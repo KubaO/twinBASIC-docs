@@ -24,7 +24,7 @@ The available attributes are listed below in alphabetic order. Not every attribu
 
 Syntax: **[AppObject]**
 
-Applicable to: [**CoClass**](/tB/Core/CoClass)
+Applicable to: [**CoClass**]({{site.base_url}}/tB/Core/CoClass)
 
 Indicates the class is part of the global namespace. You should not include this attribute without a full understanding of the meaning.
 
