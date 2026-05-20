@@ -134,7 +134,7 @@ pull the matching Chromium build — same shape as
 | n/a | `pyproject.toml` (new) | Created in Phase 1 at the repo root. Declares build-system, deps, the `render-book` console-script entry, and restricts setuptools to `docs*` package discovery. |
 | n/a | `docs/__init__.py`, `docs/lib/__init__.py` (new) | Both empty. Created in Phase 1. Needed so `docs` and `docs.lib` are importable packages — without `docs/__init__.py` the `render-book` console-script entry (`docs.render_book:main`) can't resolve. |
 | n/a | `docs/lib/spike_dest.py` (new) | Phase 3.1 spike script — confirms pypdf preserves `NameObject` `/Dest` through `clone_from` + write. Kept in the tree as executable documentation of the original risk and the fix. |
-| n/a | `docs/lib/compare_outlines.py` (new in Phase 3) | Diffs page count, outline tree (title + dest), and `/Dests` resolution between two PDFs. Intentionally narrow; Phase 5 folds this into the planned `docs/lib/compare_pdfs.py` (which adds metadata) and `compare_outlines.py` gets removed at that point. |
+| n/a | `docs/lib/compare_pdfs.py` (new in Phase 5) | Diffs page count, outline tree (title + dest), `/Dests` resolution, and `/Info` metadata between two PDFs. Extended from a narrower `compare_outlines.py` written in Phase 3, which was folded in and removed during Phase 5. |
 
 ## API translation reference
 
@@ -613,41 +613,84 @@ shape of the current Node output so eyeballing logs from a CI pipeline
 that mixes old and new builds isn't confusing.
 
 **5.3** Create [docs/pybook.bat](docs/pybook.bat) as a parallel entry
-point to [docs/book.bat](docs/book.bat). Mirror book.bat's structure
-but:
+point to [docs/book.bat](docs/book.bat). Same call convention as
+book.bat (`cd docs && pybook.bat`); output to `_pdf\book-py.pdf` so
+the two PDFs sit next to each other for A/B comparison.
 
-- Output path is `_pdf\book-py.pdf` (not `book.pdf`) so it sits next to
-  the Node output for A/B comparison.
-- Dependency-check line: replace `node_modules\puppeteer\package.json`
-  check with `python -c "import playwright" 2>nul` (or check for a
-  venv marker).
-- Keep `if not exist _site-pdf\book.html ...` — same precondition.
-- Keep the `--additional-script ..\perf\detach-pages.js` flag — the
-  injection still applies (the JS file runs in the browser, host
-  language doesn't matter).
-- The Node `book.bat` is **not modified** in this phase.
+Two non-obvious details:
+
+- The Python driver needs cwd at the worktree root, not at `docs\`.
+  Reason: `render_book.py` does `from docs.lib.outline import ...`,
+  which needs `docs` discoverable as a top-level package on sys.path —
+  easiest with cwd at the worktree root. The worktree-local `.venv\`
+  also lives at the root. Solution: `pushd ..` inside the script
+  after the `_site-pdf\book.html` precondition check; `popd` before
+  exit so a caller in a chain sees the cwd it started with. Preserve
+  `%ERRORLEVEL%` across the popd.
+- Prefer the worktree-local `.venv\Scripts\python.exe` if it exists,
+  otherwise fall back to whatever `python` is on PATH. The dependency
+  check (`python -c "import playwright, pypdf"`) and the
+  `render_book.py` invocation both go through the same `%PY%`
+  variable.
+
+Keep the existing `if not exist _site-pdf\book.html ...` precondition
+before the pushd, so it's evaluated against `docs\`'s cwd just like
+book.bat. Keep the `--additional-script perf\detach-pages.js` flag —
+relative to the worktree root since the pushd has already landed
+there (note this is `perf\...`, not `..\perf\...`).
+
+The Node `book.bat` is **not modified** in this phase.
 
 **5.4** Extend the Phase 3 `docs/lib/compare_outlines.py` into
-`docs/lib/compare_pdfs.py` — add the metadata-comparison step from the
-Testing strategy section (creator/producer/title/lang/dates), then
-delete `compare_outlines.py`. ~80 lines total. Designed to be called as
-`python docs/lib/compare_pdfs.py _pdf/book.pdf _pdf/book-py.pdf`.
+`docs/lib/compare_pdfs.py` — add `/Info` metadata comparison on top of
+the existing outline + page-count diff, then delete
+`compare_outlines.py`. Designed to be called as `python
+docs/lib/compare_pdfs.py _pdf/book.pdf _pdf/book-py.pdf`. ~230 lines
+total (most of which is the outline tree walker carried over from
+Phase 3; the metadata addition itself is ~80 lines).
 
-**5.5** Run both builds end-to-end on the same input:
+Split the metadata fields into two buckets:
+
+- **Strict-equal** (any mismatch is a failure): `/Title`, `/Subject`,
+  `/Author`, `/Keywords`, and `/Lang` (on the catalog, not /Info).
+  Both pipelines pull these from the same `gather_meta` browser-side
+  scrape, so they should round-trip identically.
+- **Acknowledged-different** (printed side-by-side, never a failure):
+  `/Creator`, `/Producer`, `/CreationDate`, `/ModDate`. Node and
+  Python use different Chromium builds (puppeteer's vs playwright's),
+  so the Creator and Producer strings Chromium emits differ before
+  either toolchain touches them. Plus pdf-lib clobbers `/Producer`
+  with its own banner on save while pypdf preserves Chromium's
+  `Skia/PDF mXX`. Dates differ by build time. Do treat a *blank*
+  value on either side as a failure — the field should at minimum
+  contain Chromium's string.
+
+**5.5** Run both builds end-to-end on the same input. Both scripts
+take `docs\` as cwd:
 
 ```cmd
-docs\build.bat
-docs\book.bat
-docs\pybook.bat
-python docs\lib\compare_pdfs.py _pdf\book.pdf _pdf\book-py.pdf
+cd docs
+build.bat                    :: optional; only if _site-pdf\book.html is stale
+book.bat                     :: produces _pdf\book.pdf
+pybook.bat                   :: produces _pdf\book-py.pdf
+..\.venv\Scripts\python lib\compare_pdfs.py _pdf\book.pdf _pdf\book-py.pdf
 ```
 
-Confirm exit 0 from compare_pdfs.py.
+Confirm exit 0 from `compare_pdfs.py`. Expected output on the current
+book: pages match (1651), outline structure identical (1773 entries),
+`/Dests` catalogs match (4353 entries, with the same 2 pre-existing
+Chrome-quirk misses on both sides), strict-equal metadata matches,
+acknowledged differences printed for spot-check.
 
 **5.6** Time comparison: both `book.bat` and `pybook.bat` run on the
-same `_site-pdf/book.html`, same machine. Record wall-clock totals and
-phase breakdowns. Expect Python within ±20% of Node. If Python is much
-worse, profile and decide whether to re-evaluate pikepdf.
+same `_site-pdf/book.html`, same machine. Record wall-clock totals
+and phase breakdowns. Expected ±20% of Node; the actual result on
+the 1651-page book turned out to be a Python *win* on total — 74–76 s
+vs 89 s — because the faster generate and process phases more than
+compensate for a slower render phase. See "Open questions / risks"
+for the per-phase breakdown and the render-slowdown analysis. If a
+future benchmark on different hardware comes in much worse than this,
+profile and decide whether to re-evaluate pikepdf.
 
 **5.7** Optional: add a `docs/pybook.sh` Linux counterpart if any
 contributor or CI environment expects a shell script. Otherwise defer
@@ -801,6 +844,37 @@ Phases 1-3 is noted inline.
   (Phase 3).* Python total: 72.6 s vs Node total: 91.9 s on the same
   1651-page book. Process phase: 2.1 s (Python, on ~13.6 MB raw)
   vs 7.0 s (Node, on ~53.5 MB raw). No need to revisit pikepdf.
+- **Metadata fields that survive the Node→Python switch unchanged.**
+  *Verified (Phase 5).* `/Title`, `/Subject`, `/Author`, `/Keywords`,
+  and `/Lang` come from the same `gather_meta` browser-side scrape on
+  both paths and round-trip identically. `compare_pdfs.py`
+  strict-equals them.
+- **Metadata fields that differ by design between Node and Python.**
+  *Documented (Phase 5).* `/Creator` and `/Producer` differ because
+  puppeteer and playwright bundle different Chromium builds (m127 vs
+  m148 at the time of the port), and Chromium emits different strings
+  in each: the full UA `Mozilla/5.0 ... HeadlessChrome/127.0.0.0 ...`
+  for m127 vs the literal `Chromium` for m148. Producer additionally
+  differs because pdf-lib clobbers it with its own banner on save
+  while pypdf preserves Chromium's `Skia/PDF mXX`. Both pipelines
+  append `" + Paged.js"` to Creator regardless of host language.
+  Dates always differ by build time. `compare_pdfs.py` prints these
+  side-by-side without failing.
+- **Render phase slower on the Playwright stack.** *Compensated
+  downstream (Phase 5).* Browser-side `performance.now()` timestamps
+  show the paged.js layout phase taking ~1.8x longer under
+  Playwright/Chromium-m148 (28 s at 1600 pages) than under
+  Puppeteer/Chromium-m127 (14.5 s at 1600 pages). Pure Chromium-side
+  cost — Python's CDP wrapper adds no measurable overhead, since
+  `page.evaluate` just await's the IPC response. Unknown root cause:
+  could be an m148 layout regression on paged.js's
+  mutate-style-recalc-layout-per-page pattern, Playwright's CDP
+  transport backpressuring the console-event channel into the
+  renderer, or default-flag differences. Per-phase numbers on the
+  1651-page book: render 31 s (Py) vs 17 s (Node); generate 39 s
+  vs 64 s (Playwright returns ~13.6 MB compressed where Puppeteer
+  returns ~53.5 MB uncompressed); process 2 s vs 6 s. Net Python
+  total 74–76 s vs Node 89 s.
 
 ## Out of scope (explicitly)
 

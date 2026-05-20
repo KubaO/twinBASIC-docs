@@ -1,25 +1,36 @@
-"""Compare /Outlines trees between two PDFs.
+"""Compare two PDFs for the Phase 5 parallel-track gate.
 
-Used to verify the Python port's outline (Phase 3) matches the
-Node-built reference. Dumps a normalized JSON tree from each PDF and
-diffs them. Exit 0 on match, exit 1 on mismatch.
+Used to verify the Python port's output matches the Node-built
+reference. Diffs page count, outline tree, /Dests resolution, and
+/Info metadata. Exit 0 on match, exit 1 on regression.
 
-Compares:
+Strict-equal (any difference is a failure):
   - page count
   - outline hierarchy (title + destination per node, recursively)
   - that each outline /Dest resolves to a /Dests entry on the catalog
+  - /Info: Title, Subject, Author, Keywords
+  - catalog: /Lang
+  - /CreationDate, /ModDate present in both (values themselves differ
+    by build time -- compared informationally only)
+
+Acknowledged differences (printed, never a failure):
+  - /Creator, /Producer. Node and Python bundle different Chromium
+    builds (puppeteer's vs playwright's), so the Creator and Producer
+    strings Chromium emits differ; additionally pdf-lib clobbers
+    /Producer with its own banner on save while pypdf preserves
+    Chromium's `Skia/PDF mXX`. Both are expected; this script prints
+    the two values side by side for spot-checking.
 
 Does NOT compare:
-  - per-page rendered content (out of scope, byte-different by design)
-  - PDF metadata (Phase 4 verifies that separately)
+  - per-page rendered content (out of scope, byte-different by
+    design: different Chromium versions, different object numbering).
 
 Usage:
-    python docs/lib/compare_outlines.py <node.pdf> <python.pdf>
+    python docs/lib/compare_pdfs.py <node.pdf> <python.pdf>
 """
 
 from __future__ import annotations
 
-import json
 import sys
 from pathlib import Path
 
@@ -51,21 +62,22 @@ def _outline_to_json(node, depth: int = 0) -> dict:
     return out
 
 
-def dump_outline(pdf_path: Path) -> dict:
+def dump_pdf(pdf_path: Path) -> dict:
     reader = PdfReader(str(pdf_path))
     root = reader.trailer["/Root"]
     info: dict = {
         "path": str(pdf_path),
+        "reader": reader,
         "pages": len(reader.pages),
         "has_outlines": "/Outlines" in root,
         "has_dests": "/Dests" in root,
     }
-    if not info["has_outlines"]:
+    if info["has_outlines"]:
+        outlines = root["/Outlines"]
+        info["outline_count"] = outlines.get("/Count")
+        info["outline"] = _outline_to_json(outlines)
+    else:
         info["outline"] = None
-        return info
-    outlines = root["/Outlines"]
-    info["outline_count"] = outlines.get("/Count")
-    info["outline"] = _outline_to_json(outlines)
 
     # Sample which /Dest names resolve in /Dests.
     if info["has_dests"]:
@@ -73,9 +85,10 @@ def dump_outline(pdf_path: Path) -> dict:
         # /Dests can be a name tree or a dict; Chrome uses a dict.
         if hasattr(dests, "keys"):
             info["dests_total"] = len(list(dests.keys()))
+            info["dests"] = dests
         else:
             info["dests_total"] = None
-        info["dests"] = dests
+            info["dests"] = None
     return info
 
 
@@ -107,14 +120,84 @@ def _walk_titles(node: dict, out: list[str], prefix: str = "") -> None:
         _walk_titles(child, out, prefix + "  ")
 
 
+def _get_meta(reader: PdfReader, key: str) -> str | None:
+    md = reader.metadata
+    if not md:
+        return None
+    v = md.get(key)
+    return str(v) if v is not None else None
+
+
+def _get_lang(reader: PdfReader) -> str | None:
+    root = reader.trailer["/Root"]
+    v = root.get("/Lang")
+    return str(v) if v is not None else None
+
+
+def _compare_metadata(a: dict, b: dict, failures: list[str]) -> None:
+    """Diff /Info fields and /Lang. See module docstring for the split
+    between strict-equal and acknowledged-different fields.
+    """
+    a_r: PdfReader = a["reader"]
+    b_r: PdfReader = b["reader"]
+
+    print()
+    print("metadata (strict-equal):")
+    for field in ("/Title", "/Subject", "/Author", "/Keywords"):
+        va = _get_meta(a_r, field)
+        vb = _get_meta(b_r, field)
+        if va != vb:
+            failures.append(f"metadata {field} differs: a={va!r}, b={vb!r}")
+            print(f"  {field}: MISMATCH a={va!r} b={vb!r}")
+        elif va is None:
+            print(f"  {field}: (both unset)")
+        else:
+            print(f"  {field}: {va[:80]} (match)")
+
+    a_lang = _get_lang(a_r)
+    b_lang = _get_lang(b_r)
+    if a_lang != b_lang:
+        failures.append(f"/Lang differs: a={a_lang!r}, b={b_lang!r}")
+        print(f"  /Lang: MISMATCH a={a_lang!r} b={b_lang!r}")
+    elif a_lang is None:
+        print(f"  /Lang: (both unset)")
+    else:
+        print(f"  /Lang: {a_lang} (match)")
+
+    # Acknowledged differences: print both, don't fail. A blank value
+    # on either side is still a bug -- the field should at minimum
+    # contain Chromium's emitted string.
+    print()
+    print("metadata (Node vs Python differs by design):")
+    for field in ("/Creator", "/Producer"):
+        va = _get_meta(a_r, field)
+        vb = _get_meta(b_r, field)
+        if not va or not vb:
+            failures.append(f"metadata {field} blank or missing: a={va!r}, b={vb!r}")
+        print(f"  {field}:")
+        print(f"    a: {va!r}")
+        print(f"    b: {vb!r}")
+
+    # Dates: same build produces same Title but never the same dates.
+    # Require both present; print both values for sanity.
+    for field in ("/CreationDate", "/ModDate"):
+        va = _get_meta(a_r, field)
+        vb = _get_meta(b_r, field)
+        if va is None or vb is None:
+            failures.append(f"{field} missing in one PDF: a={va!r}, b={vb!r}")
+        print(f"  {field}:")
+        print(f"    a: {va!r}")
+        print(f"    b: {vb!r}")
+
+
 def main() -> int:
     if len(sys.argv) != 3:
         print(__doc__)
         return 2
     a_path = Path(sys.argv[1])
     b_path = Path(sys.argv[2])
-    a = dump_outline(a_path)
-    b = dump_outline(b_path)
+    a = dump_pdf(a_path)
+    b = dump_pdf(b_path)
 
     failures: list[str] = []
 
@@ -177,6 +260,8 @@ def main() -> int:
             failures.append(f"a has {len(only_a)} unique unresolved /Dest entries: {only_a[:3]}")
         if only_b:
             failures.append(f"b has {len(only_b)} unique unresolved /Dest entries: {only_b[:3]}")
+
+    _compare_metadata(a, b, failures)
 
     if failures:
         print()
