@@ -113,26 +113,26 @@ jobs:
           --offline --include-fragments
           --root-dir docs/_site-pdf
           docs/_site-pdf/book.html
-      - name: Install book render dependencies (Python)
-        # pyproject.toml at the repo root declares playwright + pypdf;
-        # `pip install -e .` makes `docs` importable as a top-level
-        # package so the driver's `from docs.lib.outline import ...`
-        # resolves. `playwright install --with-deps chromium` downloads
-        # the Chromium build that matches the Playwright version and
-        # installs the system libraries Chromium needs on Ubuntu --
-        # same idea as the previous `npx puppeteer browsers install
-        # chrome --install-deps`.
-        run: |
-          pip install -e .
-          playwright install --with-deps chromium
+      - name: Install Chromium for book render
+        # requirements.txt (installed in the "Install Python deps"
+        # step above) already pins playwright + pypdf; this step just
+        # pulls down the Chromium build that matches the Playwright
+        # version and installs the system libs Chromium needs on
+        # Ubuntu -- same idea as the previous `npx puppeteer browsers
+        # install chrome --install-deps`. Done now (not earlier with
+        # the other deps) so a link-check failure doesn't waste the
+        # ~170 MB Chromium download.
+        run: playwright install --with-deps chromium
       - name: Render book PDF
-        # Invoked from the repo root, not docs/: the driver does
-        # `from docs.lib.outline import ...`, and --additional-script
-        # resolves relative to cwd. (Locally on Windows, docs/book.bat
-        # pushd's to the root and does the same call.)
+        # Invoked from the repo root: `python -m docs.render_book`
+        # puts cwd on sys.path[0] so the driver's
+        # `from docs.lib.outline import ...` resolves, and
+        # --additional-script resolves relative to cwd. (Locally on
+        # Windows, docs/book.bat pushd's to the root and does the
+        # same call.)
         run: |
           mkdir -p docs/_pdf
-          python docs/render_book.py docs/_site-pdf/book.html -o docs/_pdf/book.pdf --outline-tags h1,h2,h3,h4 --additional-script perf/detach-pages.js
+          python -m docs.render_book docs/_site-pdf/book.html -o docs/_pdf/book.pdf --outline-tags h1,h2,h3,h4 --additional-script perf/detach-pages.js
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v5
         with:

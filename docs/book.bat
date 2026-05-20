@@ -10,11 +10,10 @@ rem investigation. Same call convention as before:
 rem `cd docs && book.bat`.
 rem
 rem Internally the script pushd's to the worktree root before invoking
-rem Python: the driver does `from docs.lib.outline import ...`, so
-rem `docs` needs to be discoverable as a top-level package on
-rem sys.path, and the worktree-local .venv\ lives at .venv\Scripts\.
-rem popd restores docs\ before exit so callers in a chain see the cwd
-rem they started with.
+rem Python: `python -m docs.render_book` puts cwd on sys.path[0] so
+rem the driver's `from docs.lib.outline import ...` resolves. popd
+rem restores docs\ before exit so callers in a chain see the cwd they
+rem started with.
 rem
 rem --additional-script perf\detach-pages.js injects a Paged.Handler
 rem that hides each finalised page from Chromium's layout tree and
@@ -29,18 +28,10 @@ if not exist _site-pdf\book.html (
 
 pushd ..
 
-rem Prefer the worktree-local .venv if it exists; otherwise fall back
-rem to whatever `python` is on PATH. The venv keeps playwright + pypdf
-rem isolated from the system Python.
-set PY=python
-if exist .venv\Scripts\python.exe set PY=.venv\Scripts\python.exe
-
-%PY% -c "import playwright, pypdf" >nul 2>&1
+python -c "import playwright, pypdf" >nul 2>&1
 if errorlevel 1 (
-    echo Python dependencies not importable with %PY%. From the worktree root:
-    echo     python -m venv .venv
-    echo     .venv\Scripts\activate
-    echo     pip install -e .
+    echo Python dependencies not importable. From the worktree root:
+    echo     pip install -r requirements.txt
     echo     playwright install chromium
     popd
     exit /b 1
@@ -48,7 +39,7 @@ if errorlevel 1 (
 
 if not exist docs\_pdf mkdir docs\_pdf
 
-%PY% docs\render_book.py docs\_site-pdf\book.html -o docs\_pdf\book.pdf --outline-tags h1,h2,h3,h4 --additional-script perf\detach-pages.js
+python -m docs.render_book docs\_site-pdf\book.html -o docs\_pdf\book.pdf --outline-tags h1,h2,h3,h4 --additional-script perf\detach-pages.js
 set ERR=%ERRORLEVEL%
 
 popd

@@ -8,8 +8,8 @@ Phase 4 status: Playwright browser driver + pypdf process phase with
 outline and metadata attached. Functionally equivalent to the Node
 render-book.mjs end-to-end.
 
-Usage:
-    python docs/render_book.py <input.html> -o <output.pdf>
+Usage (from the worktree root):
+    python -m docs.render_book <input.html> -o <output.pdf>
                                [--outline-tags h1,h2,...] [-t <timeout-ms>]
                                [--additional-script <path>]...
 
@@ -48,7 +48,7 @@ PROGRESS_SCRIPT_PATH = Path(__file__).parent / "lib" / "progress-handler.js"
 
 def parse_args() -> argparse.Namespace:
     p = argparse.ArgumentParser(
-        prog="render_book.py",
+        prog="python -m docs.render_book",
         description="Render an HTML book to PDF via paged.js + Chromium + pypdf.",
     )
     p.add_argument("input", help="Input HTML file (e.g. _site-pdf/book.html).")
