@@ -57,7 +57,7 @@ jobs:
         env:
           JEKYLL_ENV: production
           PAGES_REPO_NWO: "${{ github.repository }}"
-      - name: Set up Python for link checks
+      - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.14'
@@ -113,6 +113,23 @@ jobs:
           --offline --include-fragments
           --root-dir docs/_site-pdf
           docs/_site-pdf/book.html
+      - name: Cache Playwright browsers
+        # Caches the Chrome / FFmpeg / headless-shell binaries that
+        # the next step downloads into ~/.cache/ms-playwright (~290 MB
+        # total). On a cache hit `playwright install` detects the
+        # already-present binaries and skips the download, leaving
+        # only the apt portion of `--with-deps` to run.
+        #
+        # Keyed on requirements.txt -- if the pinned Playwright
+        # version changes, the cache invalidates and the next run
+        # re-populates it. The Playwright pin is currently a `>=`
+        # range, so a transparent minor bump won't bust the cache;
+        # `playwright install` will simply download whichever browser
+        # build is missing under the existing cache directory.
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ hashFiles('requirements.txt') }}
       - name: Install Chromium for book render
         # requirements.txt (installed in the "Install Python deps"
         # step above) already pins playwright + pypdf; this step just
@@ -121,7 +138,9 @@ jobs:
         # Ubuntu -- same idea as the previous `npx puppeteer browsers
         # install chrome --install-deps`. Done now (not earlier with
         # the other deps) so a link-check failure doesn't waste the
-        # ~170 MB Chromium download.
+        # ~170 MB Chromium download. The preceding `actions/cache`
+        # step restores the ~290 MB of browser binaries on cache hits
+        # so `--with-deps` only re-runs the (small) apt portion.
         run: playwright install --with-deps chromium
       - name: Render book PDF
         # Invoked from the repo root: `python -m docs.render_book`
