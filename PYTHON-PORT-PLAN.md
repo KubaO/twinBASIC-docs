@@ -81,18 +81,38 @@ in most current Linux distros and on Windows installers.
 
 ### Dependency management
 
-Add a `pyproject.toml` (PEP 621) at the repo root pinning the two
-runtime deps:
+Add a `pyproject.toml` (PEP 621) at the repo root. It pins the two
+runtime deps and declares a setuptools build backend so
+`pip install -e .` discovers `docs/` cleanly:
 
 ```toml
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
 [project]
 name = "tbasic-docs-render"
+version = "0.1.0"
 requires-python = ">=3.11"
 dependencies = [
     "playwright>=1.47",
     "pypdf>=5.0",
 ]
+
+[project.scripts]
+render-book = "docs.render_book:main"
+
+[tool.setuptools.packages.find]
+include = ["docs*"]
+namespaces = false
 ```
+
+The `[tool.setuptools.packages.find]` block restricts setuptools'
+auto-discovery to `docs/` (and `docs/lib/`) so it doesn't try to
+package `scripts/`, `experiments/`, etc. The `[project.scripts]`
+entry registers a `render-book` console script via the editable
+install — the same callable that `python docs/render_book.py` runs,
+just with the venv's `Scripts/` directory on PATH.
 
 Post-install, contributors run `playwright install chromium` once to
 pull the matching Chromium build — same shape as
@@ -111,6 +131,8 @@ pull the matching Chromium build — same shape as
 | [docs/book.bat](docs/book.bat) | **unchanged through Phase 5**, then replaced in Phase 6 | New `docs/pybook.bat` runs alongside it during the port. |
 | n/a | `docs/pybook.bat` (new) | Created in Phase 5. Calls `python docs/render_book.py ... -o _pdf/book-py.pdf` so its output sits next to the Node output for comparison. |
 | [docs/package.json](docs/package.json) | **unchanged through Phase 5**, stripped or deleted in Phase 6 | Only happens at cutover, after the Python port is confirmed working. |
+| n/a | `pyproject.toml` (new) | Created in Phase 1 at the repo root. Declares build-system, deps, the `render-book` console-script entry, and restricts setuptools to `docs*` package discovery. |
+| n/a | `docs/__init__.py`, `docs/lib/__init__.py` (new) | Both empty. Created in Phase 1. Needed so `docs` and `docs.lib` are importable packages — without `docs/__init__.py` the `render-book` console-script entry (`docs.render_book:main`) can't resolve. |
 
 ## API translation reference
 
@@ -183,31 +205,23 @@ Ordered so each step is independently verifiable. Tasks are
 numbered `<phase>.<step>` for easy reference in commits / PR descriptions
 (e.g. "implements 3.4-3.7").
 
-### Phase 1: Scaffolding (1-2 hours)
+### Phase 1: Scaffolding
 
 **1.1** Confirm `python --version` ≥ 3.11 on the development machine.
 Document the minimum version in the plan if it shifts.
 
-**1.2** Create `pyproject.toml` at repo root:
+**1.2** Create `pyproject.toml` at repo root with the content shown
+in the "Dependency management" section above. The `[build-system]`
+and `[tool.setuptools.packages.find]` blocks are not optional:
+without them `pip install -e .` fails because setuptools'
+auto-discovery can't pick a single top-level package out of the
+repo's layout (`docs/`, `scripts/`, `experiments/`, ...).
 
-```toml
-[project]
-name = "tbasic-docs-render"
-version = "0.1.0"
-requires-python = ">=3.11"
-dependencies = [
-    "playwright>=1.47",
-    "pypdf>=5.0",
-]
-
-[project.scripts]
-render-book = "docs.render_book:main"
-```
-
-**1.3** Optional but recommended: create a `.venv/` and add it to
-`.gitignore` (check whether `.gitignore` already covers it). Decide
-whether contributors must use a venv or whether system Python is fine
-— probably venv for Windows contributors, system fine on CI.
+**1.3** Recommended on Windows: create a `.venv/` at the worktree
+root (`python -m venv .venv`). Add `.venv/`, `__pycache__/`, and
+`*.egg-info/` to `.gitignore` if they aren't already there — a
+fresh `pip install -e .` produces an `*.egg-info/` at the repo
+root. System Python is fine on CI; venv keeps the dev box clean.
 
 **1.4** Install dependencies:
 
@@ -235,13 +249,18 @@ def parse_args() -> argparse.Namespace:
     return p.parse_args()
 ```
 
-Also stub an `async def main(args)` and a sync `def main()` that wraps
-`asyncio.run(main(parse_args()))`. Both are needed: Playwright's API is
-async, but `book.bat` calls a single command.
+Also stub an `async def render(args)` (the actual driver, body filled
+in Phase 2+) and a sync `def main()` that wraps
+`asyncio.run(render(parse_args()))`. Both are needed: Playwright's API
+is async, but `book.bat` calls a single command. `main` is what the
+`render-book` console-script entry resolves to.
 
-**1.6** Create `docs/lib/__init__.py` (empty), `docs/lib/outline.py`,
-and `docs/lib/postprocesser.py` with stub function signatures and
-docstrings — no bodies yet.
+**1.6** Create `docs/__init__.py` (empty), `docs/lib/__init__.py`
+(empty), `docs/lib/outline.py`, and `docs/lib/postprocesser.py`. The
+two non-empty `.py` files get stub function signatures and
+docstrings — no bodies yet. `docs/__init__.py` is required so the
+`render-book` console-script entry (`docs.render_book:main`)
+resolves.
 
 **1.7** Smoke test:
 

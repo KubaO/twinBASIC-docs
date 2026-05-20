@@ -3,6 +3,11 @@ CLAUDE.md
 /.htmltest.yml
 node_modules/
 
+# Python (book PDF render pipeline -- see pyproject.toml)
+.venv/
+__pycache__/
+*.egg-info/
+
 # perf/measure.mjs --out targets at repo root (book.pdf + render.cpuprofile + timing.*)
 /before/
 /after-*/
