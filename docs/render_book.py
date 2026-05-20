@@ -4,8 +4,9 @@ Python port of docs/render-book.mjs. See PYTHON-PORT-PLAN.md for the
 full porting plan. This module ships the production driver invoked
 by docs/pybook.bat (added in Phase 5).
 
-Phase 3 status: Playwright browser driver + pypdf process phase with
-outline attached. Metadata setter (Phase 4) is still pending.
+Phase 4 status: Playwright browser driver + pypdf process phase with
+outline and metadata attached. Functionally equivalent to the Node
+render-book.mjs end-to-end.
 
 Usage:
     python docs/render_book.py <input.html> -o <output.pdf>
@@ -38,6 +39,7 @@ from playwright.async_api import async_playwright
 from pypdf import PdfReader, PdfWriter
 
 from docs.lib.outline import parse_outline, set_outline
+from docs.lib.postprocesser import gather_meta, set_metadata
 
 
 PAGED_SCRIPT_PATH = Path(__file__).parent / "lib" / "paged.browser.js"
@@ -202,7 +204,7 @@ async def render(args: argparse.Namespace) -> None:
             clear_progress()
             print(f"render:   {_fmt_ms(time.monotonic() - t_render)}  ({page_count} pages)")
 
-            # Generate -- outline walk, then Chromium DOM->PDF.
+            # Generate -- meta extraction, outline walk, then Chromium DOM->PDF.
             #
             # parse_outline walks the DOM and also injects a hidden link
             # holder div whose <a href="#id"> entries make Chrome populate
@@ -214,6 +216,7 @@ async def render(args: argparse.Namespace) -> None:
             # 500 ms wall-clock heartbeat keeps an elapsed counter visible
             # during the wait so the terminal doesn't look hung.
             t_generate = time.monotonic()
+            meta = await gather_meta(page)
             outline = await parse_outline(page, outline_tags)
 
             async def _heartbeat() -> None:
@@ -252,11 +255,11 @@ async def render(args: argparse.Namespace) -> None:
                 f"  (raw {len(raw_pdf) / 1024 / 1024:.1f} MB)"
             )
 
-            # Process -- pypdf round-trip with the outline attached.
-            # Phase 4 will add set_metadata between the clone and write.
+            # Process -- pypdf round-trip with outline + metadata attached.
             t_process = time.monotonic()
             reader = PdfReader(io.BytesIO(raw_pdf))
             writer = PdfWriter(clone_from=reader)
+            set_metadata(reader, writer, meta)
             set_outline(writer, outline)
             with open(output_path, "wb") as f:
                 writer.write(f)
