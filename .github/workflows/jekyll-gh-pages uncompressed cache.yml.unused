@@ -1,0 +1,282 @@
+name: Deploy Jekyll site to Pages
+# Starting point: https://github.com/actions/starter-workflows/blob/main/pages/jekyll.yml
+
+on:
+  push:
+    branches: ["staging"]
+
+  # Allows you to run this workflow manually from the Actions tab.
+  # The manual path additionally cuts a GitHub release with the
+  # offline-browsable site copy attached as a zip; pushes to
+  # `staging` only deploy to Pages.
+  workflow_dispatch:
+    inputs:
+      release_tag:
+        description: 'Release tag (leave blank for auto: docs-YYYY-MM-DD-HHMM in UTC)'
+        required: false
+        type: string
+
+# Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Allow only one concurrent deployment, skipping runs queued between the run in-progress and latest queued.
+# However, do NOT cancel in-progress runs as we want to allow these production deployments to complete.
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  # Build job
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+      - name: Set up Ruby and install gems
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.4'
+          bundler-cache: true
+          working-directory: ./docs
+          cache-version: 0 # Increment this number if you need to re-download cached gems
+      - name: Setup Pages
+        id: pages
+        uses: actions/configure-pages@v6
+      - name: Write secondary config if available
+        run: |
+          echo "${{ vars.JEKYLL_SITE_CONFIG }}" > _site_config.yml
+          echo "SITE_CONFIG=_site_config.yml" >> "$GITHUB_ENV"
+        if: ${{ vars.JEKYLL_SITE_CONFIG != '' }}
+        working-directory: ./docs
+      - name: Build with Jekyll
+        run: bundle exec jekyll build --config _config.yml,$SITE_CONFIG --baseurl "${{ steps.pages.outputs.base_path }}"
+        working-directory: ./docs
+        env:
+          JEKYLL_ENV: production
+          PAGES_REPO_NWO: "${{ github.repository }}"
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.14'
+          cache: 'pip'
+      - name: Install Python deps
+        run: pip install -r requirements.txt
+      - name: Check online links (check_links.py)
+        # `--fallback-extensions html` mirrors what GitHub Pages does at request time:
+        # an extensionless URL like `/FAQ` is served as `/FAQ.html`. Without the flag
+        # every pretty permalink on the site would look broken.
+        #
+        # `--base-path` strips the Pages baseurl (e.g. `/twinBASIC-docs`) from absolute
+        # URLs before resolving against `--root-dir`. Equivalent to the `--remap` regex
+        # that lychee used in earlier iterations of this step.
+        run: >-
+          python scripts/check_links.py
+          --offline --include-fragments
+          --fallback-extensions html
+          --index-files 'index.html,.'
+          --base-path '${{ steps.pages.outputs.base_path }}'
+          --root-dir docs/_site
+          docs/_site
+      - name: Check offline links (check_links.py)
+        # Strict check on `_site-offline/`: every link must resolve to an actual file
+        # under `file://`, with no extension fallback. Catches relative links in
+        # markdown sources that point at a permalink that doesn't match the rendered
+        # filename (e.g. `[Foo](Foo/)` when Jekyll wrote `Foo.html`, not
+        # `Foo/index.html`) -- the kind of breakage the online check above hides
+        # behind `--fallback-extensions html`.
+        run: >-
+          python scripts/check_links.py
+          --offline --include-fragments
+          --index-files index.html
+          --root-dir docs/_site-offline
+          docs/_site-offline
+      - name: Check for surviving live-site links in offline tree
+        # Flags any https://docs.twinbasic.com/<path> reference left in
+        # _site-offline/ HTML outside <code>/<pre> blocks. After offlinify
+        # strips the jekyll-seo-tag block, anything surviving is a source
+        # link that points at the live site instead of using a relative or
+        # /tB/... permalink that resolves locally. The bare root URL
+        # (https://docs.twinbasic.com[/]) is exempt -- intentional "go to
+        # the live site" links are allowed.
+        run: python scripts/check_offline_live_links.py
+      - name: Check book links (informational)
+        # Failures do not block the build. The book still has absolute
+        # intra-site URLs that the chapter transform has not yet rewritten
+        # and some fragment anchors that are not yet generated. Tracked here
+        # for visibility until those are fixed.
+        continue-on-error: true
+        run: >-
+          python scripts/check_links.py
+          --offline --include-fragments
+          --root-dir docs/_site-pdf
+          docs/_site-pdf/book.html
+      - name: Export Actions cache env vars
+        # ACTIONS_RESULTS_URL and ACTIONS_RUNTIME_TOKEN are only
+        # injected into action code, not `run:` steps. Export them
+        # so ci_cache.py can call the cache v2 Twirp API.
+        uses: actions/github-script@v7
+        with:
+          script: |
+            core.exportVariable('ACTIONS_RESULTS_URL', process.env.ACTIONS_RESULTS_URL)
+            core.exportVariable('ACTIONS_RUNTIME_TOKEN', process.env.ACTIONS_RUNTIME_TOKEN)
+      - name: Export runner image identity
+        # ImageOS / ImageVersion are shell env vars on GitHub-hosted
+        # runners but are not in the Actions `env` context, so
+        # ${{ env.ImageOS }} evaluates to "". Exporting them to
+        # GITHUB_ENV makes them available to subsequent expressions.
+        # Falls back to a weekly date stamp if a future image stops
+        # setting them.
+        run: |
+          echo "ImageOS=${ImageOS:-linux}" >> "$GITHUB_ENV"
+          echo "ImageVersion=${ImageVersion:-$(date -u +%Y-W%V)}" >> "$GITHUB_ENV"
+      - name: Restore apt cache
+        # Warms /var/lib/apt/lists/ so the `apt-get update` inside
+        # `playwright install --with-deps` runs as a quick incremental
+        # refresh rather than a cold ~16 MB redownload. --sudo because
+        # the directory is root-owned.
+        run: >-
+          python scripts/ci_cache.py restore --sudo
+          "apt-lists-${{ runner.os }}-${{ env.ImageOS }}-${{ env.ImageVersion }}"
+          /var/lib/apt/lists
+          "apt-lists-${{ runner.os }}-${{ env.ImageOS }}-"
+      - name: Restore Playwright cache
+        # Restores ~/.cache/ms-playwright (~290 MB) so `playwright
+        # install` skips the browser download on a cache hit.
+        run: >-
+          python scripts/ci_cache.py restore
+          "playwright-${{ runner.os }}-${{ hashFiles('requirements.txt') }}"
+          "$HOME/.cache/ms-playwright"
+      - name: Install Chromium for book render
+        # requirements.txt (installed in the "Install Python deps"
+        # step above) already pins playwright + pypdf; this step just
+        # pulls down the Chromium build that matches the Playwright
+        # version and installs the system libs Chromium needs on
+        # Ubuntu -- same idea as the previous `npx puppeteer browsers
+        # install chrome --install-deps`. Done now (not earlier with
+        # the other deps) so a link-check failure doesn't waste the
+        # ~170 MB Chromium download. The preceding ci-cache.sh restore
+        # steps seed the apt index and browser binaries on cache hits
+        # so `--with-deps` runs a quick incremental apt-get update and
+        # skips the ~290 MB browser download.
+        run: playwright install --with-deps chromium
+      - name: Save caches
+        run: |
+          sudo rm -f /var/lib/apt/lists/lock
+          sudo rm -rf /var/lib/apt/lists/partial
+          python scripts/ci_cache.py save "apt-lists-${{ runner.os }}-${{ env.ImageOS }}-${{ env.ImageVersion }}" /var/lib/apt/lists
+          python scripts/ci_cache.py save "playwright-${{ runner.os }}-${{ hashFiles('requirements.txt') }}" "$HOME/.cache/ms-playwright"
+      - name: Render book PDF
+        # Invoked from the repo root: `python -m docs.render_book`
+        # puts cwd on sys.path[0] so the driver's
+        # `from docs.lib.outline import ...` resolves, and
+        # --additional-script resolves relative to cwd. (Locally on
+        # Windows, docs/book.bat pushd's to the root and does the
+        # same call.)
+        run: |
+          mkdir -p docs/_pdf
+          python -m docs.render_book docs/_site-pdf/book.html -o docs/_pdf/book.pdf --outline-tags h1,h2,h3,h4 --additional-script perf/detach-pages.js
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v5
+        with:
+          path: ./docs/_site
+      # The next two steps run only on manual dispatch -- they
+      # package the offline copy of the site (`docs/_site-offline/`,
+      # produced by the always-on `also_build_offline: true` flag in
+      # `_config.yml` via `_plugins/offlinify.rb`) and ship it as a
+      # workflow artifact for the `release` job to attach to a new
+      # GitHub release. Pushes to `staging` skip this and only
+      # deploy to Pages.
+      - name: Package offline site
+        if: github.event_name == 'workflow_dispatch'
+        run: |
+          if [ ! -d ./docs/_site-offline ]; then
+            echo "::error::./docs/_site-offline not found -- ensure also_build_offline is true in _config.yml (or in the JEKYLL_SITE_CONFIG override)"
+            exit 1
+          fi
+          (cd ./docs/_site-offline && zip -rq "${{ runner.temp }}/twinbasic-docs-offline.zip" .)
+      - name: Upload offline-site workflow artifact
+        if: github.event_name == 'workflow_dispatch'
+        uses: actions/upload-artifact@v4
+        with:
+          name: twinbasic-docs-offline-zip
+          path: ${{ runner.temp }}/twinbasic-docs-offline.zip
+          # Workflow-internal hand-off to the release job; the
+          # release itself carries the long-lived copy of the zip.
+          retention-days: 7
+      - name: Upload book PDF workflow artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: twinbasic-docs-book-pdf
+          path: ./docs/_pdf/book.pdf
+
+  # Deployment job
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v5
+
+  # Release job -- runs only on manual dispatch, after a successful
+  # Pages deploy. Each manual deploy cuts a new GitHub release whose
+  # tag tracks a publicly visible documentation snapshot at
+  # https://docs.twinbasic.com, with the offline-browsable copy of
+  # the site attached as twinbasic-docs-offline.zip.
+  release:
+    if: github.event_name == 'workflow_dispatch'
+    needs: deploy
+    runs-on: ubuntu-latest
+    permissions:
+      # softprops/action-gh-release needs contents:write to create
+      # tags and publish releases. The top-level permissions block
+      # only grants contents:read for the build/deploy path.
+      contents: write
+    steps:
+      - name: Download offline-site workflow artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: twinbasic-docs-offline-zip
+      - name: Download book PDF workflow artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: twinbasic-docs-book-pdf
+      - name: Compute release tag and name
+        id: tag
+        env:
+          INPUT_TAG: ${{ inputs.release_tag }}
+        run: |
+          if [ -n "$INPUT_TAG" ]; then
+            TAG="$INPUT_TAG"
+            NAME="$INPUT_TAG"
+          else
+            TAG="docs-$(date -u +'%Y-%m-%d-%H%M')"
+            NAME="Documentation $(date -u +'%Y-%m-%d %H:%M UTC')"
+          fi
+          echo "tag=$TAG"   >> "$GITHUB_OUTPUT"
+          echo "name=$NAME" >> "$GITHUB_OUTPUT"
+      - name: Create release with offline-site zip
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.tag.outputs.tag }}
+          name: ${{ steps.tag.outputs.name }}
+          target_commitish: ${{ github.sha }}
+          body: |
+            Snapshot of the documentation deployed to <https://docs.twinbasic.com>.
+
+            **Offline copy:** download `twinbasic-docs-offline.zip`, extract anywhere, and open `index.html` in any browser — no server required. URLs, navigation, dark mode, and search all work over `file://`.
+
+            **PDF book:** download `book.pdf` for an offline-readable, printable copy of the full reference.
+
+            Source commit: ${{ github.sha }}.
+          files: |
+            twinbasic-docs-offline.zip
+            book.pdf
+          fail_on_unmatched_files: true
+          make_latest: 'true'
