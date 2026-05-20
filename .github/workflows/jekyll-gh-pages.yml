@@ -113,22 +113,26 @@ jobs:
           --offline --include-fragments
           --root-dir docs/_site-pdf
           docs/_site-pdf/book.html
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '22'
-          cache: 'npm'
-          cache-dependency-path: docs/package-lock.json
-      - name: Install Node.js dependencies and Chromium
+      - name: Install book render dependencies (Python)
+        # pyproject.toml at the repo root declares playwright + pypdf;
+        # `pip install -e .` makes `docs` importable as a top-level
+        # package so the driver's `from docs.lib.outline import ...`
+        # resolves. `playwright install --with-deps chromium` downloads
+        # the Chromium build that matches the Playwright version and
+        # installs the system libraries Chromium needs on Ubuntu --
+        # same idea as the previous `npx puppeteer browsers install
+        # chrome --install-deps`.
         run: |
-          npm ci
-          npx puppeteer browsers install chrome --install-deps
-        working-directory: ./docs
+          pip install -e .
+          playwright install --with-deps chromium
       - name: Render book PDF
+        # Invoked from the repo root, not docs/: the driver does
+        # `from docs.lib.outline import ...`, and --additional-script
+        # resolves relative to cwd. (Locally on Windows, docs/book.bat
+        # pushd's to the root and does the same call.)
         run: |
-          mkdir -p _pdf
-          node render-book.mjs _site-pdf/book.html -o _pdf/book.pdf --outline-tags h1,h2,h3,h4 --additional-script ../perf/detach-pages.js
-        working-directory: ./docs
+          mkdir -p docs/_pdf
+          python docs/render_book.py docs/_site-pdf/book.html -o docs/_pdf/book.pdf --outline-tags h1,h2,h3,h4 --additional-script perf/detach-pages.js
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v5
         with:

@@ -1,11 +1,26 @@
 # PDF render profiling
 
+> **Note (post Python cutover).** Production rendering has moved to
+> Python (`docs/render_book.py`, invoked by `docs/book.bat`); see
+> PYTHON-PORT-PLAN.md. This perf harness stays on Node because the
+> incremental writer (`incremental-pdf.mjs`) relies on pdf-lib
+> internals that weren't ported. Numbers from `measure.mjs` are still
+> directly comparable to production for the `render` and `generate`
+> phases (same paged.js + Chromium + `page.pdf()` flow underneath);
+> for the `process` phase, compare against the pdf-lib mode only —
+> production now uses pypdf on the much smaller raw PDF that
+> Playwright's Chromium hands back.
+
 The book PDF is built by rendering `_site-pdf/book.html` through
-paged.js + headless Chromium + pdf-lib (see `docs/book.bat`, which
-invokes `docs/render-book.mjs`). The pipeline was historically driven
-by `pagedjs-cli`; we replaced that with our own thin driver after the
-investigations in this folder, so we control pdf-lib's parseSpeed
-without patching upstream (see "Profiling pdf-lib's load" below).
+paged.js + headless Chromium + pypdf (driven by `docs/render_book.py`
+via `docs/book.bat`). Historically the production driver was Node-
+based (puppeteer + pdf-lib via `docs/render-book.mjs`); the
+investigations in this folder happened on that stack, were validated
+there, and ultimately led to the Python port. The text below mostly
+refers to the historical Node pipeline — the underlying paged.js
+layout and `page.pdf()` cost are the same after the cutover and the
+findings remain valid.
+
 As the book has grown we noticed **quadratic** wall-clock behaviour:
 time-per-page goes up as later pages are laid out, so doubling the
 page count roughly quadruples the total render time.
@@ -54,8 +69,8 @@ DevTools-compatible trace is a few lines.
 
 | File | Role |
 | --- | --- |
-| `package.json` | Pins `puppeteer` + `pdf-lib` + `html-entities` (the same direct deps `docs/` uses). |
-| `measure.mjs` | Puppeteer harness. Drives the same flow as `docs/render-book.mjs` (loads the vendored paged.js bundle, runs `PagedPolyfill.preview()`, calls `page.pdf()`, then either the pdf-lib roundtrip or the incremental writer), with optional CPU profiling, in-page handler injection, and DOM-accessor instrumentation. |
+| `package.json` | Pins `puppeteer` + `pdf-lib` + `html-entities` for this perf harness. |
+| `measure.mjs` | Puppeteer harness. Drives the same browser-side flow that production runs (loads the vendored paged.js bundle, runs `PagedPolyfill.preview()`, calls `page.pdf()`, then either the pdf-lib roundtrip or the incremental writer), with optional CPU profiling, in-page handler injection, and DOM-accessor instrumentation. Production has since moved to Python (`docs/render_book.py` + Playwright + pypdf); this harness stays on puppeteer + pdf-lib so the incremental-writer experiments still work. |
 | `timing-handler.js` | `Paged.Handler` that records per-page wall time + heap into `window.__pagedTiming` and streams a line per page to the console. Always injected. |
 | `detach-pages.js` | `Paged.Handler` that hides each completed page from the layout tree (registered against `finalizePage`). The fix. Injected by `--detach-pages` and by `docs/book.bat`. |
 | `instrument-flush-ops.js` | Wraps `getComputedStyle`, `getBoundingClientRect`, and the `offsetWidth` / `clientWidth` / `scrollWidth` family with counters + per-call timing. Injected by `--instrument`. |
