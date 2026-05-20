@@ -4,10 +4,8 @@ Python port of docs/render-book.mjs. See PYTHON-PORT-PLAN.md for the
 full porting plan. This module ships the production driver invoked
 by docs/pybook.bat (added in Phase 5).
 
-Phase 2 status: Playwright browser driver complete. The PDF
-Chromium emits is written directly to the output path; the outline
-porter (Phase 3), metadata setter (Phase 4), and pypdf process
-phase (Phase 5) are still pending.
+Phase 3 status: Playwright browser driver + pypdf process phase with
+outline attached. Metadata setter (Phase 4) is still pending.
 
 Usage:
     python docs/render_book.py <input.html> -o <output.pdf>
@@ -30,12 +28,16 @@ from __future__ import annotations
 
 import argparse
 import asyncio
+import io
 import re
 import sys
 import time
 from pathlib import Path
 
 from playwright.async_api import async_playwright
+from pypdf import PdfReader, PdfWriter
+
+from docs.lib.outline import parse_outline, set_outline
 
 
 PAGED_SCRIPT_PATH = Path(__file__).parent / "lib" / "paged.browser.js"
@@ -176,6 +178,8 @@ async def render(args: argparse.Namespace) -> None:
                     sys.stdout.flush()
             page.on("console", _on_console)
 
+            outline_tags = [t.strip() for t in args.outline_tags.split(",") if t.strip()]
+
             await page.emulate_media(media="print")
             await page.goto(input_path.as_uri(), wait_until="load")
             await page.evaluate(
@@ -198,7 +202,11 @@ async def render(args: argparse.Namespace) -> None:
             clear_progress()
             print(f"render:   {_fmt_ms(time.monotonic() - t_render)}  ({page_count} pages)")
 
-            # Generate -- Chromium DOM->PDF.
+            # Generate -- outline walk, then Chromium DOM->PDF.
+            #
+            # parse_outline walks the DOM and also injects a hidden link
+            # holder div whose <a href="#id"> entries make Chrome populate
+            # /Dests in the emitted PDF. Must run before page.pdf().
             #
             # page.pdf() returns a single buffer with no progress signal:
             # on the Chromium we ship with, the PDF writer buffers the
@@ -206,6 +214,7 @@ async def render(args: argparse.Namespace) -> None:
             # 500 ms wall-clock heartbeat keeps an elapsed counter visible
             # during the wait so the terminal doesn't look hung.
             t_generate = time.monotonic()
+            outline = await parse_outline(page, outline_tags)
 
             async def _heartbeat() -> None:
                 try:
@@ -243,15 +252,19 @@ async def render(args: argparse.Namespace) -> None:
                 f"  (raw {len(raw_pdf) / 1024 / 1024:.1f} MB)"
             )
 
-            # Phase 5 wires the pypdf process phase (outline + metadata)
-            # between here and the write. For Phase 2's done-when check
-            # we write Chromium's raw PDF straight to disk so we can
-            # eyeball the page count and visual fidelity without depending
-            # on the outline porter (Phase 3) being in place yet.
-            output_path.write_bytes(raw_pdf)
+            # Process -- pypdf round-trip with the outline attached.
+            # Phase 4 will add set_metadata between the clone and write.
+            t_process = time.monotonic()
+            reader = PdfReader(io.BytesIO(raw_pdf))
+            writer = PdfWriter(clone_from=reader)
+            set_outline(writer, outline)
+            with open(output_path, "wb") as f:
+                writer.write(f)
+            final_size = output_path.stat().st_size
+            print(f"process:  {_fmt_ms(time.monotonic() - t_process)}")
             print(
                 f"saved:    {output_path}"
-                f"  ({len(raw_pdf) / 1024 / 1024:.1f} MB)"
+                f"  ({final_size / 1024 / 1024:.1f} MB)"
             )
             print(f"total:    {_fmt_ms(time.monotonic() - t0)}")
         finally:

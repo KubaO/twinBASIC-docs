@@ -133,6 +133,8 @@ pull the matching Chromium build — same shape as
 | [docs/package.json](docs/package.json) | **unchanged through Phase 5**, stripped or deleted in Phase 6 | Only happens at cutover, after the Python port is confirmed working. |
 | n/a | `pyproject.toml` (new) | Created in Phase 1 at the repo root. Declares build-system, deps, the `render-book` console-script entry, and restricts setuptools to `docs*` package discovery. |
 | n/a | `docs/__init__.py`, `docs/lib/__init__.py` (new) | Both empty. Created in Phase 1. Needed so `docs` and `docs.lib` are importable packages — without `docs/__init__.py` the `render-book` console-script entry (`docs.render_book:main`) can't resolve. |
+| n/a | `docs/lib/spike_dest.py` (new) | Phase 3.1 spike script — confirms pypdf preserves `NameObject` `/Dest` through `clone_from` + write. Kept in the tree as executable documentation of the original risk and the fix. |
+| n/a | `docs/lib/compare_outlines.py` (new in Phase 3) | Diffs page count, outline tree (title + dest), and `/Dests` resolution between two PDFs. Intentionally narrow; Phase 5 folds this into the planned `docs/lib/compare_pdfs.py` (which adds metadata) and `compare_outlines.py` gets removed at that point. |
 
 ## API translation reference
 
@@ -198,6 +200,28 @@ pull the matching Chromium build — same shape as
   in-memory PDF and appends `" + Paged.js"` to Creator. In pypdf:
   `reader.metadata.creator` returns the existing value as a string;
   concatenation works the same way.
+- **`NameObject(s)` does not decode `#XX` hex escapes** the way pdf-lib's
+  `PDFName.of(s)` does — it stores `s` literally and only escapes `#` on
+  write. `parseOutline` deliberately produces destinations of the form
+  `"Form#2520Designer"` (the `#25` is a stand-in for `%`) counting on the
+  PDF Name layer to convert `#25` back to `%` so the resulting Name
+  resolves against Chromium's `/Dests` catalog (whose keys hold the
+  already-`%`-form, e.g. `Form%20Designer`). With pypdf you must
+  pre-decode `#XX` yourself before constructing the `NameObject`. A
+  regex of `#([0-9a-fA-F]{2})` + `chr(int(g, 16))` mirrors PDF 1.7
+  §7.3.5 exactly; see `_decode_pdf_name` in
+  [docs/lib/outline.py](docs/lib/outline.py). Without this, every outline
+  entry whose underlying heading id was URI-encoded by
+  `encodeURIComponent` (anything outside `A-Za-z0-9-_.!~*'()`) silently
+  points at a missing destination — Phase 3 hit this on the only
+  heading id containing a space.
+- **Chromium's `page.pdf()` declares a trailer `/Size` smaller than the
+  actual xref length** (observed: `/Size 15030` vs 15114 objects on the
+  1651-page book). pypdf logs `"Object count N exceeds defined trailer
+  size M"` at parse time but parses successfully; the writer regenerates
+  a correct `/Size` on save and files written by `PdfWriter` re-parse
+  cleanly. Harmless, but suppress with `warnings.filterwarnings(...)`
+  around the `PdfReader(BytesIO(raw_pdf))` call if the noise matters.
 
 ## Implementation phases
 
@@ -453,7 +477,11 @@ from pypdf.generic import (
     IndirectObject,
 )
 item_dict[NameObject("/Title")]  = TextStringObject(sanitize(item["title"]))
-item_dict[NameObject("/Dest")]   = NameObject("/" + item["destination"])
+# _decode_pdf_name unescapes the #XX placeholders parseOutline plants in
+# destination strings (see pdf-lib → pypdf watch-outs). Without it,
+# pypdf writes `#23#25...` as the Name bytes and the resulting Name
+# doesn't match Chromium's /Dests key.
+item_dict[NameObject("/Dest")]   = NameObject("/" + _decode_pdf_name(item["destination"]))
 item_dict[NameObject("/Parent")] = parent_ref
 ```
 
@@ -472,13 +500,22 @@ the generate and process phases, matching the order in
 
 **3.10** Build the full book and verify in a PDF viewer:
 
-- Open `_pdf/book.pdf` in Adobe Acrobat or Chrome.
+- Run `python docs/render_book.py _site-pdf/book.html -o _pdf/book-py.pdf
+  --outline-tags h1,h2,h3,h4 --additional-script perf/detach-pages.js`
+  (the same args `pybook.bat` will use in Phase 5).
+- Open `_pdf/book-py.pdf` in Adobe Acrobat or Chrome.
 - Confirm the Bookmarks / Outline panel is populated with the expected
   hierarchy (matches the H1/H2/H3/H4 structure of book.html).
 - Click 10 entries sampled across depths 1-4. Each should jump to the
   correct page.
-- Compare the outline structure against a recent Node-built PDF using
-  the comparison script from Phase 5.
+- Run `docs/book.bat` to produce a fresh Node `_pdf/book.pdf` from the
+  same `_site-pdf/book.html`, then diff with
+  `python docs/lib/compare_outlines.py _pdf/book.pdf _pdf/book-py.pdf`.
+  A handful of `/Dests` entries may be unresolved in **both** PDFs
+  (Chrome doesn't register a destination for headings whose id
+  contains spaces / certain reserved characters); the comparison script
+  treats matched-on-both-sides misses as a warning, not a failure. Any
+  miss unique to one side is a port regression.
 
 **Phase 3 done when:** outline structure matches Node output and all
 sampled destinations resolve to the right pages.
@@ -590,9 +627,10 @@ but:
   language doesn't matter).
 - The Node `book.bat` is **not modified** in this phase.
 
-**5.4** Write the comparison script from the Testing strategy section
-as `docs/lib/compare_pdfs.py`. Compares page count, outline JSON, and
-metadata between two PDFs. ~50 lines. Designed to be called as
+**5.4** Extend the Phase 3 `docs/lib/compare_outlines.py` into
+`docs/lib/compare_pdfs.py` — add the metadata-comparison step from the
+Testing strategy section (creator/producer/title/lang/dates), then
+delete `compare_outlines.py`. ~80 lines total. Designed to be called as
 `python docs/lib/compare_pdfs.py _pdf/book.pdf _pdf/book-py.pdf`.
 
 **5.5** Run both builds end-to-end on the same input:
@@ -734,25 +772,35 @@ lines.
 
 ## Open questions / risks
 
-- **Named-destination outline format.** pypdf's outline helpers assume
-  page-indexed destinations. We need to confirm a hand-built
-  `DictionaryObject` with `/Dest` as a `NameObject` survives the
-  `PdfWriter.clone_from(reader)` + `write()` round-trip without
-  pypdf "helpfully" rewriting it. **Mitigation:** spike this in Phase 3
-  before doing the full port. ~1 hour to verify with a 2-page test PDF.
-- **`add_script_tag(path=)` with absolute Windows paths.** Playwright
-  Python passes the file content to the page; the path resolution
-  semantics may differ subtly from puppeteer (which we know works with
-  `D:\...` paths today). **Mitigation:** verify in Phase 1 scaffolding.
-- **`page.pdf()` output equivalence.** Chromium's PDF writer is what it
-  is — same Chromium, same output. But Playwright may pass different
-  CDP-level options than puppeteer for the same Python call signature.
-  **Mitigation:** raw-PDF byte-length comparison between Node and Python
-  outputs in Phase 2; should differ by < 1 KB (timestamp only).
-- **pypdf performance on a 50 MB PDF.** Order-of-magnitude check: load +
-  save should be < 30 s. If it's much worse, revisit pikepdf.
-  **Mitigation:** Phase 2 timing comparison; we'd discover this before
-  committing to the outline port.
+These risks were live when the plan was first drafted. Status after
+Phases 1-3 is noted inline.
+
+- **Named-destination outline format.** *Resolved (Phase 3).* The 3.1
+  spike confirmed pypdf preserves a hand-built `/Dest = NameObject`
+  through `PdfReader → PdfWriter(clone_from=reader) → write()` without
+  rewriting it as an explicit destination array. A separate, related
+  gotcha surfaced: `NameObject(s)` does not decode `#XX` escapes the
+  way pdf-lib's `PDFName.of(s)` does — see the pdf-lib → pypdf
+  watch-outs. The port carries a `_decode_pdf_name` helper to mirror
+  pdf-lib's behavior; outline structure across all 1773 entries
+  matches the Node baseline.
+- **`add_script_tag(path=)` with absolute Windows paths.** *No
+  problem (Phase 2).* Playwright Python accepts the same `D:\...`
+  paths puppeteer does.
+- **`page.pdf()` output equivalence.** *Functionally equivalent
+  (Phase 3); raw size prediction wrong.* Same page count (1651),
+  outline structure, and `/Dests` catalog (4353 entries). The
+  byte-length prediction here ("< 1 KB difference") was off by 4×:
+  Playwright returned ~13.6 MB raw on the book vs puppeteer's ~53.5 MB
+  for the same content. Likely cause: puppeteer/CDP appears to ask
+  Chromium for uncompressed content streams (which pdf-lib then
+  compresses on save), while Playwright gets compressed streams from
+  Chromium directly. Final on-disk sizes: 17.9 MB (Node) vs 14.1 MB
+  (Python). The Python process phase is much faster as a result.
+- **pypdf performance on a 50 MB PDF.** *Comfortably under budget
+  (Phase 3).* Python total: 72.6 s vs Node total: 91.9 s on the same
+  1651-page book. Process phase: 2.1 s (Python, on ~13.6 MB raw)
+  vs 7.0 s (Node, on ~53.5 MB raw). No need to revisit pikepdf.
 
 ## Out of scope (explicitly)
 
