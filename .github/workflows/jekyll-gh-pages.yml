@@ -113,6 +113,35 @@ jobs:
           --offline --include-fragments
           --root-dir docs/_site-pdf
           docs/_site-pdf/book.html
+      - name: Export runner image identity
+        # ImageOS / ImageVersion are shell env vars on GitHub-hosted
+        # runners but are not in the Actions `env` context, so
+        # ${{ env.ImageOS }} evaluates to "". Exporting them to
+        # GITHUB_ENV makes them available to subsequent expressions.
+        # Falls back to a weekly date stamp if a future image stops
+        # setting them.
+        run: |
+          echo "ImageOS=${ImageOS:-linux}" >> "$GITHUB_ENV"
+          echo "ImageVersion=${ImageVersion:-$(date -u +%Y-W%V)}" >> "$GITHUB_ENV"
+      - name: Cache apt package lists
+        # Warms /var/lib/apt/lists/ so the `apt-get update` inside
+        # `playwright install --with-deps` runs as a quick incremental
+        # refresh (HTTP conditional GETs + pdiff top-up) rather than a
+        # cold ~16 MB redownload of every repository index. On a
+        # typical run this cuts the apt-update phase from ~6.6s to ~1s.
+        #
+        # Keyed on the runner image (ImageOS + ImageVersion, exported
+        # above): the cache invalidates ~weekly when GitHub refreshes
+        # the image, which is the cadence that actually governs
+        # sources.list changes. The restore-keys fallback lets a stale
+        # cache still seed the directory so apt's incremental top-up
+        # has a head start even on a key miss.
+        uses: actions/cache@v4
+        with:
+          path: /var/lib/apt/lists
+          key: apt-lists-${{ runner.os }}-${{ env.ImageOS }}-${{ env.ImageVersion }}
+          restore-keys: |
+            apt-lists-${{ runner.os }}-${{ env.ImageOS }}-
       - name: Cache Playwright browsers
         # Caches the Chrome / FFmpeg / headless-shell binaries that
         # the next step downloads into ~/.cache/ms-playwright (~290 MB
@@ -139,9 +168,15 @@ jobs:
         # install chrome --install-deps`. Done now (not earlier with
         # the other deps) so a link-check failure doesn't waste the
         # ~170 MB Chromium download. The preceding `actions/cache`
-        # step restores the ~290 MB of browser binaries on cache hits
-        # so `--with-deps` only re-runs the (small) apt portion.
+        # steps restore the apt index and browser binaries on cache
+        # hits so `--with-deps` runs a quick incremental apt-get
+        # update and skips the ~290 MB browser download.
         run: playwright install --with-deps chromium
+      - name: Clean apt cache for save
+        # Remove root-owned transient files that actions/cache (which
+        # runs as the runner user) cannot tar. The lock file and
+        # partial/ staging dir are not part of the index data we cache.
+        run: sudo rm -f /var/lib/apt/lists/lock && sudo rm -rf /var/lib/apt/lists/partial
       - name: Render book PDF
         # Invoked from the repo root: `python -m docs.render_book`
         # puts cwd on sys.path[0] so the driver's
