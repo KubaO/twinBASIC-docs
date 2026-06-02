@@ -1,3 +1,5 @@
+import path from 'node:path';
+
 const MAGIC = 0xEA0BA51C;
 
 function parseTwinpack(buffer) {
@@ -58,4 +60,39 @@ function parseTwinpack(buffer) {
   return readEntry();
 }
 
-export { parseTwinpack };
+function collectFiles(rootEntry) {
+  const files = [];
+
+  function walk(entry, prefix) {
+    if (entry.mark2 === 0x07) return;
+
+    if (entry.kind === 'file') {
+      files.push({ relativePath: prefix + entry.name, content: entry.content });
+      return;
+    }
+
+    if (entry.children) {
+      const dir = prefix + entry.name + '/';
+      for (const child of entry.children) {
+        walk(child, dir);
+      }
+    }
+  }
+
+  if (rootEntry.children) {
+    for (const child of rootEntry.children) {
+      walk(child, '');
+    }
+  }
+
+  files.sort((a, b) => {
+    const dirA = path.dirname(a.relativePath);
+    const dirB = path.dirname(b.relativePath);
+    if (dirA !== dirB) return dirA.localeCompare(dirB);
+    return path.basename(a.relativePath).localeCompare(path.basename(b.relativePath));
+  });
+
+  return files;
+}
+
+export { parseTwinpack, collectFiles };

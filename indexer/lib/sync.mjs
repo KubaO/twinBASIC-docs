@@ -1,11 +1,6 @@
-import { readFile, writeFile, mkdir, rm, access } from 'node:fs/promises';
-import { join } from 'node:path';
+import { readFile } from 'node:fs/promises';
 import { queryPackages, downloadPackage } from './twinserv-client.mjs';
-import { parseTwinpack } from './twinpack-parser.mjs';
-
-async function dirExists(path) {
-  try { await access(path); return true; } catch { return false; }
-}
+import { parseTwinpack, collectFiles } from './twinpack-parser.mjs';
 
 function latestVersion(pkg) {
   return pkg.versions[pkg.versions.length - 1];
@@ -15,41 +10,22 @@ function versionString(v) {
   return `${v.versionMajor}.${v.versionMinor}.${v.versionRevision}.${v.versionBuild}`;
 }
 
-async function loadManifest(packagesDir) {
+async function loadManifest(manifestPath) {
   try {
-    return JSON.parse(await readFile(join(packagesDir, 'manifest.json'), 'utf8'));
+    return JSON.parse(await readFile(manifestPath, 'utf8'));
   } catch {
     return { syncedAt: null, packages: {} };
   }
 }
 
-async function extractTree(entry, destDir) {
-  if (entry.mark2 === 0x07) return;
-
-  if (entry.kind === 'file') {
-    await writeFile(join(destDir, entry.name), entry.content);
-    return;
-  }
-
-  const dir = join(destDir, entry.name);
-  await mkdir(dir, { recursive: true });
-  if (entry.children) {
-    for (const child of entry.children) {
-      await extractTree(child, dir);
-    }
-  }
-}
-
-async function syncPackages(packagesDir, { concurrency = 4 } = {}) {
-  await mkdir(packagesDir, { recursive: true });
-
-  const manifest = await loadManifest(packagesDir);
+async function fetchUpdatedSources(manifestPath, { concurrency = 4 } = {}) {
+  const manifest = await loadManifest(manifestPath);
   const { public: packages } = await queryPackages();
 
-  const added = [];
-  const updated = [];
-  const removed = [];
+  const toIndex = [];
   const unchanged = [];
+  const removed = [];
+  const failed = [];
 
   const remoteIds = new Set();
   const toDownload = [];
@@ -66,8 +42,6 @@ async function syncPackages(packagesDir, { concurrency = 4 } = {}) {
       toDownload.push({ pkg, version: latest, reason: 'added' });
     } else if (cached.version !== ver) {
       toDownload.push({ pkg, version: latest, reason: 'updated' });
-    } else if (!await dirExists(join(packagesDir, cached.symbol))) {
-      toDownload.push({ pkg, version: latest, reason: 'updated' });
     } else {
       unchanged.push(cached.symbol);
     }
@@ -75,22 +49,14 @@ async function syncPackages(packagesDir, { concurrency = 4 } = {}) {
 
   for (const [id, info] of Object.entries(manifest.packages)) {
     if (!remoteIds.has(id)) {
-      removed.push(info.symbol);
-      await rm(join(packagesDir, info.symbol), { recursive: true, force: true });
+      removed.push({ id, symbol: info.symbol });
       delete manifest.packages[id];
     }
   }
 
-  const failed = [];
-
   async function processDownload({ pkg, version, reason }) {
     const symbol = version.symbol;
     const id = pkg.projectId;
-
-    const oldInfo = manifest.packages[id];
-    if (oldInfo && oldInfo.symbol !== symbol) {
-      await rm(join(packagesDir, oldInfo.symbol), { recursive: true, force: true });
-    }
 
     let buf, root;
     try {
@@ -101,15 +67,7 @@ async function syncPackages(packagesDir, { concurrency = 4 } = {}) {
       return;
     }
 
-    const pkgDir = join(packagesDir, symbol);
-    await rm(pkgDir, { recursive: true, force: true });
-    await mkdir(pkgDir, { recursive: true });
-
-    if (root.children) {
-      for (const child of root.children) {
-        await extractTree(child, pkgDir);
-      }
-    }
+    const files = collectFiles(root);
 
     manifest.packages[id] = {
       symbol,
@@ -119,8 +77,7 @@ async function syncPackages(packagesDir, { concurrency = 4 } = {}) {
       publishedTime: version.publishedTime,
     };
 
-    if (reason === 'added') added.push(symbol);
-    else updated.push(symbol);
+    toIndex.push({ symbol, projectId: id, reason, versionInfo: version, files });
   }
 
   for (let i = 0; i < toDownload.length; i += concurrency) {
@@ -129,12 +86,8 @@ async function syncPackages(packagesDir, { concurrency = 4 } = {}) {
   }
 
   manifest.syncedAt = new Date().toISOString();
-  await writeFile(
-    join(packagesDir, 'manifest.json'),
-    JSON.stringify(manifest, null, 2) + '\n',
-  );
 
-  return { added, updated, removed, unchanged, failed };
+  return { toIndex, unchanged, removed, failed, manifest };
 }
 
-export { syncPackages };
+export { fetchUpdatedSources };
