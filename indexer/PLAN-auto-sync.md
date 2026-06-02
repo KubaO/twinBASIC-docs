@@ -288,3 +288,116 @@ Wire everything into `twin-index.mjs`:
 from TWINSERV, extract all packages, index `.twin` + VB6 files, and produce
 markdown in `package-indexes/`. Spot-check a few packages against expected
 structure.
+
+### Phase 7: Direct package-to-parser pipeline
+
+Phases 1–6 round-trip through the filesystem: `extractTree` writes parsed
+twinpack content to disk, then `globSources` + `readFile` reads it back.
+Phase 7 eliminates this — the twinpack parser feeds results directly to the
+language parser in memory. The manifest file is retained as the sole record
+of which package versions are currently indexed, enabling incremental
+updates without scanning `.md` output files.
+
+**Manifest rules:**
+
+- Missing or empty manifest → treat every package as new (download all).
+- Manifest entry exists with matching version string → skip (unchanged).
+- Manifest entry missing for a remote package, or version mismatch →
+  download, parse, and re-index.
+- Manifest entry has no corresponding remote package → package was removed
+  from TWINSERV; delete its `.md` and drop the entry.
+- Failed download/parse → retain old manifest entry (if any) so the next
+  run retries.
+
+The manifest moves from `packages/manifest.json` to the output directory
+(default `./package-indexes/manifest.json`) since the `packages/` extraction
+tree is no longer used in default mode.
+
+**`lib/twinpack-parser.mjs`** — add `collectFiles(rootEntry)`:
+
+```js
+collectFiles(rootEntry)
+// Walks TwinpackEntry tree. Skips mark2=0x07 subtrees (Packages/).
+// Returns: [{ relativePath: string, content: Buffer }]
+// Paths are relative to root (e.g. "Sources/WaynesGrid.twin").
+// Sorted by relativePath for deterministic output.
+```
+
+Iterates `rootEntry.children` (root name is the package name, not a path
+component). Recursive helper accumulates `prefix + name + '/'` for
+directories and `prefix + name` for files. Sort the result to match
+`globSources` order: group by directory (`path.dirname`), then by filename
+(`path.basename`) within each group, both via `localeCompare`.
+
+**`lib/sync.mjs`** — replace `syncPackages` with `fetchUpdatedSources`:
+
+```js
+fetchUpdatedSources(manifestPath, { concurrency = 4 })
+// 1. Queries TWINSERV for all public packages (latest version of each).
+// 2. Loads manifest from manifestPath (missing/empty file → all packages new).
+// 3. Compares: manifest entry with matching version → unchanged;
+//    missing entry or version mismatch → download + parse in memory.
+// 4. For downloads: downloadPackage → parseTwinpack → collectFiles.
+// 5. Detects removed: manifest entries whose projectId is not on TWINSERV.
+// Returns: {
+//   toIndex:    [{ symbol, projectId, reason: 'added'|'updated',
+//                  versionInfo, files: [{ relativePath, content }] }],
+//   unchanged:  [string],            // symbols skipped (already indexed)
+//   removed:    [{ id, symbol }],    // in manifest but gone from TWINSERV
+//   failed:     [{ symbol, error }], // download/parse errors
+//   manifest:   object               // updated manifest, ready to persist
+// }
+```
+
+The returned `manifest` carries forward unchanged entries, adds/replaces
+entries for successfully fetched packages, omits removed packages, and
+preserves old entries for failed packages (so they retry next run). The
+caller writes the manifest to disk after indexing succeeds.
+
+Remove `extractTree`, `dirExists`, and `rm`/`mkdir`/`access` imports.
+Keep `latestVersion`, `versionString`. Adjust `loadManifest` to take a
+file path instead of a directory. Retain `readFile` from `node:fs/promises`
+for manifest loading.
+
+**`twin-index.mjs`** — restructure into two code paths:
+
+Default mode (in-memory):
+1. Call `fetchUpdatedSources(manifestPath)`.
+2. For each package in `toIndex`: filter files by `SOURCE_EXTS`, strip
+   `Sources/` prefix, convert `Buffer` → string, run through `indexFiles`
+   helper (VB6 preprocess → lex → extract → collectEnums).
+3. `emitMarkdown` → write `.md` to output dir.
+4. For each entry in `removed`: delete `<symbol>.md` from output dir.
+5. Write updated manifest to `manifestPath`.
+6. Log summary: added, updated, removed, unchanged, failed counts.
+
+Legacy mode (`--no-sync <path>`): preserved disk-based path using existing
+`globSources` + `readFile`, refactored to share the `indexFiles` helper.
+
+Remove `--sync-only` flag (no disk extraction means nothing to "sync only").
+Replace `doSync`/`doIndex` booleans with a single `legacyDiskMode` flag,
+set by `--no-sync`. The positional `<packages-root>` arg is only meaningful
+in legacy mode. Update `--help` text accordingly.
+
+Extract `countDecls` to module level (currently inline at line 126). Add
+shared `indexFiles(files)` helper:
+
+```js
+indexFiles(files)
+// files: [{ relativePath: string, content: string }]
+// For each file: check VB6_EXTS on path.extname(relativePath);
+//   if VB6, preprocessVB6(content, ext) first.
+//   Then lex(content) → extract(logicalLines) → collectEnums(declarations, relativePath).
+// Returns: {
+//   fileResults: [{ relativePath, declarations, enums: allEnums }],
+//   declCount: number   // total across all files (via countDecls)
+// }
+```
+
+**Verification:** Parse `indexer/sample.twinpack` with `collectFiles`, verify
+it returns `Sources/WaynesGrid.twin` and no Packages/ entries. Run the full
+pipeline with `node indexer/twin-index.mjs --out ./test-output/` and diff
+output against the phase-6 baseline — must be byte-identical. Run
+`--no-sync ./package-indexes/packages --out ./test-legacy/` and diff likewise.
+Run a second time with no TWINSERV changes — zero downloads, unchanged count
+matches package count, manifest and `.md` files unmodified.
