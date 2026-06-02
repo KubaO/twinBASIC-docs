@@ -78,10 +78,19 @@ Follows the common header for directory entries:
 
 Follows the common header for file entries:
 
-| Offset | Size          | Type      | Field      | Description |
-|--------|---------------|-----------|------------|-------------|
-| +0     | var           | LenString | `contents` | File content (source code, images, JSON, etc.). |
-| +var   | 4             | uint32    | `trailer`  | Always observed as `0x00000000`. |
+| Offset | Size          | Type      | Field           | Description |
+|--------|---------------|-----------|-----------------|-------------|
+| +0     | var           | LenString | `contents`      | File content (source code, images, JSON, etc.). |
+| +var   | 4             | uint32    | `revisionCount` | Number of trailing uint32 revision entries (see below). |
+| +var+4 | `revisionCount`×4 | uint32[] | `revisions` | Revision entries.  Absent when `revisionCount` is 0. |
+
+The `revisionCount` field is 0 for the vast majority of files, making the file
+body effectively `contents + 4 zero bytes`.  Non-zero counts have been observed
+in packages that embed other packages (e.g. WinReg, which bundles WinDevLib).
+In WinReg's `RegCls.twin`, `revisionCount` is 7 and is followed by 7 uint32
+values (observed values: 514, 529×6).  The semantic meaning of these revision
+entries is unknown — they may track per-child revision state for the parent
+directory — but they must be consumed to keep the read cursor aligned.
 
 ## Field Details
 

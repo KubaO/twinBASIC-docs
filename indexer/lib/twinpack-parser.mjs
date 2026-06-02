@@ -39,7 +39,11 @@ function parseTwinpack(buffer) {
       const contentLen = readU32();
       const content = Buffer.from(buf.subarray(pos, pos + contentLen));
       pos += contentLen;
-      readU32();  // trailer
+      // After content: a uint32 that doubles as a count of trailing revision
+      // entries (uint32 each).  Most files have 0 here; WinReg's RegCls.twin
+      // has 7, followed by 7 × 4 bytes of revision data.
+      const revisionCount = readU32();
+      pos += revisionCount * 4;
       return { kind: 'file', name, mark2, content };
     }
 
