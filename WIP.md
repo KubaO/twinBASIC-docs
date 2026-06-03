@@ -282,6 +282,14 @@ Always link to the **canonical** location (the page's `permalink:`), not to a `r
 
 ## Per-symbol workflow
 
+The indexer pipeline (`indexer/twin-index.mjs`) can identify which
+symbols need documentation. Run `sync` then `analyze` to get a change
+report listing undocumented, modified, and removed symbols. See
+[`indexer/README.md`](indexer/README.md) for usage and
+[`indexer/PLAN-pipeline.md`](indexer/PLAN-pipeline.md) for the full
+pipeline design (including the planned draft workflow that will
+automate steps 2-4 below).
+
 1. **Decide placement** — pick the package's section convention:
    - Pure language keyword (parsed by the compiler, no runtime call) → `docs/Reference/Core/`.
    - Runtime function/property → `docs/Reference/<Package>/<Mod>/`. Add `redirect_from: /tB/Core/<name>` so legacy `tB/Core/<name>` links still work.

@@ -39,6 +39,17 @@ sync  →  analyze  →  draft  →  verify  →  human review
 4. **verify** — build the site, check links, validate formatting
 5. **human review** — developer reviews, commits, PRs
 
+## Status
+
+| Phase | Status | Notes |
+|---|---|---|
+| A — Restructure indexer directory | ✓ Done | Manifests created as stubs (old gitignored dirs left in place) |
+| B — JSON emitter + store management | ✓ Done | Includes extractor enhancement (signature/access on all nodes) |
+| C — Analyze stage | ✓ Done | `auditCoverage` returns documented/undocumented; mismatched deferred |
+| D — Documentation reorganization | Not started | Independent of A–C |
+| E — Draft workflow | Not started | Depends on C |
+| F — Roll out | Not started | Depends on D + E |
+
 Every stage accepts `--package <name>` (or `--packages <a>,<b>`) to
 limit scope to specific packages.
 
@@ -395,6 +406,16 @@ downloaded once and the requested packages are extracted.
 
 ### Module changes
 
+**`lib/extractor.mjs`** (enhanced):
+
+The extractor now captures `signature` and `access` on every
+declaration node. The `consumeAttrs(node, rawSig)` helper sets both
+from the stripped declaration text (`rawSig` = `stripped` with
+whitespace normalized). CoClassInterface nodes get their signature
+from the original `text` (preserves `[Default]`/`[Source]` markers).
+The old `Declare` node's hand-built `signature` field is replaced by
+the full `rawSig` from the source line.
+
 **`lib/json-emitter.mjs`** (new):
 
 ```js
@@ -508,13 +529,15 @@ export function diffApi(baseline, current)
 // Only public symbols generate tasks. Private symbols are included
 // in api.json for context but filtered out of the change report.
 
-export function auditCoverage(apiJson, docPages)
-// Takes a parsed api.json and a list of existing doc page paths.
+export function auditCoverage(apiJson, docPageMap)
+// Takes a parsed api.json and a Map<title, filePath> of existing doc pages.
 // Returns: {
 //   documented: Symbol[],       // have pages
 //   undocumented: Symbol[],     // missing pages
-//   mismatched: MismatchInfo[]  // pages with wrong signatures
 // }
+// Note: mismatched detection (pages with stale signatures) is deferred —
+// it requires parsing signatures from doc page content, which is
+// format-dependent. For now, audit reports documented vs undocumented.
 ```
 
 ### Change report output
@@ -702,31 +725,33 @@ agents read the source code directly.
 
 ## Migration Steps
 
-### Phase A: Restructure indexer directory
+### Phase A: Restructure indexer directory — ✓ Done
 
-1. Create `indexer/manifests/` directory.
-2. Move `builtin-indexes/manifest.json` → `indexer/manifests/built-in.json`.
-3. Move `package-indexes/manifest.json` → `indexer/manifests/contributed.json`.
-4. Remove old `builtin-indexes/` and `package-indexes/` directories
-   (including their `*.md` index files and `packages/` subdirectories).
-5. Add `indexer/.packages/` to `.gitignore`.
-6. Create `indexer/snapshots/{default,built-in,contributed}/` directory
-   structure (initially empty; populated by first sync).
-7. Update manifest-loading paths in `sync.mjs` and `builtin-sync.mjs`.
-   Manifest format stays the same — only the file paths change.
+1. ✓ Create `indexer/manifests/` directory.
+2. ✓ Created `indexer/manifests/built-in.json` and `contributed.json`
+   as stubs (`syncedAt: null`). Old gitignored directories
+   (`builtin-indexes/`, `package-indexes/`) are not in the repo;
+   first sync populates the new manifests from remote state.
+3. ✓ (See 2 — stubs created directly; no files to move from git.)
+4. Old directories are gitignored and were never committed. Code no
+   longer references them. `.gitignore` entries kept as safety net.
+5. ✓ Added `indexer/.packages/` to `.gitignore`.
+6. ✓ Created `indexer/snapshots/{default,built-in,contributed}/` with
+   `.gitkeep` files.
+7. ✓ Manifest paths updated in `twin-index.mjs` (the refactored CLI).
+   `sync.mjs` and `builtin-sync.mjs` accept paths as parameters —
+   unchanged.
 
-**Verification:** `node indexer/twin-index.mjs` (old CLI, not yet
-refactored) still runs using the moved manifests. No data loss.
+### Phase B: JSON emitter + store management — ✓ Done
 
-### Phase B: JSON emitter + store management
-
-8. Implement `lib/json-emitter.mjs` — api.json emitter with signature
-   normalization.
-9. Implement `lib/store.mjs` — .packages/ git repo lifecycle management
-   (init, seed from snapshots, commit, copy to snapshots).
-10. Refactor `twin-index.mjs` into `sync` subcommand that writes to
-    `.packages/` and `snapshots/`. Old CLI flags (`--out`,
-    `--builtin-out`, `--dont-save-packages`) are removed.
+8. ✓ Implemented `lib/json-emitter.mjs`. Also enhanced
+   `lib/extractor.mjs` to capture `signature` (normalized stripped
+   text) and `access` (Public/Private/etc.) on all declaration nodes.
+9. ✓ Implemented `lib/store.mjs`.
+10. ✓ Refactored `twin-index.mjs` into `sync` subcommand. Old CLI
+    flags removed. Added fresh-clone recovery: both contributed and
+    built-in sync paths detect unchanged packages with missing store
+    directories and force re-download.
 
 **Verification:** Run `node indexer/twin-index.mjs sync`. Confirm:
 - `indexer/.packages/` is created as a git repo with one or two
@@ -735,17 +760,22 @@ refactored) still runs using the moved manifests. No data loss.
 - `indexer/manifests/` is updated.
 - Run again immediately — no new commit (nothing changed).
 
-### Phase C: Analyze stage
+### Phase C: Analyze stage — ✓ Done
 
-11. Implement `lib/differ.mjs` — api.json diffing + coverage auditing.
-12. Add `analyze` subcommand to `twin-index.mjs`.
-13. Test end-to-end: sync → analyze for one package.
+11. ✓ Implemented `lib/differ.mjs`. `diffApi` compares flattened
+    symbol maps by `(container.name.kind)` key. `auditCoverage`
+    returns `{documented, undocumented}` — the `mismatched` return
+    (pages with stale signatures) is deferred since it requires
+    parsing signatures from markdown page content.
+12. ✓ Added `analyze` subcommand. Supports update mode (diff against
+    `git show HEAD:indexer/snapshots/...`) and audit/pre-tracking
+    mode. Falls back to old docs layout (`Reference/{Package}/`) if
+    the Phase D grouped layout hasn't been applied yet.
+13. Test end-to-end after first sync.
 
-**Verification:** Run `analyze --package Assert` (small package, has
-existing docs). Confirm the change report correctly identifies
-documented vs undocumented symbols. Manually verify against the actual
-doc pages in `docs/Reference/Assert/` (after Phase D moves them to
-`docs/Reference/Built-In/Assert/`).
+**Verification:** Run `sync`, then `analyze --package Assert` (small
+package, has existing docs). Confirm the change report correctly
+identifies documented vs undocumented symbols.
 
 ### Phase D: Documentation reorganization
 

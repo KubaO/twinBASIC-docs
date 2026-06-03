@@ -20,11 +20,16 @@ function extract(logicalLines) {
       roots.push(node);
     }
   }
-  function consumeAttrs(node) {
+  function consumeAttrs(node, sig) {
     if (pendingAttrs.length) node.attrs = [...pendingAttrs];
     if (pendingDescription) node.description = pendingDescription;
     pendingAttrs = [];
     pendingDescription = null;
+    if (sig !== undefined) {
+      node.signature = sig;
+      const am = sig.match(/^(Public|Private|Protected|Friend)\b/i);
+      node.access = am ? am[1] : null;
+    }
   }
 
   for (const { line, text, rawText } of logicalLines) {
@@ -48,6 +53,7 @@ function extract(logicalLines) {
 
     // strip leading attribute brackets from text for pattern matching
     const stripped = text.replace(/^\s*(\[[^\]]*\]\s*,?\s*)*/, '').trim();
+    const rawSig = stripped.replace(/\s+/g, ' ');
 
     // Priority 1: Container ends
     if ((m = stripped.match(/^End\s+(Module|Class|Interface|Enum|Type|CoClass)\b/i))) {
@@ -74,8 +80,7 @@ function extract(logicalLines) {
     if (cur && cur.kind === 'CoClass') {
       if ((m = text.match(/(Default|Source).*Interface\s+(\w+)/i))) {
         const refText = text.replace(/^\s*/, '').replace(/\s+/g, ' ');
-        const node = { kind: 'CoClassInterface', name: m[2], line, signature: refText, children: [] };
-        // signature already includes [Default]/[Source] — don't duplicate as attrs
+        const node = { kind: 'CoClassInterface', name: m[2], line, signature: refText, access: null, children: [] };
         pendingAttrs = [];
         pendingDescription = null;
         addChild(node);
@@ -86,14 +91,14 @@ function extract(logicalLines) {
     // Priority 3: Container starts (Interface suppressed inside CoClass)
     if ((m = stripped.match(/^(?:Public|Private|Protected)?\s*Module\s+(\w+)/i))) {
       const node = { kind: 'Module', name: m[1], line, children: [] };
-      consumeAttrs(node);
+      consumeAttrs(node, rawSig);
       addChild(node);
       containerStack.push(node);
       continue;
     }
     if ((m = stripped.match(/^(?:Public|Private|Protected)?\s*Class\s+(\w+)/i))) {
       const node = { kind: 'Class', name: m[1], line, children: [] };
-      consumeAttrs(node);
+      consumeAttrs(node, rawSig);
       addChild(node);
       containerStack.push(node);
       continue;
@@ -101,28 +106,28 @@ function extract(logicalLines) {
     if (!(cur && cur.kind === 'CoClass') &&
         (m = stripped.match(/^(?:Public|Private)?\s*Interface\s+(\w+)(?:\s+Extends\s+(\S+))?/i))) {
       const node = { kind: 'Interface', name: m[1], line, extends: m[2] || null, children: [] };
-      consumeAttrs(node);
+      consumeAttrs(node, rawSig);
       addChild(node);
       containerStack.push(node);
       continue;
     }
     if ((m = stripped.match(/^(?:Public|Private)?\s*Enum\s+(\w+)/i))) {
       const node = { kind: 'Enum', name: m[1], line, children: [], members: [] };
-      consumeAttrs(node);
+      consumeAttrs(node, rawSig);
       addChild(node);
       containerStack.push(node);
       continue;
     }
     if ((m = stripped.match(/^(?:Public|Private)?\s*Type\s+(\w+)/i))) {
       const node = { kind: 'Type', name: m[1], line, children: [] };
-      consumeAttrs(node);
+      consumeAttrs(node, rawSig);
       addChild(node);
       containerStack.push(node);
       continue;
     }
     if ((m = stripped.match(/^CoClass\s+(\w+)/i))) {
       const node = { kind: 'CoClass', name: m[1], line, children: [] };
-      consumeAttrs(node);
+      consumeAttrs(node, rawSig);
       addChild(node);
       containerStack.push(node);
       continue;
@@ -153,9 +158,8 @@ function extract(logicalLines) {
         const rtm = stripped.match(/\)\s+As\s+(\w[\w.]*(?:\(Of\s+[^)]+\))?)/i);
         if (rtm) returnType = rtm[1];
       }
-      const sig = returnType ? `Declare ${subOrFunc} ${name}` : `Declare ${subOrFunc} ${name}`;
-      const node = { kind: 'Declare', subKind: subOrFunc, name, line, lib, returnType, signature: sig };
-      consumeAttrs(node);
+      const node = { kind: 'Declare', subKind: subOrFunc, name, line, lib, returnType };
+      consumeAttrs(node, rawSig);
       addChild(node);
       continue;
     }
@@ -163,7 +167,7 @@ function extract(logicalLines) {
     // Priority 6: Const
     if ((m = stripped.match(/^(?:Public|Private)?\s*Const\s+(\w+)/i))) {
       const node = { kind: 'Const', name: m[1], line };
-      consumeAttrs(node);
+      consumeAttrs(node, rawSig);
       addChild(node);
       continue;
     }
@@ -171,7 +175,7 @@ function extract(logicalLines) {
     // Priority 7: Event
     if ((m = stripped.match(/^(?:Public|Private|Protected)?\s*Event\s+(\w+)/i))) {
       const node = { kind: 'Event', name: m[1], line };
-      consumeAttrs(node);
+      consumeAttrs(node, rawSig);
       addChild(node);
       continue;
     }
@@ -186,7 +190,7 @@ function extract(logicalLines) {
         if (rtm) returnType = rtm[1];
       }
       const node = { kind: subOrFunc, name, line, returnType };
-      consumeAttrs(node);
+      consumeAttrs(node, rawSig);
       addChild(node);
       // interface/type members are bodyless signatures — don't enter procedure mode
       if (!(cur && (cur.kind === 'Interface' || cur.kind === 'Type'))) {
@@ -205,7 +209,7 @@ function extract(logicalLines) {
         if (rtm) returnType = rtm[1];
       }
       const node = { kind: 'Property', accessor, name, line, returnType };
-      consumeAttrs(node);
+      consumeAttrs(node, rawSig);
       addChild(node);
       if (!(cur && (cur.kind === 'Interface' || cur.kind === 'Type'))) {
         inProcedure = true;
@@ -216,13 +220,13 @@ function extract(logicalLines) {
     // Priority 10: Implements / Inherits
     if ((m = stripped.match(/^Implements\s+(\S+)/i))) {
       const node = { kind: 'Implements', name: m[1], line };
-      consumeAttrs(node);
+      consumeAttrs(node, rawSig);
       addChild(node);
       continue;
     }
     if ((m = stripped.match(/^Inherits\s+(\S+)/i))) {
       const node = { kind: 'Inherits', name: m[1], line };
-      consumeAttrs(node);
+      consumeAttrs(node, rawSig);
       addChild(node);
       continue;
     }
@@ -244,7 +248,7 @@ function extract(logicalLines) {
         const name = m[3];
         // skip if name is a keyword that would have been caught above
         const node = { kind: 'Field', name, line, withEvents };
-        consumeAttrs(node);
+        consumeAttrs(node, rawSig);
         addChild(node);
         continue;
       }
