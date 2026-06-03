@@ -218,6 +218,8 @@ return {
 function buildDraftPrompt(task) {
   const examples = EXAMPLES_BY_KIND[task.kind] || EXAMPLES_BY_KIND['Sub']
   const exList = examples.map(p => '   - ' + p).join('\n')
+  const docsBase = 'docs/Reference/' + task.groupDir + '/' + task.package + '/'
+  const fullTarget = docsBase + task.targetPath
 
   const lines = [
     'You are writing documentation for `' + task.symbol + '` from the `' + task.package + '` package.',
@@ -231,10 +233,11 @@ function buildDraftPrompt(task) {
 
   if (task.signature) lines.push('SIGNATURE: ' + task.signature)
   lines.push('SOURCE FILE: ' + task.sourcePath)
-  lines.push('TARGET FILE: ' + task.targetPath)
+  lines.push('TARGET FILE: ' + fullTarget)
 
   if (task.action === 'update') {
-    if (task.existingPagePath) lines.push('EXISTING PAGE: ' + task.existingPagePath)
+    const existingPath = task.existingPagePath || fullTarget
+    lines.push('EXISTING PAGE: ' + existingPath)
     if (task.reason) lines.push('REASON: ' + task.reason)
     if (task.oldSignature) lines.push('OLD SIGNATURE: ' + task.oldSignature)
     if (task.newSignature) lines.push('NEW SIGNATURE: ' + task.newSignature)
@@ -246,9 +249,10 @@ function buildDraftPrompt(task) {
   lines.push('2. Read WIP.md (repo root) for the page template skeleton and formatting conventions.')
   lines.push('3. Read these example pages for reference:')
   lines.push(exList)
-  lines.push('4. Read the package index: docs/Reference/' + task.groupDir + '/' + task.package + '/index.md')
-  if (task.action === 'update' && task.existingPagePath) {
-    lines.push('5. Read the existing page at ' + task.existingPagePath + ' and preserve its structure.')
+  lines.push('4. Read the package index: ' + docsBase + 'index.md')
+  if (task.action === 'update') {
+    const existingPath = task.existingPagePath || fullTarget
+    lines.push('5. Read the existing page at ' + existingPath + ' and preserve its structure.')
   }
 
   lines.push('')
@@ -264,9 +268,9 @@ function buildDraftPrompt(task) {
   lines.push('')
 
   if (task.action === 'create') {
-    lines.push('Write the COMPLETE markdown file using the Write tool at: ' + task.targetPath)
+    lines.push('Write the COMPLETE markdown file using the Write tool at: ' + fullTarget)
   } else {
-    lines.push('Update the file at ' + task.targetPath + ' using the Edit tool.')
+    lines.push('Update the file at ' + fullTarget + ' using the Edit tool.')
     lines.push('Preserve existing structure; change only what the update requires.')
   }
 

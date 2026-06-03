@@ -906,3 +906,25 @@ fully normalized. Improvements to pursue as edge cases surface:
 These don't block the pipeline — the JSON emitter normalizes what it
 can, and the differ compares what's there. Better normalization reduces
 false-positive "modified" reports.
+
+## Known Limitations
+
+- **API internals in audit results**: `auditCoverage` includes all
+  Public symbols, but some (WinAPI `Declare` statements, internal helper
+  modules) are implementation details. The draft workflow creates pages
+  for them; the developer should skip or delete low-value pages during
+  review. A future enhancement could let packages opt out specific
+  modules or symbol kinds from audit.
+
+- **Inline-documented members**: packages that document all members on
+  the container page (e.g., Assert puts 15 functions on `Exact.md`)
+  report those members as "undocumented" because no standalone page
+  exists. The audit is technically correct — there is no page titled
+  `AreEqual` — but the content is present on the parent page. The
+  developer should not run the draft workflow for these packages; just
+  add `indexed_from` after manual review.
+
+- **CEF version duplication**: the three CEF packages
+  (`cefPackage49/109/145`) have identical API surfaces. Running a full
+  analyze produces three redundant reports. Use `--package cefPackage145`
+  to analyze only the recommended version.
