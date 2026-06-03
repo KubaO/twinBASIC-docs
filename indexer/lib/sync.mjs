@@ -18,17 +18,15 @@ async function loadManifest(manifestPath) {
   }
 }
 
-async function fetchUpdatedSources(manifestPath, { concurrency = 4 } = {}) {
+async function compareWithManifest(manifestPath) {
   const manifest = await loadManifest(manifestPath);
   const { public: packages } = await queryPackages();
 
-  const toIndex = [];
+  const toDownload = [];
   const unchanged = [];
   const removed = [];
-  const failed = [];
 
   const remoteIds = new Set();
-  const toDownload = [];
 
   for (const pkg of packages) {
     const latest = latestVersion(pkg);
@@ -39,9 +37,9 @@ async function fetchUpdatedSources(manifestPath, { concurrency = 4 } = {}) {
     const cached = manifest.packages[id];
 
     if (!cached) {
-      toDownload.push({ pkg, version: latest, reason: 'added' });
+      toDownload.push({ id, pkg, version: latest, symbol: latest.symbol, reason: 'added' });
     } else if (cached.version !== ver) {
-      toDownload.push({ pkg, version: latest, reason: 'updated' });
+      toDownload.push({ id, pkg, version: latest, symbol: latest.symbol, reason: 'updated' });
     } else {
       unchanged.push(cached.symbol);
     }
@@ -54,40 +52,13 @@ async function fetchUpdatedSources(manifestPath, { concurrency = 4 } = {}) {
     }
   }
 
-  async function processDownload({ pkg, version, reason }) {
-    const symbol = version.symbol;
-    const id = pkg.projectId;
-
-    let buf, root;
-    try {
-      buf = await downloadPackage(id, version);
-      root = parseTwinpack(buf);
-    } catch (e) {
-      failed.push({ symbol, error: e.message });
-      return;
-    }
-
-    const files = collectFiles(root);
-
-    manifest.packages[id] = {
-      symbol,
-      publisher: pkg.publisher,
-      version: versionString(version),
-      publishedDate: version.publishedDate,
-      publishedTime: version.publishedTime,
-    };
-
-    toIndex.push({ symbol, projectId: id, reason, versionInfo: version, files });
-  }
-
-  for (let i = 0; i < toDownload.length; i += concurrency) {
-    const batch = toDownload.slice(i, i + concurrency);
-    await Promise.all(batch.map(item => processDownload(item)));
-  }
-
-  manifest.syncedAt = new Date().toISOString();
-
-  return { toIndex, unchanged, removed, failed, manifest };
+  return { toDownload, unchanged, removed, manifest };
 }
 
-export { fetchUpdatedSources };
+async function fetchPackage(projectId, version) {
+  const buf = await downloadPackage(projectId, version);
+  const root = parseTwinpack(buf);
+  return collectFiles(root);
+}
+
+export { compareWithManifest, fetchPackage, versionString };

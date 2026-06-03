@@ -122,6 +122,31 @@ Key options used by `book.bat`:
 | `--outline-tags h1,h2,h3,h4` | Heading levels to include in the PDF outline / bookmarks. |
 | `--additional-script <path>` | Path to a script injected before paged.js runs. `book.bat` passes `perf\detach-pages.js`, which hides each finalised page from Chromium's layout tree and restores them all before `page.pdf()` runs, dropping render time from ~104s to ~51s on the 1,638-page book by sidestepping paged.js's quadratic overflow walker. |
 
+### indexer/twin-index.mjs --- Package indexer
+{: #twin-index }
+
+    node indexer/twin-index.mjs [--out <dir>] [--save-packages]
+
+> [!NOTE]
+> This tool is not part of the build pipeline; it is being developed to assist future documentation efforts.
+
+Fetches every public package from the twinBASIC package server (TWINSERV), parses the `.twinpack` binaries in memory, and generates one markdown declaration index per package. A manifest file tracks which package versions have already been indexed so that subsequent runs only download what changed.
+
+The tool processes `.twin` source files natively and also handles VB6-format files (`.bas`, `.cls`, `.frm`, `.dsr`, `.ctl`) by stripping their headers and wrapping the body in a synthetic container before lexing.
+
+Output lands in `package-indexes/` by default --- one `<PackageName>.md` per package plus a `manifest.json` that records the indexed version of each package.
+
+| Flag | Effect |
+|---|---|
+| `--out <dir>` | Output directory for `.md` files and `manifest.json`. Default: `./package-indexes/`. |
+| `--save-packages` | Also write the extracted source files to `<out>/packages/<symbol>/`. Without this flag, everything stays in memory. |
+
+The run prints three phases to stdout:
+
+1. **Fetching package index** --- queries TWINSERV and compares with the manifest. Lists packages to add, update, or remove, and a count of unchanged packages. Exits early with "Up to date." if nothing changed.
+2. **Fetching packages** --- downloads each new or updated `.twinpack`, logging each package name as it completes.
+3. **Indexing packages** --- parses and indexes each fetched package, logging per-package file and declaration counts. Removed packages have their `.md` deleted (and their `<out>/packages/` directory, if `--save-packages` is active).
+
 ## Configuration files
 
 The build pipeline also reads a handful of declarative files. They are not executable but the build's behaviour depends on them.

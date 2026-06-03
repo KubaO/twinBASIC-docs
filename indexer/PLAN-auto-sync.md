@@ -45,8 +45,11 @@ No circular dependencies. Leaf modules (`lexer`, `extractor`, `emitter`,
 
 ```
 package-indexes/
-  packages/                    # Extracted source files (gitignored)
-    manifest.json              # Version tracking
+  manifest.json                # Version tracking (which packages are indexed)
+  Assert.md                    # Generated markdown indexes
+  CustomControlsPackage.md
+  ...
+  packages/                    # Only with --save-packages (gitignored)
     Assert/
       Sources/
         Exact.twin
@@ -56,9 +59,6 @@ package-indexes/
       Sources/
         WaynesGrid.twin
     ...
-  Assert.md                    # Generated markdown indexes (existing location)
-  CustomControlsPackage.md
-  ...
 ```
 
 ## Module Interfaces
@@ -103,14 +103,19 @@ reads. Maintains a position cursor like `parse_tree.ps1`'s `$script:pos`.
 ### lib/sync.mjs
 
 ```js
-export async function syncPackages(packagesDir, { concurrency = 4 } = {})
-// 1. Queries TWINSERV for all public packages (latest version of each)
-// 2. Loads manifest.json from packagesDir
-// 3. Compares: download new/updated, delete removed, skip unchanged
-// 4. For downloads: fetch .twinpack, parse, extract Sources/ tree to disk
-//    (skip Packages/ subtree -- mark2=0x07 -- to avoid transitive deps)
-// 5. Writes updated manifest.json
-// Returns: { added: string[], updated: string[], removed: string[], unchanged: string[] }
+export async function compareWithManifest(manifestPath)
+// 1. Loads manifest from manifestPath (missing/empty → all packages new).
+// 2. Queries TWINSERV for all public packages (latest version of each).
+// 3. Compares versions; categorises each as added/updated/unchanged/removed.
+// Returns: { toDownload, unchanged, removed, manifest }
+// toDownload entries carry { id, pkg, version, symbol, reason }.
+
+export async function fetchPackage(projectId, version)
+// Downloads a single .twinpack, parses it, returns collectFiles() result.
+// Throws on network or parse error (caller handles).
+
+export function versionString(v)
+// Returns "major.minor.revision.build" string from a VersionInfo object.
 ```
 
 **Manifest shape** (persisted as `manifest.json`):
@@ -214,20 +219,19 @@ export function emitNode(node, depth, lines)
 
 ```
 node indexer/twin-index.mjs                           # sync + index (default)
-node indexer/twin-index.mjs --no-sync [<packages-root>]  # index only (legacy mode)
-node indexer/twin-index.mjs --sync-only               # sync only, no indexing
 node indexer/twin-index.mjs --out <dir>                # custom output directory
+node indexer/twin-index.mjs --save-packages            # also write sources to <out>/packages/
 ```
 
 Defaults:
-- Packages source: `./package-indexes/packages` (synced cache)
 - Output: `./package-indexes/`
-- `--no-sync` + positional arg: uses the given directory (backward compat)
+- `--save-packages`: writes extracted source files to `<out>/packages/<symbol>/`
 
-**Indexing loop changes:**
+**Indexing loop:**
 
-1. `globTwin()` → `globSources()`: matches `*.twin`, `*.bas`, `*.cls`, `*.frm`,
-   `*.dsr`, `*.ctl`. Excludes files under any `Packages/` subdirectory.
+1. Source files are filtered by extension (`.twin`, `.bas`, `.cls`, `.frm`,
+   `.dsr`, `.ctl`). Files under `Packages/` subtrees are excluded by the
+   twinpack parser (`collectFiles` skips mark2=0x07).
 2. Non-`.twin` files go through `preprocessVB6()` before `lex()`.
 3. Line numbers adjusted by `lineOffset` from the preprocessor.
 
@@ -371,14 +375,6 @@ Default mode (in-memory):
 5. Write updated manifest to `manifestPath`.
 6. Log summary: added, updated, removed, unchanged, failed counts.
 
-Legacy mode (`--no-sync <path>`): preserved disk-based path using existing
-`globSources` + `readFile`, refactored to share the `indexFiles` helper.
-
-Remove `--sync-only` flag (no disk extraction means nothing to "sync only").
-Replace `doSync`/`doIndex` booleans with a single `legacyDiskMode` flag,
-set by `--no-sync`. The positional `<packages-root>` arg is only meaningful
-in legacy mode. Update `--help` text accordingly.
-
 Extract `countDecls` to module level (currently inline at line 126). Add
 shared `indexFiles(files)` helper:
 
@@ -397,7 +393,53 @@ indexFiles(files)
 **Verification:** Parse `indexer/sample.twinpack` with `collectFiles`, verify
 it returns `Sources/WaynesGrid.twin` and no Packages/ entries. Run the full
 pipeline with `node indexer/twin-index.mjs --out ./test-output/` and diff
-output against the phase-6 baseline — must be byte-identical. Run
-`--no-sync ./package-indexes/packages --out ./test-legacy/` and diff likewise.
-Run a second time with no TWINSERV changes — zero downloads, unchanged count
-matches package count, manifest and `.md` files unmodified.
+output against the phase-6 baseline — must be byte-identical. Run a second
+time with no TWINSERV changes — zero downloads, unchanged count matches
+package count, manifest and `.md` files unmodified.
+
+### Phase 8: Phased progress output, replace legacy mode with --save-packages
+
+Phase 7's `fetchUpdatedSources` did everything in one call — the user saw
+nothing until the entire sync + download + parse cycle finished. Phase 8
+splits the work into three visually distinct CLI phases so each step logs
+as it happens. It also removes the `--no-sync` legacy disk-reading mode
+and replaces it with `--save-packages`, which writes fetched source files
+to `<out>/packages/` as a side effect of the normal in-memory pipeline.
+
+**`lib/sync.mjs`** — replace `fetchUpdatedSources` with two functions:
+
+```js
+compareWithManifest(manifestPath)
+// 1. Loads manifest.
+// 2. Queries TWINSERV for all public packages.
+// 3. Compares versions; categorises each as added/updated/unchanged/removed.
+// Returns: { toDownload, unchanged, removed, manifest }
+// toDownload entries carry { id, pkg, version, symbol, reason }.
+
+fetchPackage(projectId, version)
+// Downloads a single .twinpack, parses it, returns collectFiles() result.
+// Throws on network or parse error (caller handles).
+```
+
+Export `versionString` so the CLI can build manifest entries.
+
+**`twin-index.mjs`** — three logged phases:
+
+1. **Fetching package index** — call `compareWithManifest`. Print the
+   add/update/remove/unchanged summary. Early-exit with "Up to date." if
+   nothing changed.
+2. **Fetching packages** — iterate `toDownload` sequentially. Log each
+   symbol as it completes. On error, log the failure and continue. Build
+   manifest entries for successful fetches.
+3. **Indexing packages** — iterate fetched packages, run through
+   `indexFiles` → `emitMarkdown` → write `.md`. Log per-package file and
+   declaration counts. If `--save-packages`, also write each package's
+   files to `<out>/packages/<symbol>/`. Handle removals (delete `.md` and,
+   if `--save-packages`, the package directory). Write manifest.
+
+Remove `--no-sync`, `legacyDiskMode`, `packagesRoot`, and `globSources`.
+
+**Verification:** Fresh run (no manifest) prints all three phases with
+32 packages listed under each. Second run prints only "Fetching package
+index..." + "Up to date." with zero downloads. `--save-packages` writes
+source trees under `<out>/packages/`.
