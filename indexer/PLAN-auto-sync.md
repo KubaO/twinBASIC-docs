@@ -449,3 +449,206 @@ Remove `--no-sync`, `legacyDiskMode`, `packagesRoot`, and `globSources`.
 32 packages listed under each. Second run prints only "Fetching package
 index..." + "Up to date." with zero downloads. `--save-packages` writes
 source trees under `<out>/packages/`.
+
+### Phase 9: Index built-in packages from twinBASIC GitHub releases
+
+twinBASIC ships built-in packages inside every release — VBA, VBRUN,
+WinForms, CustomControls, and others. These are `.twinproj` files in
+the `packages/` directory of the release zip, using the same binary
+format as `.twinpack` files (magic `0xEA0BA51C`, format version 1).
+Phase 9 adds a parallel pipeline that checks GitHub for new twinBASIC
+releases, downloads the release zip when the version changes, extracts
+built-in packages, and indexes them through the same lex → extract →
+emit chain as TWINSERV packages.
+
+**Key decisions:**
+
+- Index all built-in packages (16 as of BETA 983), including the
+  dot-prefixed core runtime packages (`.{GUID}_VBA`, `.{GUID}_VBRUN`).
+- Output to a separate directory (default `./builtin-indexes/`), not
+  mixed with TWINSERV package indexes.
+- Track the full GitHub release tag (e.g. `beta-x-0983`) in the
+  built-in manifest. When the tag changes, re-download and re-index all
+  built-in packages.
+- Overlapping packages (ones that exist both as built-in and on
+  TWINSERV) are indexed independently — both versions get their own
+  `.md` files in their respective output directories.
+
+**Release structure** (observed in BETA 983):
+
+```
+twinBASIC_IDE_BETA_983.zip
+  └─ packages/
+       ├─ .{54F90FBF-...}_VBA/package.twinproj
+       ├─ .{8BEB50D8-...}_VBRUN/package.twinproj
+       ├─ {F50B82D0-...}_VB/package.twinproj
+       ├─ {EA18E2B1-...}_CustomControls/package.twinproj
+       └─ ... (16 total)
+```
+
+Each folder name follows the pattern `[.]{GUID}_SymbolName`. The dot
+prefix on VBA and VBRUN indicates core runtime packages but does not
+change processing. Each folder contains exactly one `package.twinproj`.
+
+**`lib/zip-reader.mjs`** (new) — Minimal zip central-directory parser,
+zero external dependencies:
+
+```js
+readZipDirectory(buffer)
+// Parses ONLY the zip central directory — file metadata, not contents.
+// No file data is read or decompressed at this stage.
+// 1. Locate the End of Central Directory record (scan backward for
+//    signature 0x06054b50).
+// 2. Read the central directory: for each entry, extract the file name,
+//    compressed size, uncompressed size, compression method, and the
+//    offset to the local file header.
+// 3. Return a Map<string, ZipEntry> keyed by file path.
+//
+// Returns: Map<string, { name, compressedSize, uncompressedSize,
+//            compressionMethod, localHeaderOffset }>
+
+extractFile(buffer, entry)
+// Extract a single file from the zip buffer given a ZipEntry.
+// Called selectively — only for the specific entries the caller needs.
+// 1. Seek to localHeaderOffset, read the local file header to get the
+//    actual data offset (header is 30 bytes + variable-length fields).
+// 2. Read the compressed data.
+// 3. If compression method 8 (Deflate), inflate with zlib.inflateRawSync.
+//    If method 0 (Stored), return as-is.
+// Returns: Buffer
+```
+
+Only methods 0 (Stored) and 8 (Deflate) are supported — these cover
+all zip files produced by standard tools. The module uses `node:zlib`
+for decompression. The two-step design (directory scan, then selective
+extract) means we never decompress the IDE binaries, addins, or
+anything else in the ~28 MB zip — only the `.twinproj` files we need.
+
+**`lib/github-release.mjs`** (new) — GitHub release fetching:
+
+```js
+getLatestRelease()
+// GET https://api.github.com/repos/twinbasic/twinbasic/releases
+// (all releases are pre-releases, so /releases/latest returns 404).
+// Returns the first entry: { tag, assetUrl, publishedAt }.
+// Throws on network error or unexpected response shape.
+//
+// Returns: { tag: 'beta-x-0983',
+//            assetUrl: 'https://github.com/.../twinBASIC_IDE_BETA_983.zip',
+//            publishedAt: '2026-05-29T...' }
+
+downloadRelease(assetUrl)
+// Downloads the release zip. Follows redirects (GitHub assets redirect
+// to a CDN). Returns the full zip as a Buffer.
+// Throws on network error or non-2xx status.
+//
+// Returns: Buffer
+```
+
+Uses `fetch()` — the GitHub API is public, no auth required for
+read-only access to public releases. Unauthenticated requests are
+rate-limited to 60/hour, which is fine since we make at most one
+request per run.
+
+**`lib/builtin-sync.mjs`** (new) — Built-in package sync logic:
+
+```js
+compareBuiltinManifest(manifestPath)
+// 1. Load manifest (same shape: { syncedAt, twinbasicTag, packages: {} }).
+// 2. Call getLatestRelease() to get the current tag.
+// 3. If manifest.twinbasicTag matches the current tag, return early:
+//    all packages are unchanged.
+// 4. Otherwise, return { tag, assetUrl, publishedAt } so the caller
+//    can download.
+//
+// Returns: { tag, assetUrl, publishedAt, manifest,
+//            needsUpdate: boolean }
+
+extractBuiltinPackages(zipBuffer)
+// 1. readZipDirectory(zipBuffer) to scan the central directory.
+//    This reads only file metadata — no contents are decompressed.
+// 2. Filter the directory for entries matching
+//    packages/<folder>/package.twinproj. Everything else in the zip
+//    (IDE binaries, addins, themes, etc.) is ignored entirely.
+// 3. For each matching entry only:
+//    a. extractFile() to decompress the .twinproj Buffer.
+//    b. parseTwinpack() + collectFiles() (existing pipeline).
+//    c. Parse the folder name to extract GUID and symbol.
+// 4. Return an array of { guid, symbol, files } — same shape as
+//    TWINSERV fetchPackage results, ready for indexFiles().
+//
+// folder name pattern: /^\.?\{([0-9A-F-]+)\}_(.+)$/i
+//
+// Returns: [{ guid: '54F90FBF-...', symbol: 'VBA',
+//             files: [{ relativePath, content }] }, ...]
+```
+
+**`twin-index.mjs`** — Extend with built-in package pipeline:
+
+New CLI option:
+
+```
+--builtin-out <dir>   Output directory for built-in packages
+                      (default: ./builtin-indexes/)
+```
+
+After the TWINSERV sync completes, run the built-in pipeline using the
+same three-phase structure:
+
+1. **Checking twinBASIC release** — call `compareBuiltinManifest`.
+   Print the current release tag. If `needsUpdate` is false, print
+   "Built-in packages up to date (beta-x-XXXX)." and skip.
+
+2. **Downloading release** — call `downloadRelease(assetUrl)`, then
+   `extractBuiltinPackages(zipBuffer)`. Print the count of extracted
+   packages.
+
+3. **Indexing built-in packages** — iterate extracted packages through
+   `indexFiles` → `emitMarkdown` → write `.md` to `builtinOutDir`.
+   Log per-package file and declaration counts. If `savePackages`,
+   write source files to `<builtinOutDir>/packages/<symbol>/`. Write
+   the built-in manifest with the new tag:
+   ```json
+   {
+     "syncedAt": "...",
+     "twinbasicTag": "beta-x-0983",
+     "publishedAt": "2026-05-29T...",
+     "packages": {
+       "54F90FBF-5CDC-41D6-AEC2-983DEF203B07": { "symbol": "VBA" },
+       "F50B82D0-DCAB-43FE-9631-11959D4A4728": { "symbol": "VB" },
+       ...
+     }
+   }
+   ```
+
+The `--dont-save-packages` flag applies to built-in packages too.
+
+**Missing-folder check for built-ins:** When `savePackages` is true,
+after `compareBuiltinManifest` returns `needsUpdate: false` (tag
+matches), scan `<builtinOutDir>/packages/` and check that a folder
+exists for every package listed in the manifest. If any folder is
+missing, override `needsUpdate` to `true` — this forces a full
+re-download of the release zip because all built-in packages come from
+a single zip (unlike TWINSERV packages, which can be fetched
+individually). This matches the behaviour already implemented for
+TWINSERV packages in `twin-index.mjs`, where unchanged packages with
+missing source folders are promoted to `toDownload`.
+
+**Verification:**
+
+1. Fresh run (no built-in manifest): prints "Checking twinBASIC
+   release..." with tag, downloads the release, extracts and indexes
+   all 16 built-in packages, writes `.md` files and manifest to
+   `./builtin-indexes/`.
+2. Second run (same tag): prints "Built-in packages up to date
+   (beta-x-0983)." with no download.
+3. Delete one package's folder under `builtin-indexes/packages/`,
+   run again with `savePackages` on: the missing-folder check detects
+   the gap and forces a full re-download despite the tag being
+   unchanged. All built-in packages are re-extracted and re-indexed.
+4. Verify `.md` output for a known package (e.g. VBA) contains
+   expected declarations.
+5. `--dont-save-packages`: no `packages/` subdirectory written under
+   `builtin-indexes/`, and the missing-folder check is skipped.
+6. `--builtin-out ./my-builtins/`: output lands in the specified
+   directory.
