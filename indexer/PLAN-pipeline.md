@@ -889,8 +889,23 @@ identifies documented vs undocumented symbols.
     coverage checks — previously only checked members.
 24. ✓ Updated `findPackageDocsDir` to scan `package_name` frontmatter
     as a fallback when the docs directory name doesn't match.
-25. Adopt remaining built-in packages one at a time.
-26. Begin contributed package documentation.
+25. ✓ Fixed `writeToStore` to strip `Sources/` prefix so source file
+    paths match the `file` fields in api.json. Fixed missing-sources
+    detection to check for `sources/` subdir (not just the package dir)
+    so snapshot-seeded stores correctly trigger re-download.
+26. ✓ Added missing `EXAMPLES_BY_KIND` entries to the draft workflow:
+    Declare, Const, Field, Interface, CoClass, CoClassInterface.
+27. ✓ Fixed `buildDraftPrompt` to construct full repo-root-relative
+    target paths (`docs/Reference/{group}/{package}/{target}`) instead
+    of using the triage agent's package-relative `targetPath` directly.
+    First test run confirmed agents wrote to the repo root without this.
+28. Draft workflow tested on WinEventLogLib — triage + draft agents
+    ran successfully. Draft agents correctly detected inline-documented
+    members on existing container pages and did not create redundant
+    standalone pages. Need to test on a package with NO existing docs
+    (e.g., TwinTimerPackage) to verify page creation works.
+29. Adopt remaining built-in packages one at a time.
+30. Begin contributed package documentation.
 
 ## Parser Improvements (incremental)
 
