@@ -83,15 +83,19 @@ Dependencies: global `fetch` only. No `node:fs`.
 
 ### lib/twinpack-parser.mjs
 
+Binary format reference: [`docs/Features/Packages/TWINPACK file format.md`](../docs/Features/Packages/TWINPACK%20file%20format.md).
+
 ```js
 export function parseTwinpack(buffer)
-// Takes Buffer or Uint8Array. Validates magic 0xEA0BA51C.
+// Takes Buffer or Uint8Array. Validates magic 0xEA0BA51C and format version.
 // Returns: TwinpackEntry (the root)
 //
 // TwinpackEntry = {
 //   kind: 'file' | 'directory',
 //   name: string,
-//   mark2: number,             // 0x03=Sources, 0x07=Packages, etc.
+//   revision: number,          // uint64 revision counter (low 16 bits vary in practice)
+//   flags: number,             // uint32 bitmask: 0x01=Hidden, 0x02=SuperHidden, 0x04=Virtual
+//   category: number,          // 0x03=Sources, 0x07=Packages, etc. — see CATEGORY constants
 //   content?: Buffer,          // file content (only for kind='file')
 //   children?: TwinpackEntry[] // child entries (only for kind='directory')
 // }
@@ -231,7 +235,7 @@ Defaults:
 
 1. Source files are filtered by extension (`.twin`, `.bas`, `.cls`, `.frm`,
    `.dsr`, `.ctl`). Files under `Packages/` subtrees are excluded by the
-   twinpack parser (`collectFiles` skips mark2=0x07).
+   twinpack parser (`collectFiles` skips category=0x07 (Packages)).
 2. Non-`.twin` files go through `preprocessVB6()` before `lex()`.
 3. Line numbers adjusted by `lineOffset` from the preprocessor.
 
@@ -250,7 +254,9 @@ Diff output against current `package-indexes/*.md` — must be byte-identical.
 ### Phase 2: Twinpack binary parser
 
 Create `lib/twinpack-parser.mjs`. Port logic from `parse_tree.ps1` (34 lines of
-PowerShell → similar-sized JS with DataView helpers).
+PowerShell → similar-sized JS with DataView helpers). Binary format is
+documented in
+[`docs/Features/Packages/TWINPACK file format.md`](../docs/Features/Packages/TWINPACK%20file%20format.md).
 
 **Verification:** Parse `indexer/sample.twinpack`. Verify root name is
 `CustomControlsPackage`, Sources/ contains `WaynesGrid.twin`, content is valid
@@ -321,7 +327,7 @@ tree is no longer used in default mode.
 
 ```js
 collectFiles(rootEntry)
-// Walks TwinpackEntry tree. Skips mark2=0x07 subtrees (Packages/).
+// Walks TwinpackEntry tree. Skips category=0x07 (Packages) subtrees.
 // Returns: [{ relativePath: string, content: Buffer }]
 // Paths are relative to root (e.g. "Sources/WaynesGrid.twin").
 // Sorted by relativePath for deterministic output.

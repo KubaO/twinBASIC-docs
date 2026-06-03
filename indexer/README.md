@@ -9,7 +9,9 @@ protocol and the `.twinproj` / `.twinpack` binary format (June 2026, IDE Beta
 | File | Description |
 |------|-------------|
 | `TWINSERV-protocol.md` | TWINSERV HTTP API specification — endpoints, auth flow, error codes, IDE-to-compiler WebSocket commands. |
-| `twinproj-format.md` | Binary container format shared by `.twinproj` and `.twinpack` files — header, entry structure, field semantics. |
+
+The canonical `.twinpack` binary format documentation lives in
+[`docs/Features/Packages/TWINPACK file format.md`](../docs/Features/Packages/TWINPACK%20file%20format.md).
 
 ## Beautified IDE sources
 
