@@ -46,12 +46,13 @@ sync  →  analyze  →  draft  →  verify  →  human review
 | A — Restructure indexer directory | ✓ Done | Manifests created as stubs (old gitignored dirs left in place) |
 | B — JSON emitter + store management | ✓ Done | Includes extractor enhancement (signature/access on all nodes) |
 | C — Analyze stage | ✓ Done | `auditCoverage` returns documented/undocumented; mismatched deferred |
-| D — Documentation reorganization | Not started | Independent of A–C |
-| E — Draft workflow | Not started | Depends on C |
+| D — Documentation reorganization | ✓ Done | Landing pages created; packages moved into Default/, Built-In/, Contributed/ |
+| E — Draft workflow | ✓ Done | `.claude/workflows/doc-draft.mjs`; Haiku triage → Sonnet draft/index |
 | F — Roll out | Not started | Depends on D + E |
 
-Every stage accepts `--package <name>` (or `--packages <a>,<b>`) to
-limit scope to specific packages.
+The CLI stages (`sync`, `analyze`) accept `--package <name>` (or
+`--packages <a>,<b>`) to limit scope. The draft workflow accepts an
+optional package name via `args`.
 
 ## Directory Structure
 
@@ -71,9 +72,9 @@ indexer/
     lexer.mjs                     # Tokenizer + attribute scanner
     extractor.mjs                 # Declaration tree builder
     emitter.mjs                   # Markdown emitter (existing)
-    json-emitter.mjs              # api.json emitter (new)
-    differ.mjs                    # api.json differ (new)
-    store.mjs                     # .packages/ git repo management (new)
+    json-emitter.mjs              # api.json emitter
+    differ.mjs                    # api.json differ
+    store.mjs                     # .packages/ git repo management
   manifests/
     built-in.json                 # committed; tracks synced release tag
     contributed.json              # committed; tracks synced TWINSERV versions
@@ -102,6 +103,13 @@ indexer/
       ArrayListLib/
         sources/*.twin
         api.json
+```
+
+### Draft workflow (under `.claude/workflows/`)
+
+```
+.claude/workflows/
+  doc-draft.mjs                   # Claude Code workflow: triage → draft → index
 ```
 
 **Moved from repo root:**
@@ -416,7 +424,7 @@ from the original `text` (preserves `[Default]`/`[Source]` markers).
 The old `Declare` node's hand-built `signature` field is replaced by
 the full `rawSig` from the source line.
 
-**`lib/json-emitter.mjs`** (new):
+**`lib/json-emitter.mjs`**:
 
 ```js
 export function emitApiJson(packageName, version, fileResults)
@@ -428,7 +436,7 @@ Produces api.json from the extractor's declaration tree. Applies
 signature normalization. Output is deterministic: sorted keys, sorted
 arrays, consistent formatting.
 
-**`lib/store.mjs`** (new):
+**`lib/store.mjs`**:
 
 ```js
 export async function ensureStore(storePath, snapshotsPath)
@@ -514,7 +522,7 @@ after the symbol.
 
 ### Module changes
 
-**`lib/differ.mjs`** (new):
+**`lib/differ.mjs`**:
 
 ```js
 export function diffApi(baseline, current)
@@ -589,12 +597,14 @@ export function auditCoverage(apiJson, docPageMap)
 ```
 
 The change report is printed to stdout as a human-readable summary.
-The full JSON is written to `indexer/.packages/report.json` (not
-committed to the store repo — transient working file). The draft
-workflow reads this file as its input.
+The full JSON — an **array** of per-package report objects — is
+written to `indexer/.packages/report.json` (not committed to the
+store repo — transient working file). The draft workflow reads this
+file as its input.
 
-If `--package` is used, the report covers only that package. Without
-it, the report covers all packages that have changes.
+If `--package` is used, the array contains only that package's report.
+Without it, the array covers all packages with api.json files in the
+store.
 
 ## Stage 3: draft (Claude Workflow)
 
@@ -604,12 +614,12 @@ a change report and dispatches agents to write documentation.
 ### Workflow structure
 
 ```
-Phase 1 — Triage
+Phase 1 — Triage  [Haiku]
   Single agent reads the change report + existing doc structure.
   Validates tasks, resolves file paths, determines page templates.
   Output: enriched task list with concrete file paths and instructions.
 
-Phase 2 — Draft (fan-out)
+Phase 2 — Draft (fan-out)  [Sonnet]
   pipeline(tasks, task => agent(draftPrompt(task)))
   Each agent receives:
     - The symbol's source code (from .packages/)
@@ -619,33 +629,65 @@ Phase 2 — Draft (fan-out)
     - Package index.md for context
   Produces: markdown file content written to the correct path.
 
-Phase 3 — Index updates
-  Single agent updates parent index pages, cross-reference indexes
-  (Statements.md, Procedures and Functions.md), and the package
-  index.md (including indexed_from update).
+Phase 3 — Index updates  [Sonnet]
+  One agent per package updates the package index.md (including
+  indexed_from update). Cross-reference index updates (Statements.md,
+  Procedures and Functions.md) deferred to manual pass.
 ```
 
-### Agent prompt template (sketch)
+### Model selection
 
-```
-You are documenting `{symbol}` from the `{package}` package.
+Every `agent()` call specifies an explicit `model:` — the default
+(inherited parent model) is never used.
 
-ACTION: {create | update}
-SYMBOL: {module}.{name} ({kind})
-SIGNATURE: {signature}
-SOURCE FILE: {path to source in .packages/}
-{if update: EXISTING PAGE: {path to current .md}}
-{if update: REASON: {signature_changed | ...}}
+| Phase | Model | Rationale |
+|---|---|---|
+| Triage | Haiku | Mechanical: read JSON, apply deterministic path-resolution rules, return structured output. No prose generation. |
+| Draft | Sonnet | Creative: read source code, follow conventions, write quality documentation prose matching existing style. |
+| Index | Sonnet | Semi-creative: read source for accurate one-line descriptions, edit existing pages while preserving structure. |
 
-Write a documentation page following these conventions:
-[... WIP.md excerpt: frontmatter format, definition-list style,
-     cross-linking patterns, example format ...]
+Opus is not used — the draft task is convention-following (imitate
+example pages), not open-ended reasoning. Sonnet's writing quality is
+sufficient when guided by explicit examples and a structured prompt.
+Haiku handles the data-wrangling triage at a fraction of the cost.
 
-Example pages to imitate:
-[... 2-3 similar pages included inline ...]
+### Implementation details
 
-Output ONLY the complete markdown file content.
-```
+**Triage agent** returns structured output (JSON Schema) with an
+enriched flat task list. Each task carries resolved `sourcePath` and
+`targetPath`. The agent reads `report.json` and checks the filesystem
+to determine folder-style vs single-file layout for each target.
+`flag_removal` tasks are separated into a `flagged` list.
+
+**Draft agents** read files themselves — each agent's prompt lists
+exact paths and the agent uses the Read tool to fetch:
+1. The source file (implementation context)
+2. `WIP.md` (page template, frontmatter format, cross-linking rules)
+3. 2–3 kind-matched example pages from `EXAMPLES_BY_KIND` table
+4. The package's `index.md` (package-level context)
+5. The existing page (for update actions)
+
+The agent writes the file directly via Write (create) or Edit (update).
+
+**Kind → example page mapping** (hardcoded in the workflow):
+
+| Kind | Example pages |
+|---|---|
+| Sub, Function | `Default/VBA/Interaction/AppActivate.md`, `Beep.md` |
+| Property | `Default/VBRUN/AmbientProperties/BackColor.md`, `Default/VBA/DateTime/Date.md` |
+| Event | `Default/VB/CheckBox/index.md` |
+| Class | `Built-In/CEF/CefBrowser/index.md`, `Built-In/WinEventLogLib/EventLog.md` |
+| Module | `Built-In/Assert/Exact.md` |
+| Enum | `Built-In/CustomControls/Enumerations/WindowState.md` |
+| Type | `Default/VBRUN/PropertyBag/index.md` |
+
+**Index agents** run in parallel (one per affected package). Each
+reads the current `index.md`, adds alphabetically-sorted bullet
+entries for new symbols, and sets `indexed_from` to the new version.
+
+**Package filter**: the workflow accepts an optional `args` string. If
+set, the triage agent processes only the named package from the
+report.
 
 ## Stage 4: verify
 
@@ -670,11 +712,11 @@ existing docs or not), there is a one-time "adoption" process.
 
 Example: VBA (has extensive docs, written before the pipeline existed).
 
-1. `sync` — populates `.packages/default/VBA/`
-2. `analyze --package VBA` — sees no `indexed_from` → full audit mode.
-   Compares api.json against pages in `docs/Reference/Default/VBA/`.
-   Reports: documented, undocumented, mismatched.
-3. `draft --package VBA` — agents fill gaps, fix mismatches.
+1. `node indexer/twin-index.mjs sync` — populates `.packages/default/VBA/`
+2. `node indexer/twin-index.mjs analyze --package VBA` — sees no
+   `indexed_from` → full audit mode. Compares api.json against pages
+   in `docs/Reference/Default/VBA/`. Reports: documented, undocumented.
+3. Run the `doc-draft` workflow (with `args: "VBA"`) — agents fill gaps.
 4. Developer reviews, adds `indexed_from: beta-x-0983` to index.md.
 5. If a `WIP-VBA.md` exists: extract user-relevant architectural
    notes into the package's index.md, then delete the WIP file.
@@ -683,10 +725,12 @@ Example: VBA (has extensive docs, written before the pipeline existed).
 
 Example: ArrayListLib (no existing docs).
 
-1. `sync --package ArrayListLib` — downloads, extracts, generates api.json.
-2. `analyze --package ArrayListLib` — no docs at all → full scaffold
-   report listing every module, class, enum, member.
-3. `draft --package ArrayListLib` — agents scaffold the entire package:
+1. `node indexer/twin-index.mjs sync --package ArrayListLib` —
+   downloads, extracts, generates api.json.
+2. `node indexer/twin-index.mjs analyze --package ArrayListLib` — no
+   docs at all → full scaffold report listing every public symbol.
+3. Run the `doc-draft` workflow (with `args: "ArrayListLib"`) — agents
+   scaffold the entire package:
    - `Contributed/ArrayListLib/index.md` with overview + `indexed_from`
    - Per-module/class pages with members
    - Enum detail pages
@@ -696,13 +740,13 @@ Example: ArrayListLib (no existing docs).
 
 Example: ArrayListLib 1.3.0 → 1.4.0.
 
-1. `sync` — downloads new version, commits to `.packages/`, copies
-   api.json to `snapshots/`.
-2. `analyze --package ArrayListLib` — diffs api.json (1.3.0 baseline
-   from committed snapshot vs 1.4.0 current in `.packages/`). Reports:
-   2 added, 1 modified.
-3. `draft --package ArrayListLib` — agents update only affected pages,
-   update `indexed_from: 1.4.0`.
+1. `node indexer/twin-index.mjs sync` — downloads new version,
+   commits to `.packages/`, copies api.json to `snapshots/`.
+2. `node indexer/twin-index.mjs analyze --package ArrayListLib` —
+   diffs api.json (1.3.0 baseline from committed snapshot vs 1.4.0
+   current in `.packages/`). Reports: 2 added, 1 modified.
+3. Run the `doc-draft` workflow (with `args: "ArrayListLib"`) — agents
+   update only affected pages, update `indexed_from: 1.4.0`.
 4. Developer reviews, commits (doc changes + updated snapshot +
    updated `indexed_from`).
 
@@ -769,49 +813,35 @@ agents read the source code directly.
     parsing signatures from markdown page content.
 12. ✓ Added `analyze` subcommand. Supports update mode (diff against
     `git show HEAD:indexer/snapshots/...`) and audit/pre-tracking
-    mode. Falls back to old docs layout (`Reference/{Package}/`) if
-    the Phase D grouped layout hasn't been applied yet.
+    mode. `findPackageDocsDir()` tries the grouped layout first
+    (`Reference/{Group}/{Package}/`), falls back to the flat layout
+    (`Reference/{Package}/`) as a safety net.
 13. Test end-to-end after first sync.
 
 **Verification:** Run `sync`, then `analyze --package Assert` (small
 package, has existing docs). Confirm the change report correctly
 identifies documented vs undocumented symbols.
 
-### Phase D: Documentation reorganization
+### Phase D: Documentation reorganization — ✓ Done
 
-Phase D is independent of Phases A–C and can be done in parallel.
+14. ✓ Created landing pages: `Default.md`, `Built-In.md`,
+    `Contributed.md` under `docs/Reference/`.
+15. ✓ Moved all 12 package directories into grouped subdirectories
+    (`Default/`, `Built-In/`). Created empty `Contributed/`.
+16. ✓ Updated `parent:` frontmatter in all 12 package index.md files
+    (`Packages` → `Default Packages` / `Built-In Packages`). No pages
+    used `grand_parent: Packages` so no child pages needed changes.
+    All `permalink` and `redirect_from` values preserved.
+17. ✓ Updated `Packages.md` to reference the three landing pages.
+18. Build verification deferred to Phase F roll-out.
 
-14. Create landing pages: `Default.md`, `Built-In.md`, `Contributed.md`
-    under `docs/Reference/`.
-15. Move doc directories:
-    - `Reference/VB/` → `Reference/Default/VB/`
-    - `Reference/VBA/` → `Reference/Default/VBA/`
-    - `Reference/VBRUN/` → `Reference/Default/VBRUN/`
-    - `Reference/Assert/` → `Reference/Built-In/Assert/`
-    - `Reference/CEF/` → `Reference/Built-In/CEF/`
-    - `Reference/CustomControls/` → `Reference/Built-In/CustomControls/`
-    - `Reference/WebView2/` → `Reference/Built-In/WebView2/`
-    - `Reference/WinEventLogLib/` → `Reference/Built-In/WinEventLogLib/`
-    - `Reference/WinNamedPipesLib/` → `Reference/Built-In/WinNamedPipesLib/`
-    - `Reference/WinServicesLib/` → `Reference/Built-In/WinServicesLib/`
-    - `Reference/tbIDE/` → `Reference/Built-In/tbIDE/`
-    - `Reference/WinNativeCommonCtls/` → `Reference/Built-In/WinNativeCommonCtls/`
-    - `Reference/Contributed/` created empty (populated by the pipeline).
-16. Update frontmatter in all moved pages:
-    - Package index.md: change `parent: Packages` to
-      `parent: Default Packages` / `parent: Built-In Packages` /
-      `parent: Contributed Packages` as appropriate.
-    - Child pages using `grand_parent: Packages`: update to new parent.
-    - Preserve ALL `permalink` values — no URL changes.
-    - Preserve ALL `redirect_from` values.
-17. Update `Packages.md` to reference the three new landing pages.
-18. Build site with `node builder/tbdocs.mjs`, verify no broken links
-    or missing pages. Compare output page count before and after — must
-    be identical (no pages lost in the move).
+### Phase E: Draft workflow — ✓ Done
 
-### Phase E: Draft workflow
-
-19. Write `.claude/workflows/doc-draft.mjs`.
+19. ✓ Wrote `.claude/workflows/doc-draft.mjs`. Three-phase workflow:
+    Triage (Haiku) reads report, resolves paths → Draft (Sonnet)
+    pipeline fans out one agent per symbol → Index (Sonnet) updates
+    package index pages. Accepts optional `args` string to filter by
+    package name.
 20. Test with one small package (e.g., Assert) end-to-end.
 
 ### Phase F: Roll out
