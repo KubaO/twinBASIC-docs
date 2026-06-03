@@ -9,3 +9,4 @@ node_modules/
 /findoverflow-baseline/
 indexer/.packages/
 /package-indexes/
+/builtin-indexes/

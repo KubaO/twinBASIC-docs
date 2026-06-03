@@ -1,6 +1,8 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import { compareWithManifest, fetchPackage, versionString } from './lib/sync.mjs';
+import { compareBuiltinManifest, extractBuiltinPackages } from './lib/builtin-sync.mjs';
+import { downloadRelease } from './lib/github-release.mjs';
 import { preprocessVB6, CONTAINER_MAP } from './lib/vb6-preprocess.mjs';
 import { lex } from './lib/lexer.mjs';
 import { extract } from './lib/extractor.mjs';
@@ -10,20 +12,24 @@ import { emitMarkdown } from './lib/emitter.mjs';
 
 const args = process.argv.slice(2);
 let outDir = './package-indexes/';
+let builtinOutDir = './builtin-indexes/';
 let savePackages = true;
 
 for (let i = 0; i < args.length; i++) {
   if (args[i] === '--out' && args[i + 1]) {
     outDir = args[++i];
+  } else if (args[i] === '--builtin-out' && args[i + 1]) {
+    builtinOutDir = args[++i];
   } else if (args[i] === '--dont-save-packages') {
     savePackages = false;
   } else if (args[i] === '--help' || args[i] === '-h') {
     console.log('Usage: node indexer/twin-index.mjs [options]');
     console.log('');
-    console.log('  Fetch packages from TWINSERV and generate markdown indexes.');
+    console.log('  Fetch packages from TWINSERV and twinBASIC releases, generate markdown indexes.');
     console.log('');
     console.log('Options:');
-    console.log('  --out <dir>              Output directory (default: ./package-indexes/)');
+    console.log('  --out <dir>              TWINSERV output directory (default: ./package-indexes/)');
+    console.log('  --builtin-out <dir>      Built-in package output directory (default: ./builtin-indexes/)');
     console.log('  --dont-save-packages     Skip writing package source files to <out>/packages/');
     process.exit(0);
   }
@@ -104,6 +110,7 @@ async function main() {
 
   if (!toDownload.length && !removed.length) {
     console.log('\nUp to date.');
+    await indexBuiltinPackages();
     return;
   }
 
@@ -179,6 +186,87 @@ async function main() {
     (failed.length ? ` ${failed.length} failed.` : ''),
   );
   console.log(`Output: ${path.resolve(outDir)}`);
+
+  // --- Built-in packages from twinBASIC GitHub releases ---
+  await indexBuiltinPackages();
+}
+
+async function indexBuiltinPackages() {
+  await fs.mkdir(builtinOutDir, { recursive: true });
+  const manifestPath = path.join(builtinOutDir, 'manifest.json');
+  const packagesDir = path.join(builtinOutDir, 'packages');
+
+  // Phase 1: Check twinBASIC release
+  console.log('\nChecking twinBASIC release...');
+  const release = await compareBuiltinManifest(manifestPath);
+  console.log(`  Tag: ${release.tag}`);
+
+  // If saving packages, check for missing folders even when tag matches
+  if (!release.needsUpdate && savePackages) {
+    const symbols = Object.values(release.manifest.packages).map(p => p.symbol);
+    const missing = [];
+    for (const symbol of symbols) {
+      try {
+        await fs.access(path.join(packagesDir, symbol));
+      } catch {
+        missing.push(symbol);
+      }
+    }
+    if (missing.length) {
+      console.log(`  Missing source folders: ${missing.join(', ')}`);
+      release.needsUpdate = true;
+    }
+  }
+
+  if (!release.needsUpdate) {
+    console.log(`  Built-in packages up to date (${release.tag}).`);
+    return;
+  }
+
+  // Phase 2: Download release and extract built-in packages
+  console.log('\nDownloading release...');
+  const zipBuffer = await downloadRelease(release.assetUrl);
+  const builtinPackages = extractBuiltinPackages(zipBuffer);
+  console.log(`  Extracted ${builtinPackages.length} built-in packages`);
+
+  // Phase 3: Index built-in packages
+  console.log('\nIndexing built-in packages...');
+  const builtinManifest = {
+    syncedAt: new Date().toISOString(),
+    twinbasicTag: release.tag,
+    publishedAt: release.publishedAt,
+    packages: {},
+  };
+
+  for (const pkg of builtinPackages) {
+    const sourceFiles = pkg.files
+      .filter(f => SOURCE_EXTS.has(path.extname(f.relativePath).toLowerCase()))
+      .map(f => {
+        const rel = f.relativePath.startsWith('Sources/')
+          ? f.relativePath.slice('Sources/'.length)
+          : f.relativePath;
+        return { relativePath: rel, content: f.content.toString('utf-8') };
+      });
+
+    const { fileResults, declCount } = indexFiles(sourceFiles);
+    const md = emitMarkdown(pkg.symbol, fileResults);
+    await fs.writeFile(path.join(builtinOutDir, `${pkg.symbol}.md`), md, 'utf-8');
+
+    if (savePackages) {
+      for (const f of pkg.files) {
+        const dest = path.join(packagesDir, pkg.symbol, f.relativePath);
+        await fs.mkdir(path.dirname(dest), { recursive: true });
+        await fs.writeFile(dest, f.content);
+      }
+    }
+
+    builtinManifest.packages[pkg.guid] = { symbol: pkg.symbol };
+    console.log(`  ${pkg.symbol}: ${sourceFiles.length} files, ${declCount} declarations`);
+  }
+
+  await fs.writeFile(manifestPath, JSON.stringify(builtinManifest, null, 2) + '\n');
+  console.log(`\nBuilt-in: ${builtinPackages.length} packages indexed.`);
+  console.log(`Output: ${path.resolve(builtinOutDir)}`);
 }
 
 main().catch(err => {
