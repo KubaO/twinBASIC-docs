@@ -1,0 +1,732 @@
+{
+  "package": "AutoCompleteLib",
+  "version": "1.0.0.0",
+  "modules": [
+    {
+      "name": "AutoComplete",
+      "kind": "Class",
+      "file": "AutoComplete.cls",
+      "access": "Public",
+      "attributes": [],
+      "implements": [
+        "AutoCompleteGuids.IEnumStringVB"
+      ],
+      "inherits": null,
+      "members": [
+        {
+          "name": "ACDD_VISIBLE",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const ACDD_VISIBLE As Long = 1",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ACLO_CURRENTDIR",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const ACLO_CURRENTDIR As Long = 1",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ACLO_DESKTOP",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const ACLO_DESKTOP As Long = 4",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ACLO_FAVORITES",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const ACLO_FAVORITES As Long = 8",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ACLO_FILESYSDIRS",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const ACLO_FILESYSDIRS As Long = 32",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ACLO_FILESYSONLY",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const ACLO_FILESYSONLY As Long = 16",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ACLO_MYCOMPUTER",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const ACLO_MYCOMPUTER As Long = 2",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ACLO_NONE",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const ACLO_NONE As Long = 0",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ACO_AUTOAPPEND",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const ACO_AUTOAPPEND As Long = &H2",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ACO_AUTOSUGGEST",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const ACO_AUTOSUGGEST As Long = &H1",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ACO_FILTERPREFIXES",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const ACO_FILTERPREFIXES As Long = &H8",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ACO_NONE",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const ACO_NONE As Long = &H0",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ACO_SEARCH",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const ACO_SEARCH As Long = &H4",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ACO_UPDOWNKEYDROPSLIST",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const ACO_UPDOWNKEYDROPSLIST As Long = &H20",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ACO_USETAB",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const ACO_USETAB As Long = &H10",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "AutoCompleteFileSystemOptionConstants",
+          "kind": "Enum",
+          "access": "Public",
+          "signature": "Public Enum AutoCompleteFileSystemOptionConstants",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "AutoCompleteOptionConstants",
+          "kind": "Enum",
+          "access": "Public",
+          "signature": "Public Enum AutoCompleteOptionConstants",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "AutoCompleteSourceConstants",
+          "kind": "Enum",
+          "access": "Public",
+          "signature": "Public Enum AutoCompleteSourceConstants",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Class_Initialize",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub Class_Initialize()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CopyMemory",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare PtrSafe Sub CopyMemory Lib \"\" Alias \"\" (ByRef Destination As Any, ByRef Source As Any, ByVal Length As Long)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CopyMemory",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare Sub CopyMemory Lib \"\" Alias \"\" (ByRef Destination As Any, ByRef Source As Any, ByVal Length As Long)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CustomSource",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get CustomSource() As Variant",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CustomSource",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Let CustomSource(ByVal StringArray As Variant)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Disable",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub Disable()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "DroppedDown",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function DroppedDown() As Boolean",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "E_NOTIMPL",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const E_NOTIMPL As Long = &H80004001",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "E_POINTER",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const E_POINTER As Long = &H80004003",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Enable",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub Enable()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "FileSystemOptions",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get FileSystemOptions() As AutoCompleteFileSystemOptionConstants",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "FileSystemOptions",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Let FileSystemOptions(ByVal Value As AutoCompleteFileSystemOptionConstants)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "IEnumStringVB_Clone",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub IEnumStringVB_Clone(ByRef RetVal As Long, ByVal lppEnum As LongPtr)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "IEnumStringVB_Next",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub IEnumStringVB_Next(ByRef RetVal As Long, ByVal cElt As Long, ByVal rgElt As LongPtr, ByVal lpcEltFetched As LongPtr)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "IEnumStringVB_Reset",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub IEnumStringVB_Reset(ByRef RetVal As Long)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "IEnumStringVB_Skip",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub IEnumStringVB_Skip(ByRef RetVal As Long, ByVal cElt As Long)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Init",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub Init(ByVal hWndEdit As LongPtr, ByVal Source As AutoCompleteSourceConstants)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "LongPtr",
+          "kind": "Enum",
+          "access": "Private",
+          "signature": "Private Enum LongPtr",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "NULL_PTR",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const NULL_PTR As LongPtr = 0",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "NULL_PTR",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const NULL_PTR As Long = 0",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Options",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get Options() As AutoCompleteOptionConstants",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Options",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Let Options(ByVal Value As AutoCompleteOptionConstants)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "PTR_SIZE",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const PTR_SIZE As Long = 8",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "PTR_SIZE",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const PTR_SIZE As Long = 4",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Refresh",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub Refresh()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "S_OK",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const S_OK As Long = &H0, S_FALSE As Long = &H1",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "UnsignedAdd",
+          "kind": "Function",
+          "access": "Private",
+          "signature": "Private Function UnsignedAdd(ByVal Start As LongPtr, ByVal Incr As LongPtr) As LongPtr",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "AutoCompleteHandle",
+      "kind": "Module",
+      "file": "AutoCompleteHandle.bas",
+      "access": "Public",
+      "attributes": [],
+      "implements": [],
+      "inherits": null,
+      "members": [
+        {
+          "name": "CLSCTX_INPROC_SERVER",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const CLSCTX_INPROC_SERVER As Long = 1",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CLSID_ACLHistory",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const CLSID_ACLHistory As String = \"\"",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CLSID_ACListISF",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const CLSID_ACListISF As String = \"\"",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CLSID_ACLMRU",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const CLSID_ACLMRU As String = \"\"",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CLSID_ACLMulti",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const CLSID_ACLMulti As String = \"\"",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CLSID_IACList2",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const CLSID_IACList2 As String = \"\"",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CLSID_IAutoComplete",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const CLSID_IAutoComplete As String = \"\"",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CLSID_IAutoCompleteDropDown",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const CLSID_IAutoCompleteDropDown As String = \"\"",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CLSIDFromString",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare PtrSafe Function CLSIDFromString Lib \"\" (ByVal lpszProgID As LongPtr, ByRef pCLSID As Any) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CLSIDFromString",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare Function CLSIDFromString Lib \"\" (ByVal lpszProgID As Long, ByRef pCLSID As Any) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CoCreateInstance",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare PtrSafe Function CoCreateInstance Lib \"\" (ByRef rclsid As Any, ByVal pUnkOuter As LongPtr, ByVal dwClsContext As Long, ByRef riid As Any, ByRef ppv As IUnknown) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CoCreateInstance",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare Function CoCreateInstance Lib \"\" (ByRef rclsid As Any, ByVal pUnkOuter As Long, ByVal dwClsContext As Long, ByRef riid As Any, ByRef ppv As IUnknown) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CreateIACLHistory",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function CreateIACLHistory() As IUnknown",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CreateIACList2",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function CreateIACList2() As IUnknown",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CreateIACListISF",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function CreateIACListISF() As IUnknown",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CreateIACLMRU",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function CreateIACLMRU() As IUnknown",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CreateIAutoComplete2",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function CreateIAutoComplete2() As IUnknown",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CreateIAutoCompleteDropDown",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function CreateIAutoCompleteDropDown() As IUnknown",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CreateIObjMgr",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function CreateIObjMgr() As IUnknown",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "E_NOINTERFACE",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const E_NOINTERFACE As Long = &H80004002",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "E_NOTIMPL",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const E_NOTIMPL As Long = &H80004001",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "E_POINTER",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const E_POINTER As Long = &H80004003",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GetACLEnum",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function GetACLEnum(ByVal This As AutoCompleteGuids.IEnumStringVB) As AutoCompleteGuids.IEnumString",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GetVTableIEnumString",
+          "kind": "Function",
+          "access": "Private",
+          "signature": "Private Function GetVTableIEnumString() As LongPtr",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "IEnumString_AddRef",
+          "kind": "Function",
+          "access": "Private",
+          "signature": "Private Function IEnumString_AddRef(ByRef This As VTableIEnumStringDataStruct) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "IEnumString_Clone",
+          "kind": "Function",
+          "access": "Private",
+          "signature": "Private Function IEnumString_Clone(ByRef This As VTableIEnumStringDataStruct, ByRef ppEnum As AutoCompleteGuids.IEnumString) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "IEnumString_Next",
+          "kind": "Function",
+          "access": "Private",
+          "signature": "Private Function IEnumString_Next(ByRef This As VTableIEnumStringDataStruct, ByVal cElt As Long, ByVal rgElt As LongPtr, ByVal lpcEltFetched As LongPtr) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "IEnumString_QueryInterface",
+          "kind": "Function",
+          "access": "Private",
+          "signature": "Private Function IEnumString_QueryInterface(ByRef This As VTableIEnumStringDataStruct, ByRef IID As AutoCompleteGuids.[_AC_GUID], ByRef pvObj As LongPtr) As Long",
+          "attributes": [
+            "_AC_GUID"
+          ],
+          "description": null
+        },
+        {
+          "name": "IEnumString_Release",
+          "kind": "Function",
+          "access": "Private",
+          "signature": "Private Function IEnumString_Release(ByRef This As VTableIEnumStringDataStruct) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "IEnumString_Reset",
+          "kind": "Function",
+          "access": "Private",
+          "signature": "Private Function IEnumString_Reset(ByRef This As VTableIEnumStringDataStruct) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "IEnumString_Skip",
+          "kind": "Function",
+          "access": "Private",
+          "signature": "Private Function IEnumString_Skip(ByRef This As VTableIEnumStringDataStruct, ByVal cElt As Long) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "IID_IAutoComplete2",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const IID_IAutoComplete2 As String = \"\"",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "IID_IObjMgr",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const IID_IObjMgr As String = \"\"",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "IID_IUnknown",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const IID_IUnknown As String = \"\"",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "LongPtr",
+          "kind": "Enum",
+          "access": "Private",
+          "signature": "Private Enum LongPtr",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "NULL_PTR",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const NULL_PTR As LongPtr = 0",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "NULL_PTR",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const NULL_PTR As Long = 0",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ProcPtr",
+          "kind": "Function",
+          "access": "Private",
+          "signature": "Private Function ProcPtr(ByVal Address As LongPtr) As LongPtr",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "PTR_SIZE",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const PTR_SIZE As Long = 8",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "PTR_SIZE",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const PTR_SIZE As Long = 4",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "S_OK",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const S_OK As Long = &H0",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "VTableIEnumStringDataStruct",
+          "kind": "Type",
+          "access": "Private",
+          "signature": "Private Type VTableIEnumStringDataStruct",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    }
+  ],
+  "enums": [],
+  "types": []
+}

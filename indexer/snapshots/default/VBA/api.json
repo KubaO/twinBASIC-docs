@@ -1,0 +1,3769 @@
+{
+  "package": "VBA",
+  "version": "beta-x-0983",
+  "modules": [
+    {
+      "name": "_Collection",
+      "kind": "Interface",
+      "file": "Collection.twin",
+      "access": "Public",
+      "attributes": [
+        "InterfaceId"
+      ],
+      "implements": [],
+      "inherits": null,
+      "members": [
+        {
+          "name": "_NewEnum",
+          "kind": "Function",
+          "access": null,
+          "signature": "Function _NewEnum() As stdole.IUnknown",
+          "attributes": [
+            "DispId(-4)",
+            "Hidden",
+            "Restricted"
+          ],
+          "description": null
+        },
+        {
+          "name": "Add",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub Add(ByRef Item As Variant, Optional ByRef Key As Variant, Optional ByRef Before As Variant, Optional ByRef After As Variant)",
+          "attributes": [
+            "DispId(1)",
+            "Before",
+            "After"
+          ],
+          "description": null
+        },
+        {
+          "name": "Clear",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub Clear()",
+          "attributes": [
+            "DispId(4)"
+          ],
+          "description": null
+        },
+        {
+          "name": "Count",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Get Count() As Long",
+          "attributes": [
+            "DispId(2)"
+          ],
+          "description": null
+        },
+        {
+          "name": "Exists",
+          "kind": "Function",
+          "access": null,
+          "signature": "Function Exists(ByVal Key As String) As Boolean",
+          "attributes": [
+            "DispId(5)"
+          ],
+          "description": null
+        },
+        {
+          "name": "Item",
+          "kind": "Function",
+          "access": null,
+          "signature": "Function Item(ByRef Index As Variant) As Variant",
+          "attributes": [
+            "DispId(0)"
+          ],
+          "description": null
+        },
+        {
+          "name": "Items",
+          "kind": "Function",
+          "access": null,
+          "signature": "Function Items() As Variant()",
+          "attributes": [
+            "DispId(8)"
+          ],
+          "description": null
+        },
+        {
+          "name": "KeyCompareMode",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Get KeyCompareMode() As VbCompareMethod",
+          "attributes": [
+            "DispId(7)"
+          ],
+          "description": null
+        },
+        {
+          "name": "KeyCompareMode",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Let KeyCompareMode(ByVal Value As VbCompareMethod)",
+          "attributes": [
+            "DispId(7)"
+          ],
+          "description": null
+        },
+        {
+          "name": "KeyCountHint",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Get KeyCountHint() As Long",
+          "attributes": [
+            "DispId(6)"
+          ],
+          "description": null
+        },
+        {
+          "name": "KeyCountHint",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Let KeyCountHint(ByVal Value As Long)",
+          "attributes": [
+            "DispId(6)"
+          ],
+          "description": null
+        },
+        {
+          "name": "Keys",
+          "kind": "Function",
+          "access": null,
+          "signature": "Function Keys() As String()",
+          "attributes": [
+            "DispId(9)"
+          ],
+          "description": null
+        },
+        {
+          "name": "Remove",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub Remove(ByRef Index As Variant)",
+          "attributes": [
+            "DispId(3)"
+          ],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "_ErrObject",
+      "kind": "Interface",
+      "file": "ErrObject.twin",
+      "access": "Public",
+      "attributes": [
+        "InterfaceId"
+      ],
+      "implements": [],
+      "inherits": null,
+      "members": [
+        {
+          "name": "Clear",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub Clear()",
+          "attributes": [
+            "DispId(&H6002000B)",
+            "RedirectToStaticImplementation(\"_HiddenModule.ErrClear\")"
+          ],
+          "description": null
+        },
+        {
+          "name": "Description",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Get Description() As String",
+          "attributes": [
+            "DispId(&H60020004)",
+            "RedirectToStaticImplementation(\"_HiddenModule.GetErrDescription\")"
+          ],
+          "description": null
+        },
+        {
+          "name": "Description",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Let Description(ByVal Value As String)",
+          "attributes": [
+            "DispId(&H60020004)",
+            "RedirectToStaticImplementation(\"_HiddenModule.LetErrDescription\")"
+          ],
+          "description": null
+        },
+        {
+          "name": "HelpContext",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Get HelpContext() As Long",
+          "attributes": [
+            "DispId(&H60020008)",
+            "RedirectToStaticImplementation(\"_HiddenModule.GetErrHelpContext\")"
+          ],
+          "description": null
+        },
+        {
+          "name": "HelpContext",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Let HelpContext(ByVal Value As Long)",
+          "attributes": [
+            "DispId(&H60020008)",
+            "RedirectToStaticImplementation(\"_HiddenModule.LetErrHelpContext\")"
+          ],
+          "description": null
+        },
+        {
+          "name": "HelpFile",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Get HelpFile() As String",
+          "attributes": [
+            "DispId(&H60020006)",
+            "RedirectToStaticImplementation(\"_HiddenModule.GetErrHelpFile\")"
+          ],
+          "description": null
+        },
+        {
+          "name": "HelpFile",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Let HelpFile(ByVal Value As String)",
+          "attributes": [
+            "DispId(&H60020006)",
+            "RedirectToStaticImplementation(\"_HiddenModule.LetErrHelpFile\")"
+          ],
+          "description": null
+        },
+        {
+          "name": "LastDllError",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Get LastDllError() As Long",
+          "attributes": [
+            "DispId(&H6002000C)",
+            "RedirectToStaticImplementation(\"_HiddenModule.GetErrLastDllError\")"
+          ],
+          "description": null
+        },
+        {
+          "name": "LastDllError",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Let LastDllError(ByVal Value As Long)",
+          "attributes": [
+            "DispId(&H6002000C)",
+            "RedirectToStaticImplementation(\"_HiddenModule.LetErrLastDllError\")"
+          ],
+          "description": null
+        },
+        {
+          "name": "LastHresult",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Get LastHresult() As Long",
+          "attributes": [
+            "DispId(&H6002000E)",
+            "RedirectToStaticImplementation(\"_HiddenModule.GetErrLastHresult\")"
+          ],
+          "description": null
+        },
+        {
+          "name": "Number",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Get Number() As Long",
+          "attributes": [
+            "DispId(0)",
+            "RedirectToStaticImplementation(\"_HiddenModule.GetErrNumber\")"
+          ],
+          "description": null
+        },
+        {
+          "name": "Number",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Let Number(ByVal Value As Long)",
+          "attributes": [
+            "DispId(0)",
+            "RedirectToStaticImplementation(\"_HiddenModule.LetErrNumber\")"
+          ],
+          "description": null
+        },
+        {
+          "name": "Raise",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub Raise(ByVal Number As Long, Optional ByVal Source As String, Optional ByVal Description As String, Optional ByVal HelpFile As String, Optional ByVal HelpFileContext As Long)",
+          "attributes": [
+            "DispId(&H6002000A)",
+            "RedirectToStaticImplementation(\"_HiddenModule.ErrRaise\")",
+            "HelpFile",
+            "HelpContext"
+          ],
+          "description": null
+        },
+        {
+          "name": "ReturnHResult",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Get ReturnHResult() As Long",
+          "attributes": [
+            "DispId(&H60020010)",
+            "RedirectToStaticImplementation(\"_HiddenModule.GetErrReturnHResult\")",
+            "value"
+          ],
+          "description": null
+        },
+        {
+          "name": "ReturnHResult",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Let ReturnHResult(ByVal Value As Long)",
+          "attributes": [
+            "DispId(&H60020010)",
+            "RedirectToStaticImplementation(\"_HiddenModule.LetErrReturnHResult\")",
+            "value"
+          ],
+          "description": null
+        },
+        {
+          "name": "Source",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Get Source() As String",
+          "attributes": [
+            "DispId(&H60020002)",
+            "RedirectToStaticImplementation(\"_HiddenModule.GetErrSource\")"
+          ],
+          "description": null
+        },
+        {
+          "name": "Source",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Let Source(ByVal Value As String)",
+          "attributes": [
+            "DispId(&H60020002)",
+            "RedirectToStaticImplementation(\"_HiddenModule.LetErrSource\")"
+          ],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "Collection",
+      "kind": "CoClass",
+      "file": "Collection.twin",
+      "access": "Public",
+      "attributes": [
+        "CoClassId",
+        "CoClassCustomConstructor(\"_HiddenModule.CreateCollectionObject\")",
+        "COMCreatable(True)"
+      ],
+      "implements": [],
+      "inherits": null,
+      "members": [
+        {
+          "name": "_Collection",
+          "kind": "CoClassInterface",
+          "access": null,
+          "signature": "[Default] Interface _Collection",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "Compilation",
+      "kind": "Module",
+      "file": "Compilation.twin",
+      "access": "Public",
+      "attributes": [],
+      "implements": [],
+      "inherits": null,
+      "members": [
+        {
+          "name": "CompilerVersion",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function CompilerVersion Lib \"\" Alias \"\" () As Long",
+          "attributes": [
+            "PreserveSig(False)",
+            "DLLStackCheck(False)"
+          ],
+          "description": "Returns the twinBASIC compiler version number.  "
+        },
+        {
+          "name": "CurrentComponentCLSID",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function CurrentComponentCLSID Lib \"\" Alias \"\" () As String",
+          "attributes": [
+            "PreserveSig(False)",
+            "DLLStackCheck(False)"
+          ],
+          "description": null
+        },
+        {
+          "name": "CurrentComponentName",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function CurrentComponentName Lib \"\" Alias \"\" () As String",
+          "attributes": [
+            "PreserveSig(False)",
+            "DLLStackCheck(False)"
+          ],
+          "description": null
+        },
+        {
+          "name": "CurrentProcedureName",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function CurrentProcedureName Lib \"\" Alias \"\" () As String",
+          "attributes": [
+            "PreserveSig(False)",
+            "DLLStackCheck(False)"
+          ],
+          "description": null
+        },
+        {
+          "name": "CurrentProjectName",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function CurrentProjectName Lib \"\" Alias \"\" () As String",
+          "attributes": [
+            "PreserveSig(False)",
+            "DLLStackCheck(False)"
+          ],
+          "description": null
+        },
+        {
+          "name": "CurrentSourceFile",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function CurrentSourceFile Lib \"\" Alias \"\" () As String",
+          "attributes": [
+            "PreserveSig(False)",
+            "DLLStackCheck(False)"
+          ],
+          "description": null
+        },
+        {
+          "name": "ProcessorArchitecture",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function ProcessorArchitecture Lib \"\" Alias \"\" () As VbArchitecture",
+          "attributes": [
+            "PreserveSig(False)",
+            "DLLStackCheck(False)"
+          ],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "Constants",
+      "kind": "Module",
+      "file": "Constants.twin",
+      "access": "Public",
+      "attributes": [],
+      "implements": [],
+      "inherits": null,
+      "members": [
+        {
+          "name": "VbAppWinStyle",
+          "kind": "Enum",
+          "access": "Public",
+          "signature": "Public Enum VbAppWinStyle",
+          "attributes": [
+            "EnumId"
+          ],
+          "description": null
+        },
+        {
+          "name": "VbArchitecture",
+          "kind": "Enum",
+          "access": "Public",
+          "signature": "Public Enum VbArchitecture",
+          "attributes": [
+            "EnumId"
+          ],
+          "description": null
+        },
+        {
+          "name": "vbBack",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const vbBack As String = TB_BUILTIN_CHR(8)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "VbCalendar",
+          "kind": "Enum",
+          "access": "Public",
+          "signature": "Public Enum VbCalendar",
+          "attributes": [
+            "EnumId"
+          ],
+          "description": null
+        },
+        {
+          "name": "VbCallType",
+          "kind": "Enum",
+          "access": "Public",
+          "signature": "Public Enum VbCallType",
+          "attributes": [
+            "EnumId"
+          ],
+          "description": null
+        },
+        {
+          "name": "VbCompareMethod",
+          "kind": "Enum",
+          "access": "Public",
+          "signature": "Public Enum VbCompareMethod",
+          "attributes": [
+            "EnumId"
+          ],
+          "description": null
+        },
+        {
+          "name": "vbCr",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const vbCr As String = TB_BUILTIN_CHR(13)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "vbCrLf",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const vbCrLf As String = TB_BUILTIN_CHR(13) & TB_BUILTIN_CHR(10)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "VbDateTimeFormat",
+          "kind": "Enum",
+          "access": "Public",
+          "signature": "Public Enum VbDateTimeFormat",
+          "attributes": [
+            "EnumId"
+          ],
+          "description": null
+        },
+        {
+          "name": "VbDayOfWeek",
+          "kind": "Enum",
+          "access": "Public",
+          "signature": "Public Enum VbDayOfWeek",
+          "attributes": [
+            "EnumId"
+          ],
+          "description": null
+        },
+        {
+          "name": "VbFileAttribute",
+          "kind": "Enum",
+          "access": "Public",
+          "signature": "Public Enum VbFileAttribute",
+          "attributes": [
+            "EnumId"
+          ],
+          "description": null
+        },
+        {
+          "name": "VbFirstWeekOfYear",
+          "kind": "Enum",
+          "access": "Public",
+          "signature": "Public Enum VbFirstWeekOfYear",
+          "attributes": [
+            "EnumId"
+          ],
+          "description": null
+        },
+        {
+          "name": "vbFormFeed",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const vbFormFeed As String = TB_BUILTIN_CHR(12)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "VbIMEStatus",
+          "kind": "Enum",
+          "access": "Public",
+          "signature": "Public Enum VbIMEStatus",
+          "attributes": [
+            "EnumId"
+          ],
+          "description": null
+        },
+        {
+          "name": "vbLf",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const vbLf As String = TB_BUILTIN_CHR(10)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "VbMsgBoxResult",
+          "kind": "Enum",
+          "access": "Public",
+          "signature": "Public Enum VbMsgBoxResult",
+          "attributes": [
+            "EnumId"
+          ],
+          "description": null
+        },
+        {
+          "name": "VbMsgBoxStyle",
+          "kind": "Enum",
+          "access": "Public",
+          "signature": "Public Enum VbMsgBoxStyle",
+          "attributes": [
+            "EnumId"
+          ],
+          "description": null
+        },
+        {
+          "name": "vbNewLine",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const vbNewLine As String = TB_BUILTIN_CHR(13) & TB_BUILTIN_CHR(10)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "vbNullChar",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const vbNullChar As String = TB_BUILTIN_CHR(0)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "vbNullPtr",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const vbNullPtr As LongPtr = 0",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "vbNullString",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const vbNullString As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "vbObjectError",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const vbObjectError As Long = &H80040000",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "VbStrConv",
+          "kind": "Enum",
+          "access": "Public",
+          "signature": "Public Enum VbStrConv",
+          "attributes": [
+            "EnumId"
+          ],
+          "description": null
+        },
+        {
+          "name": "vbTab",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const vbTab As String = TB_BUILTIN_CHR(9)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "VbTriState",
+          "kind": "Enum",
+          "access": "Public",
+          "signature": "Public Enum VbTriState",
+          "attributes": [
+            "EnumId"
+          ],
+          "description": null
+        },
+        {
+          "name": "VbVarType",
+          "kind": "Enum",
+          "access": "Public",
+          "signature": "Public Enum VbVarType",
+          "attributes": [
+            "EnumId"
+          ],
+          "description": null
+        },
+        {
+          "name": "vbVerticalTab",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const vbVerticalTab As String = TB_BUILTIN_CHR(11)",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "Conversion",
+      "kind": "Module",
+      "file": "Conversion.twin",
+      "access": "Public",
+      "attributes": [],
+      "implements": [],
+      "inherits": null,
+      "members": [
+        {
+          "name": "CBool",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function CBool Lib \"\" Alias \"\" (ByVal Expression As Any) As Boolean",
+          "attributes": [
+            "PreserveSig(False)",
+            "DLLStackCheck(False)"
+          ],
+          "description": null
+        },
+        {
+          "name": "CByte",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function CByte Lib \"\" Alias \"\" (ByVal Expression As Any) As Byte",
+          "attributes": [
+            "PreserveSig(False)",
+            "DLLStackCheck(False)"
+          ],
+          "description": null
+        },
+        {
+          "name": "CCur",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function CCur Lib \"\" Alias \"\" (ByVal Expression As Any) As Currency",
+          "attributes": [
+            "PreserveSig(False)",
+            "DLLStackCheck(False)"
+          ],
+          "description": null
+        },
+        {
+          "name": "CDate",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function CDate Lib \"\" Alias \"\" (ByVal Expression As Any) As Date",
+          "attributes": [
+            "PreserveSig(False)",
+            "DLLStackCheck(False)"
+          ],
+          "description": null
+        },
+        {
+          "name": "CDbl",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function CDbl Lib \"\" Alias \"\" (ByVal Expression As Any) As Double",
+          "attributes": [
+            "PreserveSig(False)",
+            "DLLStackCheck(False)"
+          ],
+          "description": null
+        },
+        {
+          "name": "CDec",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function CDec Lib \"\" Alias \"\" (ByVal Expression As Any) As Decimal",
+          "attributes": [
+            "PreserveSig(False)",
+            "DLLStackCheck(False)"
+          ],
+          "description": null
+        },
+        {
+          "name": "CInt",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function CInt Lib \"\" Alias \"\" (ByVal Expression As Any) As Integer",
+          "attributes": [
+            "PreserveSig(False)",
+            "DLLStackCheck(False)"
+          ],
+          "description": null
+        },
+        {
+          "name": "CLng",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function CLng Lib \"\" Alias \"\" (ByVal Expression As Any) As Long",
+          "attributes": [
+            "PreserveSig(False)",
+            "DLLStackCheck(False)"
+          ],
+          "description": null
+        },
+        {
+          "name": "CLngLng",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function CLngLng Lib \"\" Alias \"\" (ByVal Expression As Any) As LongLong",
+          "attributes": [
+            "PreserveSig(False)",
+            "DLLStackCheck(False)"
+          ],
+          "description": null
+        },
+        {
+          "name": "CLngPtr",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function CLngPtr Lib \"\" Alias \"\" (ByVal Expression As Any) As LongPtr",
+          "attributes": [
+            "PreserveSig(False)",
+            "DLLStackCheck(False)"
+          ],
+          "description": null
+        },
+        {
+          "name": "CSng",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function CSng Lib \"\" Alias \"\" (ByVal Expression As Any) As Single",
+          "attributes": [
+            "PreserveSig(False)",
+            "DLLStackCheck(False)"
+          ],
+          "description": null
+        },
+        {
+          "name": "CStr",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function CStr Lib \"\" Alias \"\" (ByVal Expression As Any) As String",
+          "attributes": [
+            "PreserveSig(False)",
+            "DLLStackCheck(False)"
+          ],
+          "description": null
+        },
+        {
+          "name": "CType",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function CType Lib \"\" Alias \"\" (ByVal Value As Any) As Variant",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CVar",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function CVar Lib \"\" Alias \"\" (ByVal Expression As Any) As Variant",
+          "attributes": [
+            "PreserveSig(False)",
+            "DLLStackCheck(False)"
+          ],
+          "description": null
+        },
+        {
+          "name": "CVDate",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function CVDate Lib \"\" Alias \"\" (ByRef Expression As Variant) As Variant",
+          "attributes": [
+            "PreserveSig(False)",
+            "DLLStackCheck(False)",
+            "ConstantFoldableNumericsOnly"
+          ],
+          "description": null
+        },
+        {
+          "name": "CVErr",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function CVErr Lib \"\" Alias \"\" (ByRef Expression As Variant) As Variant",
+          "attributes": [
+            "PreserveSig(False)",
+            "DLLStackCheck(False)",
+            "ConstantFoldableNumericsOnly"
+          ],
+          "description": null
+        },
+        {
+          "name": "Error",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function Error Lib \"\" Alias \"\" (Optional ByRef ErrorNumber As Variant) As Variant",
+          "attributes": [
+            "PreserveSig(False)",
+            "DLLStackCheck(False)",
+            "BindOnlyIfStringSuffix",
+            "Optional"
+          ],
+          "description": null
+        },
+        {
+          "name": "Fix",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function Fix Lib \"\" Alias \"\" (ByRef Number As Variant) As Variant",
+          "attributes": [
+            "PreserveSig(False)",
+            "DLLStackCheck(False)",
+            "ConstantFoldableNumericsOnly"
+          ],
+          "description": null
+        },
+        {
+          "name": "Hex",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function Hex Lib \"\" Alias \"\" (ByRef Number As Variant) As Variant",
+          "attributes": [
+            "PreserveSig(False)",
+            "DLLStackCheck(False)",
+            "ConstantFoldableNumericsOnly"
+          ],
+          "description": null
+        },
+        {
+          "name": "Int",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function Int Lib \"\" Alias \"\" (ByRef Number As Variant) As Variant",
+          "attributes": [
+            "PreserveSig(False)",
+            "DLLStackCheck(False)",
+            "ConstantFoldableNumericsOnly"
+          ],
+          "description": null
+        },
+        {
+          "name": "MacID",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function MacID Lib \"\" Alias \"\" (ByVal Constant As String) As Long",
+          "attributes": [
+            "PreserveSig(False)",
+            "DLLStackCheck(False)"
+          ],
+          "description": null
+        },
+        {
+          "name": "Nz",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function Nz Lib \"\" Alias \"\" (ByRef Value As Variant, Optional ByRef ValueIfNull As Variant) As Variant",
+          "attributes": [
+            "PreserveSig(False)",
+            "DLLStackCheck(False)",
+            "ConstantFoldable",
+            "Optional"
+          ],
+          "description": null
+        },
+        {
+          "name": "Oct",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function Oct Lib \"\" Alias \"\" (ByRef Number As Variant) As Variant",
+          "attributes": [
+            "PreserveSig(False)",
+            "DLLStackCheck(False)",
+            "ConstantFoldableNumericsOnly"
+          ],
+          "description": null
+        },
+        {
+          "name": "Str",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function Str Lib \"\" Alias \"\" (ByRef Number As Variant) As Variant",
+          "attributes": [
+            "PreserveSig(False)",
+            "DLLStackCheck(False)",
+            "ConstantFoldableNumericsOnly"
+          ],
+          "description": null
+        },
+        {
+          "name": "Val",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function Val Lib \"\" Alias \"\" (ByVal String As String) As Double",
+          "attributes": [
+            "PreserveSig(False)",
+            "DLLStackCheck(False)",
+            "ConstantFoldable"
+          ],
+          "description": null
+        },
+        {
+          "name": "ValDec",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function ValDec Lib \"\" Alias \"\" (ByVal String As String) As Decimal",
+          "attributes": [
+            "PreserveSig(False)",
+            "DLLStackCheck(False)"
+          ],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "DateTime",
+      "kind": "Module",
+      "file": "DateTime.twin",
+      "access": "Public",
+      "attributes": [],
+      "implements": [],
+      "inherits": null,
+      "members": [
+        {
+          "name": "DateAdd",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function DateAdd Lib \"\" Alias \"\" (ByVal Interval As String, ByVal Number As Double, ByRef Date As Variant) As Variant",
+          "attributes": [
+            "PreserveSig(False)",
+            "DLLStackCheck(False)"
+          ],
+          "description": null
+        },
+        {
+          "name": "DateDiff",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function DateDiff Lib \"\" Alias \"\" (ByVal Interval As String, ByRef Date1 As Variant, ByRef Date2 As Variant, Optional ByVal FirstDayOfWeek As VbDayOfWeek = 1&, Optional ByVal FirstWeekOfYear As VbFirstWeekOfYear = 1&) As Variant",
+          "attributes": [
+            "PreserveSig(False)",
+            "DLLStackCheck(False)",
+            "FirstWeekOfYear"
+          ],
+          "description": null
+        },
+        {
+          "name": "DatePart",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function DatePart Lib \"\" Alias \"\" (ByVal Interval As String, ByRef Date As Variant, Optional ByVal FirstDayOfWeek As VbDayOfWeek = VbDayOfWeek.vbSunday, Optional ByVal FirstWeekOfYear As VbFirstWeekOfYear = VbFirstWeekOfYear.vbFirstJan1) As Variant",
+          "attributes": [
+            "PreserveSig(False)",
+            "DLLStackCheck(False)",
+            "FirstWeekOfYear"
+          ],
+          "description": null
+        },
+        {
+          "name": "DateSerial",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function DateSerial Lib \"\" Alias \"\" (ByVal Year As Integer, ByVal Month As Integer, ByVal Day As Integer) As Variant",
+          "attributes": [
+            "PreserveSig(False)",
+            "DLLStackCheck(False)",
+            "ConstantFoldableNumericsOnly"
+          ],
+          "description": null
+        },
+        {
+          "name": "DateValue",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function DateValue Lib \"\" Alias \"\" (ByVal Date As String) As Variant",
+          "attributes": [
+            "PreserveSig(False)",
+            "DLLStackCheck(False)"
+          ],
+          "description": null
+        },
+        {
+          "name": "Day",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function Day Lib \"\" Alias \"\" (ByRef Date As Variant) As Variant",
+          "attributes": [
+            "PreserveSig(False)",
+            "DLLStackCheck(False)",
+            "ConstantFoldableNumericsOnly"
+          ],
+          "description": null
+        },
+        {
+          "name": "Hour",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function Hour Lib \"\" Alias \"\" (ByRef Time As Variant) As Variant",
+          "attributes": [
+            "PreserveSig(False)",
+            "DLLStackCheck(False)",
+            "ConstantFoldableNumericsOnly"
+          ],
+          "description": null
+        },
+        {
+          "name": "Minute",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function Minute Lib \"\" Alias \"\" (ByRef Time As Variant) As Variant",
+          "attributes": [
+            "PreserveSig(False)",
+            "DLLStackCheck(False)",
+            "ConstantFoldableNumericsOnly"
+          ],
+          "description": null
+        },
+        {
+          "name": "Month",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function Month Lib \"\" Alias \"\" (ByRef Date As Variant) As Variant",
+          "attributes": [
+            "PreserveSig(False)",
+            "DLLStackCheck(False)",
+            "ConstantFoldableNumericsOnly"
+          ],
+          "description": null
+        },
+        {
+          "name": "Second",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function Second Lib \"\" Alias \"\" (ByRef Time As Variant) As Variant",
+          "attributes": [
+            "PreserveSig(False)",
+            "DLLStackCheck(False)",
+            "ConstantFoldableNumericsOnly"
+          ],
+          "description": null
+        },
+        {
+          "name": "TimeSerial",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function TimeSerial Lib \"\" Alias \"\" (ByVal Hour As Integer, ByVal Minute As Integer, ByVal Second As Integer) As Variant",
+          "attributes": [
+            "PreserveSig(False)",
+            "DLLStackCheck(False)",
+            "ConstantFoldableNumericsOnly"
+          ],
+          "description": null
+        },
+        {
+          "name": "TimeValue",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function TimeValue Lib \"\" Alias \"\" (ByVal Time As String) As Variant",
+          "attributes": [
+            "PreserveSig(False)",
+            "DLLStackCheck(False)"
+          ],
+          "description": null
+        },
+        {
+          "name": "Weekday",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function Weekday Lib \"\" Alias \"\" (ByRef Date As Variant, Optional ByVal FirstDayOfWeek As VbDayOfWeek = VbDayOfWeek.vbSunday) As Variant",
+          "attributes": [
+            "PreserveSig(False)",
+            "DLLStackCheck(False)",
+            "ConstantFoldableNumericsOnly"
+          ],
+          "description": null
+        },
+        {
+          "name": "Year",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function Year Lib \"\" Alias \"\" (ByRef Date As Variant) As Variant",
+          "attributes": [
+            "PreserveSig(False)",
+            "DLLStackCheck(False)",
+            "ConstantFoldableNumericsOnly"
+          ],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "ErrObject",
+      "kind": "CoClass",
+      "file": "ErrObject.twin",
+      "access": "Public",
+      "attributes": [
+        "CoClassId",
+        "COMCreatable(False)"
+      ],
+      "implements": [],
+      "inherits": null,
+      "members": [
+        {
+          "name": "_ErrObject",
+          "kind": "CoClassInterface",
+          "access": null,
+          "signature": "[Default] Interface _ErrObject",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "FileSystem",
+      "kind": "Module",
+      "file": "FileSystem.twin",
+      "access": "Public",
+      "attributes": [],
+      "implements": [],
+      "inherits": null,
+      "members": [
+        {
+          "name": "_FileRename",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Sub _FileRename Lib \"\" Alias \"\" (ByVal OriginalName As String, ByVal NewName As String)",
+          "attributes": [
+            "PreserveSig(False)",
+            "DLLStackCheck(False)",
+            "Hidden",
+            "Restricted"
+          ],
+          "description": null
+        },
+        {
+          "name": "ChDir",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Sub ChDir Lib \"\" Alias \"\" (ByVal Path As String)",
+          "attributes": [
+            "PreserveSig(False)",
+            "DLLStackCheck(False)"
+          ],
+          "description": null
+        },
+        {
+          "name": "ChDrive",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Sub ChDrive Lib \"\" Alias \"\" (ByVal Path As String)",
+          "attributes": [
+            "PreserveSig(False)",
+            "DLLStackCheck(False)"
+          ],
+          "description": null
+        },
+        {
+          "name": "CurDir",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function CurDir Lib \"\" Alias \"\" (Optional ByRef Drive As Variant) As Variant",
+          "attributes": [
+            "PreserveSig(False)",
+            "DLLStackCheck(False)"
+          ],
+          "description": null
+        },
+        {
+          "name": "Dir",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function Dir Lib \"\" Alias \"\" (Optional ByRef PathName As Variant, Optional ByVal Attributes As VbFileAttribute = 0&) As String",
+          "attributes": [
+            "PreserveSig(False)",
+            "DLLStackCheck(False)",
+            "Attributes"
+          ],
+          "description": null
+        },
+        {
+          "name": "EOF",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function EOF Lib \"\" Alias \"\" (ByVal FileNumber As Integer) As Boolean",
+          "attributes": [
+            "PreserveSig(False)",
+            "DLLStackCheck(False)"
+          ],
+          "description": null
+        },
+        {
+          "name": "FileAttr",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function FileAttr Lib \"\" Alias \"\" (ByVal FileNumber As Integer, Optional ByVal ReturnType As Integer = 1) As Long",
+          "attributes": [
+            "PreserveSig(False)",
+            "DLLStackCheck(False)"
+          ],
+          "description": null
+        },
+        {
+          "name": "FileCopy",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Sub FileCopy Lib \"\" Alias \"\" (ByVal Source As String, ByVal Destination As String)",
+          "attributes": [
+            "PreserveSig(False)",
+            "DLLStackCheck(False)"
+          ],
+          "description": null
+        },
+        {
+          "name": "FileDateTime",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function FileDateTime Lib \"\" Alias \"\" (ByVal PathName As String) As Variant",
+          "attributes": [
+            "PreserveSig(False)",
+            "DLLStackCheck(False)"
+          ],
+          "description": null
+        },
+        {
+          "name": "FileLen",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function FileLen Lib \"\" Alias \"\" (ByVal PathName As String) As Long",
+          "attributes": [
+            "PreserveSig(False)",
+            "DLLStackCheck(False)"
+          ],
+          "description": null
+        },
+        {
+          "name": "FreeFile",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function FreeFile Lib \"\" Alias \"\" (Optional ByRef RangeNumber As Variant) As Integer",
+          "attributes": [
+            "PreserveSig(False)",
+            "DLLStackCheck(False)"
+          ],
+          "description": null
+        },
+        {
+          "name": "GetAttr",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function GetAttr Lib \"\" Alias \"\" (ByVal PathName As String) As VbFileAttribute",
+          "attributes": [
+            "PreserveSig(False)",
+            "DLLStackCheck(False)"
+          ],
+          "description": null
+        },
+        {
+          "name": "Kill",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Sub Kill Lib \"\" Alias \"\" (ByRef PathName As Variant)",
+          "attributes": [
+            "PreserveSig(False)",
+            "DLLStackCheck(False)"
+          ],
+          "description": null
+        },
+        {
+          "name": "Loc",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function Loc Lib \"\" Alias \"\" (ByVal FileNumber As Integer) As Long",
+          "attributes": [
+            "PreserveSig(False)",
+            "DLLStackCheck(False)"
+          ],
+          "description": null
+        },
+        {
+          "name": "LOF",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function LOF Lib \"\" Alias \"\" (ByVal FileNumber As Integer) As Long",
+          "attributes": [
+            "PreserveSig(False)",
+            "DLLStackCheck(False)"
+          ],
+          "description": null
+        },
+        {
+          "name": "MkDir",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Sub MkDir Lib \"\" Alias \"\" (ByVal PathName As String)",
+          "attributes": [
+            "PreserveSig(False)",
+            "DLLStackCheck(False)"
+          ],
+          "description": null
+        },
+        {
+          "name": "Reset",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Sub Reset Lib \"\" Alias \"\" ()",
+          "attributes": [
+            "PreserveSig(False)",
+            "DLLStackCheck(False)"
+          ],
+          "description": null
+        },
+        {
+          "name": "RmDir",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Sub RmDir Lib \"\" Alias \"\" (ByVal PathName As String)",
+          "attributes": [
+            "PreserveSig(False)",
+            "DLLStackCheck(False)"
+          ],
+          "description": null
+        },
+        {
+          "name": "Seek",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function Seek Lib \"\" Alias \"\" (ByVal FileNumber As Integer) As Long",
+          "attributes": [
+            "PreserveSig(False)",
+            "DLLStackCheck(False)"
+          ],
+          "description": null
+        },
+        {
+          "name": "SetAttr",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function SetAttr Lib \"\" Alias \"\" (ByVal PathName As String, ByVal Attributes As VbFileAttribute) As Long",
+          "attributes": [
+            "PreserveSig(False)",
+            "DLLStackCheck(False)"
+          ],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "Financial",
+      "kind": "Module",
+      "file": "Financial.twin",
+      "access": "Public",
+      "attributes": [],
+      "implements": [],
+      "inherits": null,
+      "members": [
+        {
+          "name": "DDB",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function DDB Lib \"\" Alias \"\" (ByVal Cost As Double, ByVal Salvage As Double, ByVal Life As Double, ByVal Period As Double, Optional ByRef Factor As Variant) As Double",
+          "attributes": [
+            "PreserveSig(False)",
+            "DLLStackCheck(False)",
+            "ConstantFoldable"
+          ],
+          "description": null
+        },
+        {
+          "name": "FV",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function FV Lib \"\" Alias \"\" (ByVal Rate As Double, ByVal NPer As Double, ByVal Pmt As Double, Optional ByRef PV As Variant, Optional ByRef Type As Variant) As Double",
+          "attributes": [
+            "PreserveSig(False)",
+            "DLLStackCheck(False)",
+            "ConstantFoldable",
+            "Type"
+          ],
+          "description": null
+        },
+        {
+          "name": "IPmt",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function IPmt Lib \"\" Alias \"\" (ByVal Rate As Double, ByVal Per As Double, ByVal NPer As Double, ByVal PV As Double, Optional ByRef FV As Variant, Optional ByRef Due As Variant) As Double",
+          "attributes": [
+            "PreserveSig(False)",
+            "DLLStackCheck(False)",
+            "ConstantFoldable",
+            "Due"
+          ],
+          "description": null
+        },
+        {
+          "name": "IRR",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function IRR Lib \"\" Alias \"\" (ByRef ValueArray() As Double, Optional ByVal Guess As Double) As Double",
+          "attributes": [
+            "PreserveSig(False)",
+            "DLLStackCheck(False)",
+            "ConstantFoldable"
+          ],
+          "description": null
+        },
+        {
+          "name": "MIRR",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function MIRR Lib \"\" Alias \"\" (ByRef ValueArray() As Double, ByVal FinanceRate As Double, ByVal ReinvestRate As Double) As Double",
+          "attributes": [
+            "PreserveSig(False)",
+            "DLLStackCheck(False)",
+            "ConstantFoldable"
+          ],
+          "description": null
+        },
+        {
+          "name": "NPer",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function NPer Lib \"\" Alias \"\" (ByVal Rate As Double, ByVal Pmt As Double, ByVal PV As Double, Optional ByRef FV As Variant, Optional ByRef Due As Variant) As Double",
+          "attributes": [
+            "PreserveSig(False)",
+            "DLLStackCheck(False)",
+            "ConstantFoldable",
+            "Due"
+          ],
+          "description": null
+        },
+        {
+          "name": "NPV",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function NPV Lib \"\" Alias \"\" (ByVal Rate As Double, ByRef ValueArray() As Double) As Double",
+          "attributes": [
+            "PreserveSig(False)",
+            "DLLStackCheck(False)",
+            "ConstantFoldable"
+          ],
+          "description": null
+        },
+        {
+          "name": "Pmt",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function Pmt Lib \"\" Alias \"\" (ByVal Rate As Double, ByVal NPer As Double, ByVal PV As Double, Optional ByRef FV As Variant, Optional ByRef Due As Variant) As Double",
+          "attributes": [
+            "PreserveSig(False)",
+            "DLLStackCheck(False)",
+            "ConstantFoldable",
+            "Due"
+          ],
+          "description": null
+        },
+        {
+          "name": "PPmt",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function PPmt Lib \"\" Alias \"\" (ByVal Rate As Double, ByVal Per As Double, ByVal NPer As Double, ByVal PV As Double, Optional ByRef FV As Variant, Optional ByRef Due As Variant) As Double",
+          "attributes": [
+            "PreserveSig(False)",
+            "DLLStackCheck(False)",
+            "ConstantFoldable",
+            "Due"
+          ],
+          "description": null
+        },
+        {
+          "name": "PV",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function PV Lib \"\" Alias \"\" (ByVal Rate As Double, ByVal NPer As Double, ByVal Pmt As Double, Optional ByRef FV As Variant, Optional ByRef Due As Variant) As Double",
+          "attributes": [
+            "PreserveSig(False)",
+            "DLLStackCheck(False)",
+            "ConstantFoldable",
+            "Due"
+          ],
+          "description": null
+        },
+        {
+          "name": "Rate",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function Rate Lib \"\" Alias \"\" (ByVal NPer As Double, ByVal Pmt As Double, ByVal PV As Double, Optional ByRef FV As Variant, Optional ByRef Due As Variant, Optional ByRef Guess As Variant) As Double",
+          "attributes": [
+            "PreserveSig(False)",
+            "DLLStackCheck(False)",
+            "ConstantFoldable",
+            "Due",
+            "Guess"
+          ],
+          "description": null
+        },
+        {
+          "name": "SLN",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function SLN Lib \"\" Alias \"\" (ByVal Cost As Double, ByVal Salvage As Double, ByVal Life As Double) As Double",
+          "attributes": [
+            "PreserveSig(False)",
+            "DLLStackCheck(False)",
+            "ConstantFoldable"
+          ],
+          "description": null
+        },
+        {
+          "name": "SYD",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function SYD Lib \"\" Alias \"\" (ByVal Cost As Double, ByVal Salvage As Double, ByVal Life As Double, ByVal Period As Double) As Double",
+          "attributes": [
+            "PreserveSig(False)",
+            "DLLStackCheck(False)",
+            "ConstantFoldable"
+          ],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "GetMessageHookHelper",
+      "kind": "Module",
+      "file": "_HiddenModule.twin",
+      "access": "Public",
+      "attributes": [],
+      "implements": [],
+      "inherits": null,
+      "members": [
+        {
+          "name": "HookMSG",
+          "kind": "Type",
+          "access": null,
+          "signature": "Type HookMSG",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "HookPOINT",
+          "kind": "Type",
+          "access": null,
+          "signature": "Type HookPOINT",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "IGetMessageHook",
+      "kind": "Interface",
+      "file": "_HiddenModule.twin",
+      "access": "Public",
+      "attributes": [
+        "InterfaceId"
+      ],
+      "implements": [],
+      "inherits": "stdole.IUnknown",
+      "members": [
+        {
+          "name": "EnumDescendantsModeFlags",
+          "kind": "Enum",
+          "access": null,
+          "signature": "Enum EnumDescendantsModeFlags",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "RegisterMessage",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub RegisterMessage(ByVal ParentHWND As LongPtr, ByVal Mode As EnumDescendantsModeFlags, ByVal MessageType As Integer, ByVal Callback As GetMessageHookHelper.GetMessageHandler)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Start",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub Start()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Stop",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub Stop()",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "Information",
+      "kind": "Module",
+      "file": "Information.twin",
+      "access": "Public",
+      "attributes": [],
+      "implements": [],
+      "inherits": null,
+      "members": [
+        {
+          "name": "Erl",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function Erl Lib \"\" Alias \"\" () As Long",
+          "attributes": [
+            "PreserveSig(True)",
+            "DLLStackCheck(False)"
+          ],
+          "description": null
+        },
+        {
+          "name": "IMEStatus",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function IMEStatus Lib \"\" Alias \"\" () As VbIMEStatus",
+          "attributes": [
+            "PreserveSig(False)",
+            "DLLStackCheck(False)"
+          ],
+          "description": null
+        },
+        {
+          "name": "IsArray",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function IsArray Lib \"\" Alias \"\" (ByRef VarName As Variant) As Boolean",
+          "attributes": [
+            "PreserveSig(True)",
+            "DLLStackCheck(False)",
+            "ConstantFoldable"
+          ],
+          "description": null
+        },
+        {
+          "name": "IsArrayInitialized",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function IsArrayInitialized Lib \"\" Alias \"\" (ByRef VarName As Variant) As Boolean",
+          "attributes": [
+            "PreserveSig(True)",
+            "DLLStackCheck(False)",
+            "ConstantFoldable"
+          ],
+          "description": null
+        },
+        {
+          "name": "IsDate",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function IsDate Lib \"\" Alias \"\" (ByRef Expression As Variant) As Boolean",
+          "attributes": [
+            "PreserveSig(True)",
+            "DLLStackCheck(False)",
+            "ConstantFoldableNumericsOnly"
+          ],
+          "description": null
+        },
+        {
+          "name": "IsEmpty",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function IsEmpty Lib \"\" Alias \"\" (ByRef Expression As Variant) As Boolean",
+          "attributes": [
+            "PreserveSig(True)",
+            "DLLStackCheck(False)",
+            "ConstantFoldable"
+          ],
+          "description": null
+        },
+        {
+          "name": "IsError",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function IsError Lib \"\" Alias \"\" (ByRef Expression As Variant) As Boolean",
+          "attributes": [
+            "PreserveSig(True)",
+            "DLLStackCheck(False)",
+            "ConstantFoldable"
+          ],
+          "description": null
+        },
+        {
+          "name": "IsMissing",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function IsMissing Lib \"\" Alias \"\" (ByRef ArgName As Variant) As Boolean",
+          "attributes": [
+            "PreserveSig(True)",
+            "DLLStackCheck(False)",
+            "ConstantFoldable"
+          ],
+          "description": null
+        },
+        {
+          "name": "IsNull",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function IsNull Lib \"\" Alias \"\" (ByRef Expression As Variant) As Boolean",
+          "attributes": [
+            "PreserveSig(True)",
+            "DLLStackCheck(False)",
+            "ConstantFoldable"
+          ],
+          "description": null
+        },
+        {
+          "name": "IsNumeric",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function IsNumeric Lib \"\" Alias \"\" (ByRef Expression As Variant) As Boolean",
+          "attributes": [
+            "PreserveSig(True)",
+            "DLLStackCheck(False)",
+            "ConstantFoldableNumericsOnly"
+          ],
+          "description": null
+        },
+        {
+          "name": "IsObject",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function IsObject Lib \"\" Alias \"\" (ByRef Expression As Variant) As Boolean",
+          "attributes": [
+            "PreserveSig(True)",
+            "DLLStackCheck(False)"
+          ],
+          "description": null
+        },
+        {
+          "name": "LBound",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function LBound Lib \"\" Alias \"\" (ByRef ArrayName As Any) As Long",
+          "attributes": [
+            "PreserveSig(False)",
+            "DLLStackCheck(False)"
+          ],
+          "description": null
+        },
+        {
+          "name": "LBound",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function LBound Lib \"\" Alias \"\" (ByRef ArrayName As Any, ByVal Dimension As Long) As Long",
+          "attributes": [
+            "PreserveSig(False)",
+            "DLLStackCheck(False)"
+          ],
+          "description": null
+        },
+        {
+          "name": "QBColor",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function QBColor Lib \"\" Alias \"\" (ByVal index As Integer) As Long",
+          "attributes": [
+            "PreserveSig(False)",
+            "DLLStackCheck(False)",
+            "ConstantFoldable"
+          ],
+          "description": null
+        },
+        {
+          "name": "RGB",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function RGB Lib \"\" Alias \"\" (ByVal Red As Integer, ByVal Green As Integer, ByVal Blue As Integer) As Long",
+          "attributes": [
+            "PreserveSig(False)",
+            "DLLStackCheck(False)",
+            "ConstantFoldable"
+          ],
+          "description": null
+        },
+        {
+          "name": "RGB_B",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function RGB_B Lib \"\" Alias \"\" (ByVal RGBA As Long) As Integer",
+          "attributes": [
+            "PreserveSig(True)",
+            "DLLStackCheck(False)",
+            "ConstantFoldable"
+          ],
+          "description": null
+        },
+        {
+          "name": "RGB_G",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function RGB_G Lib \"\" Alias \"\" (ByVal RGBA As Long) As Integer",
+          "attributes": [
+            "PreserveSig(True)",
+            "DLLStackCheck(False)",
+            "ConstantFoldable"
+          ],
+          "description": null
+        },
+        {
+          "name": "RGB_R",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function RGB_R Lib \"\" Alias \"\" (ByVal RGBA As Long) As Integer",
+          "attributes": [
+            "PreserveSig(True)",
+            "DLLStackCheck(False)",
+            "ConstantFoldable"
+          ],
+          "description": null
+        },
+        {
+          "name": "RGBA",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function RGBA Lib \"\" Alias \"\" (ByVal Red As Integer, ByVal Green As Integer, ByVal Blue As Integer, ByVal Alpha As Integer) As Long",
+          "attributes": [
+            "PreserveSig(False)",
+            "DLLStackCheck(False)",
+            "ConstantFoldable"
+          ],
+          "description": null
+        },
+        {
+          "name": "RGBA_A",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function RGBA_A Lib \"\" Alias \"\" (ByVal RGBA As Long) As Integer",
+          "attributes": [
+            "PreserveSig(True)",
+            "DLLStackCheck(False)",
+            "ConstantFoldable"
+          ],
+          "description": null
+        },
+        {
+          "name": "TranslateColor",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function TranslateColor Lib \"\" Alias \"\" (ByVal ColorValue As Long, Optional ByVal hPalettePtr As LongPtr = 0&) As Long",
+          "attributes": [
+            "PreserveSig(False)",
+            "DLLStackCheck(False)"
+          ],
+          "description": null
+        },
+        {
+          "name": "TypeName",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function TypeName Lib \"\" Alias \"\" (ByRef VarName As Variant) As String",
+          "attributes": [
+            "PreserveSig(False)",
+            "DLLStackCheck(False)",
+            "ConstantFoldable"
+          ],
+          "description": null
+        },
+        {
+          "name": "UBound",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function UBound Lib \"\" Alias \"\" (ByRef ArrayName As Any) As Long",
+          "attributes": [
+            "PreserveSig(False)",
+            "DLLStackCheck(False)"
+          ],
+          "description": null
+        },
+        {
+          "name": "UBound",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function UBound Lib \"\" Alias \"\" (ByRef ArrayName As Any, ByVal Dimension As Long) As Long",
+          "attributes": [
+            "PreserveSig(False)",
+            "DLLStackCheck(False)"
+          ],
+          "description": null
+        },
+        {
+          "name": "VarType",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function VarType Lib \"\" Alias \"\" (ByRef VarName As Variant) As VbVarType",
+          "attributes": [
+            "PreserveSig(True)",
+            "DLLStackCheck(False)"
+          ],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "Interaction",
+      "kind": "Module",
+      "file": "Interaction.twin",
+      "access": "Public",
+      "attributes": [],
+      "implements": [],
+      "inherits": null,
+      "members": [
+        {
+          "name": "AppActivate",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Sub AppActivate Lib \"\" Alias \"\" (ByRef Title As Variant, Optional ByRef Wait As Variant)",
+          "attributes": [
+            "PreserveSig(False)",
+            "DLLStackCheck(False)"
+          ],
+          "description": null
+        },
+        {
+          "name": "Beep",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Sub Beep Lib \"\" Alias \"\" ()",
+          "attributes": [
+            "PreserveSig(False)",
+            "DLLStackCheck(False)"
+          ],
+          "description": null
+        },
+        {
+          "name": "CallByDispId",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function CallByDispId Lib \"\" Alias \"\" (ByVal Object As Object, ByVal DispId As Long, ByVal CallType As VbCallType, ParamArray Args() As Variant) As Variant",
+          "attributes": [
+            "PreserveSig(False)",
+            "DLLStackCheck(False)"
+          ],
+          "description": null
+        },
+        {
+          "name": "CallByName",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function CallByName Lib \"\" Alias \"\" (ByVal Object As Object, ByVal ProcName As String, ByVal CallType As VbCallType, ParamArray Args() As Variant) As Variant",
+          "attributes": [
+            "PreserveSig(False)",
+            "DLLStackCheck(False)"
+          ],
+          "description": null
+        },
+        {
+          "name": "Choose",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function Choose Lib \"\" Alias \"\" (ByVal Index As Single, ParamArray Choice() As Variant) As Variant",
+          "attributes": [
+            "PreserveSig(False)",
+            "DLLStackCheck(False)",
+            "ConstantFoldable"
+          ],
+          "description": null
+        },
+        {
+          "name": "Command",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function Command Lib \"\" Alias \"\" () As Variant",
+          "attributes": [
+            "PreserveSig(False)",
+            "DLLStackCheck(False)"
+          ],
+          "description": null
+        },
+        {
+          "name": "CreateObject",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function CreateObject Lib \"\" Alias \"\" (ByVal Class As String) As Variant",
+          "attributes": [
+            "PreserveSig(False)",
+            "DLLStackCheck(False)"
+          ],
+          "description": null
+        },
+        {
+          "name": "CreateObject",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function CreateObject Lib \"\" Alias \"\" (ByVal Class As String, ByVal ServerName As String) As Variant",
+          "attributes": [
+            "PreserveSig(False)",
+            "DLLStackCheck(False)"
+          ],
+          "description": null
+        },
+        {
+          "name": "DeleteSetting",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Sub DeleteSetting Lib \"\" Alias \"\" (ByVal AppName As String, Optional ByVal Section As Variant, Optional ByVal Key As Variant)",
+          "attributes": [
+            "PreserveSig(False)",
+            "DLLStackCheck(False)",
+            "Key"
+          ],
+          "description": null
+        },
+        {
+          "name": "DoEvents",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function DoEvents Lib \"\" Alias \"\" () As Integer",
+          "attributes": [
+            "PreserveSig(True)",
+            "DLLStackCheck(False)"
+          ],
+          "description": null
+        },
+        {
+          "name": "Environ",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function Environ Lib \"\" Alias \"\" (ByRef Expression As Variant) As Variant",
+          "attributes": [
+            "PreserveSig(False)",
+            "DLLStackCheck(False)"
+          ],
+          "description": null
+        },
+        {
+          "name": "GetAllSettings",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function GetAllSettings Lib \"\" Alias \"\" (ByVal AppName As String, ByVal Section As String) As Variant",
+          "attributes": [
+            "PreserveSig(False)",
+            "DLLStackCheck(False)"
+          ],
+          "description": null
+        },
+        {
+          "name": "GetObject",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function GetObject Lib \"\" Alias \"\" (Optional ByRef PathName As Variant, Optional ByRef Class As Variant) As Object",
+          "attributes": [
+            "PreserveSig(False)",
+            "DLLStackCheck(False)",
+            "Class"
+          ],
+          "description": null
+        },
+        {
+          "name": "GetSetting",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function GetSetting Lib \"\" Alias \"\" (ByVal AppName As String, ByVal Section As String, ByVal Key As String, Optional ByVal Default As Variant) As String",
+          "attributes": [
+            "PreserveSig(False)",
+            "DLLStackCheck(False)"
+          ],
+          "description": null
+        },
+        {
+          "name": "If",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function If Lib \"\" Alias \"\" (ByRef ExpressionTruePart As Variant, ByRef FalsePart As Variant) As Variant",
+          "attributes": [
+            "PreserveSig(False)",
+            "DLLStackCheck(False)"
+          ],
+          "description": null
+        },
+        {
+          "name": "If",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function If Lib \"\" Alias \"\" (ByRef Expression As Variant, ByRef TruePart As Variant, ByRef FalsePart As Variant) As Variant",
+          "attributes": [
+            "PreserveSig(False)",
+            "DLLStackCheck(False)"
+          ],
+          "description": null
+        },
+        {
+          "name": "IIf",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function IIf Lib \"\" Alias \"\" (ByRef Expression As Variant, ByRef TruePart As Variant, ByRef FalsePart As Variant) As Variant",
+          "attributes": [
+            "PreserveSig(False)",
+            "DLLStackCheck(False)",
+            "ConstantFoldable"
+          ],
+          "description": null
+        },
+        {
+          "name": "InputBox",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function InputBox Lib \"\" Alias \"\" (ByRef Prompt As Variant, Optional ByRef Title As Variant, Optional ByRef Default As Variant, Optional ByRef XPos As Variant, Optional ByRef YPos As Variant, Optional ByRef HelpFile As Variant, Optional ByRef Context As Variant) As Variant",
+          "attributes": [
+            "PreserveSig(False)",
+            "DLLStackCheck(False)",
+            "default",
+            "xpos",
+            "ypos",
+            "helpfile",
+            "context"
+          ],
+          "description": null
+        },
+        {
+          "name": "InputBox",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function InputBox Lib \"\" Alias \"\" (ByRef Prompt As Variant, Optional ByRef Title As Variant, Optional ByRef Default As Variant, Optional ByRef XPos As Variant, Optional ByRef YPos As Variant, Optional ByRef HelpFile As Variant, Optional ByRef Context As Variant) As Variant",
+          "attributes": [
+            "PreserveSig(False)",
+            "DLLStackCheck(False)",
+            "default",
+            "xpos",
+            "ypos",
+            "helpfile",
+            "context"
+          ],
+          "description": null
+        },
+        {
+          "name": "MacScript",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function MacScript Lib \"\" Alias \"\" (ByVal Script As String) As String",
+          "attributes": [
+            "PreserveSig(False)",
+            "DLLStackCheck(False)"
+          ],
+          "description": "This function is not implemented in twinBASIC and will always throw an error."
+        },
+        {
+          "name": "MsgBox",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function MsgBox Lib \"\" Alias \"\" (ByRef Prompt As Variant, Optional ByVal Buttons As VbMsgBoxStyle = 0&, Optional ByRef Title As Variant, Optional ByRef HelpFile As Variant, Optional ByRef Context As Variant) As VbMsgBoxResult",
+          "attributes": [
+            "PreserveSig(False)",
+            "DLLStackCheck(False)",
+            "title",
+            "helpfile",
+            "context"
+          ],
+          "description": null
+        },
+        {
+          "name": "MsgBox",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function MsgBox Lib \"\" Alias \"\" (ByRef Prompt As Variant, Optional ByVal Buttons As VbMsgBoxStyle = vbOKOnly, Optional ByRef Title As Variant, Optional ByRef HelpFile As Variant, Optional ByRef Context As Variant) As VbMsgBoxResult",
+          "attributes": [
+            "PreserveSig(False)",
+            "DLLStackCheck(False)",
+            "title",
+            "helpfile",
+            "context"
+          ],
+          "description": null
+        },
+        {
+          "name": "Partition",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function Partition Lib \"\" Alias \"\" (ByRef Number As Variant, ByRef Start As Variant, ByRef Stop As Variant, ByRef Interval As Variant) As Variant",
+          "attributes": [
+            "PreserveSig(False)",
+            "DLLStackCheck(False)"
+          ],
+          "description": null
+        },
+        {
+          "name": "RaiseEventByName",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function RaiseEventByName Lib \"\" Alias \"\" (ByVal Object As Object, ByVal ProcName As String, Optional ByRef ArgsArray As Variant) As Variant",
+          "attributes": [
+            "PreserveSig(False)",
+            "DLLStackCheck(False)"
+          ],
+          "description": null
+        },
+        {
+          "name": "RaiseEventByName2",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function RaiseEventByName2 Lib \"\" Alias \"\" (ByVal Object As Object, ByVal ProcName As String, ParamArray Args() As Variant) As Variant",
+          "attributes": [
+            "PreserveSig(False)",
+            "DLLStackCheck(False)"
+          ],
+          "description": null
+        },
+        {
+          "name": "RaiseEventByNameAndIID",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function RaiseEventByNameAndIID Lib \"\" Alias \"\" (ByVal IIDString As String, ByVal Object As Object, ByVal ProcName As String, Optional ArgsArray As Variant) As Variant",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "RaiseEventByNameAndIID2",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function RaiseEventByNameAndIID2 Lib \"\" Alias \"\" (ByVal IIDString As String, ByVal Object As Object, ByVal ProcName As String, ParamArray Args() As Variant) As Variant",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SaveSetting",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Sub SaveSetting Lib \"\" Alias \"\" (ByVal AppName As String, ByVal Section As String, ByVal Key As String, ByVal Setting As String)",
+          "attributes": [
+            "PreserveSig(False)",
+            "DLLStackCheck(False)"
+          ],
+          "description": null
+        },
+        {
+          "name": "SendKeys",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Sub SendKeys Lib \"\" Alias \"\" (ByVal String As String, Optional ByVal Wait As Variant)",
+          "attributes": [
+            "PreserveSig(False)",
+            "DLLStackCheck(False)"
+          ],
+          "description": null
+        },
+        {
+          "name": "Shell",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function Shell Lib \"\" Alias \"\" (ByRef PathName As Variant, Optional ByVal WindowStyle As VbAppWinStyle = VbAppWinStyle.vbMinimizedFocus) As Double",
+          "attributes": [
+            "PreserveSig(False)",
+            "DLLStackCheck(False)"
+          ],
+          "description": null
+        },
+        {
+          "name": "Switch",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function Switch Lib \"\" Alias \"\" (ParamArray VarExpr() As Variant) As Variant",
+          "attributes": [
+            "PreserveSig(False)",
+            "DLLStackCheck(False)",
+            "ConstantFoldable"
+          ],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "ITbCustomBinder",
+      "kind": "Interface",
+      "file": "ExpressionService.twin",
+      "access": "Public",
+      "attributes": [
+        "InterfaceId"
+      ],
+      "implements": [],
+      "inherits": "IUnknown",
+      "members": [
+        {
+          "name": "Bind",
+          "kind": "Function",
+          "access": null,
+          "signature": "Function Bind(ByVal Symbol As String, ByVal ArgCount As Long) As ITbExpression",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "ITbExpression",
+      "kind": "Interface",
+      "file": "ExpressionService.twin",
+      "access": "Public",
+      "attributes": [
+        "InterfaceId"
+      ],
+      "implements": [],
+      "inherits": "stdole.IUnknown",
+      "members": [
+        {
+          "name": "Evaluate",
+          "kind": "Function",
+          "access": null,
+          "signature": "Function Evaluate() As Variant",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "ITbExpressionService",
+      "kind": "Interface",
+      "file": "ExpressionService.twin",
+      "access": "Public",
+      "attributes": [
+        "InterfaceId"
+      ],
+      "implements": [],
+      "inherits": "stdole.IUnknown",
+      "members": [
+        {
+          "name": "AddCustomBinder",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub AddCustomBinder(ByVal CustomBinder As ITbCustomBinder)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "AddCustomBinderObject",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub AddCustomBinderObject(ByVal Name As String, ByVal Object As Object, ByVal Flags As ExpressionEngineBinderFlags = 0)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "AddStdLibraryBinder",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub AddStdLibraryBinder()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Compile",
+          "kind": "Function",
+          "access": null,
+          "signature": "Function Compile(ByVal Expression As String) As ITbExpression",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ExpressionEngineBinderFlags",
+          "kind": "Enum",
+          "access": null,
+          "signature": "Enum ExpressionEngineBinderFlags",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "Math",
+      "kind": "Module",
+      "file": "Math.twin",
+      "access": "Public",
+      "attributes": [],
+      "implements": [],
+      "inherits": null,
+      "members": [
+        {
+          "name": "Abs",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function Abs Lib \"\" Alias \"\" (ByRef Number As Variant) As Variant",
+          "attributes": [
+            "PreserveSig(False)",
+            "DLLStackCheck(False)",
+            "ConstantFoldableNumericsOnly"
+          ],
+          "description": null
+        },
+        {
+          "name": "Atn",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function Atn Lib \"\" Alias \"\" (ByVal Number As Double) As Double",
+          "attributes": [
+            "PreserveSig(False)",
+            "DLLStackCheck(False)",
+            "ConstantFoldable"
+          ],
+          "description": null
+        },
+        {
+          "name": "Cos",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function Cos Lib \"\" Alias \"\" (ByVal Number As Double) As Double",
+          "attributes": [
+            "PreserveSig(False)",
+            "DLLStackCheck(False)",
+            "ConstantFoldable"
+          ],
+          "description": null
+        },
+        {
+          "name": "Exp",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function Exp Lib \"\" Alias \"\" (ByVal Number As Double) As Double",
+          "attributes": [
+            "PreserveSig(False)",
+            "DLLStackCheck(False)",
+            "ConstantFoldable"
+          ],
+          "description": null
+        },
+        {
+          "name": "Log",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function Log Lib \"\" Alias \"\" (ByVal Number As Double) As Double",
+          "attributes": [
+            "PreserveSig(False)",
+            "DLLStackCheck(False)",
+            "ConstantFoldable"
+          ],
+          "description": null
+        },
+        {
+          "name": "Randomize",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Sub Randomize Lib \"\" Alias \"\" (Optional ByRef Number As Variant)",
+          "attributes": [
+            "PreserveSig(False)",
+            "DLLStackCheck(False)"
+          ],
+          "description": null
+        },
+        {
+          "name": "Rnd",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function Rnd Lib \"\" Alias \"\" (Optional ByRef Number As Variant) As Single",
+          "attributes": [
+            "PreserveSig(False)",
+            "DLLStackCheck(False)"
+          ],
+          "description": null
+        },
+        {
+          "name": "Round",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function Round Lib \"\" Alias \"\" (ByRef Number As Variant, Optional ByVal NumDigitsAfterDecimal As Long = 0&) As Variant",
+          "attributes": [
+            "PreserveSig(False)",
+            "DLLStackCheck(False)",
+            "ConstantFoldableNumericsOnly"
+          ],
+          "description": null
+        },
+        {
+          "name": "Sgn",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function Sgn Lib \"\" Alias \"\" (ByRef Number As Variant) As Variant",
+          "attributes": [
+            "PreserveSig(False)",
+            "DLLStackCheck(False)",
+            "ConstantFoldableNumericsOnly"
+          ],
+          "description": null
+        },
+        {
+          "name": "Sin",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function Sin Lib \"\" Alias \"\" (ByVal Number As Double) As Double",
+          "attributes": [
+            "PreserveSig(False)",
+            "DLLStackCheck(False)",
+            "ConstantFoldable"
+          ],
+          "description": null
+        },
+        {
+          "name": "Sqr",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function Sqr Lib \"\" Alias \"\" (ByVal Number As Double) As Double",
+          "attributes": [
+            "PreserveSig(False)",
+            "DLLStackCheck(False)",
+            "ConstantFoldable"
+          ],
+          "description": null
+        },
+        {
+          "name": "Tan",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function Tan Lib \"\" Alias \"\" (ByVal Number As Double) As Double",
+          "attributes": [
+            "PreserveSig(False)",
+            "DLLStackCheck(False)",
+            "ConstantFoldable"
+          ],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "Strings",
+      "kind": "Module",
+      "file": "Strings.twin",
+      "access": "Public",
+      "attributes": [],
+      "implements": [],
+      "inherits": null,
+      "members": [
+        {
+          "name": "Asc",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function Asc Lib \"\" Alias \"\" (ByVal String As String) As Integer",
+          "attributes": [
+            "PreserveSig(False)",
+            "DLLStackCheck(False)"
+          ],
+          "description": null
+        },
+        {
+          "name": "AscB",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function AscB Lib \"\" Alias \"\" (ByVal String As String) As Byte",
+          "attributes": [
+            "PreserveSig(False)",
+            "DLLStackCheck(False)",
+            "ConstantFoldable"
+          ],
+          "description": null
+        },
+        {
+          "name": "AscW",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function AscW Lib \"\" Alias \"\" (ByVal String As String) As Integer",
+          "attributes": [
+            "PreserveSig(False)",
+            "DLLStackCheck(False)",
+            "ConstantFoldable"
+          ],
+          "description": null
+        },
+        {
+          "name": "Chr",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function Chr Lib \"\" Alias \"\" (ByVal CharCode As Long) As Variant",
+          "attributes": [
+            "PreserveSig(False)",
+            "DLLStackCheck(False)"
+          ],
+          "description": null
+        },
+        {
+          "name": "ChrB",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function ChrB Lib \"\" Alias \"\" (ByVal CharCode As Long) As Variant",
+          "attributes": [
+            "PreserveSig(False)",
+            "DLLStackCheck(False)",
+            "ConstantFoldable"
+          ],
+          "description": null
+        },
+        {
+          "name": "ChrW",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function ChrW Lib \"\" Alias \"\" (ByVal CharCode As Long) As Variant",
+          "attributes": [
+            "PreserveSig(False)",
+            "DLLStackCheck(False)",
+            "ConstantFoldable"
+          ],
+          "description": null
+        },
+        {
+          "name": "Filter",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function Filter Lib \"\" Alias \"\" (ByRef SourceArray As Variant, ByVal Match As String, Optional ByVal Include As Boolean = True, Optional ByVal Compare As VbCompareMethod = TB_BUILTIN_CURRENT_MODULE_TEXTCOMPARE_MODE) As Variant",
+          "attributes": [
+            "PreserveSig(False)",
+            "DLLStackCheck(False)",
+            "Compare"
+          ],
+          "description": null
+        },
+        {
+          "name": "Format",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function Format Lib \"\" Alias \"\" (ByRef Expression As Variant, Optional ByRef Format As Variant, Optional ByVal FirstDayOfWeek As VbDayOfWeek = VbDayOfWeek.vbSunday, Optional ByVal FirstWeekOfYear As VbFirstWeekOfYear = VbFirstWeekOfYear.vbFirstJan1) As Variant",
+          "attributes": [
+            "PreserveSig(False)",
+            "DLLStackCheck(False)",
+            "Format",
+            "FirstDayOfWeek",
+            "FirstWeekOfYear",
+            "Expression",
+            "Format",
+            "FirstDayOfWeek",
+            "FirstWeekOfYear"
+          ],
+          "description": null
+        },
+        {
+          "name": "FormatCurrency",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function FormatCurrency Lib \"\" Alias \"\" (ByRef Expression As Variant, Optional ByVal NumDigitsAfterDecimal As Long = -1&, Optional ByVal IncludeLeadingDigit As VbTriState = VbTriState.vbUseDefault, Optional ByVal UseParensForNegativeNumbers As VbTriState = VbTriState.vbUseDefault, Optional ByVal GroupDigits As VbTriState = VbTriState.vbUseDefault) As String",
+          "attributes": [
+            "PreserveSig(False)",
+            "DLLStackCheck(False)",
+            "IncludeLeadingDigit",
+            "UseParensForNegativeNumbers",
+            "GroupDigits"
+          ],
+          "description": null
+        },
+        {
+          "name": "FormatDateTime",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function FormatDateTime Lib \"\" Alias \"\" (ByRef Expression As Variant, Optional ByVal NamedFormat As VbDateTimeFormat = VbDateTimeFormat.vbGeneralDate) As String",
+          "attributes": [
+            "PreserveSig(False)",
+            "DLLStackCheck(False)"
+          ],
+          "description": null
+        },
+        {
+          "name": "FormatNumber",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function FormatNumber Lib \"\" Alias \"\" (ByRef Expression As Variant, Optional ByVal NumDigitsAfterDecimal As Long = -1&, Optional ByVal IncludeLeadingDigit As VbTriState = VbTriState.vbUseDefault, Optional ByVal UseParensForNegativeNumbers As VbTriState = VbTriState.vbUseDefault, Optional ByVal GroupDigits As VbTriState = VbTriState.vbUseDefault) As String",
+          "attributes": [
+            "PreserveSig(False)",
+            "DLLStackCheck(False)",
+            "IncludeLeadingDigit",
+            "UseParensForNegativeNumbers",
+            "GroupDigits"
+          ],
+          "description": null
+        },
+        {
+          "name": "FormatPercent",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function FormatPercent Lib \"\" Alias \"\" (ByRef Expression As Variant, Optional ByVal NumDigitsAfterDecimal As Long = -1&, Optional ByVal IncludeLeadingDigit As VbTriState = VbTriState.vbUseDefault, Optional ByVal UseParensForNegativeNumbers As VbTriState = VbTriState.vbUseDefault, Optional ByVal GroupDigits As VbTriState = VbTriState.vbUseDefault) As String",
+          "attributes": [
+            "PreserveSig(False)",
+            "DLLStackCheck(False)",
+            "IncludeLeadingDigit",
+            "UseParensForNegativeNumbers",
+            "GroupDigits"
+          ],
+          "description": null
+        },
+        {
+          "name": "InStr",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function InStr Lib \"\" Alias \"\" (ByRef Start As Variant, ByRef String1 As Variant, ByRef String2 As Variant, Optional ByVal Compare As VbCompareMethod = TB_BUILTIN_CURRENT_MODULE_TEXTCOMPARE_MODE) As Variant",
+          "attributes": [
+            "PreserveSig(False)",
+            "DLLStackCheck(False)",
+            "Compare"
+          ],
+          "description": null
+        },
+        {
+          "name": "InStr",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function InStr Lib \"\" Alias \"\" (ByRef String1 As Variant, ByRef String2 As Variant, Optional ByVal Compare As VbCompareMethod = TB_BUILTIN_CURRENT_MODULE_TEXTCOMPARE_MODE) As Variant",
+          "attributes": [
+            "PreserveSig(False)",
+            "DLLStackCheck(False)",
+            "Compare"
+          ],
+          "description": null
+        },
+        {
+          "name": "InStrB",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function InStrB Lib \"\" Alias \"\" (ByRef Start As Variant, ByRef String1 As Variant, ByRef String2 As Variant, Optional ByVal Compare As VbCompareMethod = TB_BUILTIN_CURRENT_MODULE_TEXTCOMPARE_MODE) As Variant",
+          "attributes": [
+            "PreserveSig(False)",
+            "DLLStackCheck(False)",
+            "Compare"
+          ],
+          "description": null
+        },
+        {
+          "name": "InStrB",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function InStrB Lib \"\" Alias \"\" (ByRef String1 As Variant, ByRef String2 As Variant, Optional ByVal Compare As VbCompareMethod = TB_BUILTIN_CURRENT_MODULE_TEXTCOMPARE_MODE) As Variant",
+          "attributes": [
+            "PreserveSig(False)",
+            "DLLStackCheck(False)",
+            "Compare"
+          ],
+          "description": null
+        },
+        {
+          "name": "InStrRev",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function InStrRev Lib \"\" Alias \"\" (ByRef StringCheck As Variant, ByRef StringMatch As Variant, Optional ByRef Start As Variant, Optional ByVal Compare As VbCompareMethod = TB_BUILTIN_CURRENT_MODULE_TEXTCOMPARE_MODE) As Variant",
+          "attributes": [
+            "PreserveSig(False)",
+            "DLLStackCheck(False)",
+            "Compare"
+          ],
+          "description": null
+        },
+        {
+          "name": "Join",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function Join Lib \"\" Alias \"\" (ByRef SourceArray As Variant, Optional ByRef Delimiter As Variant) As String",
+          "attributes": [
+            "PreserveSig(False)",
+            "DLLStackCheck(False)",
+            "ConstantFoldable"
+          ],
+          "description": null
+        },
+        {
+          "name": "LCase",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function LCase Lib \"\" Alias \"\" (ByRef String As Variant) As Variant",
+          "attributes": [
+            "PreserveSig(False)",
+            "DLLStackCheck(False)",
+            "ConstantFoldable",
+            "String"
+          ],
+          "description": null
+        },
+        {
+          "name": "Left",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function Left Lib \"\" Alias \"\" (ByRef String As Variant, ByVal Length As Long) As Variant",
+          "attributes": [
+            "PreserveSig(False)",
+            "DLLStackCheck(False)",
+            "ConstantFoldable",
+            "BindOnlyIfNoArguments(False)"
+          ],
+          "description": null
+        },
+        {
+          "name": "LeftB",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function LeftB Lib \"\" Alias \"\" (ByRef String As Variant, ByVal Length As Long) As Variant",
+          "attributes": [
+            "PreserveSig(False)",
+            "DLLStackCheck(False)",
+            "ConstantFoldable"
+          ],
+          "description": null
+        },
+        {
+          "name": "Len",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function Len Lib \"\" Alias \"\" (ByVal Value As Any) As Long",
+          "attributes": [
+            "PreserveSig(False)",
+            "DLLStackCheck(False)",
+            "Value"
+          ],
+          "description": null
+        },
+        {
+          "name": "LenB",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function LenB Lib \"\" Alias \"\" (ByVal Value As Any) As Long",
+          "attributes": [
+            "PreserveSig(False)",
+            "DLLStackCheck(False)",
+            "Value"
+          ],
+          "description": null
+        },
+        {
+          "name": "LTrim",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function LTrim Lib \"\" Alias \"\" (ByRef String As Variant) As Variant",
+          "attributes": [
+            "PreserveSig(False)",
+            "DLLStackCheck(False)",
+            "ConstantFoldable"
+          ],
+          "description": null
+        },
+        {
+          "name": "Mid",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function Mid Lib \"\" Alias \"\" (ByRef String As Variant, ByVal Start As Long, Optional ByRef Length As Variant) As Variant",
+          "attributes": [
+            "PreserveSig(False)",
+            "DLLStackCheck(False)",
+            "ConstantFoldable",
+            "length"
+          ],
+          "description": null
+        },
+        {
+          "name": "MidB",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function MidB Lib \"\" Alias \"\" (ByRef String As Variant, ByVal Start As Long, Optional ByRef Length As Variant) As Variant",
+          "attributes": [
+            "PreserveSig(False)",
+            "DLLStackCheck(False)",
+            "ConstantFoldable",
+            "length"
+          ],
+          "description": null
+        },
+        {
+          "name": "MonthName",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function MonthName Lib \"\" Alias \"\" (ByVal Month As Long, Optional ByVal Abbreviate As Boolean = False) As String",
+          "attributes": [
+            "PreserveSig(False)",
+            "DLLStackCheck(False)"
+          ],
+          "description": null
+        },
+        {
+          "name": "Replace",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function Replace Lib \"\" Alias \"\" (ByVal Expression As String, ByVal Find As String, ByVal Replace As String, Optional ByVal Start As Long = 1&, Optional ByVal Count As Long = -1&, Optional ByVal Compare As VbCompareMethod = TB_BUILTIN_CURRENT_MODULE_TEXTCOMPARE_MODE) As String",
+          "attributes": [
+            "PreserveSig(False)",
+            "DLLStackCheck(False)",
+            "Count",
+            "Compare",
+            "PreserveSig(False)",
+            "DLLStackCheck(False)"
+          ],
+          "description": null
+        },
+        {
+          "name": "Right",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function Right Lib \"\" Alias \"\" (ByRef String As Variant, ByVal Length As Long) As Variant",
+          "attributes": [
+            "PreserveSig(False)",
+            "DLLStackCheck(False)",
+            "ConstantFoldable"
+          ],
+          "description": null
+        },
+        {
+          "name": "RightB",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function RightB Lib \"\" Alias \"\" (ByRef String As Variant, ByVal Length As Long) As Variant",
+          "attributes": [
+            "PreserveSig(False)",
+            "DLLStackCheck(False)",
+            "ConstantFoldable"
+          ],
+          "description": null
+        },
+        {
+          "name": "RTrim",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function RTrim Lib \"\" Alias \"\" (ByRef String As Variant) As Variant",
+          "attributes": [
+            "PreserveSig(False)",
+            "DLLStackCheck(False)",
+            "ConstantFoldable"
+          ],
+          "description": null
+        },
+        {
+          "name": "Space",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function Space Lib \"\" Alias \"\" (ByVal Number As Long) As Variant",
+          "attributes": [
+            "PreserveSig(False)",
+            "DLLStackCheck(False)"
+          ],
+          "description": null
+        },
+        {
+          "name": "Split",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function Split Lib \"\" Alias \"\" (ByVal Expression As String, Optional ByRef Delimiter As Variant, Optional ByVal Limit As Long = -1&, Optional ByVal Compare As VbCompareMethod = TB_BUILTIN_CURRENT_MODULE_TEXTCOMPARE_MODE) As Variant",
+          "attributes": [
+            "PreserveSig(False)",
+            "DLLStackCheck(False)",
+            "Limit",
+            "Compare"
+          ],
+          "description": null
+        },
+        {
+          "name": "StrComp",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function StrComp Lib \"\" Alias \"\" (ByRef String1 As Variant, ByRef String2 As Variant, Optional ByVal Compare As VbCompareMethod = TB_BUILTIN_CURRENT_MODULE_TEXTCOMPARE_MODE) As Variant",
+          "attributes": [
+            "PreserveSig(False)",
+            "DLLStackCheck(False)"
+          ],
+          "description": null
+        },
+        {
+          "name": "StrConv",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function StrConv Lib \"\" Alias \"\" (ByRef String As Variant, ByVal Conversion As VbStrConv, Optional ByVal LocaleID As Long = 0&) As Variant",
+          "attributes": [
+            "Conversion",
+            "LocaleID"
+          ],
+          "description": null
+        },
+        {
+          "name": "StrConv",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function StrConv Lib \"\" Alias \"\" (ByRef String As Variant, ByVal Conversion As VbStrConv, Optional ByVal LocaleID As Long = 0&) As Variant",
+          "attributes": [
+            "PreserveSig(False)",
+            "DLLStackCheck(False)",
+            "Conversion",
+            "LocaleID"
+          ],
+          "description": null
+        },
+        {
+          "name": "String",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function String Lib \"\" Alias \"\" (ByVal Number As Long, ByRef Character As Variant) As Variant",
+          "attributes": [
+            "PreserveSig(False)",
+            "DLLStackCheck(False)"
+          ],
+          "description": null
+        },
+        {
+          "name": "StrReverse",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function StrReverse Lib \"\" Alias \"\" (ByVal Expression As String) As String",
+          "attributes": [
+            "PreserveSig(False)",
+            "DLLStackCheck(False)",
+            "ConstantFoldable"
+          ],
+          "description": null
+        },
+        {
+          "name": "Trim",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function Trim Lib \"\" Alias \"\" (ByRef String As Variant) As Variant",
+          "attributes": [
+            "PreserveSig(False)",
+            "DLLStackCheck(False)",
+            "ConstantFoldable"
+          ],
+          "description": null
+        },
+        {
+          "name": "UCase",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function UCase Lib \"\" Alias \"\" (ByRef String As Variant) As Variant",
+          "attributes": [
+            "PreserveSig(False)",
+            "DLLStackCheck(False)",
+            "ConstantFoldable",
+            "String"
+          ],
+          "description": null
+        },
+        {
+          "name": "WeekdayName",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function WeekdayName Lib \"\" Alias \"\" (ByVal Weekday As Long, Optional ByVal Abbreviate As Boolean = False, Optional ByVal FirstDayOfWeek As VbDayOfWeek = 1&) As String",
+          "attributes": [
+            "PreserveSig(False)",
+            "DLLStackCheck(False)",
+            "FirstDayOfWeek"
+          ],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "TbExpressionService",
+      "kind": "CoClass",
+      "file": "ExpressionService.twin",
+      "access": "Public",
+      "attributes": [
+        "CoClassCustomConstructor(\"_HiddenModule.RuntimeCreateExpressionService\")"
+      ],
+      "implements": [],
+      "inherits": null,
+      "members": [
+        {
+          "name": "ITbExpressionService",
+          "kind": "CoClassInterface",
+          "access": null,
+          "signature": "[Default] Interface ITbExpressionService",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "TestGeneric",
+      "kind": "Class",
+      "file": "_HiddenModule.twin",
+      "access": "Public",
+      "attributes": [],
+      "implements": [],
+      "inherits": null,
+      "members": [
+        {
+          "name": "Something",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub Something()",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "TextEncodingConstants",
+      "kind": "Module",
+      "file": "TextEncodingConstants.twin",
+      "access": "Public",
+      "attributes": [],
+      "implements": [],
+      "inherits": null,
+      "members": [
+        {
+          "name": "big5",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const big5 As String = \"\"",
+          "attributes": [
+            "Hidden",
+            "Restricted"
+          ],
+          "description": null
+        },
+        {
+          "name": "default_system_ansi",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const default_system_ansi As String = \"\"",
+          "attributes": [
+            "Hidden",
+            "Restricted"
+          ],
+          "description": null
+        },
+        {
+          "name": "ibm_850_western_europe",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const ibm_850_western_europe As String = \"\"",
+          "attributes": [
+            "Hidden",
+            "Restricted"
+          ],
+          "description": null
+        },
+        {
+          "name": "ibm_852_central_and_eastern_europe",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const ibm_852_central_and_eastern_europe As String = \"\"",
+          "attributes": [
+            "Hidden",
+            "Restricted"
+          ],
+          "description": null
+        },
+        {
+          "name": "ibm_855_cyrillic",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const ibm_855_cyrillic As String = \"\"",
+          "attributes": [
+            "Hidden",
+            "Restricted"
+          ],
+          "description": null
+        },
+        {
+          "name": "ibm_856_hebrew",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const ibm_856_hebrew As String = \"\"",
+          "attributes": [
+            "Hidden",
+            "Restricted"
+          ],
+          "description": null
+        },
+        {
+          "name": "ibm_857_turkish",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const ibm_857_turkish As String = \"\"",
+          "attributes": [
+            "Hidden",
+            "Restricted"
+          ],
+          "description": null
+        },
+        {
+          "name": "ibm_858_western_europe",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const ibm_858_western_europe As String = \"\"",
+          "attributes": [
+            "Hidden",
+            "Restricted"
+          ],
+          "description": null
+        },
+        {
+          "name": "ibm_860_portuguese",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const ibm_860_portuguese As String = \"\"",
+          "attributes": [
+            "Hidden",
+            "Restricted"
+          ],
+          "description": null
+        },
+        {
+          "name": "ibm_861_icelandic",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const ibm_861_icelandic As String = \"\"",
+          "attributes": [
+            "Hidden",
+            "Restricted"
+          ],
+          "description": null
+        },
+        {
+          "name": "ibm_862_hebrew",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const ibm_862_hebrew As String = \"\"",
+          "attributes": [
+            "Hidden",
+            "Restricted"
+          ],
+          "description": null
+        },
+        {
+          "name": "ibm_863_canadian",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const ibm_863_canadian As String = \"\"",
+          "attributes": [
+            "Hidden",
+            "Restricted"
+          ],
+          "description": null
+        },
+        {
+          "name": "ibm_865_danish",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const ibm_865_danish As String = \"\"",
+          "attributes": [
+            "Hidden",
+            "Restricted"
+          ],
+          "description": null
+        },
+        {
+          "name": "ibm_866_cyrillic",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const ibm_866_cyrillic As String = \"\"",
+          "attributes": [
+            "Hidden",
+            "Restricted"
+          ],
+          "description": null
+        },
+        {
+          "name": "ibm_869_greek",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const ibm_869_greek As String = \"\"",
+          "attributes": [
+            "Hidden",
+            "Restricted"
+          ],
+          "description": null
+        },
+        {
+          "name": "ibm_932_japanese",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const ibm_932_japanese As String = \"\"",
+          "attributes": [
+            "Hidden",
+            "Restricted"
+          ],
+          "description": null
+        },
+        {
+          "name": "ibm_949_korean",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const ibm_949_korean As String = \"\"",
+          "attributes": [
+            "Hidden",
+            "Restricted"
+          ],
+          "description": null
+        },
+        {
+          "name": "iso_8859_1_latin1",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const iso_8859_1_latin1 As String = \"\"",
+          "attributes": [
+            "Hidden",
+            "Restricted"
+          ],
+          "description": null
+        },
+        {
+          "name": "iso_8859_10_latin6_nordic",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const iso_8859_10_latin6_nordic As String = \"\"",
+          "attributes": [
+            "Hidden",
+            "Restricted"
+          ],
+          "description": null
+        },
+        {
+          "name": "iso_8859_11_thai",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const iso_8859_11_thai As String = \"\"",
+          "attributes": [
+            "Hidden",
+            "Restricted"
+          ],
+          "description": null
+        },
+        {
+          "name": "iso_8859_13_latin8_baltic",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const iso_8859_13_latin8_baltic As String = \"\"",
+          "attributes": [
+            "Hidden",
+            "Restricted"
+          ],
+          "description": null
+        },
+        {
+          "name": "iso_8859_14_latin8_celtic",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const iso_8859_14_latin8_celtic As String = \"\"",
+          "attributes": [
+            "Hidden",
+            "Restricted"
+          ],
+          "description": null
+        },
+        {
+          "name": "iso_8859_15_latin9_euro",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const iso_8859_15_latin9_euro As String = \"\"",
+          "attributes": [
+            "Hidden",
+            "Restricted"
+          ],
+          "description": null
+        },
+        {
+          "name": "iso_8859_16_latin10_balkan",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const iso_8859_16_latin10_balkan As String = \"\"",
+          "attributes": [
+            "Hidden",
+            "Restricted"
+          ],
+          "description": null
+        },
+        {
+          "name": "iso_8859_2_latin2",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const iso_8859_2_latin2 As String = \"\"",
+          "attributes": [
+            "Hidden",
+            "Restricted"
+          ],
+          "description": null
+        },
+        {
+          "name": "iso_8859_3_latin3",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const iso_8859_3_latin3 As String = \"\"",
+          "attributes": [
+            "Hidden",
+            "Restricted"
+          ],
+          "description": null
+        },
+        {
+          "name": "iso_8859_4_latin4",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const iso_8859_4_latin4 As String = \"\"",
+          "attributes": [
+            "Hidden",
+            "Restricted"
+          ],
+          "description": null
+        },
+        {
+          "name": "iso_8859_5_cyrillic",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const iso_8859_5_cyrillic As String = \"\"",
+          "attributes": [
+            "Hidden",
+            "Restricted"
+          ],
+          "description": null
+        },
+        {
+          "name": "iso_8859_6_arabic",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const iso_8859_6_arabic As String = \"\"",
+          "attributes": [
+            "Hidden",
+            "Restricted"
+          ],
+          "description": null
+        },
+        {
+          "name": "iso_8859_7_greek",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const iso_8859_7_greek As String = \"\"",
+          "attributes": [
+            "Hidden",
+            "Restricted"
+          ],
+          "description": null
+        },
+        {
+          "name": "iso_8859_8_hebrew",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const iso_8859_8_hebrew As String = \"\"",
+          "attributes": [
+            "Hidden",
+            "Restricted"
+          ],
+          "description": null
+        },
+        {
+          "name": "iso_8859_9_latin5_turkish",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const iso_8859_9_latin5_turkish As String = \"\"",
+          "attributes": [
+            "Hidden",
+            "Restricted"
+          ],
+          "description": null
+        },
+        {
+          "name": "koi8_r",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const koi8_r As String = \"\"",
+          "attributes": [
+            "Hidden",
+            "Restricted"
+          ],
+          "description": null
+        },
+        {
+          "name": "koi8_u",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const koi8_u As String = \"\"",
+          "attributes": [
+            "Hidden",
+            "Restricted"
+          ],
+          "description": null
+        },
+        {
+          "name": "us_ascii",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const us_ascii As String = \"\"",
+          "attributes": [
+            "Hidden",
+            "Restricted"
+          ],
+          "description": null
+        },
+        {
+          "name": "utf_16",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const utf_16 As String = \"\"",
+          "attributes": [
+            "Hidden",
+            "Restricted"
+          ],
+          "description": null
+        },
+        {
+          "name": "utf_16_bom",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const utf_16_bom As String = \"\"",
+          "attributes": [
+            "Hidden",
+            "Restricted"
+          ],
+          "description": null
+        },
+        {
+          "name": "utf_7",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const utf_7 As String = \"\"",
+          "attributes": [
+            "Hidden",
+            "Restricted"
+          ],
+          "description": null
+        },
+        {
+          "name": "utf_7_bom",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const utf_7_bom As String = \"\"",
+          "attributes": [
+            "Hidden",
+            "Restricted"
+          ],
+          "description": null
+        },
+        {
+          "name": "utf_8",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const utf_8 As String = \"\"",
+          "attributes": [
+            "Hidden",
+            "Restricted"
+          ],
+          "description": null
+        },
+        {
+          "name": "utf_8_bom",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const utf_8_bom As String = \"\"",
+          "attributes": [
+            "Hidden",
+            "Restricted"
+          ],
+          "description": null
+        },
+        {
+          "name": "windows_1250_central_europe",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const windows_1250_central_europe As String = \"\"",
+          "attributes": [
+            "Hidden",
+            "Restricted"
+          ],
+          "description": null
+        },
+        {
+          "name": "windows_1251_cyrillic",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const windows_1251_cyrillic As String = \"\"",
+          "attributes": [
+            "Hidden",
+            "Restricted"
+          ],
+          "description": null
+        },
+        {
+          "name": "windows_1252_western",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const windows_1252_western As String = \"\"",
+          "attributes": [
+            "Hidden",
+            "Restricted"
+          ],
+          "description": null
+        },
+        {
+          "name": "windows_1253_greek",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const windows_1253_greek As String = \"\"",
+          "attributes": [
+            "Hidden",
+            "Restricted"
+          ],
+          "description": null
+        },
+        {
+          "name": "windows_1254_turkish",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const windows_1254_turkish As String = \"\"",
+          "attributes": [
+            "Hidden",
+            "Restricted"
+          ],
+          "description": null
+        },
+        {
+          "name": "windows_1255_hebrew",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const windows_1255_hebrew As String = \"\"",
+          "attributes": [
+            "Hidden",
+            "Restricted"
+          ],
+          "description": null
+        },
+        {
+          "name": "windows_1256_arabic",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const windows_1256_arabic As String = \"\"",
+          "attributes": [
+            "Hidden",
+            "Restricted"
+          ],
+          "description": null
+        },
+        {
+          "name": "windows_1257_baltic",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const windows_1257_baltic As String = \"\"",
+          "attributes": [
+            "Hidden",
+            "Restricted"
+          ],
+          "description": null
+        },
+        {
+          "name": "windows_1258_vietnamese",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const windows_1258_vietnamese As String = \"\"",
+          "attributes": [
+            "Hidden",
+            "Restricted"
+          ],
+          "description": null
+        }
+      ],
+      "events": []
+    }
+  ],
+  "enums": [],
+  "types": []
+}

@@ -1,0 +1,2327 @@
+{
+  "package": "tbShellLibImpl",
+  "version": "1.2.7.0",
+  "modules": [
+    {
+      "name": "ICategoryProvider",
+      "kind": "Interface",
+      "file": "modShell.twin",
+      "access": "Public",
+      "attributes": [],
+      "implements": [],
+      "inherits": "stdole.IUnknown",
+      "members": [
+        {
+          "name": "CanCategorizeOnSCID",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub CanCategorizeOnSCID(pscid As SHCOLUMNID)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CreateCategory",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub CreateCategory(pguid As UUID, riid As UUID, ppv As LongPtr)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "EnumCategories",
+          "kind": "Function",
+          "access": null,
+          "signature": "Function EnumCategories() As IEnumGUID",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GetCategoryForSCID",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub GetCategoryForSCID(pscid As SHCOLUMNID, pguid As UUID)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GetCategoryName",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub GetCategoryName(pguid As UUID, pszName As LongPtr, ByVal cch As Long)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GetDefaultCategory",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub GetDefaultCategory(pguid As UUID, pscid As SHCOLUMNID)",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "IClassFactory",
+      "kind": "Interface",
+      "file": "modOLE.twin",
+      "access": "Public",
+      "attributes": [],
+      "implements": [],
+      "inherits": "stdole.IUnknown",
+      "members": [
+        {
+          "name": "CreateInstance",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub CreateInstance(ByVal pUnkOuter As stdole.IUnknown, ByRef riid As UUID, ByRef ppvObject As LongPtr)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "LockServer",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub LockServer(ByVal fLock As Long)",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "IClassFactory2",
+      "kind": "Interface",
+      "file": "modOLE.twin",
+      "access": "Public",
+      "attributes": [],
+      "implements": [],
+      "inherits": "IClassFactory",
+      "members": [
+        {
+          "name": "CreateInstanceLic",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub CreateInstanceLic(ByVal pUnkOuter As stdole.IUnknown, ByVal pUnkReserved As stdole.IUnknown, ByRef riid As UUID, ByVal bstrKey As String, ByRef ppvObj As LongPtr)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GetLicInfo",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub GetLicInfo(ByRef pLicInfo As LICINFO)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "RequestLicKey",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub RequestLicKey(ByVal dwReserved As Long, ByRef pBstrKey As String)",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "IDataObject",
+      "kind": "Interface",
+      "file": "modShell.twin",
+      "access": "Public",
+      "attributes": [],
+      "implements": [],
+      "inherits": "stdole.IUnknown",
+      "members": [
+        {
+          "name": "DAdvise",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub DAdvise(pFormatEtc As FORMATETC, ByVal advf As ADVF, pAdvSink As IAdviseSink)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "DUnadvise",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub DUnadvise(ByVal dwConnection As Long)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "EnumDAdvise",
+          "kind": "Function",
+          "access": null,
+          "signature": "Function EnumDAdvise() As IEnumSTATDATA",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "EnumFormatEtc",
+          "kind": "Function",
+          "access": null,
+          "signature": "Function EnumFormatEtc(ByVal dwDirection As DATADIR) As IEnumFormatETC",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GetCanonicalFormatEtc",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub GetCanonicalFormatEtc(pFormatEtcIn As FORMATETC, pFormatEtcOut As FORMATETC)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GetData",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub GetData(pFormatEtcIn As FORMATETC, pMedium As STGMEDIUM)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GetDataHere",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub GetDataHere(pFormatEtc As FORMATETC, pMedium As STGMEDIUM)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "QueryGetData",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub QueryGetData(pFormatEtc As FORMATETC)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SetData",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub SetData(pFormatEtc As FORMATETC, pMedium As STGMEDIUM, ByVal fRelease As Long)",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "IEnumFormatETC",
+      "kind": "Interface",
+      "file": "modShell.twin",
+      "access": "Public",
+      "attributes": [],
+      "implements": [],
+      "inherits": "stdole.IUnknown",
+      "members": [
+        {
+          "name": "Clone",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub Clone(ppEnum As IEnumFormatETC)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Next",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub Next(ByVal celt As Long, rgelt As FORMATETC, Optional ByRef pceltFetched As Long)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Reset",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub Reset()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Skip",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub Skip(ByVal celt As Long)",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "IEnumIDList",
+      "kind": "Interface",
+      "file": "modShell.twin",
+      "access": "Public",
+      "attributes": [],
+      "implements": [],
+      "inherits": "stdole.IUnknown",
+      "members": [
+        {
+          "name": "Clone",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub Clone(ppEnum As IEnumIDList)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Next",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub Next(ByVal celt As Long, rgelt As LongPtr, pceltFetched As Long)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Reset",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub Reset()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Skip",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub Skip(ByVal celt As Long)",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "IEnumOLEVERB",
+      "kind": "Interface",
+      "file": "modOLE.twin",
+      "access": "Public",
+      "attributes": [],
+      "implements": [],
+      "inherits": "stdole.IUnknown",
+      "members": [
+        {
+          "name": "Clone",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub Clone(ppEnum As IEnumOLEVERB)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Next",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub Next(ByVal celt As Long, rgelt As LongPtr, pceltFetched As Long)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Reset",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub Reset()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Skip",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub Skip(ByVal celt As Long)",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "IEnumShellItems",
+      "kind": "Interface",
+      "file": "modShell.twin",
+      "access": "Public",
+      "attributes": [],
+      "implements": [],
+      "inherits": "stdole.IUnknown",
+      "members": [
+        {
+          "name": "Clone",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub Clone(ppEnum As IEnumShellItems)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Next",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub Next(ByVal celt As Long, rgelt As IShellItem, pceltFetched As Long)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Reset",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub Reset()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Skip",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub Skip(ByVal celt As Long)",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "IEnumString",
+      "kind": "Interface",
+      "file": "modShell.twin",
+      "access": "Public",
+      "attributes": [],
+      "implements": [],
+      "inherits": "stdole.IUnknown",
+      "members": [
+        {
+          "name": "Clone",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub Clone(ppEnum As IEnumString)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Next",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub Next(ByVal celt As Long, rgelt As LongPtr, pceltFetched As Long)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Reset",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub Reset()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Skip",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub Skip(ByVal celt As Long)",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "IEnumVARIANT",
+      "kind": "Interface",
+      "file": "modOLE.twin",
+      "access": "Public",
+      "attributes": [],
+      "implements": [],
+      "inherits": "stdole.IUnknown",
+      "members": [
+        {
+          "name": "Clone",
+          "kind": "Function",
+          "access": null,
+          "signature": "Function Clone() As IEnumVARIANT",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Next",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub Next(ByVal celt As Long, ByRef rgelt As Variant, Optional ByRef pceltFetched As Long = 0)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Reset",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub Reset()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Skip",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub Skip(ByVal celt As Long)",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "IFolderView",
+      "kind": "Interface",
+      "file": "modShell.twin",
+      "access": "Public",
+      "attributes": [],
+      "implements": [],
+      "inherits": "stdole.IUnknown",
+      "members": [
+        {
+          "name": "GetAutoArrange",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub GetAutoArrange()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GetCurrentViewMode",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub GetCurrentViewMode(pViewMode As FOLDERVIEWMODE)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GetDefaultSpacing",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub GetDefaultSpacing(ppt As POINT)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GetFocusedItem",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub GetFocusedItem(piItem As Long)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GetFolder",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub GetFolder(riid As UUID, ppv As LongPtr)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GetItemPosition",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub GetItemPosition(ByVal pidl As LongPtr, ppt As POINT)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GetSelectionMarkedItem",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub GetSelectionMarkedItem(piItem As Long)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GetSpacing",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub GetSpacing(ppt As POINT)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Item",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub Item(ByVal iItemIndex As Long, ppidl As LongPtr)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ItemCount",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub ItemCount(ByVal uFlags As SVGIO_Flags, pcItems As Long)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Items",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub Items(ByVal uFlags As SVGIO_Flags, riid As UUID, ppv As LongPtr)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SelectAndPositionItems",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub SelectAndPositionItems(ByVal cidl As Long, apidl As LongPtr, apt As POINT, ByVal dwFlags As SVSI_Flags)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SelectItem",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub SelectItem(ByVal iItem As Long, ByVal dwFlags As SVSI_Flags)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SetCurrentViewMode",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub SetCurrentViewMode(ByVal ViewMode As FOLDERVIEWMODE)",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "IFolderView2",
+      "kind": "Interface",
+      "file": "modShell.twin",
+      "access": "Public",
+      "attributes": [],
+      "implements": [],
+      "inherits": "IFolderView",
+      "members": [
+        {
+          "name": "DoRename",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub DoRename()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GetCurrentFolderFlags",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub GetCurrentFolderFlags(pdwFlags As FOLDERFLAGS)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GetGroupBy",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub GetGroupBy(key As PROPERTYKEY, pfAscending As Long)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GetGroupSubsetCount",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub GetGroupSubsetCount(pcVisibleRows As Long)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GetItem",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub GetItem(ByVal iItem As Long, riid As UUID, ppv As LongPtr)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GetSelectedItem",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub GetSelectedItem(ByVal iStart As Long, piItem As Long)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GetSelection",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub GetSelection(ByVal fNoneImpliesFolder As Long, ppsia As IShellItemArray)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GetSelectionState",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub GetSelectionState(ByVal pidl As LongPtr, pdwFlags As SVSI_Flags)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GetSortColumnCount",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub GetSortColumnCount(pcColumns As Long)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GetSortColumns",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub GetSortColumns(ByVal rgSortColumns As LongPtr, ByVal cColumns As Long)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GetViewModeAndIconSize",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub GetViewModeAndIconSize(puViewMode As FOLDERVIEWMODE, piImageSize As Long)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GetViewProperty",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub GetViewProperty(ByVal pidl As LongPtr, propkey As PROPERTYKEY, ppropvar As Variant)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GetVisibleItem",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub GetVisibleItem(ByVal iStart As Long, ByVal fPrevious As Long, piItem As Long)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "InvokeVerbOnSelection",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub InvokeVerbOnSelection(ByVal pszVerb As LongPtr)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "IsMoveInSameFolder",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub IsMoveInSameFolder()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SetCurrentFolderFlags",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub SetCurrentFolderFlags(ByVal dwMask As FOLDERFLAGS, ByVal dwFlags As FOLDERFLAGS)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SetExtendedTileViewProperties",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub SetExtendedTileViewProperties(ByVal pidl As LongPtr, ByVal pszPropList As LongPtr)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SetGroupBy",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub SetGroupBy(key As PROPERTYKEY, ByVal fAscending As Long)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SetGroupSubsetCount",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub SetGroupSubsetCount(ByVal cVisibleRows As Long)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SetRedraw",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub SetRedraw(ByVal fRedrawOn As Long)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SetSortColumns",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub SetSortColumns(ByVal rgSortColumns As LongPtr, ByVal cColumns As Long)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SetText",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub SetText(ByVal iType As FVTEXTTYPE, ByVal pwszText As LongPtr)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SetTileViewProperties",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub SetTileViewProperties(ByVal pidl As LongPtr, ByVal pszPropList As LongPtr)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SetViewModeAndIconSize",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub SetViewModeAndIconSize(ByVal uViewMode As FOLDERVIEWMODE, ByVal iImageSize As Long)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SetViewProperty",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub SetViewProperty(ByVal pidl As LongPtr, propkey As PROPERTYKEY, propvar As Variant)",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "IInitializeWithBindCtx",
+      "kind": "Interface",
+      "file": "modShell.twin",
+      "access": "Public",
+      "attributes": [],
+      "implements": [],
+      "inherits": "stdole.IUnknown",
+      "members": [
+        {
+          "name": "Initialize",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub Initialize(ByVal pbc As IBindCtx)",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "IInitializeWithFile",
+      "kind": "Interface",
+      "file": "modShell.twin",
+      "access": "Public",
+      "attributes": [],
+      "implements": [],
+      "inherits": "stdole.IUnknown",
+      "members": [
+        {
+          "name": "Initialize",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub Initialize(ByVal pszFilePath As LongPtr, ByVal grfMode As Long)",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "IInitializeWithItem",
+      "kind": "Interface",
+      "file": "modShell.twin",
+      "access": "Public",
+      "attributes": [],
+      "implements": [],
+      "inherits": "stdole.IUnknown",
+      "members": [
+        {
+          "name": "Initialize",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub Initialize(ByVal psi As IShellItem, ByVal grfMode As Long)",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "IInitializeWithPropertyStore",
+      "kind": "Interface",
+      "file": "modShell.twin",
+      "access": "Public",
+      "attributes": [],
+      "implements": [],
+      "inherits": "stdole.IUnknown",
+      "members": [
+        {
+          "name": "Initialize",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub Initialize(ByVal pps As IPropertyStore)",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "IInitializeWithStream",
+      "kind": "Interface",
+      "file": "modShell.twin",
+      "access": "Public",
+      "attributes": [],
+      "implements": [],
+      "inherits": "stdole.IUnknown",
+      "members": [
+        {
+          "name": "Initialize",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub Initialize(ByVal pstream As IStream, ByVal grfMode As Long)",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "IInitializeWithWindow",
+      "kind": "Interface",
+      "file": "modShell.twin",
+      "access": "Public",
+      "attributes": [],
+      "implements": [],
+      "inherits": "stdole.IUnknown",
+      "members": [
+        {
+          "name": "Initialize",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub Initialize(ByVal hwnd As LongPtr)",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "IInternetProtocol",
+      "kind": "Interface",
+      "file": "modShell.twin",
+      "access": "Public",
+      "attributes": [],
+      "implements": [],
+      "inherits": "stdole.IUnknown",
+      "members": [],
+      "events": []
+    },
+    {
+      "name": "IInternetProtocolSink",
+      "kind": "Interface",
+      "file": "modShell.twin",
+      "access": "Public",
+      "attributes": [],
+      "implements": [],
+      "inherits": "stdole.IUnknown",
+      "members": [],
+      "events": []
+    },
+    {
+      "name": "IMessageFilter",
+      "kind": "Interface",
+      "file": "modShell.twin",
+      "access": "Public",
+      "attributes": [],
+      "implements": [],
+      "inherits": "stdole.IUnknown",
+      "members": [
+        {
+          "name": "HandleInComingCall",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub HandleInComingCall(ByVal dwCallType As CALLTYPE, ByVal htaskCaller As LongPtr, ByVal dwTickCount As Long, ByRef lpInterfaceInfo As INTERFACEINFO)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "MessagePending",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub MessagePending(ByVal htaskCallee As LongPtr, ByVal dwTickCount As Long, ByVal dwPendingType As PENDINGTYPE)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "RetryRejectedCall",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub RetryRejectedCall(ByVal htaskCallee As LongPtr, ByVal dwTickCount As Long, ByVal dwRejectType As SERVERCALL)",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "IObjectWithSite",
+      "kind": "Interface",
+      "file": "modShell.twin",
+      "access": "Public",
+      "attributes": [],
+      "implements": [],
+      "inherits": "stdole.IUnknown",
+      "members": [
+        {
+          "name": "GetSite",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub GetSite(riid As UUID, ppvSite As LongPtr)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SetSite",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub SetSite(ByVal pUnkSite As stdole.IUnknown)",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "IOleContainer",
+      "kind": "Interface",
+      "file": "modOLE.twin",
+      "access": "Public",
+      "attributes": [],
+      "implements": [],
+      "inherits": "IParseDisplayName",
+      "members": [
+        {
+          "name": "EnumObjects",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub EnumObjects(ByVal grfFlags As Long, ppenum As IEnumUnknown)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "LockContainer",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub LockContainer(ByVal fLock As Long)",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "IPersistFile",
+      "kind": "Interface",
+      "file": "modShell.twin",
+      "access": "Public",
+      "attributes": [],
+      "implements": [],
+      "inherits": "stdole.IUnknown",
+      "members": [],
+      "events": []
+    },
+    {
+      "name": "IPersistStream",
+      "kind": "Interface",
+      "file": "modShell.twin",
+      "access": "Public",
+      "attributes": [],
+      "implements": [],
+      "inherits": "stdole.IUnknown",
+      "members": [],
+      "events": []
+    },
+    {
+      "name": "IPreviewHandler",
+      "kind": "Interface",
+      "file": "modShell.twin",
+      "access": "Public",
+      "attributes": [],
+      "implements": [],
+      "inherits": "stdole.IUnknown",
+      "members": [
+        {
+          "name": "DoPreview",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub DoPreview()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "QueryFocus",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub QueryFocus(phwnd As LongPtr)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SetFocus",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub SetFocus()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SetRect",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub SetRect(prc As RECT)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SetWindow",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub SetWindow(ByVal hwnd As LongPtr, prc As RECT)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "TranslateAccelerator",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub TranslateAccelerator(pMsg As MSG)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Unload",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub Unload()",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "IPreviewHandlerFrame",
+      "kind": "Interface",
+      "file": "modShell.twin",
+      "access": "Public",
+      "attributes": [],
+      "implements": [],
+      "inherits": "stdole.IUnknown",
+      "members": [
+        {
+          "name": "GetWindowContext",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub GetWindowContext(pInfo As PREVIEWHANDLERFRAMEINFO)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "TranslateAccelerator",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub TranslateAccelerator(pMsg As MSG)",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "IPreviewHandlerVisuals",
+      "kind": "Interface",
+      "file": "modShell.twin",
+      "access": "Public",
+      "attributes": [],
+      "implements": [],
+      "inherits": "stdole.IUnknown",
+      "members": [
+        {
+          "name": "SetBackgroundColor",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub SetBackgroundColor(ByVal color As Long)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SetFont",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub SetFont(ByVal plf As LongPtr)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SetTextColor",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub SetTextColor(ByVal color As Long)",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "IPropertyStore",
+      "kind": "Interface",
+      "file": "modShell.twin",
+      "access": "Public",
+      "attributes": [],
+      "implements": [],
+      "inherits": "stdole.IUnknown",
+      "members": [
+        {
+          "name": "Commit",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub Commit()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GetAt",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub GetAt(ByVal iProp As Long, pkey As PROPERTYKEY)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GetCount",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub GetCount(cProps As Long)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GetValue",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub GetValue(key As PROPERTYKEY, pv As Variant)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SetValue",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub SetValue(key As PROPERTYKEY, propvar As Variant)",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "IPropertyStoreCapabilities",
+      "kind": "Interface",
+      "file": "modShell.twin",
+      "access": "Public",
+      "attributes": [],
+      "implements": [],
+      "inherits": "stdole.IUnknown",
+      "members": [
+        {
+          "name": "IsPropertyWritable",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub IsPropertyWritable(ByVal pkey As LongPtr)",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "ISequentialStream",
+      "kind": "Interface",
+      "file": "modShell.twin",
+      "access": "Public",
+      "attributes": [],
+      "implements": [],
+      "inherits": "stdole.IUnknown",
+      "members": [
+        {
+          "name": "Read",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub Read(pv As any, ByVal cb As Long, pcbRead As Long)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Write",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub Write(pv As any, ByVal cb As Long, pcbWritten As Long)",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "IServiceProvider",
+      "kind": "Interface",
+      "file": "modShell.twin",
+      "access": "Public",
+      "attributes": [],
+      "implements": [],
+      "inherits": "stdole.IUnknown",
+      "members": [
+        {
+          "name": "QueryService",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub QueryService(guidService As UUID, riid As UUID, ppvObject As LongPtr)",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "IShellBrowser",
+      "kind": "Interface",
+      "file": "modShell.twin",
+      "access": "Public",
+      "attributes": [],
+      "implements": [],
+      "inherits": "IOleWindow",
+      "members": [
+        {
+          "name": "BrowseObject",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub BrowseObject(ByVal pidl As LongPtr, ByVal wFlags As BO_Flags)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "EnableModelessSB",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub EnableModelessSB(ByVal fEnable As Long)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GetControlWindow",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub GetControlWindow(ByVal id As GCW_IDs, lpHwnd As LongPtr)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GetViewStateStream",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub GetViewStateStream(ByVal grfMode As Long, ppStrm As IStream)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "InsertMenuSB",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub InsertMenuSB(ByVal hMenuShared As LongPtr, lpMenuWidth As OLEMENUGROUPWIDTHS)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "OnViewWindowActive",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub OnViewWindowActive(ByVal ppshv As IShellView)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "QueryActiveShellView",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub QueryActiveShellView(ppshv As IShellView)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "RemoveWindowSB",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub RemoveWindowSB(ByVal hMenuShared As LongPtr)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SendControlMsg",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub SendControlMsg(ByVal id As GCW_IDs, ByVal uMsg As Long, ByVal wParam As LongPtr, ByVal lParam As LongPtr, pret As LongPtr)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SetMenuSB",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub SetMenuSB(ByVal hMenuShared As LongPtr, ByVal holemenuReserved As LongPtr, ByVal hwndActiveObject As LongPtr)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SetStatusTextSB",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub SetStatusTextSB(ByVal lpszStatusText As String)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SetToolbarItems",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub SetToolbarItems(ByVal lpButtons As LongPtr, ByVal nButtons As Long, ByVal uFlags As STI_Flags)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "TranslateAcceleratorSB",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub TranslateAcceleratorSB(lpMsg As MSG, ByVal wID As Integer)",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "IShellFolder",
+      "kind": "Interface",
+      "file": "modShell.twin",
+      "access": "Public",
+      "attributes": [],
+      "implements": [],
+      "inherits": "stdole.IUnknown",
+      "members": [
+        {
+          "name": "BindToObject",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub BindToObject(ByVal pidl As LongPtr, ByVal pbc As LongPtr, riid As UUID, ppvOut As LongPtr)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "BindToStorage",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub BindToStorage(ByVal pidl As LongPtr, ByVal pbc As LongPtr, riid As UUID, ppvOut As LongPtr)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CompareIDs",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub CompareIDs(ByVal lParam As LongPtr, ByVal pidl1 As LongPtr, ByVal pidl2 As LongPtr)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CreateViewObject",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub CreateViewObject(ByVal hwndOwner As LongPtr, riid As UUID, ppvOut As LongPtr)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "EnumObjects",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub EnumObjects(ByVal hwndOwner As LongPtr, ByVal grfFlags As SHCONTF, ppEnumIdList As IEnumIDList)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GetAttributesOf",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub GetAttributesOf(ByVal cidl As Long, apidl As LongPtr, rgfInOut As SFGAO_Flags)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GetDisplayNameOf",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub GetDisplayNameOf(ByVal pidl As LongPtr, ByVal uFlags As SHGNO_Flags, lpName As STRRET)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GetUIObjectOf",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub GetUIObjectOf(ByVal hwndOwner As LongPtr, ByVal cidl As Long, apidl As LongPtr, riid As UUID, rgfReserved As Long, ppvOut As LongPtr)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ParseDisplayName",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub ParseDisplayName(ByVal hwndOwner As LongPtr, ByVal pbc As LongPtr, ByVal lpszDisplayName As LongPtr, pchEaten As Long, ppidl As LongPtr, pdwAttributes As Long)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SetNameOf",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub SetNameOf(ByVal hwndOwner As LongPtr, ByVal pidl As LongPtr, ByVal lpszName As LongPtr, ByVal uFlags As SHGNO_Flags, ppidlOut As LongPtr)",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "IShellFolder2",
+      "kind": "Interface",
+      "file": "modShell.twin",
+      "access": "Public",
+      "attributes": [],
+      "implements": [],
+      "inherits": "IShellFolder",
+      "members": [
+        {
+          "name": "EnumSearches",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub EnumSearches(ppEnum As IEnumExtraSearch)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GetDefaultColumn",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub GetDefaultColumn(ByVal dwRes As Long, pSort As Long, pDisplay As Long)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GetDefaultCOlumnState",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub GetDefaultCOlumnState(ByVal iColumn As Long, pcsFlags As SHCOLSTATEF)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GetDefaultSearchGUID",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub GetDefaultSearchGUID(pguid As UUID)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GetDetailsEx",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub GetDetailsEx(ByVal pidl As LongPtr, pscid As SHCOLUMNID, pv As Variant)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GetDetailsOf",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub GetDetailsOf(ByVal pidl As LongPtr, ByVal iColumn As Long, psd As SHELLDETAILS)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "MapColumnToSCID",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub MapColumnToSCID(ByVal iColumn As Long, pscid As SHCOLUMNID)",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "IShellView",
+      "kind": "Interface",
+      "file": "modShell.twin",
+      "access": "Public",
+      "attributes": [],
+      "implements": [],
+      "inherits": "IOleWindow",
+      "members": [
+        {
+          "name": "AddPropertySheetPages",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub AddPropertySheetPages(ByVal dwReserved As Long, ByVal lpfn As LongPtr, ByVal lParam As LongPtr)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CreateViewWindow",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub CreateViewWindow(ByVal lpPrevView As IShellView, lpfs As FOLDERSETTINGS, ByVal psb As IShellBrowser, prcView As RECT, phwnd As LongPtr)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "DestroyViewWindow",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub DestroyViewWindow()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "EnableModelessSV",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub EnableModelessSV(ByVal fEnable As Long)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GetCurrentInfo",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub GetCurrentInfo(lpfs As FOLDERSETTINGS)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GetItemObject",
+          "kind": "Function",
+          "access": null,
+          "signature": "Function GetItemObject(ByVal uItem As SVGIO_Flags, riid As UUID) As LongPtr",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Refresh",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub Refresh()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SaveViewState",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub SaveViewState()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SelectItem",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub SelectItem(ByVal pidlItem As LongPtr, ByVal uFlags As SVSI_Flags)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "TranslateAcceleratorSB",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub TranslateAcceleratorSB(lpMsg As MSG)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "UIActivate",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub UIActivate(ByVal uState As SVUIA_STATUS)",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "IShellView2",
+      "kind": "Interface",
+      "file": "modShell.twin",
+      "access": "Public",
+      "attributes": [],
+      "implements": [],
+      "inherits": "IShellView",
+      "members": [
+        {
+          "name": "CreateViewWindow2",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub CreateViewWindow2(lpParams As SV2CVW2_PARAMS)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GetView",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub GetView(pvid As UUID, ByVal uView As SV2GV_Flags)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "HandleRename",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub HandleRename(ByVal pidlNew As LongPtr)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SelectItemAndPosition",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub SelectItemAndPosition(ByVal pidlItem As LongPtr, ByVal uFlags As SVSI_Flags, pt As POINT)",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "IShellView3",
+      "kind": "Interface",
+      "file": "modShell.twin",
+      "access": "Public",
+      "attributes": [],
+      "implements": [],
+      "inherits": "IShellView2",
+      "members": [
+        {
+          "name": "CreateViewWindow3",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub CreateViewWindow3(ByVal psbOwner As IShellBrowser, ByVal psvPrev As IShellView, ByVal dwViewFlags As SV3CVW3_FLAGS, ByVal dwMask As FOLDERFLAGS, ByVal dwFlags As FOLDERFLAGS, pvid As UUID, prcView As RECT, phwndView As LongPtr)",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "IStream",
+      "kind": "Interface",
+      "file": "modShell.twin",
+      "access": "Public",
+      "attributes": [],
+      "implements": [],
+      "inherits": "ISequentialStream",
+      "members": [
+        {
+          "name": "Clone",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub Clone(ppStrm As IStream)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Commit",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub Commit(ByVal grfCommitFlags As STGC)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CopyTo",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub CopyTo(ByVal pStm As IStream, ByVal cb As LongLong, pcbRead As LongLong, pcbWritten As LongLong)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "LockRegion",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub LockRegion(ByVal libOffset As LongLong, ByVal cb As LongLong, ByVal dwLockType As Long)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Revert",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub Revert()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Seek",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub Seek(ByVal dlibMove As LongLong, ByVal dwOrigin As Long, plibNewPosition As LongLong)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SetSize",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub SetSize(ByVal libNewSize As LongLong)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Stat",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub Stat(pstatstg As STATSTG, ByVal grfStatFlag As STATFLAG)",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "ITextHost",
+      "kind": "Interface",
+      "file": "modRichEd.twin",
+      "access": "Public",
+      "attributes": [],
+      "implements": [],
+      "inherits": "stdole.IUnknown",
+      "members": [
+        {
+          "name": "OnTxCharFormatChange",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub OnTxCharFormatChange(pCF As CHARFORMATW)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "OnTxParaFormatChange",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub OnTxParaFormatChange(pPF As PARAFORMAT)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "TxActivate",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub TxActivate(plOldState As Long)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "TxClientToScreen",
+          "kind": "Function",
+          "access": null,
+          "signature": "Function TxClientToScreen(lppt As POINT) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "TxCreateCaret",
+          "kind": "Function",
+          "access": null,
+          "signature": "Function TxCreateCaret(ByVal hbmp As LongPtr, ByVal xWidth As Long, ByVal yHeight As Long) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "TxDeactivate",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub TxDeactivate(ByVal lNewState As Long)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "TxEnableScrollBar",
+          "kind": "Function",
+          "access": null,
+          "signature": "Function TxEnableScrollBar(ByVal fuSBFlags As Long, ByVal fuArrowFlags As Long) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "TxGetAcceleratorPos",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub TxGetAcceleratorPos(pcp As Long)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "TxGetBackStyle",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub TxGetBackStyle(pstyle As TXTBACKSTYLE)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "TxGetCharFormat",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub TxGetCharFormat(ppCF As CHARFORMATW)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "TxGetClientRect",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub TxGetClientRect(prc As RECT)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "TxGetDC",
+          "kind": "Function",
+          "access": null,
+          "signature": "Function TxGetDC() As LongPtr",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "TxGetExtent",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub TxGetExtent(lpExtent As SIZE)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "TxGetMaxLength",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub TxGetMaxLength(plength As Long)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "TxGetParaFormat",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub TxGetParaFormat(ppPF As PARAFORMAT)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "TxGetPasswordChar",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub TxGetPasswordChar(pch As Integer)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "TxGetPropertyBits",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub TxGetPropertyBits(ByVal dwMask As Long, pdwBits As Long)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "TxGetScrollBars",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub TxGetScrollBars(pdwScrollBars As Long)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "TxGetSelectionBarWidth",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub TxGetSelectionBarWidth(lSelBarWidth As Long)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "TxGetSysColor",
+          "kind": "Function",
+          "access": null,
+          "signature": "Function TxGetSysColor(ByVal nIndex As Long) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "TxGetViewInset",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub TxGetViewInset(prc As RECT)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "TxImmGetContext",
+          "kind": "Function",
+          "access": null,
+          "signature": "Function TxImmGetContext() As LongPtr",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "TxImmReleaseContext",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub TxImmReleaseContext(ByVal himc As LongPtr)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "TxInvalidateRect",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub TxInvalidateRect(prc As RECT, ByVal fMode As Long)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "TxKillTimer",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub TxKillTimer(ByVal idTimer As Long)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "TxNotify",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub TxNotify(ByVal iNotify As Long, pv As Any)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "TxReleaseDC",
+          "kind": "Function",
+          "access": null,
+          "signature": "Function TxReleaseDC(ByVal hdc As LongPtr) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "TxScreenToClient",
+          "kind": "Function",
+          "access": null,
+          "signature": "Function TxScreenToClient(lppt As POINT) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "TxScrollWindowEx",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub TxScrollWindowEx(ByVal dx As Long, ByVal dy As Long, lprcScroll As RECT, lprcClip As RECT, ByVal hrgnUpdate As LongPtr, lprcUpdate As RECT, ByVal fuScroll As Long)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "TxSetCapture",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub TxSetCapture(ByVal fCapture As Long)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "TxSetCaretPos",
+          "kind": "Function",
+          "access": null,
+          "signature": "Function TxSetCaretPos(ByVal x As Long, ByVal x As Long) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "TxSetCursor",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub TxSetCursor(ByVal hcur As LongPtr, ByVal fText As Long)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "TxSetFocus",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub TxSetFocus()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "TxSetScrollPos",
+          "kind": "Function",
+          "access": null,
+          "signature": "Function TxSetScrollPos(ByVal fnBar As Long, ByVal fuArrowFlags As Long) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "TxSetScrollRange",
+          "kind": "Function",
+          "access": null,
+          "signature": "Function TxSetScrollRange(ByVal fnBar As Long, ByVal nMinPos As Long, ByVal nMaxPos As Long, ByVal fRedraw As Long) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "TxSetTimer",
+          "kind": "Function",
+          "access": null,
+          "signature": "Function TxSetTimer(ByVal idTimer As Long, ByVal uTimeout As Long) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "TxShowCaret",
+          "kind": "Function",
+          "access": null,
+          "signature": "Function TxShowCaret(ByVal fShow As Long) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "TxShowScrollBar",
+          "kind": "Function",
+          "access": null,
+          "signature": "Function TxShowScrollBar(ByVal fnBar As Long, ByVal fShow As Long) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "TxViewChange",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub TxViewChange(ByVal fUpdate As Long)",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "ITextHost2",
+      "kind": "Interface",
+      "file": "modRichEd.twin",
+      "access": "Public",
+      "attributes": [],
+      "implements": [],
+      "inherits": "ITextHost",
+      "members": [
+        {
+          "name": "TxEBookImageDraw",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub TxEBookImageDraw(ByVal ID As LongPtr, ByVal hdc As LongPtr, topLeft As POINT, prcRenderint As RECT, ByVal fSelected As Long)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "TxEBookLoadImage",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub TxEBookLoadImage(ByVal lpszName As LongPtr, pID As LongPtr, psize As SIZE, pdwFlags As Long)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "TxFreeTextServicesNotification",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub TxFreeTextServicesNotification()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "TxGetEditStyle",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub TxGetEditStyle(ByVal dwItem As Long, pdwData As Long)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "TxGetFEFlags",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub TxGetFEFlags(pFlags As Long)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "TxGetHorzExtent",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub TxGetHorzExtent(plHorzExtent As Long)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "TxGetPalette",
+          "kind": "Function",
+          "access": null,
+          "signature": "Function TxGetPalette() As LongPtr",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "TxGetWindow",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub TxGetWindow(phwnd As LongPtr)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "TxGetWindowStyles",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub TxGetWindowStyles(pdwStyle As Long, pdwExStyle As Long)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "TxIsDoubleClickPending",
+          "kind": "Function",
+          "access": null,
+          "signature": "Function TxIsDoubleClickPending() As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "TxSetCursor2",
+          "kind": "Function",
+          "access": null,
+          "signature": "Function TxSetCursor2(ByVal hcur As LongPtr, ByVal bText As Long) As LongPtr",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "TxSetForegroundWindow",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub TxSetForegroundWindow()",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "IUrlHistoryStg",
+      "kind": "Interface",
+      "file": "modShell.twin",
+      "access": "Public",
+      "attributes": [],
+      "implements": [],
+      "inherits": "stdole.IUnknown",
+      "members": [],
+      "events": []
+    },
+    {
+      "name": "IViewObject",
+      "kind": "Interface",
+      "file": "modOLE.twin",
+      "access": "Public",
+      "attributes": [],
+      "implements": [],
+      "inherits": "stdole.IUnknown",
+      "members": [],
+      "events": []
+    },
+    {
+      "name": "modOLE",
+      "kind": "Module",
+      "file": "modOLE.twin",
+      "access": "Public",
+      "attributes": [],
+      "implements": [],
+      "inherits": null,
+      "members": [],
+      "events": []
+    },
+    {
+      "name": "modRichEd",
+      "kind": "Module",
+      "file": "modRichEd.twin",
+      "access": "Public",
+      "attributes": [],
+      "implements": [],
+      "inherits": null,
+      "members": [],
+      "events": []
+    },
+    {
+      "name": "modShell",
+      "kind": "Module",
+      "file": "modShell.twin",
+      "access": "Public",
+      "attributes": [],
+      "implements": [],
+      "inherits": null,
+      "members": [],
+      "events": []
+    }
+  ],
+  "enums": [],
+  "types": []
+}

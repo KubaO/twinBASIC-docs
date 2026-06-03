@@ -1,0 +1,521 @@
+{
+  "package": "CustomControls",
+  "version": "beta-x-0983",
+  "modules": [
+    {
+      "name": "_CustomControlContext",
+      "kind": "Interface",
+      "file": "CustomControls.twin",
+      "access": "Public",
+      "attributes": [
+        "InterfaceId"
+      ],
+      "implements": [],
+      "inherits": "stdole.IUnknown",
+      "members": [
+        {
+          "name": "ChangeFocusedElement",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub ChangeFocusedElement(ByVal ElementTabIndex As Long)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CreateTimer",
+          "kind": "Function",
+          "access": null,
+          "signature": "Function CreateTimer() As stdole.IUnknown",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GetSerializer",
+          "kind": "Function",
+          "access": null,
+          "signature": "Function GetSerializer() As SerializeInfo",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Repaint",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub Repaint()",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "_CustomControlsCollection",
+      "kind": "Interface",
+      "file": "CustomControls.twin",
+      "access": "Public",
+      "attributes": [
+        "InterfaceId"
+      ],
+      "implements": [],
+      "inherits": null,
+      "members": [
+        {
+          "name": "_NewEnum",
+          "kind": "Function",
+          "access": null,
+          "signature": "Function _NewEnum() As stdole.IUnknown",
+          "attributes": [
+            "DispId(-4)",
+            "Hidden"
+          ],
+          "description": null
+        },
+        {
+          "name": "Add",
+          "kind": "Function",
+          "access": null,
+          "signature": "Function Add(ByVal ProgId As String, ByVal ControlName As String, ByVal Container As Object) As Object",
+          "attributes": [
+            "DispId(2)"
+          ],
+          "description": null
+        },
+        {
+          "name": "Count",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Get Count() As Long",
+          "attributes": [
+            "DispId(1)"
+          ],
+          "description": null
+        },
+        {
+          "name": "Item",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Get Item(ByRef IndexOrName As Variant) As Object",
+          "attributes": [
+            "DispId(0)"
+          ],
+          "description": null
+        },
+        {
+          "name": "Remove",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub Remove(ByRef IndexOrName As Variant)",
+          "attributes": [
+            "DispId(3)"
+          ],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "_CustomControlTimer",
+      "kind": "Interface",
+      "file": "CustomControls.twin",
+      "access": "Public",
+      "attributes": [
+        "InterfaceId"
+      ],
+      "implements": [],
+      "inherits": "stdole.IUnknown",
+      "members": [
+        {
+          "name": "Enabled",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Get Enabled() As Boolean",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Enabled",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Let Enabled(ByVal Value As Boolean)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Interval",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Get Interval() As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Interval",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Let Interval(ByVal Value As Long)",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "_CustomControlTimerEvents",
+      "kind": "Interface",
+      "file": "CustomControls.twin",
+      "access": "Public",
+      "attributes": [
+        "InterfaceId"
+      ],
+      "implements": [],
+      "inherits": "stdole.IUnknown",
+      "members": [
+        {
+          "name": "OnTimer",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub OnTimer()",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "_CustomFormContext",
+      "kind": "Interface",
+      "file": "CustomControls.twin",
+      "access": "Public",
+      "attributes": [
+        "InterfaceId"
+      ],
+      "implements": [],
+      "inherits": "_CustomControlContext",
+      "members": [
+        {
+          "name": "Close",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub Close()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Show",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub Show()",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "Constants",
+      "kind": "Module",
+      "file": "CustomControls.twin",
+      "access": "Public",
+      "attributes": [],
+      "implements": [],
+      "inherits": null,
+      "members": [
+        {
+          "name": "BorderStyle",
+          "kind": "Enum",
+          "access": "Public",
+          "signature": "Public Enum BorderStyle",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Canvas",
+          "kind": "Type",
+          "access": null,
+          "signature": "Type Canvas",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ColorRGBA",
+          "kind": "Enum",
+          "access": null,
+          "signature": "Enum ColorRGBA",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CornerShape",
+          "kind": "Enum",
+          "access": "Public",
+          "signature": "Public Enum CornerShape",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Customtate",
+          "kind": "Enum",
+          "access": "Public",
+          "signature": "Public Enum Customtate",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "DockMode",
+          "kind": "Enum",
+          "access": "Public",
+          "signature": "Public Enum DockMode",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "FillPattern",
+          "kind": "Enum",
+          "access": "Public",
+          "signature": "Public Enum FillPattern",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "FontWeight",
+          "kind": "Enum",
+          "access": "Public",
+          "signature": "Public Enum FontWeight",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "PixelCount",
+          "kind": "Enum",
+          "access": null,
+          "signature": "Enum PixelCount",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "PointSize",
+          "kind": "Enum",
+          "access": null,
+          "signature": "Enum PointSize",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SerializeInfo",
+          "kind": "Type",
+          "access": null,
+          "signature": "Type SerializeInfo",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "StartupPosition",
+          "kind": "Enum",
+          "access": "Public",
+          "signature": "Public Enum StartupPosition",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "TextAlignment",
+          "kind": "Enum",
+          "access": "Public",
+          "signature": "Public Enum TextAlignment",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "TextOverflowMode",
+          "kind": "Enum",
+          "access": "Public",
+          "signature": "Public Enum TextOverflowMode",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "WindowState",
+          "kind": "Enum",
+          "access": "Public",
+          "signature": "Public Enum WindowState",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "CustomControlContext",
+      "kind": "CoClass",
+      "file": "CustomControls.twin",
+      "access": "Public",
+      "attributes": [
+        "CoClassId"
+      ],
+      "implements": [],
+      "inherits": null,
+      "members": [
+        {
+          "name": "_CustomControlContext",
+          "kind": "CoClassInterface",
+          "access": null,
+          "signature": "[Default] Interface _CustomControlContext",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "CustomControlsCollection",
+      "kind": "CoClass",
+      "file": "CustomControls.twin",
+      "access": "Public",
+      "attributes": [
+        "CoClassId"
+      ],
+      "implements": [],
+      "inherits": null,
+      "members": [
+        {
+          "name": "_CustomControlsCollection",
+          "kind": "CoClassInterface",
+          "access": null,
+          "signature": "[Default] Interface _CustomControlsCollection",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "CustomControlTimer",
+      "kind": "CoClass",
+      "file": "CustomControls.twin",
+      "access": "Public",
+      "attributes": [
+        "CoClassId"
+      ],
+      "implements": [],
+      "inherits": null,
+      "members": [
+        {
+          "name": "_CustomControlTimer",
+          "kind": "CoClassInterface",
+          "access": null,
+          "signature": "[Default] Interface _CustomControlTimer",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "_CustomControlTimerEvents",
+          "kind": "CoClassInterface",
+          "access": null,
+          "signature": "[Default, Source] Interface _CustomControlTimerEvents",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "CustomFormContext",
+      "kind": "CoClass",
+      "file": "CustomControls.twin",
+      "access": "Public",
+      "attributes": [
+        "CoClassId"
+      ],
+      "implements": [],
+      "inherits": null,
+      "members": [
+        {
+          "name": "_CustomFormContext",
+          "kind": "CoClassInterface",
+          "access": null,
+          "signature": "[Default] Interface _CustomFormContext",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "ICustomControl",
+      "kind": "Interface",
+      "file": "CustomControls.twin",
+      "access": "Public",
+      "attributes": [
+        "InterfaceId"
+      ],
+      "implements": [],
+      "inherits": "stdole.IUnknown",
+      "members": [
+        {
+          "name": "Destroy",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub Destroy()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Initialize",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub Initialize(ByVal Context As CustomControlContext)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Paint",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub Paint(ByVal Canvas As Canvas)",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "ICustomForm",
+      "kind": "Interface",
+      "file": "CustomControls.twin",
+      "access": "Public",
+      "attributes": [
+        "InterfaceId"
+      ],
+      "implements": [],
+      "inherits": "stdole.IUnknown",
+      "members": [
+        {
+          "name": "Destroy",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub Destroy()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Initialize",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub Initialize(ByVal Context As CustomFormContext)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Paint",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub Paint(ByVal Canvas As Canvas)",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    }
+  ],
+  "enums": [],
+  "types": []
+}

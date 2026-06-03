@@ -1,0 +1,1407 @@
+{
+  "package": "WinServicesLib",
+  "version": "beta-x-0983",
+  "modules": [
+    {
+      "name": "IServiceCreator",
+      "kind": "Interface",
+      "file": "Interfaces.twin",
+      "access": "Private",
+      "attributes": [
+        "InterfaceId"
+      ],
+      "implements": [],
+      "inherits": null,
+      "members": [
+        {
+          "name": "CreateInstance",
+          "kind": "Function",
+          "access": null,
+          "signature": "Function CreateInstance() As ITbService",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "IServiceManagerInternal",
+      "kind": "Interface",
+      "file": "Interfaces.twin",
+      "access": "Private",
+      "attributes": [
+        "InterfaceId"
+      ],
+      "implements": [],
+      "inherits": null,
+      "members": [
+        {
+          "name": "GetEntryPointAddress",
+          "kind": "Function",
+          "access": null,
+          "signature": "Function GetEntryPointAddress() As LongPtr",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "ITbService",
+      "kind": "Interface",
+      "file": "Interfaces.twin",
+      "access": "Public",
+      "attributes": [
+        "InterfaceId"
+      ],
+      "implements": [],
+      "inherits": null,
+      "members": [
+        {
+          "name": "ChangeState",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub ChangeState(ByVal ServiceContext As ServiceManager, ByVal dwControl As ServiceControlCodeConstants, ByVal dwEventType As Long, ByVal lpEventData As LongPtr)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "EntryPoint",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub EntryPoint(ByVal ServiceContext As ServiceManager)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "StartupFailed",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub StartupFailed(ByVal ServiceContext As ServiceManager)",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "ServiceCreator",
+      "kind": "Class",
+      "file": "ServiceCreator.twin",
+      "access": "Public",
+      "attributes": [
+        "COMCreatable(False)",
+        "ClassId"
+      ],
+      "implements": [
+        "IServiceCreator"
+      ],
+      "inherits": null,
+      "members": [
+        {
+          "name": "CreateInstance",
+          "kind": "Function",
+          "access": null,
+          "signature": "Function CreateInstance() As ITbService Implements IServiceCreator.CreateInstance",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "ServiceManager",
+      "kind": "Class",
+      "file": "ServiceManager.twin",
+      "access": "Public",
+      "attributes": [
+        "COMCreatable(False)"
+      ],
+      "implements": [
+        "IServiceManagerInternal"
+      ],
+      "inherits": null,
+      "members": [
+        {
+          "name": "AutoInitializeCOM",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get AutoInitializeCOM() As Boolean",
+          "attributes": [],
+          "description": "When TRUE, COM will be initialized for you on the new service thread in STA mode"
+        },
+        {
+          "name": "AutoInitializeCOM",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Let AutoInitializeCOM(ByVal Value As Boolean)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "DependentServices",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get DependentServices() As Variant()",
+          "attributes": [],
+          "description": "A list of dependent services that this service requires to be started before this service is launched (dependent services are auto-launched by the OS)"
+        },
+        {
+          "name": "DependentServices",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Let DependentServices(ByRef Value() As Variant)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Description",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get Description() As String",
+          "attributes": [],
+          "description": "The description of the service, as listed in the OS services database"
+        },
+        {
+          "name": "Description",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Let Description(ByVal Value As String)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GetEntryPointAddress",
+          "kind": "Function",
+          "access": "Private",
+          "signature": "Private Function GetEntryPointAddress() As LongPtr Implements IServiceManagerInternal.GetEntryPointAddress",
+          "attributes": [],
+          "description": "For internal use"
+        },
+        {
+          "name": "Install",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub Install()",
+          "attributes": [],
+          "description": "This method attempts to install the configured service on the system"
+        },
+        {
+          "name": "InstallCmdLine",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get InstallCmdLine() As String",
+          "attributes": [],
+          "description": "The command line arguments passed to the service EXE when the OS launches the service"
+        },
+        {
+          "name": "InstallCmdLine",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Let InstallCmdLine(ByVal Value As String)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "InstallStartMode",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get InstallStartMode() As ServiceStartConstants",
+          "attributes": [],
+          "description": "The start-mode of the service, typically tbServiceStartOnDemand or tbServiceStartAuto"
+        },
+        {
+          "name": "InstallStartMode",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Let InstallStartMode(ByVal Value As ServiceStartConstants)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "InstanceCreator",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get InstanceCreator() As IServiceCreator",
+          "attributes": [],
+          "description": "Set this to an instance of the ServiceCreator class to allow the OS to launch the instance of your service"
+        },
+        {
+          "name": "InstanceCreator",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Let InstanceCreator(ByVal Value As IServiceCreator)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "InstanceCreator",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Set InstanceCreator(ByVal Value As IServiceCreator)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Name",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get Name() As String",
+          "attributes": [],
+          "description": "The name of the service, as listed in the OS services database"
+        },
+        {
+          "name": "Name",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Let Name(ByVal Value As String)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "New",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub New()",
+          "attributes": [],
+          "description": "For internal use.  Dont create instances of ServiceManager manually, use Services.ConfigureNew instead"
+        },
+        {
+          "name": "ReportStatus",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub ReportStatus(ByVal dwCurrentState As ServiceStatusConstants, Optional ByVal dwWin32ExitCode As Long = ERRORCODE_NO_ERROR, Optional ByVal dwWaitHint As Long = 0)",
+          "attributes": [],
+          "description": "This method informs the OS of the current state of the service"
+        },
+        {
+          "name": "ResyncStatus",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub ResyncStatus()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SERVICE_TABLE_ENTRYW",
+          "kind": "Type",
+          "access": null,
+          "signature": "Type SERVICE_TABLE_ENTRYW",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ServiceControlHandlerCallback",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub ServiceControlHandlerCallback(ByVal dwControl As Long, ByVal dwEventType As Long, ByVal lpEventData As LongPtr)",
+          "attributes": [],
+          "description": "The callback for OS service related notifications"
+        },
+        {
+          "name": "ServiceEntryPoint",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub ServiceEntryPoint(ByVal dwArgc As Long, ByVal lpszArgv As LongPtr)",
+          "attributes": [],
+          "description": "The entry point of the service as soon as the OS launches it"
+        },
+        {
+          "name": "SupportsPausing",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get SupportsPausing() As Boolean",
+          "attributes": [],
+          "description": "When TRUE, the SCM will send SERVICE_CONTROL_PAUSE/SERVICE_CONTROL_CONTINUE notifications"
+        },
+        {
+          "name": "SupportsPausing",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Let SupportsPausing(ByVal Value As Boolean)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Type",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get Type() As ServiceTypeConstants",
+          "attributes": [],
+          "description": "The type of the service, typically tbServiceTypeOwnProcess or tbServiceTypeShareProcess"
+        },
+        {
+          "name": "Type",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Let Type(ByVal Value As ServiceTypeConstants)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Uninstall",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub Uninstall()",
+          "attributes": [],
+          "description": "This method attempts to uninstall the configured service on the system"
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "Services",
+      "kind": "Class",
+      "file": "Services.twin",
+      "access": "Public",
+      "attributes": [
+        "PredeclaredId"
+      ],
+      "implements": [],
+      "inherits": null,
+      "members": [
+        {
+          "name": "_NewEnum",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get _NewEnum() As Variant",
+          "attributes": [
+            "Enumerator"
+          ],
+          "description": "Provides For-Each support for the services collection, exposing each configured service as a ServiceManager instance"
+        },
+        {
+          "name": "ConfigureNew",
+          "kind": "Function",
+          "access": null,
+          "signature": "Function ConfigureNew() As ServiceManager",
+          "attributes": [],
+          "description": "Use this method to configure a service.  Usually used during app startup."
+        },
+        {
+          "name": "ControlService",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub ControlService(ByVal ServiceName As String, ByVal ControlCode As ServiceControlCodeConstants)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GetConfiguredService",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get GetConfiguredService(ByVal Name As String) As ServiceManager",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "InstallAll",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub InstallAll()",
+          "attributes": [],
+          "description": "This method tries to register ALL of the configured services onto the system"
+        },
+        {
+          "name": "LaunchService",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub LaunchService(ByVal ServiceName As String, ParamArray LaunchArgs())",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "QueryStateOfService",
+          "kind": "Function",
+          "access": null,
+          "signature": "Function QueryStateOfService(ByVal ServiceName As String) As ServiceState",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "RunServiceDispatcher",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub RunServiceDispatcher()",
+          "attributes": [],
+          "description": "This method hands over to the OS for managing the starting/stopping of services via the main thread.  This is a BLOCKING call, until the OS wants to shutdown the service EXE."
+        },
+        {
+          "name": "UninstallAll",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub UninstallAll()",
+          "attributes": [],
+          "description": "This method tries to unregister ALL of the configured services off the system"
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "ServicesAPIs",
+      "kind": "Module",
+      "file": "APIs.twin",
+      "access": "Private",
+      "attributes": [],
+      "implements": [],
+      "inherits": null,
+      "members": [
+        {
+          "name": "ChangeServiceConfig2W",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function ChangeServiceConfig2W Lib \"\" (ByVal hService As LongPtr, ByVal dwInfoLevel As Long, ByVal lpInfo As LongPtr) As Long",
+          "attributes": [
+            "DLLStackCheck(False)"
+          ],
+          "description": null
+        },
+        {
+          "name": "CloseServiceHandle",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function CloseServiceHandle Lib \"\" (ByVal hService As LongPtr) As Long",
+          "attributes": [
+            "DLLStackCheck(False)"
+          ],
+          "description": null
+        },
+        {
+          "name": "CoInitializeEx",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function CoInitializeEx Lib \"\" (ByVal pvReserved As LongPtr, ByVal dwCoInit As Long) As Long",
+          "attributes": [
+            "DLLStackCheck(False)"
+          ],
+          "description": null
+        },
+        {
+          "name": "ControlServiceExW",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function ControlServiceExW Lib \"\" (ByVal hService As LongPtr, ByVal dwControl As Long, ByVal dwInfoLevel As Long, ByVal pControlParams As LongPtr) As Long",
+          "attributes": [
+            "DLLStackCheck(False)"
+          ],
+          "description": null
+        },
+        {
+          "name": "CreateServiceW",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function CreateServiceW Lib \"\" (ByVal hSCManager As LongPtr, ByVal lpServiceName As String, ByVal lpDisplayName As String, ByVal dwDesiredAccess As Long, ByVal dwServiceType As Long, ByVal dwStartType As Long, ByVal dwErrorControl As Long, ByVal lpBinaryPathName As String, ByVal lpLoadOrderGroup As String, ByRef lpdwTagId As Any, ByVal lpDependencies As String, ByVal lpServiceStartName As String, ByVal lpPassword As String) As LongPtr",
+          "attributes": [
+            "DLLStackCheck(False)"
+          ],
+          "description": null
+        },
+        {
+          "name": "DeleteService",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function DeleteService Lib \"\" (ByVal hService As LongPtr) As Long",
+          "attributes": [
+            "DLLStackCheck(False)"
+          ],
+          "description": null
+        },
+        {
+          "name": "FormatMessageW",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function FormatMessageW Lib \"\" (ByVal dwFlags As Long, ByVal lpSource As LongPtr, ByVal dwMessageId As Long, ByVal dwLanguageId As Long, ByVal lpBuffer As LongPtr, ByVal nSize As Long, ByVal args As LongPtr) As Long",
+          "attributes": [
+            "DLLStackCheck(False)"
+          ],
+          "description": null
+        },
+        {
+          "name": "OpenSCManagerW",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function OpenSCManagerW Lib \"\" (ByVal lpMachineName As String, ByVal lpDatabaseName As String, ByVal dwDesiredAccess As Long) As LongPtr",
+          "attributes": [
+            "DLLStackCheck(False)"
+          ],
+          "description": null
+        },
+        {
+          "name": "OpenServiceW",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function OpenServiceW Lib \"\" (ByVal hSCManager As LongPtr, ByVal lpServiceName As String, ByVal dwDesiredAccess As Long) As LongPtr",
+          "attributes": [
+            "DLLStackCheck(False)"
+          ],
+          "description": null
+        },
+        {
+          "name": "QueryServiceStatusEx",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function QueryServiceStatusEx Lib \"\" (ByVal hService As LongPtr, ByVal InfoLevel As SC_STATUS_TYPE, ByVal lpBuffer As LongPtr, ByVal cbBufSize As Long, ByRef pcbBytesNeeded As Long) As LongPtr",
+          "attributes": [
+            "DLLStackCheck(False)"
+          ],
+          "description": null
+        },
+        {
+          "name": "RegisterServiceCtrlHandlerExW",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function RegisterServiceCtrlHandlerExW Lib \"\" (ByVal lpServiceName As String, ByVal lpHandlerProc As LongPtr, ByVal lpContext As LongPtr) As LongPtr",
+          "attributes": [
+            "DLLStackCheck(False)"
+          ],
+          "description": null
+        },
+        {
+          "name": "SERVICE_CONFIG_DESCRIPTION",
+          "kind": "Type",
+          "access": null,
+          "signature": "Type SERVICE_CONFIG_DESCRIPTION",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SERVICE_CONTROL_STATUS_REASON_PARAMSW",
+          "kind": "Type",
+          "access": null,
+          "signature": "Type SERVICE_CONTROL_STATUS_REASON_PARAMSW",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SERVICE_STATUS",
+          "kind": "Type",
+          "access": null,
+          "signature": "Type SERVICE_STATUS",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SERVICE_STATUS_PROCESS",
+          "kind": "Type",
+          "access": null,
+          "signature": "Type SERVICE_STATUS_PROCESS",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SetServiceStatus",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function SetServiceStatus Lib \"\" (ByVal hServiceStatus As LongPtr, ByRef lpServiceStatus As SERVICE_STATUS) As Long",
+          "attributes": [
+            "DLLStackCheck(False)"
+          ],
+          "description": null
+        },
+        {
+          "name": "StartServiceCtrlDispatcherW",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function StartServiceCtrlDispatcherW Lib \"\" (ByRef lpServiceStartTable As SERVICE_TABLE_ENTRYW) As Long",
+          "attributes": [
+            "DLLStackCheck(False)"
+          ],
+          "description": null
+        },
+        {
+          "name": "StartServiceW",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function StartServiceW Lib \"\" (ByVal hService As LongPtr, ByVal dwNumServiceArgs As Long, ByVal lpServiceArgVectors As LongPtr) As Long",
+          "attributes": [
+            "DLLStackCheck(False)"
+          ],
+          "description": null
+        },
+        {
+          "name": "SysAllocStringPtr",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function SysAllocStringPtr Lib \"\" Alias \"\" (ByVal stringValue As LongPtr) As String",
+          "attributes": [
+            "DLLStackCheck(False)"
+          ],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "ServicesConstants",
+      "kind": "Module",
+      "file": "Constants.twin",
+      "access": "Private",
+      "attributes": [],
+      "implements": [],
+      "inherits": null,
+      "members": [
+        {
+          "name": "COINIT_APARTMENTTHREADED",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const COINIT_APARTMENTTHREADED As Long = 2",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ERRORCODE_NO_ERROR",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const ERRORCODE_NO_ERROR As Long = 0",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SC_MANAGER_ALL_ACCESS",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const SC_MANAGER_ALL_ACCESS As Long = STANDARD_RIGHTS_REQUIRED Or SC_MANAGER_CONNECT Or SC_MANAGER_CREATE_SERVICE Or SC_MANAGER_ENUMERATE_SERVICE Or SC_MANAGER_LOCK Or SC_MANAGER_QUERY_LOCK_STATUS Or SC_MANAGER_MODIFY_BOOT_CONFIG",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SC_MANAGER_CONNECT",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const SC_MANAGER_CONNECT As Long = &H0001",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SC_MANAGER_CREATE_SERVICE",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const SC_MANAGER_CREATE_SERVICE As Long = &H0002",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SC_MANAGER_ENUMERATE_SERVICE",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const SC_MANAGER_ENUMERATE_SERVICE As Long = &H0004",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SC_MANAGER_LOCK",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const SC_MANAGER_LOCK As Long = &H0008",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SC_MANAGER_MODIFY_BOOT_CONFIG",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const SC_MANAGER_MODIFY_BOOT_CONFIG As Long = &H0020",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SC_MANAGER_QUERY_LOCK_STATUS",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const SC_MANAGER_QUERY_LOCK_STATUS As Long = &H0010",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SC_STATUS_TYPE",
+          "kind": "Enum",
+          "access": null,
+          "signature": "Enum SC_STATUS_TYPE",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SERVICE_ACCEPT_HARDWAREPROFILECHANGE",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const SERVICE_ACCEPT_HARDWAREPROFILECHANGE As Long = &H00000020",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SERVICE_ACCEPT_LOWRESOURCES",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const SERVICE_ACCEPT_LOWRESOURCES As Long = &H00002000",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SERVICE_ACCEPT_NETBINDCHANGE",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const SERVICE_ACCEPT_NETBINDCHANGE As Long = &H00000010",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SERVICE_ACCEPT_PARAMCHANGE",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const SERVICE_ACCEPT_PARAMCHANGE As Long = &H00000008",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SERVICE_ACCEPT_PAUSE_CONTINUE",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const SERVICE_ACCEPT_PAUSE_CONTINUE As Long = &H00000002",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SERVICE_ACCEPT_POWEREVENT",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const SERVICE_ACCEPT_POWEREVENT As Long = &H00000040",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SERVICE_ACCEPT_PRESHUTDOWN",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const SERVICE_ACCEPT_PRESHUTDOWN As Long = &H00000100",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SERVICE_ACCEPT_SESSIONCHANGE",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const SERVICE_ACCEPT_SESSIONCHANGE As Long = &H00000080",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SERVICE_ACCEPT_SHUTDOWN",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const SERVICE_ACCEPT_SHUTDOWN As Long = &H00000004",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SERVICE_ACCEPT_STOP",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const SERVICE_ACCEPT_STOP As Long = &H00000001",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SERVICE_ACCEPT_SYSTEMLOWRESOURCES",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const SERVICE_ACCEPT_SYSTEMLOWRESOURCES As Long = &H00004000",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SERVICE_ACCEPT_TIMECHANGE",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const SERVICE_ACCEPT_TIMECHANGE As Long = &H00000200",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SERVICE_ACCEPT_TRIGGEREVENT",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const SERVICE_ACCEPT_TRIGGEREVENT As Long = &H00000400",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SERVICE_ACCEPT_USER_LOGOFF",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const SERVICE_ACCEPT_USER_LOGOFF As Long = &H00000800",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SERVICE_ADAPTER",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const SERVICE_ADAPTER As Long = 4",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SERVICE_ALL_ACCESS",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const SERVICE_ALL_ACCESS As Long = STANDARD_RIGHTS_REQUIRED Or SERVICE_QUERY_CONFIG Or SERVICE_CHANGE_CONFIG Or SERVICE_QUERY_STATUS Or SERVICE_ENUMERATE_DEPENDENTS Or SERVICE_START Or SERVICE_STOP Or SERVICE_PAUSE_CONTINUE Or SERVICE_INTERROGATE Or SERVICE_USER_DEFINED_CONTROL",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SERVICE_AUTO_START",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const SERVICE_AUTO_START As Long = &H00000002",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SERVICE_BOOT_START",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const SERVICE_BOOT_START As Long = &H00000000",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SERVICE_CHANGE_CONFIG",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const SERVICE_CHANGE_CONFIG As Long = &H0002",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SERVICE_CONFIG_DESCRIPTION",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const SERVICE_CONFIG_DESCRIPTION As Long = 1",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SERVICE_CONTROL_CONTINUE",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const SERVICE_CONTROL_CONTINUE As Long = &H00000003",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SERVICE_CONTROL_DEVICEEVENT",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const SERVICE_CONTROL_DEVICEEVENT As Long = &H0000000B",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SERVICE_CONTROL_HARDWAREPROFILECHANGE",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const SERVICE_CONTROL_HARDWAREPROFILECHANGE As Long = &H0000000C",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SERVICE_CONTROL_INTERROGATE",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const SERVICE_CONTROL_INTERROGATE As Long = &H00000004",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SERVICE_CONTROL_LOWRESOURCES",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const SERVICE_CONTROL_LOWRESOURCES As Long = &H00000060",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SERVICE_CONTROL_NETBINDADD",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const SERVICE_CONTROL_NETBINDADD As Long = &H00000007",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SERVICE_CONTROL_NETBINDDISABLE",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const SERVICE_CONTROL_NETBINDDISABLE As Long = &H0000000A",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SERVICE_CONTROL_NETBINDENABLE",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const SERVICE_CONTROL_NETBINDENABLE As Long = &H00000009",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SERVICE_CONTROL_NETBINDREMOVE",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const SERVICE_CONTROL_NETBINDREMOVE As Long = &H00000008",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SERVICE_CONTROL_PARAMCHANGE",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const SERVICE_CONTROL_PARAMCHANGE As Long = &H00000006",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SERVICE_CONTROL_PAUSE",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const SERVICE_CONTROL_PAUSE As Long = &H00000002",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SERVICE_CONTROL_POWEREVENT",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const SERVICE_CONTROL_POWEREVENT As Long = &H0000000D",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SERVICE_CONTROL_PRESHUTDOWN",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const SERVICE_CONTROL_PRESHUTDOWN As Long = &H0000000F",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SERVICE_CONTROL_SESSIONCHANGE",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const SERVICE_CONTROL_SESSIONCHANGE As Long = &H0000000E",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SERVICE_CONTROL_SHUTDOWN",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const SERVICE_CONTROL_SHUTDOWN As Long = &H00000005",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SERVICE_CONTROL_STATUS_REASON_INFO",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const SERVICE_CONTROL_STATUS_REASON_INFO As Long = 1",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SERVICE_CONTROL_STOP",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const SERVICE_CONTROL_STOP As Long = &H00000001",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SERVICE_CONTROL_SYSTEMLOWRESOURCES",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const SERVICE_CONTROL_SYSTEMLOWRESOURCES As Long = &H00000061",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SERVICE_CONTROL_TIMECHANGE",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const SERVICE_CONTROL_TIMECHANGE As Long = &H00000010",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SERVICE_CONTROL_TRIGGEREVENT",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const SERVICE_CONTROL_TRIGGEREVENT As Long = &H00000020",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SERVICE_DELETE",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const SERVICE_DELETE As Long = &H10000",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SERVICE_DEMAND_START",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const SERVICE_DEMAND_START As Long = &H00000003",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SERVICE_DISABLED",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const SERVICE_DISABLED As Long = &H00000004",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SERVICE_ENUMERATE_DEPENDENTS",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const SERVICE_ENUMERATE_DEPENDENTS As Long = &H0008",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SERVICE_ERROR_CRITICAL",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const SERVICE_ERROR_CRITICAL As Long = &H00000003",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SERVICE_ERROR_IGNORE",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const SERVICE_ERROR_IGNORE As Long = &H00000000",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SERVICE_ERROR_NORMAL",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const SERVICE_ERROR_NORMAL As Long = &H00000001",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SERVICE_ERROR_SEVERE",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const SERVICE_ERROR_SEVERE As Long = &H00000002",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SERVICE_FILE_SYSTEM_DRIVER",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const SERVICE_FILE_SYSTEM_DRIVER As Long = 2",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SERVICE_INTERACTIVE_PROCESS",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const SERVICE_INTERACTIVE_PROCESS As Long = &H100",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SERVICE_INTERROGATE",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const SERVICE_INTERROGATE As Long = &H0080",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SERVICE_KERNEL_DRIVER",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const SERVICE_KERNEL_DRIVER As Long = 1",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SERVICE_PAUSE_CONTINUE",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const SERVICE_PAUSE_CONTINUE As Long = &H0040",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SERVICE_QUERY_CONFIG",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const SERVICE_QUERY_CONFIG As Long = &H0001",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SERVICE_QUERY_STATUS",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const SERVICE_QUERY_STATUS As Long = &H0004",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SERVICE_RECOGNIZER_DRIVER",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const SERVICE_RECOGNIZER_DRIVER As Long = 8",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SERVICE_START",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const SERVICE_START As Long = &H0010",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SERVICE_STOP",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const SERVICE_STOP As Long = &H0020",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SERVICE_SYSTEM_START",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const SERVICE_SYSTEM_START As Long = &H00000001",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SERVICE_USER_DEFINED_CONTROL",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const SERVICE_USER_DEFINED_CONTROL As Long = &H0100",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SERVICE_WIN32_OWN_PROCESS",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const SERVICE_WIN32_OWN_PROCESS As Long = 16",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SERVICE_WIN32_SHARE_PROCESS",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const SERVICE_WIN32_SHARE_PROCESS As Long = 32",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "STANDARD_RIGHTS_REQUIRED",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const STANDARD_RIGHTS_REQUIRED As Long = &H000F0000",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "ServicesConstantsPublic",
+      "kind": "Module",
+      "file": "Constants.twin",
+      "access": "Public",
+      "attributes": [],
+      "implements": [],
+      "inherits": null,
+      "members": [
+        {
+          "name": "ServiceControlCodeConstants",
+          "kind": "Enum",
+          "access": null,
+          "signature": "Enum ServiceControlCodeConstants",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ServiceStartConstants",
+          "kind": "Enum",
+          "access": null,
+          "signature": "Enum ServiceStartConstants",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ServiceStatusConstants",
+          "kind": "Enum",
+          "access": null,
+          "signature": "Enum ServiceStatusConstants",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ServiceTypeConstants",
+          "kind": "Enum",
+          "access": null,
+          "signature": "Enum ServiceTypeConstants",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "ServicesHelper",
+      "kind": "Module",
+      "file": "Helper.twin",
+      "access": "Private",
+      "attributes": [],
+      "implements": [],
+      "inherits": null,
+      "members": [
+        {
+          "name": "ServiceControlHandlerCallback_Trampoline",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function ServiceControlHandlerCallback_Trampoline(ByVal dwControl As Long, ByVal dwEventType As Long, ByVal lpEventData As LongPtr, ByVal lpContext_scw As ServiceManager) As Long",
+          "attributes": [],
+          "description": "For internal use.  Used instead of class-AddressOf support"
+        },
+        {
+          "name": "VariantArrayToStringArray",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function VariantArrayToStringArray(array() As Variant, Optional ByRef outCount As Long) As String()",
+          "attributes": [],
+          "description": "Converts a variant array into a string array"
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "ServiceState",
+      "kind": "Class",
+      "file": "ServiceState.twin",
+      "access": "Public",
+      "attributes": [
+        "COMCreatable(False)"
+      ],
+      "implements": [],
+      "inherits": null,
+      "members": [
+        {
+          "name": "CheckPoint",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get CheckPoint() As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ControlsAccepted",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get ControlsAccepted() As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CurrentState",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get CurrentState() As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CurrentStateText",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get CurrentStateText() As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ExitCode",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get ExitCode() As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Flags",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get Flags() As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "New",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub New(ByVal ServiceName As String)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ProcessId",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get ProcessId() As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ServiceSpecificExitCode",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get ServiceSpecificExitCode() As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Type",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get Type() As ServiceTypeConstants",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "WaitHint",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get WaitHint() As Long",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    }
+  ],
+  "enums": [],
+  "types": []
+}

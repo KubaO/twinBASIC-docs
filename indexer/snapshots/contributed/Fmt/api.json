@@ -1,0 +1,926 @@
+{
+  "package": "Fmt",
+  "version": "1.0.0.0",
+  "modules": [
+    {
+      "name": "CurrencySFI",
+      "kind": "Class",
+      "file": "CurrencySFI.cls",
+      "access": "Public",
+      "attributes": [],
+      "implements": [
+        "IStringFormatIdentifier"
+      ],
+      "inherits": null,
+      "members": [
+        {
+          "name": "IStringFormatIdentifier_GetFormattedValue",
+          "kind": "Function",
+          "access": "Private",
+          "signature": "Private Function IStringFormatIdentifier_GetFormattedValue(ByVal value As Variant, ByVal specifier As StringFormatSpecifier) As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "IStringFormatIdentifier_IsIdentifierMatch",
+          "kind": "Function",
+          "access": "Private",
+          "signature": "Private Function IStringFormatIdentifier_IsIdentifierMatch(ByVal specifier As StringFormatSpecifier) As Boolean",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "DateTimeSFI",
+      "kind": "Class",
+      "file": "DateTimeSFI.cls",
+      "access": "Public",
+      "attributes": [],
+      "implements": [
+        "IStringFormatIdentifier"
+      ],
+      "inherits": null,
+      "members": [
+        {
+          "name": "IStringFormatIdentifier_GetFormattedValue",
+          "kind": "Function",
+          "access": "Private",
+          "signature": "Private Function IStringFormatIdentifier_GetFormattedValue(ByVal value As Variant, ByVal specifier As StringFormatSpecifier) As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "IStringFormatIdentifier_IsIdentifierMatch",
+          "kind": "Function",
+          "access": "Private",
+          "signature": "Private Function IStringFormatIdentifier_IsIdentifierMatch(ByVal specifier As StringFormatSpecifier) As Boolean",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "DecimalSFI",
+      "kind": "Class",
+      "file": "DecimalSFI.cls",
+      "access": "Public",
+      "attributes": [],
+      "implements": [
+        "IStringFormatIdentifier"
+      ],
+      "inherits": null,
+      "members": [
+        {
+          "name": "IStringFormatIdentifier_GetFormattedValue",
+          "kind": "Function",
+          "access": "Private",
+          "signature": "Private Function IStringFormatIdentifier_GetFormattedValue(ByVal value As Variant, ByVal specifier As StringFormatSpecifier) As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "IStringFormatIdentifier_IsIdentifierMatch",
+          "kind": "Function",
+          "access": "Private",
+          "signature": "Private Function IStringFormatIdentifier_IsIdentifierMatch(ByVal specifier As StringFormatSpecifier) As Boolean",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "EscapeSequence",
+      "kind": "Class",
+      "file": "EscapeSequence.cls",
+      "access": "Public",
+      "attributes": [],
+      "implements": [],
+      "inherits": null,
+      "members": [
+        {
+          "name": "AsciiBase",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get AsciiBase() As AsciiEscapeBase",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "AsciiBase",
+          "kind": "Property",
+          "access": "Friend",
+          "signature": "Friend Property Let AsciiBase(value As AsciiEscapeBase)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "AsciiEscapeBase",
+          "kind": "Enum",
+          "access": "Public",
+          "signature": "Public Enum AsciiEscapeBase",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Create",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function Create(ByVal escape As String, ByVal replacement As String, Optional ByVal isAsciiReplacement As Boolean = False, Optional ByVal base As AsciiEscapeBase = Octal) As EscapeSequence",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "EscapeString",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get EscapeString() As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "EscapeString",
+          "kind": "Property",
+          "access": "Friend",
+          "signature": "Friend Property Let EscapeString(value As String)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Execute",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub Execute(ByRef string_value As String)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "IsAsciiCharacter",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get IsAsciiCharacter() As Boolean",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "IsAsciiCharacter",
+          "kind": "Property",
+          "access": "Friend",
+          "signature": "Friend Property Let IsAsciiCharacter(value As Boolean)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ProcessAsciiEscape",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub ProcessAsciiEscape(ByRef format_string As String, ByVal regexPattern As String)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ReplacementString",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get ReplacementString() As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ReplacementString",
+          "kind": "Property",
+          "access": "Friend",
+          "signature": "Friend Property Let ReplacementString(value As String)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Self",
+          "kind": "Property",
+          "access": "Friend",
+          "signature": "Friend Property Get Self() As EscapeSequence",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "tEscapeSequence",
+          "kind": "Type",
+          "access": "Private",
+          "signature": "Private Type tEscapeSequence",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "ExponentialSFI",
+      "kind": "Class",
+      "file": "ExponentialSFI.cls",
+      "access": "Public",
+      "attributes": [],
+      "implements": [
+        "IStringFormatIdentifier"
+      ],
+      "inherits": null,
+      "members": [
+        {
+          "name": "IStringFormatIdentifier_GetFormattedValue",
+          "kind": "Function",
+          "access": "Private",
+          "signature": "Private Function IStringFormatIdentifier_GetFormattedValue(ByVal value As Variant, ByVal specifier As StringFormatSpecifier) As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "IStringFormatIdentifier_IsIdentifierMatch",
+          "kind": "Function",
+          "access": "Private",
+          "signature": "Private Function IStringFormatIdentifier_IsIdentifierMatch(ByVal specifier As StringFormatSpecifier) As Boolean",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ParseExponent",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function ParseExponent(ByVal formattedValue As String) As Long",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "FixedPointSFI",
+      "kind": "Class",
+      "file": "FixedPointSFI.cls",
+      "access": "Public",
+      "attributes": [],
+      "implements": [
+        "IStringFormatIdentifier"
+      ],
+      "inherits": null,
+      "members": [
+        {
+          "name": "IStringFormatIdentifier_GetFormattedValue",
+          "kind": "Function",
+          "access": "Private",
+          "signature": "Private Function IStringFormatIdentifier_GetFormattedValue(ByVal value As Variant, ByVal specifier As StringFormatSpecifier) As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "IStringFormatIdentifier_IsIdentifierMatch",
+          "kind": "Function",
+          "access": "Private",
+          "signature": "Private Function IStringFormatIdentifier_IsIdentifierMatch(ByVal specifier As StringFormatSpecifier) As Boolean",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "FormerEntryPoint",
+      "kind": "Module",
+      "file": "FormerEntryPoint.bas",
+      "access": "Public",
+      "attributes": [],
+      "implements": [],
+      "inherits": null,
+      "members": [
+        {
+          "name": "FormerStringFormat",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function FormerStringFormat(format_string As String, ParamArray values() as variant) As String",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "FormerEscapeSequence",
+      "kind": "Class",
+      "file": "FormerEscapeSequence.cls",
+      "access": "Public",
+      "attributes": [],
+      "implements": [],
+      "inherits": null,
+      "members": [
+        {
+          "name": "Create",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function Create(escape As String, replacement As String) As FormerEscapeSequence",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "EscapeString",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get EscapeString() As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "EscapeString",
+          "kind": "Property",
+          "access": "Friend",
+          "signature": "Friend Property Let EscapeString(value As String)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ReplacementString",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get ReplacementString() As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ReplacementString",
+          "kind": "Property",
+          "access": "Friend",
+          "signature": "Friend Property Let ReplacementString(value As String)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "tFormerEscapeSequence",
+          "kind": "Type",
+          "access": "Private",
+          "signature": "Private Type tFormerEscapeSequence",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "GeneralNumericSFI",
+      "kind": "Class",
+      "file": "GeneralNumericSFI.cls",
+      "access": "Public",
+      "attributes": [],
+      "implements": [
+        "IStringFormatIdentifier"
+      ],
+      "inherits": null,
+      "members": [
+        {
+          "name": "GetFormattedValue",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function GetFormattedValue(ByVal value As Variant, ByVal specifier As StringFormatSpecifier) As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "IStringFormatIdentifier_GetFormattedValue",
+          "kind": "Function",
+          "access": "Private",
+          "signature": "Private Function IStringFormatIdentifier_GetFormattedValue(ByVal value As Variant, ByVal specifier As StringFormatSpecifier) As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "IStringFormatIdentifier_IsIdentifierMatch",
+          "kind": "Function",
+          "access": "Private",
+          "signature": "Private Function IStringFormatIdentifier_IsIdentifierMatch(ByVal specifier As StringFormatSpecifier) As Boolean",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "GenericDateTimeSFI",
+      "kind": "Class",
+      "file": "GenericDateTimeSFI.cls",
+      "access": "Public",
+      "attributes": [],
+      "implements": [
+        "IStringFormatIdentifier"
+      ],
+      "inherits": null,
+      "members": [
+        {
+          "name": "IStringFormatIdentifier_GetFormattedValue",
+          "kind": "Function",
+          "access": "Private",
+          "signature": "Private Function IStringFormatIdentifier_GetFormattedValue(ByVal value As Variant, ByVal specifier As StringFormatSpecifier) As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "IStringFormatIdentifier_IsIdentifierMatch",
+          "kind": "Function",
+          "access": "Private",
+          "signature": "Private Function IStringFormatIdentifier_IsIdentifierMatch(ByVal specifier As StringFormatSpecifier) As Boolean",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "HelloWorldClass",
+      "kind": "Class",
+      "file": "HelloWorldClass.twin",
+      "access": "Public",
+      "attributes": [],
+      "implements": [],
+      "inherits": null,
+      "members": [
+        {
+          "name": "Show",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub Show()",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "HelloWorldModule",
+      "kind": "Module",
+      "file": "HelloWorldModule.twin",
+      "access": "Public",
+      "attributes": [],
+      "implements": [],
+      "inherits": null,
+      "members": [
+        {
+          "name": "Show",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub Show()",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "HexSFI",
+      "kind": "Class",
+      "file": "HexSFI.cls",
+      "access": "Public",
+      "attributes": [],
+      "implements": [
+        "IStringFormatIdentifier"
+      ],
+      "inherits": null,
+      "members": [
+        {
+          "name": "IStringFormatIdentifier_GetFormattedValue",
+          "kind": "Function",
+          "access": "Private",
+          "signature": "Private Function IStringFormatIdentifier_GetFormattedValue(ByVal value As Variant, ByVal specifier As StringFormatSpecifier) As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "IStringFormatIdentifier_IsIdentifierMatch",
+          "kind": "Function",
+          "access": "Private",
+          "signature": "Private Function IStringFormatIdentifier_IsIdentifierMatch(ByVal specifier As StringFormatSpecifier) As Boolean",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "IStringFormatIdentifier",
+      "kind": "Class",
+      "file": "IStringFormatIdentifier.cls",
+      "access": "Public",
+      "attributes": [],
+      "implements": [],
+      "inherits": null,
+      "members": [
+        {
+          "name": "GetFormattedValue",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function GetFormattedValue(ByVal value As Variant, ByVal specifier As StringFormatSpecifier) As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "IsIdentifierMatch",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function IsIdentifierMatch(ByVal specifier As StringFormatSpecifier) As Boolean",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "NumericPaddingSFI",
+      "kind": "Class",
+      "file": "NumericPaddingSFI.cls",
+      "access": "Public",
+      "attributes": [],
+      "implements": [
+        "IStringFormatIdentifier"
+      ],
+      "inherits": null,
+      "members": [
+        {
+          "name": "IStringFormatIdentifier_GetFormattedValue",
+          "kind": "Function",
+          "access": "Private",
+          "signature": "Private Function IStringFormatIdentifier_GetFormattedValue(ByVal value As Variant, ByVal specifier As StringFormatSpecifier) As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "IStringFormatIdentifier_IsIdentifierMatch",
+          "kind": "Function",
+          "access": "Private",
+          "signature": "Private Function IStringFormatIdentifier_IsIdentifierMatch(ByVal specifier As StringFormatSpecifier) As Boolean",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "PercentSFI",
+      "kind": "Class",
+      "file": "PercentSFI.cls",
+      "access": "Public",
+      "attributes": [],
+      "implements": [
+        "IStringFormatIdentifier"
+      ],
+      "inherits": null,
+      "members": [
+        {
+          "name": "IStringFormatIdentifier_GetFormattedValue",
+          "kind": "Function",
+          "access": "Private",
+          "signature": "Private Function IStringFormatIdentifier_GetFormattedValue(ByVal value As Variant, ByVal specifier As StringFormatSpecifier) As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "IStringFormatIdentifier_IsIdentifierMatch",
+          "kind": "Function",
+          "access": "Private",
+          "signature": "Private Function IStringFormatIdentifier_IsIdentifierMatch(ByVal specifier As StringFormatSpecifier) As Boolean",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "Pootle",
+      "kind": "Module",
+      "file": "Pootle.bas",
+      "access": "Public",
+      "attributes": [],
+      "implements": [],
+      "inherits": null,
+      "members": [
+        {
+          "name": "SimpleTest",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub SimpleTest()",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "PublicEntryPoints",
+      "kind": "Module",
+      "file": "PublicEntryPoints.bas",
+      "access": "Public",
+      "attributes": [],
+      "implements": [],
+      "inherits": null,
+      "members": [
+        {
+          "name": "StringFormat",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function StringFormat(format_string As String, ParamArray values() as variant) As String",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "RoundTripSFI",
+      "kind": "Class",
+      "file": "RoundTripSFI.cls",
+      "access": "Public",
+      "attributes": [],
+      "implements": [
+        "IStringFormatIdentifier"
+      ],
+      "inherits": null,
+      "members": [
+        {
+          "name": "IStringFormatIdentifier_GetFormattedValue",
+          "kind": "Function",
+          "access": "Private",
+          "signature": "Private Function IStringFormatIdentifier_GetFormattedValue(ByVal value As Variant, ByVal specifier As StringFormatSpecifier) As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "IStringFormatIdentifier_IsIdentifierMatch",
+          "kind": "Function",
+          "access": "Private",
+          "signature": "Private Function IStringFormatIdentifier_IsIdentifierMatch(ByVal specifier As StringFormatSpecifier) As Boolean",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "StringFormatSpecifier",
+      "kind": "Class",
+      "file": "StringFormatSpecifier.cls",
+      "access": "Public",
+      "attributes": [],
+      "implements": [],
+      "inherits": null,
+      "members": [
+        {
+          "name": "Alignment",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get Alignment() As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Alignment",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Let Alignment(value As Long)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CustomSpecifier",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get CustomSpecifier() As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CustomSpecifier",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Let CustomSpecifier(value As String)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "identifier",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get identifier() As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "identifier",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Let identifier(value As String)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Index",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get Index() As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Index",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Let Index(value As Long)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Precision",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get Precision() As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ToString",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function ToString() As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "tSpecifier",
+          "kind": "Type",
+          "access": "Private",
+          "signature": "Private Type tSpecifier",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "StringHelper",
+      "kind": "Class",
+      "file": "StringHelper.cls",
+      "access": "Public",
+      "attributes": [],
+      "implements": [],
+      "inherits": null,
+      "members": [
+        {
+          "name": "Class_Initialize",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub Class_Initialize()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "DEFAULT_PADDING_CHAR",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const DEFAULT_PADDING_CHAR As String * 1 = \"\"",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ERR_FORMAT_EXCEPTION",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const ERR_FORMAT_EXCEPTION As Long = vbObjectError Or 9001",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ERR_MSG_FORMAT_EXCEPTION",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const ERR_MSG_FORMAT_EXCEPTION As String = \"\"",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ERR_MSG_INVALID_FORMAT_STRING",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const ERR_MSG_INVALID_FORMAT_STRING As String = \"\"",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ERR_SOURCE",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const ERR_SOURCE As String = \"\"",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GetFormatSpecifiers",
+          "kind": "Function",
+          "access": "Private",
+          "signature": "Private Function GetFormatSpecifiers(ByVal format_string As String, valuesCount As Long) As Collection",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "InitDateTimeSpecifiers",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub InitDateTimeSpecifiers()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "InitEscapeSequences",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub InitEscapeSequences()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "InitNumericSpecifiers",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub InitNumericSpecifiers()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "StringFormat",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function StringFormat(format_string As String, values() As Variant) As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "tString",
+          "kind": "Type",
+          "access": "Private",
+          "signature": "Private Type tString",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "StringValidation",
+      "kind": "Module",
+      "file": "StringValidation.bas",
+      "access": "Public",
+      "attributes": [],
+      "implements": [],
+      "inherits": null,
+      "members": [
+        {
+          "name": "CopyCapitalisation",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function CopyCapitalisation(ByVal source As String, ByVal applyTo As String) As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "StringContains",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function StringContains(ByVal haystack As String, ByVal needle As String, Optional ByVal caseSensitive As Boolean = False) As Boolean",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "StringContainsAny",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function StringContainsAny(ByVal haystack As String, ByVal caseSensitive As Boolean, ParamArray needles() As Variant) As Boolean",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "StringMatchesAny",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function StringMatchesAny(ByVal searchString As String, ParamArray possibleMatches() As Variant) As Boolean",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "StringStartsWith",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function StringStartsWith(ByVal startingSequence As String, ByVal source As String) As Boolean",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    }
+  ],
+  "enums": [],
+  "types": []
+}

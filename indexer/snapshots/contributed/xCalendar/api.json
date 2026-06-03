@@ -1,0 +1,1171 @@
+{
+  "package": "xCalendar",
+  "version": "1.0.7.0",
+  "modules": [
+    {
+      "name": "xCalendar",
+      "kind": "Class",
+      "file": "xCalendar.twin",
+      "access": "Public",
+      "attributes": [
+        "COMControl"
+      ],
+      "implements": [],
+      "inherits": null,
+      "members": [
+        {
+          "name": "BackColor",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get BackColor() As OLE_COLOR",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "BackColor",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Let BackColor(ByVal New_BackColor As OLE_COLOR)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "BitBlt",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare PtrSafe Function BitBlt Lib \"\" (ByVal hDestDC As LongPtr, ByVal X As Long, ByVal Y As Long, ByVal nWidth As Long, ByVal nHeight As Long, ByVal hSrcDC As LongPtr, ByVal xSrc As Long, ByVal ySrc As Long, ByVal dwRop As Long) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "cmbMonth_Click",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub cmbMonth_Click()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "cmbYear_Click",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub cmbYear_Click()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CreatePen",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare PtrSafe Function CreatePen Lib \"\" (ByVal nPenStyle As Long, ByVal nWidth As Long, ByVal crColor As Long) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CreateSolidBrush",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare PtrSafe Function CreateSolidBrush Lib \"\" (ByVal crColor As Long) As LongPtr",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CtrlStateEnum",
+          "kind": "Enum",
+          "access": "Private",
+          "signature": "Private Enum CtrlStateEnum",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Day",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get Day() As Integer",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Day",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Let Day(ByVal New_Day As Integer)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "DayBackColor",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get DayBackColor() As OLE_COLOR",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "DayBackColor",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Let DayBackColor(ByVal New_DayBackColor As OLE_COLOR)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "DayFont",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get DayFont() As Font",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "DayFont",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Set DayFont(ByVal New_DayFont As Font)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "DayFontColor",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get DayFontColor() As OLE_COLOR",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "DayFontColor",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Let DayFontColor(ByVal New_DayFontColor As OLE_COLOR)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "DayLength",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get DayLength() As DayLengthEnum",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "DayLength",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Let DayLength(ByVal New_DayLength As DayLengthEnum)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "DayLengthEnum",
+          "kind": "Enum",
+          "access": "Public",
+          "signature": "Public Enum DayLengthEnum",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "DaysMargin",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get DaysMargin() As Integer",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "DaysMargin",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Let DaysMargin(ByVal New_DaysMargin As Integer)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "DeleteObject",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare PtrSafe Function DeleteObject Lib \"\" (ByVal hObject As LongPtr) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Draw",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub Draw()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "DrawLine",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub DrawLine(hDC As LongPtr, ByVal X1 As Long, ByVal Y1 As Long, ByVal X2 As Long, ByVal Y2 As Long, ByVal vWidth As Long, ByVal vColor As Long)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "DrawRect",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub DrawRect(hDC As LongPtr, ByVal X1 As Long, ByVal Y1 As Long, ByVal X2 As Long, ByVal Y2 As Long, ByVal vWidth As Long, ByVal vColor As Long)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "DrawRectFilled",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub DrawRectFilled(hDC As LongPtr, ByVal X1 As Long, ByVal Y1 As Long, ByVal X2 As Long, ByVal Y2 As Long, ByVal vColor As Long)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "DrawTextW",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare PtrSafe Function DrawTextW Lib \"\" (ByVal hdc As LongPtr, ByVal lpStr As LongPtr, ByVal nCount As Long, lpRect As RECT, ByVal wFormat As Long) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "DT_BOTTOM",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const DT_BOTTOM = &H8",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "DT_CENTER",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const DT_CENTER = &H1",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "DT_LEFT",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const DT_LEFT = &H0",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "DT_RIGHT",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const DT_RIGHT = &H2",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "DT_SINGLELINE",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const DT_SINGLELINE = &H20",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "DT_TOP",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const DT_TOP = &H0",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "DT_VCENTER",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const DT_VCENTER = &H4",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "DT_WORDBREAK",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const DT_WORDBREAK = &H10",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Enabled",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get Enabled() As Boolean",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Enabled",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Let Enabled(ByVal New_Enabled As Boolean)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "FillRect",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare PtrSafe Function FillRect Lib \"\" (ByVal hDC As LongPtr, lpRect As RECT, ByVal hBrush As LongPtr) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "FirstDay",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get FirstDay() As WeekDaysEnum",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "FirstDay",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Let FirstDay(ByVal New_FirstDay As WeekDaysEnum)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "FontDup",
+          "kind": "Function",
+          "access": "Private",
+          "signature": "Private Function FontDup(vFont As Font) As Font",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GetFirstDate",
+          "kind": "Function",
+          "access": "Private",
+          "signature": "Private Function GetFirstDate() As Date",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GotoDate",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub GotoDate(ByVal Interval As String, ByVal Number As Long)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GridCellEffect",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get GridCellEffect() As GridCellEffectEnum",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GridCellEffect",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Let GridCellEffect(ByVal New_GridCellEffect As GridCellEffectEnum)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GridCellEffectEnum",
+          "kind": "Enum",
+          "access": "Public",
+          "signature": "Public Enum GridCellEffectEnum",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GridFont",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get GridFont() As Font",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GridFont",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Set GridFont(ByVal New_GridFont As Font)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GridFontColor",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get GridFontColor() As OLE_COLOR",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GridFontColor",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Let GridFontColor(ByVal New_GridFontColor As OLE_COLOR)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GridLinesColor",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get GridLinesColor() As OLE_COLOR",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GridLinesColor",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Let GridLinesColor(ByVal New_GridLinesColor As OLE_COLOR)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "LineTo",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare PtrSafe Function LineTo Lib \"\" (ByVal hDC As LongPtr, ByVal X As Long, ByVal Y As Long) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "m_def_Day",
+          "kind": "Const",
+          "access": null,
+          "signature": "Const m_def_Day = 1",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "m_def_DayBackColor",
+          "kind": "Const",
+          "access": null,
+          "signature": "Const m_def_DayBackColor = &HDCA86F",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "m_def_DayFontColor",
+          "kind": "Const",
+          "access": null,
+          "signature": "Const m_def_DayFontColor = 0",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "m_def_DayLength",
+          "kind": "Const",
+          "access": null,
+          "signature": "Const m_def_DayLength = 1",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "m_def_DaysMargin",
+          "kind": "Const",
+          "access": null,
+          "signature": "Const m_def_DaysMargin = 5",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "m_def_FirstDay",
+          "kind": "Const",
+          "access": null,
+          "signature": "Const m_def_FirstDay = 2",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "m_def_GridCellEffect",
+          "kind": "Const",
+          "access": null,
+          "signature": "Const m_def_GridCellEffect = 1",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "m_def_GridFontColor",
+          "kind": "Const",
+          "access": null,
+          "signature": "Const m_def_GridFontColor = &HA00000",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "m_def_GridLinesColor",
+          "kind": "Const",
+          "access": null,
+          "signature": "Const m_def_GridLinesColor = &H80000010",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "m_def_Month",
+          "kind": "Const",
+          "access": null,
+          "signature": "Const m_def_Month = 1",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "m_def_MonthLength",
+          "kind": "Const",
+          "access": null,
+          "signature": "Const m_def_MonthLength = 1",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "m_def_ShowDateSelectors",
+          "kind": "Const",
+          "access": null,
+          "signature": "Const m_def_ShowDateSelectors = True",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "m_def_ShowDays",
+          "kind": "Const",
+          "access": null,
+          "signature": "Const m_def_ShowDays = True",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "m_def_ShowHorizontalGrid",
+          "kind": "Const",
+          "access": null,
+          "signature": "Const m_def_ShowHorizontalGrid = True",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "m_def_ShowTitle",
+          "kind": "Const",
+          "access": null,
+          "signature": "Const m_def_ShowTitle = True",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "m_def_ShowVerticalGrid",
+          "kind": "Const",
+          "access": null,
+          "signature": "Const m_def_ShowVerticalGrid = True",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "m_def_TitleFontColor",
+          "kind": "Const",
+          "access": null,
+          "signature": "Const m_def_TitleFontColor = &H80FF&",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "m_def_TitleMargin",
+          "kind": "Const",
+          "access": null,
+          "signature": "Const m_def_TitleMargin = 5",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "m_def_ValueIsNull",
+          "kind": "Const",
+          "access": null,
+          "signature": "Const m_def_ValueIsNull = 0",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "m_def_Year",
+          "kind": "Const",
+          "access": null,
+          "signature": "Const m_def_Year = 2000",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Month",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get Month() As Integer",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Month",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Let Month(ByVal New_Month As Integer)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "MonthLength",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get MonthLength() As MonthLengthEnum",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "MonthLength",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Let MonthLength(ByVal New_MonthLength As MonthLengthEnum)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "MonthLengthEnum",
+          "kind": "Enum",
+          "access": "Public",
+          "signature": "Public Enum MonthLengthEnum",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "MoveToEx",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare PtrSafe Function MoveToEx Lib \"\" (ByVal hDC As LongPtr, ByVal X As Long, ByVal Y As Long, lpPoint As POINTAPI) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "NextDay",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub NextDay()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "NextMonth",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub NextMonth()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "NextWeek",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub NextWeek()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "NextYear",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub NextYear()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "picFocus_KeyDown",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub picFocus_KeyDown(KeyCode As Integer, Shift As Integer)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "POINTAPI",
+          "kind": "Type",
+          "access": "Private",
+          "signature": "Private Type POINTAPI",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "PreviousDay",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub PreviousDay()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "PreviousMonth",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub PreviousMonth()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "PreviousWeek",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub PreviousWeek()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "PreviousYear",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub PreviousYear()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "RECT",
+          "kind": "Type",
+          "access": "Private",
+          "signature": "Private Type RECT",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Rectangle",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare PtrSafe Function Rectangle Lib \"\" (ByVal hDC As LongPtr, ByVal X1 As Long, ByVal Y1 As Long, ByVal X2 As Long, ByVal Y2 As Long) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Refresh",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub Refresh()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SelectObject",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare PtrSafe Function SelectObject Lib \"\" (ByVal hDC As LongPtr, ByVal hObject As LongPtr) As LongPtr",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SetCtrlState",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub SetCtrlState(ByVal NewState As CtrlStateEnum, Optional RedrawCtrl As Boolean = True)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SetupComboBoxes",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub SetupComboBoxes()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ShowDateSelectors",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get ShowDateSelectors() As Boolean",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ShowDateSelectors",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Let ShowDateSelectors(ByVal New_ShowDateSelectors As Boolean)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ShowDays",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get ShowDays() As Boolean",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ShowDays",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Let ShowDays(ByVal New_ShowDays As Boolean)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ShowHorizontalGrid",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get ShowHorizontalGrid() As Boolean",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ShowHorizontalGrid",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Let ShowHorizontalGrid(ByVal New_ShowHorizontalGrid As Boolean)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ShowTitle",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get ShowTitle() As Boolean",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ShowTitle",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Let ShowTitle(ByVal New_ShowTitle As Boolean)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ShowVerticalGrid",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get ShowVerticalGrid() As Boolean",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ShowVerticalGrid",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Let ShowVerticalGrid(ByVal New_ShowVerticalGrid As Boolean)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "TitleFont",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get TitleFont() As Font",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "TitleFont",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Set TitleFont(ByVal New_TitleFont As Font)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "TitleFontColor",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get TitleFontColor() As OLE_COLOR",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "TitleFontColor",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Let TitleFontColor(ByVal New_TitleFontColor As OLE_COLOR)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "TitleMargin",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get TitleMargin() As Integer",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "TitleMargin",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Let TitleMargin(ByVal New_TitleMargin As Integer)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Today",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub Today()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "UserControl_Click",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub UserControl_Click()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "UserControl_DblClick",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub UserControl_DblClick()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "UserControl_GotFocus",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub UserControl_GotFocus()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "UserControl_InitProperties",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub UserControl_InitProperties()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "UserControl_KeyDown",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub UserControl_KeyDown(KeyCode As Integer, Shift As Integer)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "UserControl_KeyPress",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub UserControl_KeyPress(KeyAscii As Integer)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "UserControl_KeyUp",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub UserControl_KeyUp(KeyCode As Integer, Shift As Integer)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "UserControl_LostFocus",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub UserControl_LostFocus()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "UserControl_MouseDown",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub UserControl_MouseDown(Button As Integer, Shift As Integer, X As Single, Y As Single)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "UserControl_MouseMove",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub UserControl_MouseMove(Button As Integer, Shift As Integer, X As Single, Y As Single)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "UserControl_MouseUp",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub UserControl_MouseUp(Button As Integer, Shift As Integer, X As Single, Y As Single)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "UserControl_Paint",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub UserControl_Paint()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "UserControl_ReadProperties",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub UserControl_ReadProperties(PropBag As PropertyBag)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "UserControl_Resize",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub UserControl_Resize()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "UserControl_WriteProperties",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub UserControl_WriteProperties(PropBag As PropertyBag)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Value",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get Value() As Date",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Value",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Let Value(ByVal New_Value As Date)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ValueIsNull",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get ValueIsNull() As Boolean",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ValueIsNull",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Let ValueIsNull(ByVal New_ValueIsNull As Boolean)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ValueStr",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get ValueStr() As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ValueStr",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Let ValueStr(ByVal NewValueStr As String)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "WeekDaysEnum",
+          "kind": "Enum",
+          "access": "Public",
+          "signature": "Public Enum WeekDaysEnum",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Year",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get Year() As Integer",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Year",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Let Year(ByVal New_Year As Integer)",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": [
+        {
+          "name": "AfterUpdate",
+          "signature": "Event AfterUpdate()",
+          "attributes": []
+        },
+        {
+          "name": "BeforeUpdate",
+          "signature": "Event BeforeUpdate(Cancel As Integer)",
+          "attributes": []
+        },
+        {
+          "name": "Click",
+          "signature": "Event Click()",
+          "attributes": []
+        },
+        {
+          "name": "DblClick",
+          "signature": "Event DblClick()",
+          "attributes": []
+        },
+        {
+          "name": "KeyDown",
+          "signature": "Event KeyDown(KeyCode As Integer, Shift As Integer)",
+          "attributes": []
+        },
+        {
+          "name": "KeyPress",
+          "signature": "Event KeyPress(KeyAscii As Integer)",
+          "attributes": []
+        },
+        {
+          "name": "KeyUp",
+          "signature": "Event KeyUp(KeyCode As Integer, Shift As Integer)",
+          "attributes": []
+        },
+        {
+          "name": "MouseDown",
+          "signature": "Event MouseDown(Button As Integer, Shift As Integer, X As Single, Y As Single)",
+          "attributes": []
+        },
+        {
+          "name": "MouseMove",
+          "signature": "Event MouseMove(Button As Integer, Shift As Integer, X As Single, Y As Single)",
+          "attributes": []
+        },
+        {
+          "name": "MouseUp",
+          "signature": "Event MouseUp(Button As Integer, Shift As Integer, X As Single, Y As Single)",
+          "attributes": []
+        },
+        {
+          "name": "NewMonth",
+          "signature": "Event NewMonth()",
+          "attributes": []
+        },
+        {
+          "name": "NewYear",
+          "signature": "Event NewYear()",
+          "attributes": []
+        }
+      ]
+    }
+  ],
+  "enums": [],
+  "types": []
+}

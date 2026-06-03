@@ -1,0 +1,1216 @@
+{
+  "package": "OLEGuids",
+  "version": "1.0.2.0",
+  "modules": [
+    {
+      "name": "IDataObject",
+      "kind": "Interface",
+      "file": "OLEGuids.twin",
+      "access": "Public",
+      "attributes": [],
+      "implements": [],
+      "inherits": "stdole.IUnknown",
+      "members": [],
+      "events": []
+    },
+    {
+      "name": "IDispatch",
+      "kind": "Interface",
+      "file": "OLEGuids.twin",
+      "access": "Public",
+      "attributes": [],
+      "implements": [],
+      "inherits": "stdole.IUnknown",
+      "members": [
+        {
+          "name": "GetIDsOfNames",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub GetIDsOfNames(ByRef riid As OLEGuids.OLECLSID, ByRef rgszNames As LongPtr, ByVal cNames As Long, ByVal lcid As Long, ByRef rgDispID As Long)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GetTypeInfo",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub GetTypeInfo(ByVal itinfo As Long, ByVal lcid As Long, ByRef pptinfo As LongPtr)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GetTypeInfoCount",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub GetTypeInfoCount(ByRef pctInfo As Long)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Invoke",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub Invoke(ByVal DispIDMember As Long, ByRef riid As OLEGuids.OLECLSID, ByVal lcid As Long, ByVal wFlags As Integer, ByRef pdispparams As stdole.DISPPARAMS, ByRef pvarResult As Variant, ByRef pexcepinfo As stdole.EXCEPINFO, ByRef puArgErr As Long)",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "IEnumVARIANTUnrestricted",
+      "kind": "Interface",
+      "file": "OLEGuids.twin",
+      "access": "Public",
+      "attributes": [],
+      "implements": [],
+      "inherits": "stdole.IDispatch",
+      "members": [
+        {
+          "name": "Clone",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub Clone(ByRef ppEnum As stdole.IEnumVARIANT)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Next",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub Next(ByVal cElt As Long, ByRef rgVar As Variant, ByVal pcEltFetched As Long)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Reset",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub Reset()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Skip",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub Skip(ByVal cElt As Long)",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "IObjectSafety",
+      "kind": "Interface",
+      "file": "OLEGuids.twin",
+      "access": "Public",
+      "attributes": [],
+      "implements": [],
+      "inherits": "stdole.IUnknown",
+      "members": [
+        {
+          "name": "GetInterfaceSafetyOptions",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub GetInterfaceSafetyOptions(ByRef riid As OLEGuids.OLECLSID, ByRef pdwSupportedOptions As Long, ByRef pdwEnabledOptions As Long)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SetInterfaceSafetyOptions",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub SetInterfaceSafetyOptions(ByRef riid As OLEGuids.OLECLSID, ByVal dwOptionSetMask As Long, ByVal dwEnabledOptions As Long)",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "IOleClientSite",
+      "kind": "Interface",
+      "file": "OLEGuids.twin",
+      "access": "Public",
+      "attributes": [],
+      "implements": [],
+      "inherits": "stdole.IUnknown",
+      "members": [],
+      "events": []
+    },
+    {
+      "name": "IOleControl",
+      "kind": "Interface",
+      "file": "OLEGuids.twin",
+      "access": "Public",
+      "attributes": [],
+      "implements": [],
+      "inherits": "stdole.IUnknown",
+      "members": [
+        {
+          "name": "FreezeEvents",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub FreezeEvents(ByVal bFreeze As Long)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GetControlInfo",
+          "kind": "Function",
+          "access": null,
+          "signature": "Function GetControlInfo(ByRef pCI As OLECONTROLINFO) As Long",
+          "attributes": [
+            "PreserveSig"
+          ],
+          "description": null
+        },
+        {
+          "name": "OnAmbientPropertyChange",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub OnAmbientPropertyChange(ByVal DispID As Long)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "OnMnemonic",
+          "kind": "Function",
+          "access": null,
+          "signature": "Function OnMnemonic(ByRef pMsg As OLEACCELMSG) As Long",
+          "attributes": [
+            "PreserveSig"
+          ],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "IOleControlSite",
+      "kind": "Interface",
+      "file": "OLEGuids.twin",
+      "access": "Public",
+      "attributes": [],
+      "implements": [],
+      "inherits": "stdole.IUnknown",
+      "members": [
+        {
+          "name": "GetExtendedControl",
+          "kind": "Function",
+          "access": null,
+          "signature": "Function GetExtendedControl() As OLEGuids.IDispatch",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "LockInPlaceActive",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub LockInPlaceActive(ByVal fLock As Long)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "OnControlInfoChanged",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub OnControlInfoChanged()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "OnFocus",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub OnFocus(ByVal fGotFocus As Long)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ShowPropertyFrame",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub ShowPropertyFrame()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "TransformCoords",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub TransformCoords(ByVal pPtlHimetric As LongPtr, ByVal pPtfContainer As LongPtr, ByVal dwFlags As Long)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "TranslateAccelerator",
+          "kind": "Function",
+          "access": null,
+          "signature": "Function TranslateAccelerator(ByVal lpMsg As LongPtr, ByVal grfModifiers As Long) As Long",
+          "attributes": [
+            "PreserveSig"
+          ],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "IOleControlVB",
+      "kind": "Interface",
+      "file": "OLEGuids.twin",
+      "access": "Public",
+      "attributes": [],
+      "implements": [],
+      "inherits": "stdole.IDispatch",
+      "members": [
+        {
+          "name": "GetControlInfo",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub GetControlInfo(ByRef Handled As Boolean, ByRef AccelCount As Integer, ByRef AccelTable As LongPtr, ByRef Flags As Long)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "OnMnemonic",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub OnMnemonic(ByRef Handled As Boolean, ByVal hWnd As LongPtr, ByVal wMsg As Long, ByVal wParam As LongPtr, ByVal lParam As LongPtr, ByVal Shift As Long)",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "IOleInPlaceActiveObject",
+      "kind": "Interface",
+      "file": "OLEGuids.twin",
+      "access": "Public",
+      "attributes": [],
+      "implements": [],
+      "inherits": "OLEGuids.IUnknownUnrestricted",
+      "members": [
+        {
+          "name": "ContextSensitiveHelp",
+          "kind": "Function",
+          "access": null,
+          "signature": "Function ContextSensitiveHelp(ByVal fEnterMode As Long) As Long",
+          "attributes": [
+            "PreserveSig"
+          ],
+          "description": null
+        },
+        {
+          "name": "EnableModeless",
+          "kind": "Function",
+          "access": null,
+          "signature": "Function EnableModeless(ByVal fEnable As Long) As Long",
+          "attributes": [
+            "PreserveSig"
+          ],
+          "description": null
+        },
+        {
+          "name": "GetWindow",
+          "kind": "Function",
+          "access": null,
+          "signature": "Function GetWindow(ByRef phWnd As LongPtr) As Long",
+          "attributes": [
+            "PreserveSig"
+          ],
+          "description": null
+        },
+        {
+          "name": "OnDocWindowActivate",
+          "kind": "Function",
+          "access": null,
+          "signature": "Function OnDocWindowActivate(ByVal fActivate As Long) As Long",
+          "attributes": [
+            "PreserveSig"
+          ],
+          "description": null
+        },
+        {
+          "name": "OnFrameWindowActivate",
+          "kind": "Function",
+          "access": null,
+          "signature": "Function OnFrameWindowActivate(ByVal fActivate As Long) As Long",
+          "attributes": [
+            "PreserveSig"
+          ],
+          "description": null
+        },
+        {
+          "name": "ResizeBorder",
+          "kind": "Function",
+          "access": null,
+          "signature": "Function ResizeBorder(ByVal prcBorder As LongPtr, ByVal pUIWindow As OLEGuids.IOleInPlaceUIWindow, ByVal fFrameWindow As Long) As Long",
+          "attributes": [
+            "PreserveSig"
+          ],
+          "description": null
+        },
+        {
+          "name": "TranslateAccelerator",
+          "kind": "Function",
+          "access": null,
+          "signature": "Function TranslateAccelerator(ByVal lpMsg As LongPtr) As Long",
+          "attributes": [
+            "PreserveSig"
+          ],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "IOleInPlaceActiveObjectVB",
+      "kind": "Interface",
+      "file": "OLEGuids.twin",
+      "access": "Public",
+      "attributes": [],
+      "implements": [],
+      "inherits": "stdole.IDispatch",
+      "members": [
+        {
+          "name": "TranslateAccelerator",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub TranslateAccelerator(Handled As Boolean, RetVal As Long, ByVal hWnd As LongPtr, ByVal wMsg As Long, ByVal wParam As LongPtr, ByVal lParam As LongPtr, ByVal Shift As Long)",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "IOleInPlaceFrame",
+      "kind": "Interface",
+      "file": "OLEGuids.twin",
+      "access": "Public",
+      "attributes": [],
+      "implements": [],
+      "inherits": "OLEGuids.IOleInPlaceUIWindow",
+      "members": [],
+      "events": []
+    },
+    {
+      "name": "IOleInPlaceObject",
+      "kind": "Interface",
+      "file": "OLEGuids.twin",
+      "access": "Public",
+      "attributes": [],
+      "implements": [],
+      "inherits": "OLEGuids.IOleWindow",
+      "members": [
+        {
+          "name": "InPlaceDeactivate",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub InPlaceDeactivate()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ReactivateAndUndo",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub ReactivateAndUndo()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SetObjectRects",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub SetObjectRects(ByVal lprcPosRect As LongPtr, ByVal lprcClipRect As LongPtr)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "UIDeactivate",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub UIDeactivate()",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "IOleInPlaceSite",
+      "kind": "Interface",
+      "file": "OLEGuids.twin",
+      "access": "Public",
+      "attributes": [],
+      "implements": [],
+      "inherits": "OLEGuids.IOleWindow",
+      "members": [
+        {
+          "name": "CanInPlaceActivate",
+          "kind": "Function",
+          "access": null,
+          "signature": "Function CanInPlaceActivate() As Long",
+          "attributes": [
+            "PreserveSig"
+          ],
+          "description": null
+        },
+        {
+          "name": "DeactivateAndUndo",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub DeactivateAndUndo()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "DiscardUndoState",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub DiscardUndoState()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GetWindowContext",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub GetWindowContext(ByRef ppFrame As OLEGuids.IOleInPlaceFrame, ByRef ppDoc As OLEGuids.IOleInPlaceUIWindow, ByVal lprcPosRect As LongPtr, ByVal lprcClipRect As LongPtr, ByVal lpFrameInfo As LongPtr)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "OnInPlaceActivate",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub OnInPlaceActivate()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "OnInPlaceDeactivate",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub OnInPlaceDeactivate()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "OnPosRectChange",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub OnPosRectChange(ByVal lprcPosRect As LongPtr)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "OnUIActivate",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub OnUIActivate()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "OnUIDeactivate",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub OnUIDeactivate(ByVal fUndoable As Long)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Scroll",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub Scroll(ByVal scrollExtant As Currency)",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "IOleInPlaceUIWindow",
+      "kind": "Interface",
+      "file": "OLEGuids.twin",
+      "access": "Public",
+      "attributes": [],
+      "implements": [],
+      "inherits": "OLEGuids.IOleWindow",
+      "members": [
+        {
+          "name": "GetBorder",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub GetBorder(ByVal lpRectBorder As LongPtr)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "RequestBorderSpace",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub RequestBorderSpace(ByVal pBorderWidths As LongPtr)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SetActiveObject",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub SetActiveObject(ByVal pActiveObject As OLEGuids.IOleInPlaceActiveObject, ByVal lpszObjName As LongPtr)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SetBorderSpace",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub SetBorderSpace(ByVal pBorderWidths As LongPtr)",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "IOleObject",
+      "kind": "Interface",
+      "file": "OLEGuids.twin",
+      "access": "Public",
+      "attributes": [],
+      "implements": [],
+      "inherits": "stdole.IUnknown",
+      "members": [
+        {
+          "name": "Close",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub Close(ByVal dwSaveOption As Long)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "DoVerb",
+          "kind": "Function",
+          "access": null,
+          "signature": "Function DoVerb(ByVal iVerb As Long, ByVal lpMsg As LongPtr, ByVal pActiveSite As OLEGuids.IOleClientSite, ByVal Index As Long, ByVal hWndParent As LongPtr, ByVal lprcPosRect As LongPtr) As Long",
+          "attributes": [
+            "PreserveSig"
+          ],
+          "description": null
+        },
+        {
+          "name": "GetClientSite",
+          "kind": "Function",
+          "access": null,
+          "signature": "Function GetClientSite() As OLEGuids.IOleClientSite",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GetClipboardData",
+          "kind": "Function",
+          "access": null,
+          "signature": "Function GetClipboardData(ByVal dwReserved As Long) As LongPtr",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GetMoniker",
+          "kind": "Function",
+          "access": null,
+          "signature": "Function GetMoniker(ByVal dwAssign As Long, ByVal dwWhichMoniker As Long) As LongPtr",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "InitFromData",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub InitFromData(ByVal lpDataObject As LongPtr, ByVal fCreation As Long, ByVal dwReserved As Long)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SetClientSite",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub SetClientSite(ByVal pClientSite As OLEGuids.IOleClientSite)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SetHostNames",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub SetHostNames(ByVal lpszContainerApp As LongPtr, ByVal lpszContainerObj As LongPtr)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SetMoniker",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub SetMoniker(ByVal dwWhichMoniker As Long, ByVal lpmk As LongPtr)",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "IOleWindow",
+      "kind": "Interface",
+      "file": "OLEGuids.twin",
+      "access": "Public",
+      "attributes": [],
+      "implements": [],
+      "inherits": "IUnknown",
+      "members": [
+        {
+          "name": "ContextSensitiveHelp",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub ContextSensitiveHelp(ByVal fEnterMode As Long)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GetWindow",
+          "kind": "Function",
+          "access": null,
+          "signature": "Function GetWindow() As LongPtr",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "IPerPropertyBrowsing",
+      "kind": "Interface",
+      "file": "OLEGuids.twin",
+      "access": "Public",
+      "attributes": [],
+      "implements": [],
+      "inherits": "stdole.IUnknown",
+      "members": [
+        {
+          "name": "GetDisplayString",
+          "kind": "Function",
+          "access": null,
+          "signature": "Function GetDisplayString(ByVal DispID As Long, ByRef lpDisplayName As LongPtr) As Long",
+          "attributes": [
+            "PreserveSig"
+          ],
+          "description": null
+        },
+        {
+          "name": "GetPredefinedStrings",
+          "kind": "Function",
+          "access": null,
+          "signature": "Function GetPredefinedStrings(ByVal DispID As Long, ByRef pCaStringsOut As OLEGuids.OLECALPOLESTR, ByRef pCaCookiesOut As OLEGuids.OLECADWORD) As Long",
+          "attributes": [
+            "PreserveSig"
+          ],
+          "description": null
+        },
+        {
+          "name": "GetPredefinedValue",
+          "kind": "Function",
+          "access": null,
+          "signature": "Function GetPredefinedValue(ByVal DispID As Long, ByVal dwCookie As Long, ByRef pVarOut As Variant) As Long",
+          "attributes": [
+            "PreserveSig"
+          ],
+          "description": null
+        },
+        {
+          "name": "MapPropertyToPage",
+          "kind": "Function",
+          "access": null,
+          "signature": "Function MapPropertyToPage(ByVal DispID As Long, ByRef pCLSID As OLEGuids.OLECLSID) As Long",
+          "attributes": [
+            "PreserveSig"
+          ],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "IPerPropertyBrowsingVB",
+      "kind": "Interface",
+      "file": "OLEGuids.twin",
+      "access": "Public",
+      "attributes": [],
+      "implements": [],
+      "inherits": "stdole.IDispatch",
+      "members": [
+        {
+          "name": "GetDisplayString",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub GetDisplayString(ByRef Handled As Boolean, ByVal DispID As Long, ByRef DisplayName As String)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GetPredefinedStrings",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub GetPredefinedStrings(ByRef Handled As Boolean, ByVal DispID As Long, ByRef StringsOut As String(), ByRef CookiesOut As Long())",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GetPredefinedValue",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub GetPredefinedValue(ByRef Handled As Boolean, ByVal DispID As Long, ByVal Cookie As Long, ByRef Value As Variant)",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "IRichEditOle",
+      "kind": "Interface",
+      "file": "OLEGuids.twin",
+      "access": "Public",
+      "attributes": [],
+      "implements": [],
+      "inherits": "stdole.IUnknown",
+      "members": [
+        {
+          "name": "ActivateAs",
+          "kind": "Function",
+          "access": null,
+          "signature": "Function ActivateAs(ByRef pCLSID As OLEGuids.OLECLSID, ByRef pCLSIDAs As OLEGuids.OLECLSID) As Long",
+          "attributes": [
+            "PreserveSig"
+          ],
+          "description": null
+        },
+        {
+          "name": "ContextSensitiveHelp",
+          "kind": "Function",
+          "access": null,
+          "signature": "Function ContextSensitiveHelp(ByVal fEnterMode As Long) As Long",
+          "attributes": [
+            "PreserveSig"
+          ],
+          "description": null
+        },
+        {
+          "name": "ConvertObject",
+          "kind": "Function",
+          "access": null,
+          "signature": "Function ConvertObject(ByVal iob As Long, ByRef pCLSIDNew As OLEGuids.OLECLSID, ByVal lpstrUserTypeNew As LongPtr /* ANSI */) As Long",
+          "attributes": [
+            "PreserveSig"
+          ],
+          "description": null
+        },
+        {
+          "name": "GetClientSite",
+          "kind": "Function",
+          "access": null,
+          "signature": "Function GetClientSite() As OLEGuids.IOleClientSite",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GetClipboardData",
+          "kind": "Function",
+          "access": null,
+          "signature": "Function GetClipboardData(ByVal lpCharRange As LongPtr, ByVal RECO As Long, ByRef ppDataObject As OLEGuids.IDataObject) As Long",
+          "attributes": [
+            "PreserveSig"
+          ],
+          "description": null
+        },
+        {
+          "name": "GetLinkCount",
+          "kind": "Function",
+          "access": null,
+          "signature": "Function GetLinkCount() As Long",
+          "attributes": [
+            "PreserveSig"
+          ],
+          "description": null
+        },
+        {
+          "name": "GetObject",
+          "kind": "Function",
+          "access": null,
+          "signature": "Function GetObject(ByVal iob As Long, ByRef pREOBJECT As Any, ByVal dwFlags As Long) As Long",
+          "attributes": [
+            "PreserveSig"
+          ],
+          "description": null
+        },
+        {
+          "name": "GetObjectCount",
+          "kind": "Function",
+          "access": null,
+          "signature": "Function GetObjectCount() As Long",
+          "attributes": [
+            "PreserveSig"
+          ],
+          "description": null
+        },
+        {
+          "name": "HandsOffStorage",
+          "kind": "Function",
+          "access": null,
+          "signature": "Function HandsOffStorage(ByVal iob As Long) As Long",
+          "attributes": [
+            "PreserveSig"
+          ],
+          "description": null
+        },
+        {
+          "name": "ImportDataObject",
+          "kind": "Function",
+          "access": null,
+          "signature": "Function ImportDataObject(ByVal pDataObject As OLEGuids.IDataObject, ByVal CF As Integer, ByVal hMetaPict As LongPtr) As Long",
+          "attributes": [
+            "PreserveSig"
+          ],
+          "description": null
+        },
+        {
+          "name": "InPlaceDeactivate",
+          "kind": "Function",
+          "access": null,
+          "signature": "Function InPlaceDeactivate() As Long",
+          "attributes": [
+            "PreserveSig"
+          ],
+          "description": null
+        },
+        {
+          "name": "InsertObject",
+          "kind": "Function",
+          "access": null,
+          "signature": "Function InsertObject(ByRef pREOBJECT As Any) As Long",
+          "attributes": [
+            "PreserveSig"
+          ],
+          "description": null
+        },
+        {
+          "name": "SaveCompleted",
+          "kind": "Function",
+          "access": null,
+          "signature": "Function SaveCompleted(ByVal iob As Long, ByVal pStorage As OLEGuids.IStorage) As Long",
+          "attributes": [
+            "PreserveSig"
+          ],
+          "description": null
+        },
+        {
+          "name": "SetDvaspect",
+          "kind": "Function",
+          "access": null,
+          "signature": "Function SetDvaspect(ByVal iob As Long, ByVal dvAspect As Long) As Long",
+          "attributes": [
+            "PreserveSig"
+          ],
+          "description": null
+        },
+        {
+          "name": "SetHostNames",
+          "kind": "Function",
+          "access": null,
+          "signature": "Function SetHostNames(ByVal lpstrContainerApp As LongPtr /* ANSI */, ByVal lpstrContainerObj As LongPtr /* ANSI */) As Long",
+          "attributes": [
+            "PreserveSig"
+          ],
+          "description": null
+        },
+        {
+          "name": "SetLinkAvailable",
+          "kind": "Function",
+          "access": null,
+          "signature": "Function SetLinkAvailable(ByVal iob As Long, ByVal fAvailable As Long) As Long",
+          "attributes": [
+            "PreserveSig"
+          ],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "IRichEditOleCallback",
+      "kind": "Interface",
+      "file": "OLEGuids.twin",
+      "access": "Public",
+      "attributes": [],
+      "implements": [],
+      "inherits": "stdole.IUnknown",
+      "members": [
+        {
+          "name": "ContextSensitiveHelp",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub ContextSensitiveHelp(ByVal fEnterMode As Long)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "DeleteObject",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub DeleteObject(ByVal LpOleObject As LongPtr)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GetClipboardData",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub GetClipboardData(ByVal lpCharRange As LongPtr, ByVal RECO As Long, ByRef ppDataObject As OLEGuids.IDataObject)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GetContextMenu",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub GetContextMenu(ByVal SelType As Integer, ByVal LpOleObject As LongPtr, ByVal lpCharRange As LongPtr, ByRef hMenu As LongPtr)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GetDragDropEffect",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub GetDragDropEffect(ByVal fDrag As Long, ByVal KeyState As Long, ByRef dwEffect As Long)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GetInPlaceContext",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub GetInPlaceContext(ByRef ppFrame As OLEGuids.IOleInPlaceFrame, ByRef ppDoc As OLEGuids.IOleInPlaceUIWindow, ByRef pFrameInfo As OLEGuids.OLEINPLACEFRAMEINFO)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GetNewStorage",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub GetNewStorage(ByRef ppStorage As OLEGuids.IStorage)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "QueryAcceptData",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub QueryAcceptData(ByVal pDataObject As OLEGuids.IDataObject, ByRef CF As Integer, ByVal RECO As Long, ByVal fReally As Long, ByVal hMetaPict As LongPtr)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "QueryInsertObject",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub QueryInsertObject(ByRef pCLSID As OLEGuids.OLECLSID, ByVal pStorage As OLEGuids.IStorage, ByVal CharPos As Long)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ShowContainerUI",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub ShowContainerUI(ByVal fShow As Long)",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "ISpecifyPropertyPages",
+      "kind": "Interface",
+      "file": "OLEGuids.twin",
+      "access": "Public",
+      "attributes": [],
+      "implements": [],
+      "inherits": "stdole.IUnknown",
+      "members": [
+        {
+          "name": "GetPages",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub GetPages(ByRef pPages As OLEGuids.OLECAUUID)",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "IStorage",
+      "kind": "Interface",
+      "file": "OLEGuids.twin",
+      "access": "Public",
+      "attributes": [],
+      "implements": [],
+      "inherits": "stdole.IUnknown",
+      "members": [],
+      "events": []
+    },
+    {
+      "name": "IUnknownUnrestricted",
+      "kind": "Interface",
+      "file": "OLEGuids.twin",
+      "access": "Public",
+      "attributes": [],
+      "implements": [],
+      "inherits": "Nothing",
+      "members": [
+        {
+          "name": "AddRef",
+          "kind": "Function",
+          "access": null,
+          "signature": "Function AddRef() As Long",
+          "attributes": [
+            "PreserveSig"
+          ],
+          "description": null
+        },
+        {
+          "name": "QueryInterface",
+          "kind": "Function",
+          "access": null,
+          "signature": "Function QueryInterface(ByVal priid As LongPtr, ppvObject As LongPtr) As Long",
+          "attributes": [
+            "PreserveSig"
+          ],
+          "description": null
+        },
+        {
+          "name": "Release",
+          "kind": "Function",
+          "access": null,
+          "signature": "Function Release() As Long",
+          "attributes": [
+            "PreserveSig"
+          ],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "OLEGuids",
+      "kind": "Module",
+      "file": "OLEGuids.twin",
+      "access": "Public",
+      "attributes": [],
+      "implements": [],
+      "inherits": null,
+      "members": [
+        {
+          "name": "OLEACCELMSG",
+          "kind": "Type",
+          "access": "Public",
+          "signature": "Public Type OLEACCELMSG",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "OLECADWORD",
+          "kind": "Type",
+          "access": "Public",
+          "signature": "Public Type OLECADWORD",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "OLECALPOLESTR",
+          "kind": "Type",
+          "access": "Public",
+          "signature": "Public Type OLECALPOLESTR",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "OLECAUUID",
+          "kind": "Type",
+          "access": "Public",
+          "signature": "Public Type OLECAUUID",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "OLECLSID",
+          "kind": "Type",
+          "access": "Public",
+          "signature": "Public Type OLECLSID",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "OLECONTROLINFO",
+          "kind": "Type",
+          "access": "Public",
+          "signature": "Public Type OLECONTROLINFO",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "OLEINPLACEFRAMEINFO",
+          "kind": "Type",
+          "access": "Public",
+          "signature": "Public Type OLEINPLACEFRAMEINFO",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "OLEPOINT",
+          "kind": "Type",
+          "access": "Public",
+          "signature": "Public Type OLEPOINT",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "OLERECT",
+          "kind": "Type",
+          "access": "Public",
+          "signature": "Public Type OLERECT",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "OLESIZE",
+          "kind": "Type",
+          "access": "Public",
+          "signature": "Public Type OLESIZE",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    }
+  ],
+  "enums": [],
+  "types": []
+}

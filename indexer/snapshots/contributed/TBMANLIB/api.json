@@ -1,0 +1,1589 @@
+{
+  "package": "TBMANLIB",
+  "version": "1.0.0.5",
+  "modules": [
+    {
+      "name": "cCsv",
+      "kind": "Class",
+      "file": "Libs/FileSystem/Csv/cCsv.twin",
+      "access": "Public",
+      "attributes": [],
+      "implements": [],
+      "inherits": null,
+      "members": [
+        {
+          "name": "FixFileExtName",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub FixFileExtName(Path As String)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "LastError",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public LastError As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "LoadFrom",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function LoadFrom(ByVal Path As String) As cIni",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Root",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public Root As Scripting.Dictionary",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SaveTo",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function SaveTo(Optional ByVal Path As String) As Boolean",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "cIni",
+      "kind": "Class",
+      "file": "Libs/FileSystem/Ini/cIni.twin",
+      "access": "Public",
+      "attributes": [],
+      "implements": [],
+      "inherits": null,
+      "members": [],
+      "events": []
+    },
+    {
+      "name": "cJson",
+      "kind": "Class",
+      "file": "Libs/Json/cJson.twin",
+      "access": "Public",
+      "attributes": [],
+      "implements": [],
+      "inherits": null,
+      "members": [
+        {
+          "name": "Class_Initialize",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub Class_Initialize()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Clear",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub Clear()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Decode",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function Decode(ByRef Text As String) As cJson",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Encode",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function Encode(Optional Obj As Variant, Optional Whitespace As Variant, Optional FromUnicode As Boolean) As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Item",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get Item(ByVal Key As String) As Variant",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Item",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Set Item(ByVal Key As String, Dat As Variant)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Item",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Let Item(ByVal Key As String, Dat As Variant)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Items",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get Items(ByVal Index As Long) As Variant",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Items",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Set Items(ByVal Index As Long, Dat As Variant)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "LastError",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public LastError As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "LastSuccess",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get LastSuccess() As Boolean",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "LoadFrom",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function LoadFrom(ByVal Path As String, Optional CharSet As String = \"\") As cJson",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "NewItem",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function NewItem(Optional ParentKey As String) As cJson",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "NewItems",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function NewItems(Optional ParentKey As String) As cJson",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Root",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get Root() As Object",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "RootIsArray",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get RootIsArray() As Boolean",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "RootIsEmpty",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get RootIsEmpty() As Boolean",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "RootItem",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public RootItem As New Scripting.Dictionary",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "RootItems",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public RootItems As New Collection",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "RootText",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public RootText As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SaveTo",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function SaveTo( ByVal FileName As String, Optional CharSet As String = \"\", Optional Whitespace As Variant, Optional FromUnicode As Boolean) As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ToArray",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function ToArray() As Variant",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "uuItems",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Let uuItems(ByVal Index As Long, Dat As Variant)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "WhiteSpaceSet",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public WhiteSpaceSet As Variant",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "cLayer",
+      "kind": "Class",
+      "file": "Libs/Layer/cLayer.twin",
+      "access": "Public",
+      "attributes": [],
+      "implements": [],
+      "inherits": null,
+      "members": [
+        {
+          "name": "Toast",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function Toast(ByVal Msg As String) As Long",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "cLogs",
+      "kind": "Class",
+      "file": "Libs/Logs/cLogs.twin",
+      "access": "Public",
+      "attributes": [],
+      "implements": [],
+      "inherits": null,
+      "members": [
+        {
+          "name": "DbgView",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function DbgView(LogStr As String, Optional LogLevel As EnumLogLevel) As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "DebugPring",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public DebugPring As Boolean",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "EnumLogFileNameRule",
+          "kind": "Enum",
+          "access": null,
+          "signature": "Enum EnumLogFileNameRule",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "EnumLogLevel",
+          "kind": "Enum",
+          "access": null,
+          "signature": "Enum EnumLogLevel",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "FormListBox",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public FormListBox As VB.ListBox",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "FormListBoxMaxItem",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public FormListBoxMaxItem As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "FormView",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function FormView(LogStr As String, Optional LogLevel As EnumLogLevel) As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "LogDir",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public LogDir As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "LogFileNameByUer",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public LogFileNameByUer As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "LogFileNameRule",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public LogFileNameRule As EnumLogFileNameRule",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "LogLevelControl",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public LogLevelControl As EnumLogLevel",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "LogSubDir",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public LogSubDir As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "MakeLogData",
+          "kind": "Function",
+          "access": "Private",
+          "signature": "Private Function MakeLogData(LogStr As String, LogLevel As EnumLogLevel) As Boolean",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "MakeSureDirectoryPathExists",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare PtrSafe Function MakeSureDirectoryPathExists Lib \"\" (ByVal DirPath As String) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "OutputDebugString",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare PtrSafe Sub OutputDebugString Lib \"\" Alias \"\" (ByVal lpOutputString As String)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Save",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function Save(ByVal LogStr As String, Optional LogLevel As EnumLogLevel, Optional ToFormView As Boolean, Optional ToDbgView As Boolean, Optional ToWebView As Boolean) As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SendToDbgView",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public SendToDbgView As Boolean",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SendToFormView",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public SendToFormView As Boolean",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SendToWebView",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public SendToWebView As Boolean",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "WEB_URL",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const WEB_URL As String = \"\"",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "WebUserCode",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public WebUserCode As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "WebView",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function WebView(LogStr As String, Optional LogLevel As EnumLogLevel) As String",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "cTimer",
+      "kind": "Class",
+      "file": "Libs/DateTime/cTimer.twin",
+      "access": "Public",
+      "attributes": [],
+      "implements": [],
+      "inherits": null,
+      "members": [],
+      "events": []
+    },
+    {
+      "name": "cTimeuse",
+      "kind": "Class",
+      "file": "Libs/DateTime/cTimeUse.twin",
+      "access": "Public",
+      "attributes": [],
+      "implements": [],
+      "inherits": null,
+      "members": [
+        {
+          "name": "GetTickCount",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare PtrSafe Function GetTickCount Lib \"\" () As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Show",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function Show(Optional Txt As String = \"\") As Variant",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Start",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub Start()",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "TBMAN",
+      "kind": "Module",
+      "file": "TBMAN.twin",
+      "access": "Public",
+      "attributes": [],
+      "implements": [],
+      "inherits": null,
+      "members": [
+        {
+          "name": "Version",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get Version() As String",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "ToolsArray",
+      "kind": "Module",
+      "file": "Tools/Array/ToolsArray.twin",
+      "access": "Public",
+      "attributes": [],
+      "implements": [],
+      "inherits": null,
+      "members": [
+        {
+          "name": "Command1_Click",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub Command1_Click()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CopyMemory",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare PtrSafe Sub CopyMemory Lib \"\" Alias \"\" (Destination As Any, Source As Any, ByVal length As Long)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "DeArray",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub DeArray(Arr As Variant, ParamArray OutVars())",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Extend",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Let Extend(Vars As Variant, Value As Variant)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "FindByteArray",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function FindByteArray(ByRef Arr() As Byte, ByRef Keyword() As Byte) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GetArrayLength",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function GetArrayLength(Arr() As Variant) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GetIndexByValue",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function GetIndexByValue(Arr As Variant, Value As String) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "IsArrayEmpty",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function IsArrayEmpty(Arr As Variant) As Boolean",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "longByteType",
+          "kind": "Type",
+          "access": "Private",
+          "signature": "Private Type longByteType",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "longType",
+          "kind": "Type",
+          "access": "Private",
+          "signature": "Private Type longType",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SliceByteArray",
+          "kind": "Function",
+          "access": null,
+          "signature": "Function SliceByteArray(ByRef Arr() As Byte, ByVal StartPos As Long, Optional ByVal EndPos As Long = -1) As Byte()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SliceLongArray",
+          "kind": "Function",
+          "access": null,
+          "signature": "Function SliceLongArray(ByRef Arr() As Long, ByVal StartPos As Long, Optional ByVal EndPos As Long = -1) As Long()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SplitByteArray",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function SplitByteArray(ByRef Arr() As Byte, ByVal position As Long, Optional Offset As Long) As Variant",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SplitByteArrayByKeyword",
+          "kind": "Function",
+          "access": null,
+          "signature": "Function SplitByteArrayByKeyword(ByRef ByteArray() As Byte, ByVal Keyword As Variant, Optional ByVal SplitCount As Long) As Variant",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SplitLongToBytes",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare PtrSafe Function SplitLongToBytes Lib \"\" Alias \"\" (ByVal lngNum As Long) As longByteType",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "StringToByteArray",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function StringToByteArray(ByVal St As String) As Byte()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Test",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub Test()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "TestSliceArray",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub TestSliceArray()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "TestSliceArray2",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub TestSliceArray2()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "TestSplitArrayByKeyword",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub TestSplitArrayByKeyword()",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "ToolsDic",
+      "kind": "Module",
+      "file": "Tools/Dic/ToolsDic.twin",
+      "access": "Public",
+      "attributes": [],
+      "implements": [],
+      "inherits": null,
+      "members": [
+        {
+          "name": "DeepCopy",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function DeepCopy(srcDic As Scripting.Dictionary) As Scripting.Dictionary",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "FromWwwFormUrlencoded",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function FromWwwFormUrlencoded(Content As String, Dic As Scripting.Dictionary) As Boolean",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "OverWrite",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub OverWrite(DistDic As Scripting.Dictionary, srcDic As Scripting.Dictionary, Optional OnlyKey As Boolean = True)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "TowLevelDicAssign",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub TowLevelDicAssign(Dic As Scripting.Dictionary, Lv1Name As String, Lv2Name As String, Value As Variant)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ToWwwFormUrlencoded",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function ToWwwFormUrlencoded(Dic As Scripting.Dictionary) As String",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "ToolsFso",
+      "kind": "Module",
+      "file": "Tools/FSO/ToolsFso.twin",
+      "access": "Public",
+      "attributes": [],
+      "implements": [],
+      "inherits": null,
+      "members": [
+        {
+          "name": "AutoCompleteFullPath",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function AutoCompleteFullPath(Path As String, Optional IsFile As Boolean) As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "AutoMakeDir",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function AutoMakeDir(ByVal Path As String, Optional IsFile As Boolean) As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ClearSpan",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function ClearSpan(Path As String, Optional IsFile As Boolean) As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "MakeNewFileFulPath",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function MakeNewFileFulPath(FileSrc As String, AppendFix As String, Optional JoinStr As String = \"\") As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "MakeSureDirectoryPathExists",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare PtrSafe Function MakeSureDirectoryPathExists Lib \"\" (ByVal DirPath As String) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Test",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub Test()",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "ToolsJScript",
+      "kind": "Module",
+      "file": "Tools/JScript/ToolsJScript.twin",
+      "access": "Public",
+      "attributes": [],
+      "implements": [],
+      "inherits": null,
+      "members": [
+        {
+          "name": "Init",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub Init()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "NewArr",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function NewArr(ParamArray Item() As Variant) As Object",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "NewObj",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function NewObj() As Object",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "ToolsJsonUcs",
+      "kind": "Module",
+      "file": "Libs/Json/inc/ToolsJsonUcs.twin",
+      "access": "Public",
+      "attributes": [],
+      "implements": [],
+      "inherits": null,
+      "members": [],
+      "events": []
+    },
+    {
+      "name": "ToolsJsonVba",
+      "kind": "Module",
+      "file": "Libs/Json/inc/ToolsJsonVba.twin",
+      "access": "Public",
+      "attributes": [],
+      "implements": [],
+      "inherits": null,
+      "members": [
+        {
+          "name": "ConvertToIso",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function ConvertToIso(utc_LocalDate As Date) As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ConvertToJson",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function ConvertToJson(ByVal JsonValue As Variant, Optional ByVal Whitespace As Variant, Optional ByVal json_CurrentIndentation As Long = 0) As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ConvertToUtc",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function ConvertToUtc(utc_LocalDate As Date) As Date",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "json_BufferAppend",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub json_BufferAppend(ByRef json_Buffer As String, ByRef json_Append As Variant, ByRef json_BufferPosition As Long, ByRef json_BufferLength As Long)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "json_BufferToString",
+          "kind": "Function",
+          "access": "Private",
+          "signature": "Private Function json_BufferToString(ByRef json_Buffer As String, ByVal json_BufferPosition As Long) As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "json_Encode",
+          "kind": "Function",
+          "access": "Private",
+          "signature": "Private Function json_Encode(ByVal json_Text As Variant) As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "json_IsUndefined",
+          "kind": "Function",
+          "access": "Private",
+          "signature": "Private Function json_IsUndefined(ByVal json_Value As Variant) As Boolean",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "json_Options",
+          "kind": "Type",
+          "access": "Private",
+          "signature": "Private Type json_Options",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "json_ParseArray",
+          "kind": "Function",
+          "access": "Private",
+          "signature": "Private Function json_ParseArray(json_String As String, ByRef json_Index As Long) As Collection",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "json_ParseErrorMessage",
+          "kind": "Function",
+          "access": "Private",
+          "signature": "Private Function json_ParseErrorMessage(json_String As String, ByRef json_Index As Long, ErrorMessage As String) As Variant",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "json_ParseKey",
+          "kind": "Function",
+          "access": "Private",
+          "signature": "Private Function json_ParseKey(json_String As String, ByRef json_Index As Long) As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "json_ParseNumber",
+          "kind": "Function",
+          "access": "Private",
+          "signature": "Private Function json_ParseNumber(json_String As String, ByRef json_Index As Long) As Variant",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "json_ParseObject",
+          "kind": "Function",
+          "access": "Private",
+          "signature": "Private Function json_ParseObject(json_String As String, ByRef json_Index As Long) As Dictionary",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "json_ParseString",
+          "kind": "Function",
+          "access": "Private",
+          "signature": "Private Function json_ParseString(json_String As String, ByRef json_Index As Long) As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "json_ParseValue",
+          "kind": "Function",
+          "access": "Private",
+          "signature": "Private Function json_ParseValue(json_String As String, ByRef json_Index As Long) As Variant",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "json_Peek",
+          "kind": "Function",
+          "access": "Private",
+          "signature": "Private Function json_Peek(json_String As String, ByVal json_Index As Long, Optional json_NumberOfCharacters As Long = 1) As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "json_SkipSpaces",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub json_SkipSpaces(json_String As String, ByRef json_Index As Long)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "json_StringIsLargeNumber",
+          "kind": "Function",
+          "access": "Private",
+          "signature": "Private Function json_StringIsLargeNumber(json_String As Variant) As Boolean",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ParseIso",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function ParseIso(utc_IsoString As String) As Date",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ParseJson",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function ParseJson(ByVal JsonString As String) As Object",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ParseUtc",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function ParseUtc(utc_UtcDate As Date) As Date",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "utc_ConvertDate",
+          "kind": "Function",
+          "access": "Private",
+          "signature": "Private Function utc_ConvertDate(utc_Value As Date, Optional utc_ConvertToUtc As Boolean = False) As Date",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "utc_DateToSystemTime",
+          "kind": "Function",
+          "access": "Private",
+          "signature": "Private Function utc_DateToSystemTime(utc_Value As Date) As utc_SYSTEMTIME",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "utc_ExecuteInShell",
+          "kind": "Function",
+          "access": "Private",
+          "signature": "Private Function utc_ExecuteInShell(utc_ShellCommand As String) As utc_ShellResult",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "utc_feof",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare PtrSafe Function utc_feof Lib \"\" Alias \"\" (ByVal utc_File As LongPtr) As LongPtr",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "utc_feof",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare Function utc_feof Lib \"\" Alias \"\" (ByVal utc_File As Long) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "utc_fread",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare PtrSafe Function utc_fread Lib \"\" Alias \"\" (ByVal utc_Buffer As String, ByVal utc_Size As LongPtr, ByVal utc_Number As LongPtr, ByVal utc_File As LongPtr) As LongPtr",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "utc_fread",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare Function utc_fread Lib \"\" Alias \"\" (ByVal utc_Buffer As String, ByVal utc_Size As Long, ByVal utc_Number As Long, ByVal utc_File As Long) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "utc_GetTimeZoneInformation",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare PtrSafe Function utc_GetTimeZoneInformation Lib \"\" Alias \"\" (utc_lpTimeZoneInformation As utc_TIME_ZONE_INFORMATION) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "utc_GetTimeZoneInformation",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare Function utc_GetTimeZoneInformation Lib \"\" Alias \"\" (utc_lpTimeZoneInformation As utc_TIME_ZONE_INFORMATION) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "utc_pclose",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare PtrSafe Function utc_pclose Lib \"\" Alias \"\" (ByVal utc_File As LongPtr) As LongPtr",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "utc_pclose",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare Function utc_pclose Lib \"\" Alias \"\" (ByVal utc_File As Long) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "utc_popen",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare PtrSafe Function utc_popen Lib \"\" Alias \"\" (ByVal utc_Command As String, ByVal utc_Mode As String) As LongPtr",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "utc_popen",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare Function utc_popen Lib \"\" Alias \"\" (ByVal utc_Command As String, ByVal utc_Mode As String) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "utc_ShellResult",
+          "kind": "Type",
+          "access": "Private",
+          "signature": "Private Type utc_ShellResult",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "utc_ShellResult",
+          "kind": "Type",
+          "access": "Private",
+          "signature": "Private Type utc_ShellResult",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "utc_SYSTEMTIME",
+          "kind": "Type",
+          "access": "Private",
+          "signature": "Private Type utc_SYSTEMTIME",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "utc_SystemTimeToDate",
+          "kind": "Function",
+          "access": "Private",
+          "signature": "Private Function utc_SystemTimeToDate(utc_Value As utc_SYSTEMTIME) As Date",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "utc_SystemTimeToTzSpecificLocalTime",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare PtrSafe Function utc_SystemTimeToTzSpecificLocalTime Lib \"\" Alias \"\" (utc_lpTimeZoneInformation As utc_TIME_ZONE_INFORMATION, utc_lpUniversalTime As utc_SYSTEMTIME, utc_lpLocalTime As utc_SYSTEMTIME) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "utc_SystemTimeToTzSpecificLocalTime",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare Function utc_SystemTimeToTzSpecificLocalTime Lib \"\" Alias \"\" (utc_lpTimeZoneInformation As utc_TIME_ZONE_INFORMATION, utc_lpUniversalTime As utc_SYSTEMTIME, utc_lpLocalTime As utc_SYSTEMTIME) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "utc_TIME_ZONE_INFORMATION",
+          "kind": "Type",
+          "access": "Private",
+          "signature": "Private Type utc_TIME_ZONE_INFORMATION",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "utc_TzSpecificLocalTimeToSystemTime",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare PtrSafe Function utc_TzSpecificLocalTimeToSystemTime Lib \"\" Alias \"\" (utc_lpTimeZoneInformation As utc_TIME_ZONE_INFORMATION, utc_lpLocalTime As utc_SYSTEMTIME, utc_lpUniversalTime As utc_SYSTEMTIME) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "utc_TzSpecificLocalTimeToSystemTime",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare Function utc_TzSpecificLocalTimeToSystemTime Lib \"\" Alias \"\" (utc_lpTimeZoneInformation As utc_TIME_ZONE_INFORMATION, utc_lpLocalTime As utc_SYSTEMTIME, utc_lpUniversalTime As utc_SYSTEMTIME) As Long",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "ToolsMath",
+      "kind": "Module",
+      "file": "Tools/Math/ToolsMath.twin",
+      "access": "Public",
+      "attributes": [],
+      "implements": [],
+      "inherits": null,
+      "members": [
+        {
+          "name": "Ceil",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function Ceil(ByVal Num As Variant, Optional ByVal Dot As Long) As Double",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GetRandRange",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function GetRandRange(a As Long, b As Long) As Long",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "ToolsStr",
+      "kind": "Module",
+      "file": "Tools/String/ToolsStr.twin",
+      "access": "Public",
+      "attributes": [],
+      "implements": [],
+      "inherits": null,
+      "members": [
+        {
+          "name": "GetFirstChar",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function GetFirstChar(Txt As String, Optional Length As Long = 1) As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GetGUID",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function GetGUID(Optional isFull As Boolean) As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GetLastChar",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function GetLastChar(Txt As String, Optional Length As Long = 1) As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GetNewIds",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function GetNewIds(Optional ByVal Bath As Long) As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GetRandByte",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function GetRandByte() As Byte()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GetRandStr",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function GetRandStr(Optional ByVal Lens As Integer = 32, Optional Zuhe As String = \"\") As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "HasStr",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function HasStr(FindStr As String, FullStr As String, Optional StartPos As Long = 1, Optional CompType As VbCompareMethod = vbTextCompare) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "InsertSpan",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function InsertSpan(ByRef inputStr As String, ByVal Span As String, ByVal SetpNum As Long, Optional HeadFoot As Boolean) As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "IsEmptyEx",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function IsEmptyEx(Text As String) As Boolean",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "IsString",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function IsString(var As Variant) As Boolean",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "JoinStr",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function JoinStr(Span As String, ParamArray Strings() As Variant) As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "LeftEx",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function LeftEx(Text As Variant, Length As Long) As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "LenBytes",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function LenBytes(inputArray() As Byte) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "MidEx",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function MidEx(FullStr As String, Lstr As String, Rstr As String, Optional starindex As Long) As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "PercentDecode",
+          "kind": "Function",
+          "access": null,
+          "signature": "Function PercentDecode(encodedStr As String) As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "PercentEncode",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function PercentEncode(inputStr As String) As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "RightEx",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function RightEx(Text As Variant, Length As Long) As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SliceString",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function SliceString(ByVal Arr As String, ByVal StartPos As Long, Optional ByVal EndPos As Long = -1) As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SubStr",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function SubStr(ByVal Txt As String, ByVal txtF$, Optional ByVal txtE$, Optional RetInt As Boolean) As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ToBytes",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function ToBytes(inputString As String) As Byte()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ToHex",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function ToHex(inputArray() As Byte) As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ToString",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function ToString(inputArray() As Byte) As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "TrimEx",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function TrimEx(ByRef Text As String) As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "UnicodeDecode",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function UnicodeDecode(Text As String, Optional PreFix As String = \"\") As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "UnicodeEncode",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function UnicodeEncode(ByVal inputString As String, Optional PreFix As String = \"\") As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "UniVbCrLf",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function UniVbCrLf(Text As String) As String",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "ToolsStream",
+      "kind": "Module",
+      "file": "Tools/FSO/ToolsStream.twin",
+      "access": "Public",
+      "attributes": [],
+      "implements": [],
+      "inherits": null,
+      "members": [
+        {
+          "name": "LoadFileAsBinary",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function LoadFileAsBinary(ByVal Path As String, OutData() As Byte) As Boolean",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "LoadFileAsText",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function LoadFileAsText(ByVal FileName As String, Optional CharSet As String = \"\") As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SaveFileAsBinary",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function SaveFileAsBinary(ByVal Path As String, OutData() As Byte) As Boolean",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SaveFileAsText",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function SaveFileAsText(ByVal FileName As String, Data As String, Optional CharSet As String = \"\") As Boolean",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "ToolsUtf8",
+      "kind": "Module",
+      "file": "Tools/CharSet/ToolsUtf8.twin",
+      "access": "Public",
+      "attributes": [],
+      "implements": [],
+      "inherits": null,
+      "members": [
+        {
+          "name": "CP_UTF8",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const CP_UTF8 = 65001",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Decode",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function Decode(ByRef Utf() As Byte) As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "DecodeToByteArray",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function DecodeToByteArray(ByRef Utf() As Byte) As Byte()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Encode",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function Encode(ByVal UCS As String) As Byte()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "MultiByteToWideChar",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare PtrSafe Function MultiByteToWideChar Lib \"\" (ByVal CodePage As Long, ByVal dwFlags As Long, ByVal lpMultiByteStr As LongPtr, ByVal cchMultiByte As LongPtr, ByVal lpWideCharStr As LongPtr, ByVal cchWideChar As Long) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "WideCharToMultiByte",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare PtrSafe Function WideCharToMultiByte Lib \"\" (ByVal CodePage As Long, ByVal dwFlags As Long, ByVal lpWideCharStr As LongPtr, ByVal cchWideChar As LongPtr, ByRef lpMultiByteStr As Any, ByVal cchMultiByte As Long, ByVal lpDefaultChar As String, ByVal lpUsedDefaultChar As LongPtr) As Long",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    }
+  ],
+  "enums": [],
+  "types": []
+}

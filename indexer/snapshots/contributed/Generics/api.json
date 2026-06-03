@@ -1,0 +1,422 @@
+{
+  "package": "Generics",
+  "version": "1.0.0.0",
+  "modules": [
+    {
+      "name": "HelloWorldModule",
+      "kind": "Module",
+      "file": "HelloWorldModule.twin",
+      "access": "Public",
+      "attributes": [],
+      "implements": [],
+      "inherits": null,
+      "members": [
+        {
+          "name": "GetBigTuple",
+          "kind": "Function",
+          "access": "Private",
+          "signature": "Private Function GetBigTuple() As TupleOf7(Of String, String, String, String, String, String, String)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GetTuple",
+          "kind": "Function",
+          "access": "Private",
+          "signature": "Private Function GetTuple() As TupleOf1(Of String)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Show",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub Show()",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "TupleOf1",
+      "kind": "Class",
+      "file": "Tuple.twin",
+      "access": "Public",
+      "attributes": [
+        "COMCreatable(False)"
+      ],
+      "implements": [],
+      "inherits": null,
+      "members": [
+        {
+          "name": "Item1",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get Item1() As T1",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "New",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub New(item1 As T1)",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "TupleOf2",
+      "kind": "Class",
+      "file": "Tuple.twin",
+      "access": "Public",
+      "attributes": [
+        "COMCreatable(False)"
+      ],
+      "implements": [],
+      "inherits": null,
+      "members": [
+        {
+          "name": "Item1",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get Item1() As T1",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Item2",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get Item2() As T2",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "New",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub New(item1 As T1, item2 As T2)",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "TupleOf3",
+      "kind": "Class",
+      "file": "Tuple.twin",
+      "access": "Public",
+      "attributes": [
+        "COMCreatable(False)"
+      ],
+      "implements": [],
+      "inherits": null,
+      "members": [
+        {
+          "name": "Item1",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get Item1() As T1",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Item2",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get Item2() As T2",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Item3",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get Item3() As T3",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "New",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub New(item1 As T1, item2 As T2, item3 As T3)",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "TupleOf4",
+      "kind": "Class",
+      "file": "Tuple.twin",
+      "access": "Public",
+      "attributes": [
+        "COMCreatable(False)"
+      ],
+      "implements": [],
+      "inherits": null,
+      "members": [
+        {
+          "name": "Item1",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get Item1() As T1",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Item2",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get Item2() As T2",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Item3",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get Item3() As T3",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Item4",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get Item4() As T4",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "New",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub New(item1 As T1, item2 As T2, item3 As T3, item4 As T4)",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "TupleOf5",
+      "kind": "Class",
+      "file": "Tuple.twin",
+      "access": "Public",
+      "attributes": [
+        "COMCreatable(False)"
+      ],
+      "implements": [],
+      "inherits": null,
+      "members": [
+        {
+          "name": "Item1",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get Item1() As T1",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Item2",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get Item2() As T2",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Item3",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get Item3() As T3",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Item4",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get Item4() As T4",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Item5",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get Item5() As T5",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "New",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub New(item1 As T1, item2 As T2, item3 As T3, item4 As T4, item5 As T5)",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "TupleOf6",
+      "kind": "Class",
+      "file": "Tuple.twin",
+      "access": "Public",
+      "attributes": [
+        "COMCreatable(False)"
+      ],
+      "implements": [],
+      "inherits": null,
+      "members": [
+        {
+          "name": "Item1",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get Item1() As T1",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Item2",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get Item2() As T2",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Item3",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get Item3() As T3",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Item4",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get Item4() As T4",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Item5",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get Item5() As T5",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Item6",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get Item6() As T6",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "New",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub New(item1 As T1, item2 As T2, item3 As T3, item4 As T4, item5 As T5, item6 As T6)",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "TupleOf7",
+      "kind": "Class",
+      "file": "Tuple.twin",
+      "access": "Public",
+      "attributes": [
+        "COMCreatable(False)"
+      ],
+      "implements": [],
+      "inherits": null,
+      "members": [
+        {
+          "name": "Item1",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get Item1() As T1",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Item2",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get Item2() As T2",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Item3",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get Item3() As T3",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Item4",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get Item4() As T4",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Item5",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get Item5() As T5",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Item6",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get Item6() As T6",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Item7",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get Item7() As T7",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "New",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub New(item1 As T1, item2 As T2, item3 As T3, item4 As T4, item5 As T5, item6 As T6, item7 As T7)",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    }
+  ],
+  "enums": [],
+  "types": []
+}

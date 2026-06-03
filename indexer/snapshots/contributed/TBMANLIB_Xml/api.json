@@ -1,0 +1,980 @@
+{
+  "package": "TBMANLIB_Xml",
+  "version": "1.0.0.0",
+  "modules": [
+    {
+      "name": "cXml",
+      "kind": "Class",
+      "file": "Src/cXml.twin",
+      "access": "Public",
+      "attributes": [
+        "COMCreatable(False)"
+      ],
+      "implements": [],
+      "inherits": null,
+      "members": [
+        {
+          "name": "AddElement",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function AddElement(ByVal parentXPath As String, ByVal elementName As String) As cXmlNode",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Class_Terminate",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub Class_Terminate()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Clone",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function Clone() As cXml",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CloneNode",
+          "kind": "Function",
+          "access": "Private",
+          "signature": "Private Function CloneNode(ByRef node As cXmlNode) As cXmlNode",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CreateNew",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub CreateNew(ByVal rootElementName As String)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "DecodeXmlEntities",
+          "kind": "Function",
+          "access": "Private",
+          "signature": "Private Function DecodeXmlEntities(ByVal text As String) As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Document",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get Document() As cXmlNode",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "EncodeXmlEntities",
+          "kind": "Function",
+          "access": "Private",
+          "signature": "Private Function EncodeXmlEntities(ByVal text As String) As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Encoding",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get Encoding() As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Encoding",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Let Encoding(ByVal value As String)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "FindChildByName",
+          "kind": "Function",
+          "access": "Private",
+          "signature": "Private Function FindChildByName(ByRef parent As cXmlNode, ByVal name As String) As cXmlNode",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "FindElementsByName",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub FindElementsByName(ByRef node As cXmlNode, ByVal name As String, ByRef result As Collection)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GetAttribute",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function GetAttribute(ByVal xpath As String, ByVal attrName As String) As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GetElementText",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function GetElementText(ByVal xpath As String) As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GetNodeText",
+          "kind": "Function",
+          "access": "Private",
+          "signature": "Private Function GetNodeText(ByRef node As cXmlNode) As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Initialized",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get Initialized() As Boolean",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "LoadFromFile",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function LoadFromFile(ByVal filePath As String) As Boolean",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Merge",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub Merge(ByVal otherXml As cXml)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "New",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub New()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Parse",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function Parse(ByVal xml As String) As Boolean",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ParseAttributes",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub ParseAttributes(ByVal tagContent As String, ByRef element As cXmlNode)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ParseCData",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub ParseCData(ByRef parent As cXmlNode)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ParseComment",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub ParseComment(ByRef parent As cXmlNode)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ParseContent",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub ParseContent(ByRef parent As cXmlNode)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ParseDeclaration",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub ParseDeclaration()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ParseElement",
+          "kind": "Function",
+          "access": "Private",
+          "signature": "Private Function ParseElement() As cXmlNode",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ParseInternal",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub ParseInternal(ByVal xml As String)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ParseText",
+          "kind": "Function",
+          "access": "Private",
+          "signature": "Private Function ParseText() As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "RemoveAttribute",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub RemoveAttribute(ByVal xpath As String, ByVal attrName As String)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "RemoveElement",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function RemoveElement(ByVal xpath As String) As Boolean",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "RootElement",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get RootElement() As cXmlNode",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SaveToFile",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function SaveToFile(ByVal filePath As String, Optional ByVal withDeclaration As Boolean = True) As Boolean",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SelectElement",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function SelectElement(ByVal xpath As String) As cXmlNode",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SelectElements",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function SelectElements(ByVal tagName As String) As Collection",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SerializeNodeCompact",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub SerializeNodeCompact(ByRef node As cXmlNode, ByRef sb As Collection)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SerializeNodePretty",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub SerializeNodePretty(ByRef node As cXmlNode, ByRef sb As Collection, ByVal level As Long, ByVal indent As String)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SetAttribute",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub SetAttribute(ByVal xpath As String, ByVal attrName As String, ByVal attrValue As String)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SetDocument",
+          "kind": "Property",
+          "access": "Friend",
+          "signature": "Friend Property Let SetDocument(ByVal value As cXmlNode)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SetElementText",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub SetElementText(ByVal xpath As String, ByVal text As String)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SetInitialized",
+          "kind": "Property",
+          "access": "Friend",
+          "signature": "Friend Property Let SetInitialized(ByVal value As Boolean)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SetNodeText",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub SetNodeText(ByRef node As cXmlNode, ByVal text As String)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SetRootElement",
+          "kind": "Property",
+          "access": "Friend",
+          "signature": "Friend Property Let SetRootElement(ByVal value As cXmlNode)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SkipWhitespace",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub SkipWhitespace()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SplitPath",
+          "kind": "Function",
+          "access": "Private",
+          "signature": "Private Function SplitPath(ByVal path As String) As String()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ToXmlString",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function ToXmlString(Optional ByVal withDeclaration As Boolean = True, Optional ByVal prettyPrint As Boolean = False, Optional ByVal indent As String = \"\") As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Validate",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function Validate() As Boolean",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ValidateNode",
+          "kind": "Function",
+          "access": "Private",
+          "signature": "Private Function ValidateNode(ByRef node As cXmlNode) As Boolean",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Version",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get Version() As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Version",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Let Version(ByVal value As String)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "XmlString",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get XmlString() As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "XmlString",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Let XmlString(ByVal value As String)",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "cXmlNode",
+      "kind": "Class",
+      "file": "Src/cXmlNode.twin",
+      "access": "Public",
+      "attributes": [
+        "COMCreatable(False)"
+      ],
+      "implements": [],
+      "inherits": null,
+      "members": [
+        {
+          "name": "Attributes",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public Attributes As Collection",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ChildNodes",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public ChildNodes As Collection",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GetAttribute",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function GetAttribute(ByVal attrName As String) As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GetChildNode",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function GetChildNode(ByVal nodeName As String) As cXmlNode",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GetChildNodesByName",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function GetChildNodesByName(ByVal nodeName As String) As Collection",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Name",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public Name As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "New",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub New()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "NodeType",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public NodeType As mXml.XmlNodeType",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Parent",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public Parent As cXmlNode",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "RemoveAttribute",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub RemoveAttribute(ByVal attrName As String)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SetAttribute",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub SetAttribute(ByVal attrName As String, ByVal attrValue As String)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Value",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public Value As String",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "mXml",
+      "kind": "Module",
+      "file": "Src/mXml.twin",
+      "access": "Public",
+      "attributes": [],
+      "implements": [],
+      "inherits": null,
+      "members": [
+        {
+          "name": "CP_UTF8",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const CP_UTF8 As Long = 65001",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "DEFAULT_ENCODING",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const DEFAULT_ENCODING As String = \"\"",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "DEFAULT_INDENT",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const DEFAULT_INDENT As String = \"\"",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "DEFAULT_XML_VERSION",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const DEFAULT_XML_VERSION As String = \"\"",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ERR_ATTRIBUTE_NOT_FOUND",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const ERR_ATTRIBUTE_NOT_FOUND As Long = ERR_BASE + 4",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ERR_BASE",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const ERR_BASE As Long = vbObjectError + 5000",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ERR_EMPTY_DOCUMENT",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const ERR_EMPTY_DOCUMENT As Long = ERR_BASE + 5",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ERR_INVALID_NODE",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const ERR_INVALID_NODE As Long = ERR_BASE + 2",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ERR_INVALID_OPERATION",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const ERR_INVALID_OPERATION As Long = ERR_BASE + 6",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ERR_INVALID_XML",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const ERR_INVALID_XML As Long = ERR_BASE + 1",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ERR_NODE_NOT_FOUND",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const ERR_NODE_NOT_FOUND As Long = ERR_BASE + 3",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "MultiByteToWideChar",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare PtrSafe Function MultiByteToWideChar Lib \"\" ( ByVal CodePage As Long, ByVal dwFlags As Long, ByVal lpMultiByteStr As LongPtr, ByVal cbMultiByte As Long, ByVal lpWideCharStr As LongPtr, ByVal cchWideChar As Long) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ParseOption",
+          "kind": "Enum",
+          "access": "Public",
+          "signature": "Public Enum ParseOption",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "StringToUTF8Bytes",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function StringToUTF8Bytes(ByVal str As String) As Byte()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "UTF8BytesToString",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function UTF8BytesToString(ByRef utf8Bytes() As Byte) As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "WideCharToMultiByte",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare PtrSafe Function WideCharToMultiByte Lib \"\" ( ByVal CodePage As Long, ByVal dwFlags As Long, ByVal lpWideCharStr As LongPtr, ByVal cchWideChar As Long, ByVal lpMultiByteStr As LongPtr, ByVal cbMultiByte As Long, ByVal lpDefaultChar As LongPtr, ByVal lpUsedDefaultChar As LongPtr) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "XmlNodeType",
+          "kind": "Enum",
+          "access": "Public",
+          "signature": "Public Enum XmlNodeType",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "mXmlTests",
+      "kind": "Module",
+      "file": "mXmlTests.twin",
+      "access": "Public",
+      "attributes": [],
+      "implements": [],
+      "inherits": null,
+      "members": [
+        {
+          "name": "Assert",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub Assert(ByVal condition As Boolean, ByVal message As String)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "AssertEqual",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub AssertEqual(ByVal actual As Variant, ByVal expected As Variant, ByVal message As String)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "AssertInStr",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub AssertInStr(ByVal text As String, ByVal substring As String, ByVal message As String)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "AssertNotNothing",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub AssertNotNothing(ByVal obj As Variant, ByVal message As String)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "PrintSummary",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub PrintSummary()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "PrintTestFooter",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub PrintTestFooter()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "PrintTestHeader",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub PrintTestHeader(ByVal testName As String)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "RunAllTests",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub RunAllTests()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "TestAddElement",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub TestAddElement()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "TestClone",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub TestClone()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "TestCreateNew",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub TestCreateNew()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "TestEmptyDocument",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub TestEmptyDocument()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "TestGetAttribute",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub TestGetAttribute()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "TestGetElementText",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub TestGetElementText()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "TestLoadFromFile",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub TestLoadFromFile()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "TestMerge",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub TestMerge()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "TestNamespaces",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub TestNamespaces()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "TestParseNestedElements",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub TestParseNestedElements()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "TestParseSimple",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub TestParseSimple()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "TestParseWithAttributes",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub TestParseWithAttributes()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "TestParseWithCData",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub TestParseWithCData()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "TestParseWithComments",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub TestParseWithComments()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "TestRemoveAttribute",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub TestRemoveAttribute()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "TestRemoveElement",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub TestRemoveElement()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "TestSaveToFile",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub TestSaveToFile()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "TestSelectElement",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub TestSelectElement()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "TestSelectElements",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub TestSelectElements()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "TestSelfClosingTags",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub TestSelfClosingTags()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "TestSetAttribute",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub TestSetAttribute()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "TestSetElementText",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub TestSetElementText()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "TestSpecialCharacters",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub TestSpecialCharacters()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "TestToStringCompact",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub TestToStringCompact()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "TestToStringPretty",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub TestToStringPretty()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "TestToStringWithDeclaration",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub TestToStringWithDeclaration()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "TestValidate",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub TestValidate()",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    }
+  ],
+  "enums": [],
+  "types": []
+}

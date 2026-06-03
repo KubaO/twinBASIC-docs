@@ -1,0 +1,1218 @@
+{
+  "package": "TBMANLIB_ConsoleComponents",
+  "version": "0.0.0.0",
+  "modules": [
+    {
+      "name": "cColorHelper",
+      "kind": "Class",
+      "file": "Components/Helpers/cColorHelper.twin",
+      "access": "Public",
+      "attributes": [
+        "COMCreatable(False)"
+      ],
+      "implements": [],
+      "inherits": null,
+      "members": [
+        {
+          "name": "BrightenColor",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function BrightenColor(ByVal color As ConsoleColor) As ConsoleColor",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CPUUsageColor",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function CPUUsageColor(ByVal usage As Double) As ConsoleColor",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CycleColor",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function CycleColor(ByVal index As Long, ByRef colors() As ConsoleColor) As ConsoleColor",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "DimColor",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function DimColor(ByVal color As ConsoleColor) As ConsoleColor",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "DiskUsageColor",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function DiskUsageColor(ByVal usage As Double) As ConsoleColor",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GetContrastColor",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function GetContrastColor(ByVal bgColor As ConsoleColor) As ConsoleColor",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GradientColor",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function GradientColor(ByVal value As Double, ByVal min As Double, ByVal max As Double, ByVal color1 As ConsoleColor, ByVal color2 As ConsoleColor, ByVal color3 As ConsoleColor) As ConsoleColor",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "HeatmapColor",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function HeatmapColor(ByVal value As Double, ByVal min As Double, ByVal max As Double, Optional ByVal lowColor As ConsoleColor = ConsoleColor.Green, Optional ByVal midColor As ConsoleColor = ConsoleColor.Yellow, Optional ByVal highColor As ConsoleColor = ConsoleColor.Red) As ConsoleColor",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "IntensityColor",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function IntensityColor(ByVal value As Double, ByVal min As Double, ByVal max As Double, Optional ByVal baseColor As ConsoleColor = ConsoleColor.Gray) As ConsoleColor",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "IsDarkColor",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function IsDarkColor(ByVal color As ConsoleColor) As Boolean",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "MemoryUsageColor",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function MemoryUsageColor(ByVal usage As Double) As ConsoleColor",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "cConsoleLayout",
+      "kind": "Class",
+      "file": "Components/Panels/cConsoleLayout.twin",
+      "access": "Public",
+      "attributes": [
+        "COMCreatable(False)"
+      ],
+      "implements": [],
+      "inherits": null,
+      "members": [
+        {
+          "name": "AddPanel",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function AddPanel(ByVal name As String, ByVal left As Long, ByVal top As Long, ByVal width As Long, ByVal height As Long, Optional ByVal title As String = \"\") As cConsolePanel",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "AddPanelByRect",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function AddPanelByRect(ByVal name As String, ByVal rect As ConsoleRect, Optional ByVal title As String = \"\") As cConsolePanel",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "AutoResize",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub AutoResize()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Clear",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub Clear()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ClearAllContent",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub ClearAllContent(Optional ByVal theme As cConsoleTheme = Nothing)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ClearPanelContent",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub ClearPanelContent(ByVal name As String, Optional ByVal theme As cConsoleTheme = Nothing)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CreateGrid",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function CreateGrid(ByVal cols As Long, ByVal rows As Long, ByVal namePrefix As String) As Variant",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CreateHeaderFooter",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function CreateHeaderFooter(ByVal headerHeight As Long, ByVal footerHeight As Long, ByVal headerName As String, ByVal contentName As String, ByVal footerName As String) As Variant",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CreateSidebar",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function CreateSidebar(ByVal sidebarWidth As Long, ByVal sidebarName As String, ByVal contentName As String) As Variant",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GetAllPanels",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function GetAllPanels() As Variant",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GetPanel",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function GetPanel(ByVal name As String) As cConsolePanel",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GetPanelNames",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function GetPanelNames() As Variant",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "HasPanel",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function HasPanel(ByVal name As String) As Boolean",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "New",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub New(ByVal console As cConsole)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "PanelCount",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get PanelCount() As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "RemovePanel",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub RemovePanel(ByVal name As String)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Render",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub Render(Optional ByVal theme As cConsoleTheme = Nothing)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "RenderPanel",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub RenderPanel(ByVal name As String, Optional ByVal theme As cConsoleTheme = Nothing)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Resize",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub Resize(ByVal newWidth As Long, ByVal newHeight As Long)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SplitHorizontal",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function SplitHorizontal(ByVal parentName As String, ByVal ratio As Double, ByVal leftName As String, ByVal rightName As String) As Variant",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SplitVertical",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function SplitVertical(ByVal parentName As String, ByVal ratio As Double, ByVal topName As String, ByVal bottomName As String) As Variant",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "cConsolePanel",
+      "kind": "Class",
+      "file": "Components/Panels/cConsolePanel.twin",
+      "access": "Public",
+      "attributes": [
+        "COMCreatable(False)"
+      ],
+      "implements": [],
+      "inherits": null,
+      "members": [
+        {
+          "name": "BorderColor",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public BorderColor As ConsoleColor",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "BorderStyle",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public BorderStyle As PanelBorderStyle",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ClearContent",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub ClearContent(ByVal buffer As cConsoleBuffer, Optional ByVal fore As ConsoleColor = ConsoleColor.Gray, Optional ByVal back As ConsoleColor = ConsoleColor.Black)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ContentHeight",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function ContentHeight() As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ContentRect",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function ContentRect() As ConsoleRect",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ContentWidth",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function ContentWidth() As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "DrawBoldBorder",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub DrawBoldBorder(ByVal buffer As cConsoleBuffer, ByVal fore As ConsoleColor, ByVal back As ConsoleColor)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "DrawDoubleBorder",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub DrawDoubleBorder(ByVal buffer As cConsoleBuffer, ByVal fore As ConsoleColor, ByVal back As ConsoleColor)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "DrawRoundedBorder",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub DrawRoundedBorder(ByVal buffer As cConsoleBuffer, ByVal fore As ConsoleColor, ByVal back As ConsoleColor)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "DrawSingleBorder",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub DrawSingleBorder(ByVal buffer As cConsoleBuffer, ByVal fore As ConsoleColor, ByVal back As ConsoleColor)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "DrawTitle",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub DrawTitle(ByVal buffer As cConsoleBuffer)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Move",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub Move(ByVal left As Long, ByVal top As Long)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Name",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public Name As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "New",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub New(Optional ByVal name As String = \"\", Optional ByVal left As Long = 0, Optional ByVal top As Long = 0, Optional ByVal width As Long = 10, Optional ByVal height As Long = 5)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Padding",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public Padding As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "PanelBorderStyle",
+          "kind": "Enum",
+          "access": "Public",
+          "signature": "Public Enum PanelBorderStyle",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Rect",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public Rect As ConsoleRect",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Render",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub Render(ByVal buffer As cConsoleBuffer, Optional ByVal fore As ConsoleColor = ConsoleColor.Gray, Optional ByVal back As ConsoleColor = ConsoleColor.Black)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Resize",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub Resize(ByVal width As Long, ByVal height As Long)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Title",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public Title As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "TitleColor",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public TitleColor As ConsoleColor",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "cConsoleTheme",
+      "kind": "Class",
+      "file": "Components/Themes/cConsoleTheme.twin",
+      "access": "Public",
+      "attributes": [
+        "COMCreatable(False)"
+      ],
+      "implements": [],
+      "inherits": null,
+      "members": [
+        {
+          "name": "Background",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public Background As ConsoleColor",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Border",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public Border As ConsoleColor",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Clone",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function Clone() As cConsoleTheme",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Error",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public Error As ConsoleColor",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Foreground",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public Foreground As ConsoleColor",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GetColor",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function GetColor(ByVal colorType As ThemeColorType) As ConsoleColor",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "HeaderBackground",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public HeaderBackground As ConsoleColor",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "HeaderForeground",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public HeaderForeground As ConsoleColor",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Info",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public Info As ConsoleColor",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Muted",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public Muted As ConsoleColor",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Primary",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public Primary As ConsoleColor",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Secondary",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public Secondary As ConsoleColor",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SelectedBackground",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public SelectedBackground As ConsoleColor",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SelectedForeground",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public SelectedForeground As ConsoleColor",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Success",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public Success As ConsoleColor",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Warning",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public Warning As ConsoleColor",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "cDataGrid",
+      "kind": "Class",
+      "file": "Components/Controls/cDataGrid.twin",
+      "access": "Public",
+      "attributes": [
+        "COMCreatable(False)"
+      ],
+      "implements": [],
+      "inherits": null,
+      "members": [
+        {
+          "name": "ColumnAlignment",
+          "kind": "Enum",
+          "access": "Public",
+          "signature": "Public Enum ColumnAlignment",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "DrawRow",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub DrawRow(ByVal col As Long, ByVal row As Long, ByVal text As String, ByVal fore As ConsoleColor, ByVal back As ConsoleColor, ByVal isHeader As Boolean)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "DrawSeparator",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub DrawSeparator(ByVal col As Long, ByVal row As Long, ByVal fore As ConsoleColor, ByVal back As ConsoleColor)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GetRowCount",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function GetRowCount() As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "HeaderColor",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Let HeaderColor(ByVal value As ConsoleColor)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "MoveDown",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub MoveDown(ByVal maxRow As Long)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "MoveUp",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub MoveUp()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "New",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub New(ByVal console As cConsole)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Render",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub Render(ByVal col As Long, ByVal row As Long, Optional ByVal fore As ConsoleColor = ConsoleColor.Gray, Optional ByVal back As ConsoleColor = ConsoleColor.Black)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ScrollTo",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub ScrollTo(ByVal row As Long)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SelectedRow",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Let SelectedRow(ByVal value As Long)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SelectionColor",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Let SelectionColor(ByVal value As ConsoleColor)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SetColumnAlignments",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub SetColumnAlignments(ByRef alignments() As ColumnAlignment)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SetColumnWidths",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub SetColumnWidths(ByRef widths() As Long)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SetRowColors",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub SetRowColors(ByRef colors() As ConsoleColor)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SetRows",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub SetRows(ByRef rows() As String)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ShowBorders",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Let ShowBorders(ByVal value As Boolean)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ShowHeader",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Let ShowHeader(ByVal value As Boolean)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SplitText",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub SplitText(ByVal text As String, ByRef columns() As String, ByVal maxCols As Long)",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "cLayoutHelper",
+      "kind": "Class",
+      "file": "Components/Helpers/cLayoutHelper.twin",
+      "access": "Public",
+      "attributes": [
+        "COMCreatable(False)"
+      ],
+      "implements": [],
+      "inherits": null,
+      "members": [
+        {
+          "name": "Center",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function Center(ByVal width As Long, ByVal height As Long) As ConsolePosition",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CenterRect",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function CenterRect(ByVal width As Long, ByVal height As Long) As ConsoleRect",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CenterX",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function CenterX(ByVal width As Long) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CenterY",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function CenterY(ByVal height As Long) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ClampRect",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function ClampRect(ByVal rect As ConsoleRect) As ConsoleRect",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "EvenColumns",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function EvenColumns(ByVal count As Long, ByVal margin As Long) As Variant",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "EvenRows",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function EvenRows(ByVal count As Long, ByVal margin As Long) As Variant",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GetRectHeight",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function GetRectHeight(ByVal rect As ConsoleRect) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GetRectWidth",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function GetRectWidth(ByVal rect As ConsoleRect) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Grid",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function Grid(ByVal cols As Long, ByVal rows As Long) As Variant",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "HeaderFooter",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function HeaderFooter(ByVal headerHeight As Long, ByVal footerHeight As Long) As Variant",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "IsValidRect",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function IsValidRect(ByVal rect As ConsoleRect) As Boolean",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "New",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub New(ByVal console As cConsole)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Percent",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function Percent(ByVal percentX As Double, ByVal percentY As Double) As ConsolePosition",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "PercentRect",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function PercentRect(ByVal leftPercent As Double, ByVal topPercent As Double, ByVal widthPercent As Double, ByVal heightPercent As Double) As ConsoleRect",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "PercentX",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function PercentX(ByVal percent As Double) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "PercentY",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function PercentY(ByVal percent As Double) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Sidebar",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function Sidebar(ByVal sidebarWidth As Long) As Variant",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SpacedPositions",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function SpacedPositions(ByVal count As Long, ByVal itemWidth As Long, ByVal spacing As Long, ByVal startX As Long) As Variant",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SplitHorizontal",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function SplitHorizontal(ByVal topPercent As Double) As Variant",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SplitVertical",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function SplitVertical(ByVal leftPercent As Double) As Variant",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "WithMargins",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function WithMargins(ByVal left As Long, ByVal top As Long, ByVal right As Long, ByVal bottom As Long) As ConsoleRect",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "cProgressBar",
+      "kind": "Class",
+      "file": "Components/Controls/cProgressBar.twin",
+      "access": "Public",
+      "attributes": [
+        "COMCreatable(False)"
+      ],
+      "implements": [],
+      "inherits": null,
+      "members": [
+        {
+          "name": "GetProgressColor",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function GetProgressColor(ByVal percent As Double, Optional ByVal lowColor As ConsoleColor = ConsoleColor.Green, Optional ByVal midColor As ConsoleColor = ConsoleColor.Yellow, Optional ByVal highColor As ConsoleColor = ConsoleColor.Red) As ConsoleColor",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "New",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub New(ByVal console As cConsole)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Render",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub Render(ByVal col As Long, ByVal row As Long, ByVal width As Long, ByVal percent As Double, Optional ByVal filledChar As String = \"\", Optional ByVal emptyChar As String = \"\", Optional ByVal filledColor As ConsoleColor = ConsoleColor.Green, Optional ByVal emptyColor As ConsoleColor = ConsoleColor.DarkGray)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "RenderVertical",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub RenderVertical(ByVal col As Long, ByVal row As Long, ByVal height As Long, ByVal percent As Double, Optional ByVal filledChar As String = \"\", Optional ByVal emptyChar As String = \"\", Optional ByVal filledColor As ConsoleColor = ConsoleColor.Green, Optional ByVal emptyColor As ConsoleColor = ConsoleColor.DarkGray)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "RenderWithAutoColor",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub RenderWithAutoColor(ByVal col As Long, ByVal row As Long, ByVal width As Long, ByVal percent As Double, Optional ByVal filledChar As String = \"\", Optional ByVal emptyChar As String = \"\", Optional ByVal emptyColor As ConsoleColor = ConsoleColor.DarkGray, Optional ByVal lowColor As ConsoleColor = ConsoleColor.Green, Optional ByVal midColor As ConsoleColor = ConsoleColor.Yellow, Optional ByVal highColor As ConsoleColor = ConsoleColor.Red)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "RenderWithBrackets",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub RenderWithBrackets(ByVal col As Long, ByVal row As Long, ByVal width As Long, ByVal percent As Double, Optional ByVal filledChar As String = \"\", Optional ByVal emptyChar As String = \"\", Optional ByVal filledColor As ConsoleColor = ConsoleColor.Green, Optional ByVal emptyColor As ConsoleColor = ConsoleColor.DarkGray, Optional ByVal bracketColor As ConsoleColor = ConsoleColor.Gray)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "RenderWithLabel",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub RenderWithLabel(ByVal col As Long, ByVal row As Long, ByVal width As Long, ByVal percent As Double, ByVal label As String, Optional ByVal filledChar As String = \"\", Optional ByVal emptyChar As String = \"\", Optional ByVal filledColor As ConsoleColor = ConsoleColor.Green, Optional ByVal emptyColor As ConsoleColor = ConsoleColor.DarkGray, Optional ByVal labelColor As ConsoleColor = ConsoleColor.Gray)",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "cSparkline",
+      "kind": "Class",
+      "file": "Components/Controls/cSparkline.twin",
+      "access": "Public",
+      "attributes": [
+        "COMCreatable(False)"
+      ],
+      "implements": [],
+      "inherits": null,
+      "members": [
+        {
+          "name": "New",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub New(ByVal console As cConsole)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Render",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub Render(ByVal col As Long, ByVal row As Long, ByVal width As Long, ByVal height As Long, ByRef values() As Double, Optional ByVal minValue As Double = 0, Optional ByVal maxValue As Double = 100, Optional ByVal fore As ConsoleColor = ConsoleColor.Green, Optional ByVal back As ConsoleColor = ConsoleColor.Black, Optional ByVal charSet As SparklineCharSet = SparklineCharSet.Braille)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "RenderASCII",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub RenderASCII(ByVal col As Long, ByVal row As Long, ByVal width As Long, ByVal height As Long, ByRef values() As Double, ByVal fore As ConsoleColor, ByVal back As ConsoleColor)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "RenderBlock",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub RenderBlock(ByVal col As Long, ByVal row As Long, ByVal width As Long, ByVal height As Long, ByRef values() As Double, ByVal fore As ConsoleColor, ByVal back As ConsoleColor)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "RenderBraille",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub RenderBraille(ByVal col As Long, ByVal row As Long, ByVal width As Long, ByVal height As Long, ByRef values() As Double, ByVal fore As ConsoleColor, ByVal back As ConsoleColor)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "RenderWithStats",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub RenderWithStats(ByVal col As Long, ByVal row As Long, ByVal width As Long, ByVal height As Long, ByRef values() As Double, Optional ByVal minValue As Double = 0, Optional ByVal maxValue As Double = 100, Optional ByVal fore As ConsoleColor = ConsoleColor.Green, Optional ByVal back As ConsoleColor = ConsoleColor.Black, Optional ByVal charSet As SparklineCharSet = SparklineCharSet.Braille, Optional ByVal statColor As ConsoleColor = ConsoleColor.Gray)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SparklineCharSet",
+          "kind": "Enum",
+          "access": "Public",
+          "signature": "Public Enum SparklineCharSet",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "cVBar",
+      "kind": "Class",
+      "file": "Components/Controls/cVBar.twin",
+      "access": "Public",
+      "attributes": [
+        "COMCreatable(False)"
+      ],
+      "implements": [],
+      "inherits": null,
+      "members": [
+        {
+          "name": "BarCharStyle",
+          "kind": "Enum",
+          "access": "Public",
+          "signature": "Public Enum BarCharStyle",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "New",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub New(ByVal console As cConsole)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Render",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub Render(ByVal col As Long, ByVal row As Long, ByVal height As Long, ByVal percent As Double, Optional ByVal fore As ConsoleColor = ConsoleColor.Green, Optional ByVal back As ConsoleColor = ConsoleColor.Black, Optional ByVal charStyle As BarCharStyle = BarCharStyle.Block)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "RenderBars",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub RenderBars(ByVal col As Long, ByVal row As Long, ByVal height As Long, ByRef values() As Double, Optional ByVal spacing As Long = 1, Optional ByVal minValue As Double = 0, Optional ByVal maxValue As Double = 100, Optional ByVal fore As ConsoleColor = ConsoleColor.Green, Optional ByVal back As ConsoleColor = ConsoleColor.Black, Optional ByVal charStyle As BarCharStyle = BarCharStyle.Block)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "RenderHistory",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub RenderHistory(ByVal col As Long, ByVal row As Long, ByVal height As Long, ByRef history() As Double, Optional ByVal minValue As Double = 0, Optional ByVal maxValue As Double = 100, Optional ByVal fore As ConsoleColor = ConsoleColor.Green, Optional ByVal back As ConsoleColor = ConsoleColor.Black, Optional ByVal charStyle As BarCharStyle = BarCharStyle.Block)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "RenderWithGradient",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub RenderWithGradient(ByVal col As Long, ByVal row As Long, ByVal height As Long, ByRef values() As Double, Optional ByVal spacing As Long = 1, Optional ByVal minValue As Double = 0, Optional ByVal maxValue As Double = 100, Optional ByVal lowColor As ConsoleColor = ConsoleColor.Green, Optional ByVal midColor As ConsoleColor = ConsoleColor.Yellow, Optional ByVal highColor As ConsoleColor = ConsoleColor.Red, Optional ByVal back As ConsoleColor = ConsoleColor.Black, Optional ByVal charStyle As BarCharStyle = BarCharStyle.Block)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "RenderWithLabel",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub RenderWithLabel(ByVal col As Long, ByVal row As Long, ByVal height As Long, ByVal percent As Double, ByVal label As String, Optional ByVal fore As ConsoleColor = ConsoleColor.Green, Optional ByVal back As ConsoleColor = ConsoleColor.Black, Optional ByVal charStyle As BarCharStyle = BarCharStyle.Block, Optional ByVal labelColor As ConsoleColor = ConsoleColor.Gray)",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "mConsoleThemeFactory",
+      "kind": "Module",
+      "file": "Components/Themes/mConsoleThemeFactory.twin",
+      "access": "Public",
+      "attributes": [],
+      "implements": [],
+      "inherits": null,
+      "members": [
+        {
+          "name": "CreateDefault",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function CreateDefault() As cConsoleTheme",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CreateHTOP",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function CreateHTOP() As cConsoleTheme",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CreateLight",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function CreateLight() As cConsoleTheme",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    }
+  ],
+  "enums": [],
+  "types": []
+}

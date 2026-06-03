@@ -1,0 +1,1942 @@
+{
+  "package": "WinNamedPipesLib",
+  "version": "beta-x-0983",
+  "modules": [
+    {
+      "name": "INamedPipeClientConnectionInternal",
+      "kind": "Interface",
+      "file": "NamedPipeClientConnection.twin",
+      "access": "Private",
+      "attributes": [
+        "InterfaceId"
+      ],
+      "implements": [],
+      "inherits": "stdole.IUnknown",
+      "members": [
+        {
+          "name": "AsyncRead",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub AsyncRead(Optional ByRef Cookie As Variant, Optional overlappedStruct As LongPtr)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "AsyncWrite",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub AsyncWrite(ByRef data() As Byte, ByRef cookie As Variant)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CancelIO",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub CancelIO()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ConnectAsync",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub ConnectAsync()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ContinuouslyReadFromPipe",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Get ContinuouslyReadFromPipe() As Boolean",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "DecreaseOutstandingRequestCount",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub DecreaseOutstandingRequestCount()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "FreeThreadingEvents",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Get FreeThreadingEvents() As Boolean",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Handle",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Get Handle() As LongPtr",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "HandleConnectionError",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub HandleConnectionError()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "IncreaseOutstandingRequestCount",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub IncreaseOutstandingRequestCount()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "IsOpening",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Get IsOpening() As Boolean",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "NotifyConnected",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub NotifyConnected()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "NotifyDisconnected",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub NotifyDisconnected()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "NotifyReceivedDataAsync",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub NotifyReceivedDataAsync(ByRef Cookie As Variant, ByVal DataPtr As LongPtr, ByVal DataLen As Long)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "NotifySentDataAsync",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub NotifySentDataAsync(ByRef Cookie As Variant)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Open",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub Open()",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "INamedPipeClientManagerInternal",
+      "kind": "Interface",
+      "file": "NamedPipeClientManager.twin",
+      "access": "Private",
+      "attributes": [
+        "InterfaceId"
+      ],
+      "implements": [],
+      "inherits": "stdole.IUnknown",
+      "members": [
+        {
+          "name": "AllocateOverlappedStruct",
+          "kind": "Function",
+          "access": null,
+          "signature": "Function AllocateOverlappedStruct(ByVal associatedConnectionWEAK As LongPtr, ByRef cookie As Variant, ByVal type As OverlappedTypeConstants, ByVal bufferSize As Long = -1) As LongPtr",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ContinuouslyReadFromPipe",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Get ContinuouslyReadFromPipe() As Boolean",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "FreeThreadingEvents",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Get FreeThreadingEvents() As Boolean",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "MessageBufferSize",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Get MessageBufferSize() As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ReleaseOverlappedStruct",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub ReleaseOverlappedStruct(ByVal overlappedPtr As LongPtr)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "RemoveClientConnection",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub RemoveClientConnection(connection As INamedPipeClientConnectionInternal)",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "INamedPipeServerConnectionInternal",
+      "kind": "Interface",
+      "file": "NamedPipeServerConnection.twin",
+      "access": "Private",
+      "attributes": [
+        "InterfaceId"
+      ],
+      "implements": [],
+      "inherits": "stdole.IUnknown",
+      "members": [
+        {
+          "name": "AsyncRead",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub AsyncRead(Optional ByRef cookie As Variant, Optional overlappedStruct As LongPtr)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "AsyncWrite",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub AsyncWrite(ByRef data() As Byte, ByRef cookie As Variant)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CancelIO",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub CancelIO()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "DecreaseOutstandingRequestCount",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub DecreaseOutstandingRequestCount()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Handle",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Get Handle() As LongPtr",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "HandleConnectionError",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub HandleConnectionError()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "IncreaseOutstandingRequestCount",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub IncreaseOutstandingRequestCount()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "IsConnected",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Get IsConnected() As Boolean",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "IsConnected",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Let IsConnected(ByVal Value As Boolean)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "IsOpening",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Get IsOpening() As Boolean",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Open",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub Open()",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "INamedPipeServerInternal",
+      "kind": "Interface",
+      "file": "NamedPipeServer.twin",
+      "access": "Private",
+      "attributes": [
+        "InterfaceId"
+      ],
+      "implements": [],
+      "inherits": "stdole.IUnknown",
+      "members": [
+        {
+          "name": "AllocateOverlappedStruct",
+          "kind": "Function",
+          "access": null,
+          "signature": "Function AllocateOverlappedStruct(ByVal associatedConnectionWEAK As LongPtr, ByRef cookie As Variant, ByVal type As OverlappedTypeConstants, ByVal bufferSize As Long = -1) As LongPtr",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "FreeThreadingEvents",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Get FreeThreadingEvents() As Boolean",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "MessageBufferSize",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Get MessageBufferSize() As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "NotifyClientDisconnected",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub NotifyClientDisconnected(ByRef Connection As INamedPipeServerConnectionInternal)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ReleaseOverlappedStruct",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub ReleaseOverlappedStruct(ByVal overlappedPtr As LongPtr)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "RemoveClientConnection",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub RemoveClientConnection(connection As INamedPipeServerConnectionInternal)",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "NamedPipeClientConnection",
+      "kind": "Class",
+      "file": "NamedPipeClientConnection.twin",
+      "access": "Public",
+      "attributes": [
+        "COMCreatable(False)",
+        "InterfaceId",
+        "ClassId",
+        "EventInterfaceId"
+      ],
+      "implements": [
+        "INamedPipeClientConnectionInternal"
+      ],
+      "inherits": null,
+      "members": [
+        {
+          "name": "_ContinuouslyReadFromPipe",
+          "kind": "Property",
+          "access": "Private",
+          "signature": "Private Property Get _ContinuouslyReadFromPipe() As Boolean Implements INamedPipeClientConnectionInternal.ContinuouslyReadFromPipe",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "_FreeThreadingEvents",
+          "kind": "Property",
+          "access": "Private",
+          "signature": "Private Property Get _FreeThreadingEvents() As Boolean Implements INamedPipeClientConnectionInternal.FreeThreadingEvents",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "_Handle",
+          "kind": "Property",
+          "access": "Private",
+          "signature": "Private Property Get _Handle() As LongPtr Implements INamedPipeClientConnectionInternal.Handle",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "_IsOpening",
+          "kind": "Property",
+          "access": "Private",
+          "signature": "Private Property Get _IsOpening() As Boolean Implements INamedPipeClientConnectionInternal.IsOpening",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "AsyncClose",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub AsyncClose()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "AsyncRead",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub AsyncRead(Optional ByRef cookie As Variant = Empty, Optional overlappedStruct As LongPtr) Implements INamedPipeClientConnectionInternal.AsyncRead",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "AsyncWrite",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub AsyncWrite(ByRef data() As Byte, Optional ByRef cookie As Variant = Empty) Implements INamedPipeClientConnectionInternal.AsyncWrite",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CancelIO",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub CancelIO() Implements INamedPipeClientConnectionInternal.CancelIO",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Class_Terminate",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub Class_Terminate()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ConnectAsync",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub ConnectAsync() Implements INamedPipeClientConnectionInternal.ConnectAsync",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CustomData",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public CustomData As Variant",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "DecreaseOutstandingRequestCount",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub DecreaseOutstandingRequestCount() Implements INamedPipeClientConnectionInternal.DecreaseOutstandingRequestCount",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GetOverlappedStruct",
+          "kind": "Function",
+          "access": "Private",
+          "signature": "Private Function GetOverlappedStruct(ByVal type As OverlappedTypeConstants, ByRef Cookie As Variant) As LongPtr",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Handle",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public Handle As LongPtr",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "HandleConnectionError",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub HandleConnectionError() Implements INamedPipeClientConnectionInternal.HandleConnectionError",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "IncreaseOutstandingRequestCount",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub IncreaseOutstandingRequestCount() Implements INamedPipeClientConnectionInternal.IncreaseOutstandingRequestCount",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "New",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub New(ByVal server As INamedPipeClientManagerInternal, ByVal serverPipeName As String, ByVal serverCompletionPortHandle As LongPtr, ByVal serverMessageWindowHandle As LongPtr)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "NotifyConnected",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub NotifyConnected() Implements INamedPipeClientConnectionInternal.NotifyConnected",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "NotifyDisconnected",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub NotifyDisconnected() Implements INamedPipeClientConnectionInternal.NotifyDisconnected",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "NotifyReceivedDataAsync",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub NotifyReceivedDataAsync(ByRef Cookie As Variant, ByVal DataPtr As LongPtr, ByVal DataLen As Long) Implements INamedPipeClientConnectionInternal.NotifyReceivedDataAsync",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "NotifySentDataAsync",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub NotifySentDataAsync(ByRef Cookie As Variant) Implements INamedPipeClientConnectionInternal.NotifySentDataAsync",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Open",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub Open() Implements INamedPipeClientConnectionInternal.Open",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "PipeName",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public PipeName As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ReleaseOverlappedStruct",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub ReleaseOverlappedStruct(ByVal overlappedPtr As LongPtr)",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": [
+        {
+          "name": "Connected",
+          "signature": "Event Connected()",
+          "attributes": []
+        },
+        {
+          "name": "Disconnected",
+          "signature": "Event Disconnected()",
+          "attributes": []
+        },
+        {
+          "name": "MessageReceived",
+          "signature": "Event MessageReceived(ByRef Cookie As Variant, ByRef Data() As Byte)",
+          "attributes": []
+        },
+        {
+          "name": "MessageSent",
+          "signature": "Event MessageSent(ByRef Cookie As Variant)",
+          "attributes": []
+        }
+      ]
+    },
+    {
+      "name": "NamedPipeClientManager",
+      "kind": "Class",
+      "file": "NamedPipeClientManager.twin",
+      "access": "Public",
+      "attributes": [
+        "COMCreatable(False)",
+        "InterfaceId",
+        "EventInterfaceId",
+        "ClassId"
+      ],
+      "implements": [
+        "INamedPipeClientManagerInternal"
+      ],
+      "inherits": null,
+      "members": [
+        {
+          "name": "_ContinuouslyReadFromPipe",
+          "kind": "Property",
+          "access": "Private",
+          "signature": "Private Property Get _ContinuouslyReadFromPipe() As Boolean Implements INamedPipeClientManagerInternal.ContinuouslyReadFromPipe",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "_FreeThreadingEvents",
+          "kind": "Property",
+          "access": "Private",
+          "signature": "Private Property Get _FreeThreadingEvents() As Boolean Implements INamedPipeClientManagerInternal.FreeThreadingEvents",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "_MessageBufferSize",
+          "kind": "Property",
+          "access": "Private",
+          "signature": "Private Property Get _MessageBufferSize() As Long Implements INamedPipeClientManagerInternal.MessageBufferSize",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "AllocateOverlappedStruct",
+          "kind": "Function",
+          "access": "Private",
+          "signature": "Private Function AllocateOverlappedStruct(ByVal AssociatedConnectionRef As LongPtr, ByRef Cookie As Variant, ByVal type As OverlappedTypeConstants, ByVal bufferSize As Long = -1) As LongPtr Implements INamedPipeClientManagerInternal.AllocateOverlappedStruct",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Class_Terminate",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub Class_Terminate()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Connect",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function Connect(ByVal PipeName As String) As NamedPipeClientConnection",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ConnectionListItemClient",
+          "kind": "Type",
+          "access": "Private",
+          "signature": "Private Type ConnectionListItemClient",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ContinuouslyReadFromPipe",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public ContinuouslyReadFromPipe As Boolean = True",
+          "attributes": [],
+          "description": "set to TRUE to ensure ClientReceivedDataAsync events always fire without having to call AsyncRead manually"
+        },
+        {
+          "name": "FindNamedPipes",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function FindNamedPipes(Optional pattern As String = \"\") As Collection",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "FreeThreadingEvents",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public FreeThreadingEvents As Boolean",
+          "attributes": [],
+          "description": "set to TRUE to allow the server events ClientConnected/ClientReceivedDataAsync etc to be fired directly from the IOCP worker threads.  set to FALSE to ensure the events get fired on the main UI thread"
+        },
+        {
+          "name": "IOCPThreadClient",
+          "kind": "Function",
+          "access": "Private",
+          "signature": "Private Function IOCPThreadClient(ByVal customArg As LongPtr) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "MessageBufferSize",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public MessageBufferSize As Long = 131072",
+          "attributes": [],
+          "description": "sets the initial size for ReadFile() buffers.  does not affect the maximum message receive size, but can affect performance"
+        },
+        {
+          "name": "MessageWindowProc",
+          "kind": "Function",
+          "access": "Private",
+          "signature": "Private Function MessageWindowProc(ByVal hWnd As LongPtr, ByVal msg As Long, ByVal wParam As LongPtr, ByVal lParam As LongPtr) As LongPtr",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "New",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub New()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "NumThreadsIOCP",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public NumThreadsIOCP As Long = 1",
+          "attributes": [],
+          "description": "the number of IOCP worker threads that will be created"
+        },
+        {
+          "name": "ReleaseOverlappedStruct",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub ReleaseOverlappedStruct(ByVal overlappedPtr As LongPtr) Implements INamedPipeClientManagerInternal.ReleaseOverlappedStruct",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "RemoveClientConnection",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub RemoveClientConnection(connection As INamedPipeClientConnectionInternal) Implements INamedPipeClientManagerInternal.RemoveClientConnection",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Stop",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub Stop()",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "NamedPipesAPIs",
+      "kind": "Module",
+      "file": "APIs.twin",
+      "access": "Private",
+      "attributes": [],
+      "implements": [],
+      "inherits": null,
+      "members": [
+        {
+          "name": "CancelIoEx",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function CancelIoEx Lib \"\" (ByVal hHandle As LongPtr, ByRef overlapped As OVERLAPPED_CUSTOM) As Long",
+          "attributes": [
+            "DLLStackCheck(False)"
+          ],
+          "description": null
+        },
+        {
+          "name": "CloseHandle",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function CloseHandle Lib \"\" (ByVal hHandle As LongPtr) As Long",
+          "attributes": [
+            "DLLStackCheck(False)"
+          ],
+          "description": null
+        },
+        {
+          "name": "ConnectNamedPipe",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function ConnectNamedPipe Lib \"\" (ByVal hNamedPipe As LongPtr, ByRef lpOverlapped As OVERLAPPED_CUSTOM) As Long",
+          "attributes": [
+            "DLLStackCheck(False)"
+          ],
+          "description": null
+        },
+        {
+          "name": "CreateEventW",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function CreateEventW Lib \"\" (ByVal lpEventAttributes As LongPtr, ByVal bManualReset As Long, ByVal bInitialState As Long, ByVal lpName As String) As LongPtr",
+          "attributes": [
+            "DLLStackCheck(False)"
+          ],
+          "description": null
+        },
+        {
+          "name": "CreateFileW",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function CreateFileW Lib \"\" (ByVal lpFileName As String, ByVal dwDesiredAccess As Long, ByVal dwShareMode As Long, ByVal lpSecurityAttributes As LongPtr, ByVal dwCreationDisposition As Long, ByVal dwFlagsAndAttributes As Long, ByVal hTemplateFile As LongPtr) As LongPtr",
+          "attributes": [
+            "DLLStackCheck(False)"
+          ],
+          "description": null
+        },
+        {
+          "name": "CreateIoCompletionPort",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function CreateIoCompletionPort Lib \"\" (ByVal FileHandle As LongPtr, ByVal ExistingCompletionPort As LongPtr, ByVal CompletionKey As LongPtr, ByVal NumberOfConcurrentThreads As Long) As LongPtr",
+          "attributes": [
+            "DLLStackCheck(False)"
+          ],
+          "description": null
+        },
+        {
+          "name": "CreateNamedPipeW",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function CreateNamedPipeW Lib \"\" (ByVal lpName As String, ByVal dwOpenMode As Long, ByVal dwPipeMode As Long, ByVal nMaxInstances As Long, ByVal nOutBufferSize As Long, ByVal nInBufferSize As Long, ByVal nDefaultTimeOut As Long, ByVal lpSecurityAttributes As LongPtr) As LongPtr",
+          "attributes": [
+            "DLLStackCheck(False)"
+          ],
+          "description": null
+        },
+        {
+          "name": "CreateThread",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function CreateThread Lib \"\" (ByVal lpThreadAttributes As LongPtr, ByVal dwStackSize As LongPtr, ByVal lpStartAddress As LongPtr, ByVal lpParameter As LongPtr, ByVal dwCreationFlags As Long, ByRef lpThreadId As Long) As LongPtr",
+          "attributes": [
+            "DLLStackCheck(False)"
+          ],
+          "description": null
+        },
+        {
+          "name": "CreateWindowExW",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function CreateWindowExW Lib \"\" (ByVal dwExStyle As Long, ByVal lpClassName As String, ByVal lpWindowName As String, ByVal dwStyle As Long, ByVal X As Long, ByVal Y As Long, ByVal nWidth As Long, ByVal nHeight As Long, ByVal hWndParent As LongPtr, ByVal hMenu As LongPtr, ByVal hInstance As LongPtr, ByVal lpParam As LongPtr) As LongPtr",
+          "attributes": [
+            "DLLStackCheck(False)"
+          ],
+          "description": null
+        },
+        {
+          "name": "DestroyWindow",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function DestroyWindow Lib \"\" (ByVal hWnd As LongPtr) As Long",
+          "attributes": [
+            "DLLStackCheck(False)"
+          ],
+          "description": null
+        },
+        {
+          "name": "DispatchMessageW",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function DispatchMessageW Lib \"\" (ByRef lpMsg As MSG) As Long",
+          "attributes": [
+            "DLLStackCheck(False)"
+          ],
+          "description": null
+        },
+        {
+          "name": "FindFirstFileW",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function FindFirstFileW Lib \"\" (ByVal lpFileName As String, ByRef lpFindFileData As WIN32_FIND_DATAW) As LongPtr",
+          "attributes": [
+            "DLLStackCheck(False)"
+          ],
+          "description": null
+        },
+        {
+          "name": "FindNextFileW",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function FindNextFileW Lib \"\" (ByVal handle As LongPtr, ByRef lpFindFileData As WIN32_FIND_DATAW) As Long",
+          "attributes": [
+            "DLLStackCheck(False)"
+          ],
+          "description": null
+        },
+        {
+          "name": "GetMessageW",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function GetMessageW Lib \"\" (ByRef lpMsg As MSG, ByVal hWnd As LongPtr, ByVal wMsgFilterMin As Long, ByVal wMsgFilterMax As Long) As Long",
+          "attributes": [
+            "DLLStackCheck(False)"
+          ],
+          "description": null
+        },
+        {
+          "name": "GetOverlappedResult",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function GetOverlappedResult Lib \"\" (ByVal hFile As LongPtr, ByVal lpOverlapped As LongPtr, ByRef lpNumberOfBytesTransferred As Long, ByVal bWait As Long) As Long",
+          "attributes": [
+            "DLLStackCheck(False)"
+          ],
+          "description": null
+        },
+        {
+          "name": "GetQueuedCompletionStatus",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function GetQueuedCompletionStatus Lib \"\" (ByVal CompletionPort As LongPtr, ByRef lpNumberOfBytesTransferred As Long, ByRef lpCompletionKey As LongPtr, ByRef lpOverlapped As LongPtr, ByVal dwMilliseconds As Long) As Long",
+          "attributes": [
+            "DLLStackCheck(False)"
+          ],
+          "description": null
+        },
+        {
+          "name": "MSG",
+          "kind": "Type",
+          "access": null,
+          "signature": "Type MSG",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "OVERLAPPED_CUSTOM",
+          "kind": "Type",
+          "access": null,
+          "signature": "Type OVERLAPPED_CUSTOM",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "PeekMessageW",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function PeekMessageW Lib \"\" (ByRef lpMsg As MSG, ByVal hWnd As LongPtr, ByVal wMsgFilterMin As Long, ByVal wMsgFilterMax As Long, ByVal wRemoveMsg As Long) As Long",
+          "attributes": [
+            "DLLStackCheck(False)"
+          ],
+          "description": null
+        },
+        {
+          "name": "PeekNamedPipe",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function PeekNamedPipe Lib \"\" (ByVal hNamedPipe As LongPtr, ByVal lpBuffer As LongPtr, ByVal nBufferSize As Long, ByRef lpBytesRead As Any, ByRef lpTotalBytesAvail As Any, ByRef lpBytesLeftThisMessage As Long) As Long",
+          "attributes": [
+            "DLLStackCheck(False)"
+          ],
+          "description": null
+        },
+        {
+          "name": "POINT",
+          "kind": "Type",
+          "access": null,
+          "signature": "Type POINT",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "PostMessageW",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function PostMessageW Lib \"\" (ByVal hWnd As LongPtr, ByVal Msg As Long, ByVal wParam As LongPtr, ByVal lParam As LongPtr) As LongPtr",
+          "attributes": [
+            "DLLStackCheck(False)"
+          ],
+          "description": null
+        },
+        {
+          "name": "PostQueuedCompletionStatus",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function PostQueuedCompletionStatus Lib \"\" (ByVal CompletionPort As LongPtr, ByVal dwNumberOfBytesTransferred As Long, ByVal dwCompletionKey As LongPtr, ByVal lpOverlapped As LongPtr) As Long",
+          "attributes": [
+            "DLLStackCheck(False)"
+          ],
+          "description": null
+        },
+        {
+          "name": "ReadFile",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function ReadFile Lib \"\" (ByVal hFile As LongPtr, ByVal lpBuffer As LongPtr, ByVal nNumberOfBytesToRead As Long, ByRef lpNumberOfBytesRead As Long, ByRef lpOverlapped As OVERLAPPED_CUSTOM) As Long",
+          "attributes": [
+            "DLLStackCheck(False)"
+          ],
+          "description": null
+        },
+        {
+          "name": "SAFEARRAY_1D",
+          "kind": "Type",
+          "access": null,
+          "signature": "Type SAFEARRAY_1D",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SAFEARRAYBOUND",
+          "kind": "Type",
+          "access": null,
+          "signature": "Type SAFEARRAYBOUND",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SetNamedPipeHandleState",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function SetNamedPipeHandleState Lib \"\" (ByVal hNamedPipe As LongPtr, ByRef lpMode As Long, ByRef lpMaxCollectionCount As Any, ByRef lpCollectDataTimeout As Any) As Long",
+          "attributes": [
+            "DLLStackCheck(False)"
+          ],
+          "description": null
+        },
+        {
+          "name": "SetWindowLongPtrW",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function SetWindowLongPtrW Lib \"\" (ByVal hWnd As LongPtr, ByVal nIndex As Long, ByVal dwNewLong As LongPtr) As LongPtr",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SetWindowLongPtrW",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function SetWindowLongPtrW Lib \"\" Alias \"\" (ByVal hWnd As LongPtr, ByVal nIndex As Long, ByVal dwNewLong As LongPtr) As LongPtr",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Sleep",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Sub Sleep Lib \"\" (ByVal dwMilliseconds As Long)",
+          "attributes": [
+            "DLLStackCheck(False)"
+          ],
+          "description": null
+        },
+        {
+          "name": "SysAllocString",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function SysAllocString Lib \"\" (ByVal stringValue As String) As String",
+          "attributes": [
+            "DLLStackCheck(False)"
+          ],
+          "description": null
+        },
+        {
+          "name": "TranslateMessage",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function TranslateMessage Lib \"\" (ByRef lpMsg As MSG) As Long",
+          "attributes": [
+            "DLLStackCheck(False)"
+          ],
+          "description": null
+        },
+        {
+          "name": "WaitForMultipleObjects",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function WaitForMultipleObjects Lib \"\" (ByVal nCount As Long, ByVal lpHandles As LongPtr, ByVal bWaitAll As Long, ByVal dwMilliseconds As Long) As Long",
+          "attributes": [
+            "DLLStackCheck(False)"
+          ],
+          "description": null
+        },
+        {
+          "name": "WaitForSingleObject",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function WaitForSingleObject Lib \"\" (ByVal hHandle As LongPtr, ByVal dwMilliseconds As Long) As Long",
+          "attributes": [
+            "DLLStackCheck(False)"
+          ],
+          "description": null
+        },
+        {
+          "name": "WriteFile",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function WriteFile Lib \"\" (ByVal hFile As LongPtr, ByVal lpBuffer As LongPtr, ByVal nNumberOfBytesToWrite As Long, ByRef lpNumberOfBytesWritten As Long, ByVal lpOverlapped As LongPtr) As Long",
+          "attributes": [
+            "DLLStackCheck(False)"
+          ],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "NamedPipesConstants",
+      "kind": "Module",
+      "file": "Constants.twin",
+      "access": "Private",
+      "attributes": [],
+      "implements": [],
+      "inherits": null,
+      "members": [
+        {
+          "name": "CREATE_ALWAYS",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const CREATE_ALWAYS As Long = 2",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CREATE_NEW",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const CREATE_NEW As Long = 1",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ERROR_BROKEN_PIPE",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const ERROR_BROKEN_PIPE As Long = 109",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ERROR_IO_PENDING",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const ERROR_IO_PENDING As Long = 997",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ERROR_MORE_DATA",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const ERROR_MORE_DATA As Long = 234",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ERROR_OPERATION_ABORTED",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const ERROR_OPERATION_ABORTED As Long = 995",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ERROR_PIPE_CONNECTED",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const ERROR_PIPE_CONNECTED As Long = 535",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "FILE_FLAG_OVERLAPPED",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const FILE_FLAG_OVERLAPPED As Long = &H40000000",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GENERIC_READ",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const GENERIC_READ As Long = &H80000000",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GENERIC_WRITE",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const GENERIC_WRITE As Long = &H40000000",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GWL_WNDPROC",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const GWL_WNDPROC As Long = -4",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "INFINITE",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const INFINITE As Long = -1",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "INVALID_HANDLE_VALUE",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const INVALID_HANDLE_VALUE As LongPtr = -1^",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "IOCP_POSTED_MESSAGE",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const IOCP_POSTED_MESSAGE As Long = -1",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "LINKEDLIST_DESTROYING",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const LINKEDLIST_DESTROYING As LongPtr = -2",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "LINKEDLIST_LOCKED",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const LINKEDLIST_LOCKED As LongPtr = -1",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "OPEN_ALWAYS",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const OPEN_ALWAYS As Long = 4",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "OPEN_EXISTING",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const OPEN_EXISTING As Long = 3",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "OverlappedTypeConstants",
+          "kind": "Enum",
+          "access": null,
+          "signature": "Enum OverlappedTypeConstants",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "PIPE_ACCEPT_REMOTE_CLIENTS",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const PIPE_ACCEPT_REMOTE_CLIENTS As Long = &H00000000",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "PIPE_ACCESS_DUPLEX",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const PIPE_ACCESS_DUPLEX As Long = &H00000003",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "PIPE_ACCESS_INBOUND",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const PIPE_ACCESS_INBOUND As Long = &H00000001",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "PIPE_ACCESS_OUTBOUND",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const PIPE_ACCESS_OUTBOUND As Long = &H00000002",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "PIPE_NOWAIT",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const PIPE_NOWAIT As Long = &H00000001",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "PIPE_READMODE_BYTE",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const PIPE_READMODE_BYTE As Long = &H00000000",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "PIPE_READMODE_MESSAGE",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const PIPE_READMODE_MESSAGE As Long = &H00000002",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "PIPE_REJECT_REMOTE_CLIENTS",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const PIPE_REJECT_REMOTE_CLIENTS As Long = &H00000008",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "PIPE_TYPE_BYTE",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const PIPE_TYPE_BYTE As Long = &H00000000",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "PIPE_TYPE_MESSAGE",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const PIPE_TYPE_MESSAGE As Long = &H00000004",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "PIPE_UNLIMITED_INSTANCES",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const PIPE_UNLIMITED_INSTANCES As Long = 255",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "PIPE_WAIT",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const PIPE_WAIT As Long = &H00000000",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "PM_REMOVE",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const PM_REMOVE As Long = 1",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "TRUNCATE_EXISTING",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const TRUNCATE_EXISTING As Long = 5",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "WM_USER",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const WM_USER As Long = &H400",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "WM_USER_IOCP_EVENT_CONNECTED",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const WM_USER_IOCP_EVENT_CONNECTED As Long = WM_USER + 3",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "WM_USER_IOCP_EVENT_DISCONNECTED",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const WM_USER_IOCP_EVENT_DISCONNECTED As Long = WM_USER + 6",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "WM_USER_IOCP_EVENT_READ",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const WM_USER_IOCP_EVENT_READ As Long = WM_USER + 4",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "WM_USER_IOCP_EVENT_READY",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const WM_USER_IOCP_EVENT_READY As Long = WM_USER + 2",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "WM_USER_IOCP_EVENT_WRITE",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const WM_USER_IOCP_EVENT_WRITE As Long = WM_USER + 5",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "WM_USER_QUITTING",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const WM_USER_QUITTING As Long = WM_USER + 1",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "NamedPipeServer",
+      "kind": "Class",
+      "file": "NamedPipeServer.twin",
+      "access": "Public",
+      "attributes": [
+        "COMCreatable(False)",
+        "InterfaceId",
+        "EventInterfaceId",
+        "ClassId"
+      ],
+      "implements": [
+        "INamedPipeServerInternal"
+      ],
+      "inherits": null,
+      "members": [
+        {
+          "name": "_FreeThreadingEvents",
+          "kind": "Property",
+          "access": "Private",
+          "signature": "Private Property Get _FreeThreadingEvents() As Boolean Implements INamedPipeServerInternal.FreeThreadingEvents",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "_MessageBufferSize",
+          "kind": "Property",
+          "access": "Private",
+          "signature": "Private Property Get _MessageBufferSize() As Long Implements INamedPipeServerInternal.MessageBufferSize",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "AllocateOverlappedStruct",
+          "kind": "Function",
+          "access": "Private",
+          "signature": "Private Function AllocateOverlappedStruct(ByVal AssociatedConnectionRef As LongPtr, ByRef cookie As Variant, ByVal type As OverlappedTypeConstants, ByVal bufferSize As Long = -1) As LongPtr Implements INamedPipeServerInternal.AllocateOverlappedStruct",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "AsyncBroadcast",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub AsyncBroadcast(ByRef data() As Byte, Optional ByRef Cookie As Variant = Empty)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Class_Terminate",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub Class_Terminate()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ConnectionListItemServer",
+          "kind": "Type",
+          "access": "Private",
+          "signature": "Private Type ConnectionListItemServer",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ContinuouslyReadFromPipe",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public ContinuouslyReadFromPipe As Boolean = True",
+          "attributes": [],
+          "description": "set to TRUE to ensure ClientReceivedDataAsync events always fire without having to call AsyncRead manually"
+        },
+        {
+          "name": "CreateClientListener",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub CreateClientListener()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "FreeThreadingEvents",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public FreeThreadingEvents As Boolean",
+          "attributes": [],
+          "description": "set to TRUE to allow the server events ClientConnected/ClientReceivedDataAsync etc to be fired directly from the IOCP worker threads.  set to FALSE to ensure the events get fired on the main UI thread"
+        },
+        {
+          "name": "IOCPThreadServer",
+          "kind": "Function",
+          "access": "Private",
+          "signature": "Private Function IOCPThreadServer(ByVal customArg As LongPtr) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ManualMessageLoopEnter",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub ManualMessageLoopEnter()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ManualMessageLoopLeave",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub ManualMessageLoopLeave()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "MessageBufferSize",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public MessageBufferSize As Long = 131072",
+          "attributes": [],
+          "description": "sets the initial size for ReadFile() buffers.  does not affect the maximum message receive size, but can affect performance"
+        },
+        {
+          "name": "MessageWindowProc",
+          "kind": "Function",
+          "access": "Private",
+          "signature": "Private Function MessageWindowProc(ByVal hWnd As LongPtr, ByVal msg As Long, ByVal wParam As LongPtr, ByVal lParam As LongPtr) As LongPtr",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "New",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub New()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "NotifyClientConnected",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub NotifyClientConnected(connection As INamedPipeServerConnectionInternal)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "NotifyClientDataReceived",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub NotifyClientDataReceived(connection As INamedPipeServerConnectionInternal, ByRef Cookie As Variant, ByVal DataPtr As LongPtr, ByVal DataLen As Long)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "NotifyClientDataWritten",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub NotifyClientDataWritten(connection As INamedPipeServerConnectionInternal, ByRef Cookie As Variant)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "NotifyClientDisconnected",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub NotifyClientDisconnected(connection As INamedPipeServerConnectionInternal) Implements INamedPipeServerInternal.NotifyClientDisconnected",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "NotifyServerReady",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub NotifyServerReady()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "NumThreadsIOCP",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public NumThreadsIOCP As Long = 1",
+          "attributes": [],
+          "description": "the number of IOCP worker threads that will be created"
+        },
+        {
+          "name": "PipeName",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public PipeName As String",
+          "attributes": [],
+          "description": "the discoverable pipe name"
+        },
+        {
+          "name": "ReleaseOverlappedStruct",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub ReleaseOverlappedStruct(ByVal overlappedPtr As LongPtr) Implements INamedPipeServerInternal.ReleaseOverlappedStruct",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "RemoveClientConnection",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub RemoveClientConnection(connection As INamedPipeServerConnectionInternal) Implements INamedPipeServerInternal.RemoveClientConnection",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Start",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub Start()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Stop",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub Stop()",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": [
+        {
+          "name": "ClientConnected",
+          "signature": "Event ClientConnected(Connection As NamedPipeServerConnection)",
+          "attributes": []
+        },
+        {
+          "name": "ClientDisconnected",
+          "signature": "Event ClientDisconnected(Connection As NamedPipeServerConnection)",
+          "attributes": []
+        },
+        {
+          "name": "ClientMessageReceived",
+          "signature": "Event ClientMessageReceived(Connection As NamedPipeServerConnection, ByRef Cookie As Variant, ByRef Data() As Byte)",
+          "attributes": []
+        },
+        {
+          "name": "ClientMessageSent",
+          "signature": "Event ClientMessageSent(Connection As NamedPipeServerConnection, ByRef Cookie As Variant)",
+          "attributes": []
+        },
+        {
+          "name": "ServerReady",
+          "signature": "Event ServerReady()",
+          "attributes": []
+        }
+      ]
+    },
+    {
+      "name": "NamedPipeServerConnection",
+      "kind": "Class",
+      "file": "NamedPipeServerConnection.twin",
+      "access": "Public",
+      "attributes": [
+        "COMCreatable(False)",
+        "InterfaceId",
+        "ClassId"
+      ],
+      "implements": [
+        "INamedPipeServerConnectionInternal"
+      ],
+      "inherits": null,
+      "members": [
+        {
+          "name": "_Handle",
+          "kind": "Property",
+          "access": "Private",
+          "signature": "Private Property Get _Handle() As LongPtr Implements INamedPipeServerConnectionInternal.Handle",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "_IsConnected",
+          "kind": "Property",
+          "access": "Private",
+          "signature": "Private Property Get _IsConnected() As Boolean Implements INamedPipeServerConnectionInternal.IsConnected",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "_IsConnected",
+          "kind": "Property",
+          "access": "Private",
+          "signature": "Private Property Let _IsConnected(ByVal Value As Boolean) Implements INamedPipeServerConnectionInternal.IsConnected",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "_IsOpening",
+          "kind": "Property",
+          "access": "Private",
+          "signature": "Private Property Get _IsOpening() As Boolean Implements INamedPipeServerConnectionInternal.IsOpening",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "AsyncClose",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub AsyncClose()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "AsyncRead",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub AsyncRead(Optional ByRef Cookie As Variant = Empty, Optional overlappedStruct As LongPtr) Implements INamedPipeServerConnectionInternal.AsyncRead",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "AsyncWrite",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub AsyncWrite(ByRef data() As Byte, Optional ByRef cookie As Variant = Empty) Implements INamedPipeServerConnectionInternal.AsyncWrite",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CancelIO",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub CancelIO() Implements INamedPipeServerConnectionInternal.CancelIO",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Class_Terminate",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub Class_Terminate()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CustomData",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public CustomData As Variant",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "DecreaseOutstandingRequestCount",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub DecreaseOutstandingRequestCount() Implements INamedPipeServerConnectionInternal.DecreaseOutstandingRequestCount",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GetOverlappedStruct",
+          "kind": "Function",
+          "access": "Private",
+          "signature": "Private Function GetOverlappedStruct(ByVal type As OverlappedTypeConstants, ByRef cookie As Variant) As LongPtr",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Handle",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public Handle As LongPtr",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "HandleConnectionError",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub HandleConnectionError() Implements INamedPipeServerConnectionInternal.HandleConnectionError",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "IncreaseOutstandingRequestCount",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub IncreaseOutstandingRequestCount() Implements INamedPipeServerConnectionInternal.IncreaseOutstandingRequestCount",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "IsConnected",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public IsConnected As Boolean",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "IsOpening",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public IsOpening As Boolean",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "New",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub New(ByVal server As INamedPipeServerInternal, ByVal serverPipeName As String, ByVal serverCompletionPortHandle As LongPtr, ByVal serverMessageWindowHandle As LongPtr)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Open",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub Open() Implements INamedPipeServerConnectionInternal.Open",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ReleaseOverlappedStruct",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub ReleaseOverlappedStruct(ByVal overlappedPtr As LongPtr)",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "NamedPipesHelper",
+      "kind": "Module",
+      "file": "Helper.twin",
+      "access": "Private",
+      "attributes": [],
+      "implements": [],
+      "inherits": null,
+      "members": [
+        {
+          "name": "ObjectFromPointer_INamedPipeClientConnectionInternal",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function ObjectFromPointer_INamedPipeClientConnectionInternal(ByVal ptr As LongPtr, Optional ByVal ConsumeRef As Boolean = False) As INamedPipeClientConnectionInternal",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ObjectFromPointer_INamedPipeClientManagerInternal",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function ObjectFromPointer_INamedPipeClientManagerInternal(ByVal ptr As LongPtr, Optional ByVal ConsumeRef As Boolean = False) As INamedPipeClientManagerInternal",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ObjectFromPointer_INamedPipeServerConnectionInternal",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function ObjectFromPointer_INamedPipeServerConnectionInternal(ByVal ptr As LongPtr, Optional ByVal ConsumeRef As Boolean = False) As INamedPipeServerConnectionInternal",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ObjectFromPointer_INamedPipeServerInternal",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function ObjectFromPointer_INamedPipeServerInternal(ByVal ptr As LongPtr, Optional ByVal ConsumeRef As Boolean = False) As INamedPipeServerInternal",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ObjPtrRef",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function ObjPtrRef(object As Object) As LongPtr",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ObjReleaseRef",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub ObjReleaseRef(ptr As LongPtr)",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    }
+  ],
+  "enums": [],
+  "types": []
+}

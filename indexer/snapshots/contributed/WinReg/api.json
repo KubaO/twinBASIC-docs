@@ -1,0 +1,132 @@
+{
+  "package": "WinReg",
+  "version": "0.0.0.0",
+  "modules": [
+    {
+      "name": "RegCls",
+      "kind": "Class",
+      "file": "RegCls.twin",
+      "access": "Public",
+      "attributes": [],
+      "implements": [],
+      "inherits": null,
+      "members": [
+        {
+          "name": "ConvertValueToString",
+          "kind": "Function",
+          "access": null,
+          "signature": "Function ConvertValueToString(ByVal hKey As Long, ByVal subkey As String, ByVal lType As Long) As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ConvertValueToString",
+          "kind": "Function",
+          "access": null,
+          "signature": "Function ConvertValueToString(buf() As Byte, ByVal lType As Long) As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CreateKey",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function CreateKey(ByVal RootKey As RegKeyspace, ByVal KeyPath As String) As BOOL",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "DeleteKey",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function DeleteKey(ByVal RootKey As RegKeyspace, ByVal KeyPath As String) As BOOL",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "DeleteKeyEx",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function DeleteKeyEx(ByVal RootKey As RegKeyspace, ByVal KeyPath As String) As BOOL",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "DeleteValue",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function DeleteValue(ByVal RootKey As RegKeyspace, ByVal KeyPath As String, ByVal ValueName As String) As BOOL",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "EnumValues",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function EnumValues(ByVal RootKey As Long, ByVal KeyPath As String) As Dictionary",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GetRegistryValueType",
+          "kind": "Function",
+          "access": null,
+          "signature": "Function GetRegistryValueType(ByVal hKey As Long, ByVal subKey As String, ByVal valueName As String) As REGTYPES",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "KeyExists",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function KeyExists(ByVal RootKey As RegKeyspace, ByVal KeyPath As String) As Boolean",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ReadDWORD",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function ReadDWORD(ByVal RootKey As RegKeyspace, ByVal KeyPath As String, ByVal ValueName As String, Optional DefaultValue As Long = -1) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ReadString",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function ReadString(ByVal RootKey As RegKeyspace, ByVal KeyPath As String, ByVal ValueName As String, Optional DefaultValue As String = \"\") As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ValueExists",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function ValueExists(ByVal RootKey As RegKeyspace, ByVal KeyPath As String, ByVal ValueName As String) As Boolean",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "WriteDWORD",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function WriteDWORD(ByVal RootKey As RegKeyspace, ByVal KeyPath As String, ByVal ValueName As String, ByVal ValueData As Long) As BOOL",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "WriteString",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function WriteString(ByVal RootKey As RegKeyspace, ByVal KeyPath As String, ByVal ValueName As String, ByVal ValueData As String) As BOOL",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    }
+  ],
+  "enums": [],
+  "types": []
+}

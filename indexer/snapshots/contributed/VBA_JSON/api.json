@@ -1,0 +1,423 @@
+{
+  "package": "VBA_JSON",
+  "version": "2.3.0.1",
+  "modules": [
+    {
+      "name": "Dictionary",
+      "kind": "Class",
+      "file": "Dictionary.twin",
+      "access": "Public",
+      "attributes": [
+        "ClassId",
+        "InterfaceId"
+      ],
+      "implements": [],
+      "inherits": null,
+      "members": [
+        {
+          "name": "_NewEnum",
+          "kind": "Function",
+          "access": "Private",
+          "signature": "Private Function _NewEnum() As Variant",
+          "attributes": [
+            "Enumerator"
+          ],
+          "description": null
+        },
+        {
+          "name": "Item",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get Item(Key As String) As Variant",
+          "attributes": [
+            "DefaultMember"
+          ],
+          "description": null
+        },
+        {
+          "name": "Item",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Let Item(Key As String, Value As Variant)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Item",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Set Item(Key As String, Value As Variant)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Keys",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get Keys() As Variant",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "JsonConverter",
+      "kind": "Module",
+      "file": "JsonConverter.twin",
+      "access": "Public",
+      "attributes": [],
+      "implements": [],
+      "inherits": null,
+      "members": [
+        {
+          "name": "ConvertToIso",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function ConvertToIso(utc_LocalDate As Date) As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ConvertToJson",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function ConvertToJson(ByVal JsonValue As Variant, Optional ByVal Whitespace As Variant, Optional ByVal json_CurrentIndentation As Long = 0) As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ConvertToUtc",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function ConvertToUtc(utc_LocalDate As Date) As Date",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "json_BufferAppend",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub json_BufferAppend(ByRef json_Buffer As String, ByRef json_Append As Variant, ByRef json_BufferPosition As Long, ByRef json_BufferLength As Long)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "json_BufferToString",
+          "kind": "Function",
+          "access": "Private",
+          "signature": "Private Function json_BufferToString(ByRef json_Buffer As String, ByVal json_BufferPosition As Long) As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "json_Encode",
+          "kind": "Function",
+          "access": "Private",
+          "signature": "Private Function json_Encode(ByVal json_Text As Variant) As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "json_IsUndefined",
+          "kind": "Function",
+          "access": "Private",
+          "signature": "Private Function json_IsUndefined(ByVal json_Value As Variant) As Boolean",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "json_Options",
+          "kind": "Type",
+          "access": "Private",
+          "signature": "Private Type json_Options",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "json_ParseArray",
+          "kind": "Function",
+          "access": "Private",
+          "signature": "Private Function json_ParseArray(json_String As String, ByRef json_Index As Long) As Collection",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "json_ParseErrorMessage",
+          "kind": "Function",
+          "access": "Private",
+          "signature": "Private Function json_ParseErrorMessage(json_String As String, ByRef json_Index As Long, ErrorMessage As String) As Variant",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "json_ParseKey",
+          "kind": "Function",
+          "access": "Private",
+          "signature": "Private Function json_ParseKey(json_String As String, ByRef json_Index As Long) As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "json_ParseNumber",
+          "kind": "Function",
+          "access": "Private",
+          "signature": "Private Function json_ParseNumber(json_String As String, ByRef json_Index As Long) As Variant",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "json_ParseObject",
+          "kind": "Function",
+          "access": "Private",
+          "signature": "Private Function json_ParseObject(json_String As String, ByRef json_Index As Long) As Dictionary",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "json_ParseString",
+          "kind": "Function",
+          "access": "Private",
+          "signature": "Private Function json_ParseString(json_String As String, ByRef json_Index As Long) As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "json_ParseValue",
+          "kind": "Function",
+          "access": "Private",
+          "signature": "Private Function json_ParseValue(json_String As String, ByRef json_Index As Long) As Variant",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "json_Peek",
+          "kind": "Function",
+          "access": "Private",
+          "signature": "Private Function json_Peek(json_String As String, ByVal json_Index As Long, Optional json_NumberOfCharacters As Long = 1) As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "json_SkipSpaces",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub json_SkipSpaces(json_String As String, ByRef json_Index As Long)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "json_StringIsLargeNumber",
+          "kind": "Function",
+          "access": "Private",
+          "signature": "Private Function json_StringIsLargeNumber(json_String As Variant) As Boolean",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ParseIso",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function ParseIso(utc_IsoString As String) As Date",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ParseJson",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function ParseJson(ByVal JsonString As String) As Object",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ParseUtc",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function ParseUtc(utc_UtcDate As Date) As Date",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "utc_ConvertDate",
+          "kind": "Function",
+          "access": "Private",
+          "signature": "Private Function utc_ConvertDate(utc_Value As Date, Optional utc_ConvertToUtc As Boolean = False) As Date",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "utc_DateToSystemTime",
+          "kind": "Function",
+          "access": "Private",
+          "signature": "Private Function utc_DateToSystemTime(utc_Value As Date) As utc_SYSTEMTIME",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "utc_ExecuteInShell",
+          "kind": "Function",
+          "access": "Private",
+          "signature": "Private Function utc_ExecuteInShell(utc_ShellCommand As String) As utc_ShellResult",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "utc_feof",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare PtrSafe Function utc_feof Lib \"\" Alias \"\" (ByVal utc_File As LongPtr) As LongPtr",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "utc_feof",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare Function utc_feof Lib \"\" Alias \"\" (ByVal utc_File As Long) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "utc_fread",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare PtrSafe Function utc_fread Lib \"\" Alias \"\" (ByVal utc_Buffer As String, ByVal utc_Size As LongPtr, ByVal utc_Number As LongPtr, ByVal utc_File As LongPtr) As LongPtr",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "utc_fread",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare Function utc_fread Lib \"\" Alias \"\" (ByVal utc_Buffer As String, ByVal utc_Size As Long, ByVal utc_Number As Long, ByVal utc_File As Long) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "utc_GetTimeZoneInformation",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare PtrSafe Function utc_GetTimeZoneInformation Lib \"\" Alias \"\" (utc_lpTimeZoneInformation As utc_TIME_ZONE_INFORMATION) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "utc_GetTimeZoneInformation",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare Function utc_GetTimeZoneInformation Lib \"\" Alias \"\" (utc_lpTimeZoneInformation As utc_TIME_ZONE_INFORMATION) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "utc_pclose",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare PtrSafe Function utc_pclose Lib \"\" Alias \"\" (ByVal utc_File As LongPtr) As LongPtr",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "utc_pclose",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare Function utc_pclose Lib \"\" Alias \"\" (ByVal utc_File As Long) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "utc_popen",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare PtrSafe Function utc_popen Lib \"\" Alias \"\" (ByVal utc_Command As String, ByVal utc_Mode As String) As LongPtr",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "utc_popen",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare Function utc_popen Lib \"\" Alias \"\" (ByVal utc_Command As String, ByVal utc_Mode As String) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "utc_ShellResult",
+          "kind": "Type",
+          "access": "Private",
+          "signature": "Private Type utc_ShellResult",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "utc_ShellResult",
+          "kind": "Type",
+          "access": "Private",
+          "signature": "Private Type utc_ShellResult",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "utc_SYSTEMTIME",
+          "kind": "Type",
+          "access": "Private",
+          "signature": "Private Type utc_SYSTEMTIME",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "utc_SystemTimeToDate",
+          "kind": "Function",
+          "access": "Private",
+          "signature": "Private Function utc_SystemTimeToDate(utc_Value As utc_SYSTEMTIME) As Date",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "utc_SystemTimeToTzSpecificLocalTime",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare PtrSafe Function utc_SystemTimeToTzSpecificLocalTime Lib \"\" Alias \"\" (utc_lpTimeZoneInformation As utc_TIME_ZONE_INFORMATION, utc_lpUniversalTime As utc_SYSTEMTIME, utc_lpLocalTime As utc_SYSTEMTIME) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "utc_SystemTimeToTzSpecificLocalTime",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare Function utc_SystemTimeToTzSpecificLocalTime Lib \"\" Alias \"\" (utc_lpTimeZoneInformation As utc_TIME_ZONE_INFORMATION, utc_lpUniversalTime As utc_SYSTEMTIME, utc_lpLocalTime As utc_SYSTEMTIME) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "utc_TIME_ZONE_INFORMATION",
+          "kind": "Type",
+          "access": "Private",
+          "signature": "Private Type utc_TIME_ZONE_INFORMATION",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "utc_TzSpecificLocalTimeToSystemTime",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare PtrSafe Function utc_TzSpecificLocalTimeToSystemTime Lib \"\" Alias \"\" (utc_lpTimeZoneInformation As utc_TIME_ZONE_INFORMATION, utc_lpLocalTime As utc_SYSTEMTIME, utc_lpUniversalTime As utc_SYSTEMTIME) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "utc_TzSpecificLocalTimeToSystemTime",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare Function utc_TzSpecificLocalTimeToSystemTime Lib \"\" Alias \"\" (utc_lpTimeZoneInformation As utc_TIME_ZONE_INFORMATION, utc_lpLocalTime As utc_SYSTEMTIME, utc_lpUniversalTime As utc_SYSTEMTIME) As Long",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    }
+  ],
+  "enums": [],
+  "types": []
+}

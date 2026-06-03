@@ -1,0 +1,3351 @@
+{
+  "package": "CustomControlsPackage",
+  "version": "beta-x-0983",
+  "modules": [
+    {
+      "name": "Anchors",
+      "kind": "Class",
+      "file": "zTemporarySupport.twin",
+      "access": "Private",
+      "attributes": [
+        "ClassId"
+      ],
+      "implements": [],
+      "inherits": null,
+      "members": [
+        {
+          "name": "Bottom",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public Bottom As Boolean = False",
+          "attributes": [],
+          "description": "Determines whether the bottom side of this control is anchored to its container"
+        },
+        {
+          "name": "Left",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public Left As Boolean = True",
+          "attributes": [],
+          "description": "Determines whether the left side of this control is anchored to its container"
+        },
+        {
+          "name": "OnPropertyChanged",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub OnPropertyChanged() Handles Left.OnPropertyLet, Top.OnPropertyLet, Right.OnPropertyLet, Bottom.OnPropertyLet",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Right",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public Right As Boolean = False",
+          "attributes": [],
+          "description": "Determines whether the right side of this control is anchored to its container"
+        },
+        {
+          "name": "Top",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public Top As Boolean = True",
+          "attributes": [],
+          "description": "Determines whether the top side of this control is anchored to its container"
+        }
+      ],
+      "events": [
+        {
+          "name": "OnChanged",
+          "signature": "Event OnChanged()",
+          "attributes": []
+        }
+      ]
+    },
+    {
+      "name": "BaseControl",
+      "kind": "Class",
+      "file": "zTemporarySupport.twin",
+      "access": "Private",
+      "attributes": [
+        "ClassId"
+      ],
+      "implements": [],
+      "inherits": null,
+      "members": [
+        {
+          "name": "Anchors",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public WithEvents Anchors As Anchors = New Anchors",
+          "attributes": [],
+          "description": "Determines how the sides of this control are anchored to its container"
+        },
+        {
+          "name": "ControlContext",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public ControlContext As CustomControls.CustomControlContext",
+          "attributes": [
+            "Serialize(False)"
+          ],
+          "description": null
+        },
+        {
+          "name": "Dock",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public Dock As CustomControls.DockMode = CustomControls.DockMode.tbDockNone",
+          "attributes": [],
+          "description": "Adjusts how the control is docked inside of its container"
+        },
+        {
+          "name": "Height",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public Height As CustomControls.PixelCount",
+          "attributes": [],
+          "description": "Adjusts the height of this control, in pixels"
+        },
+        {
+          "name": "Left",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public Left As CustomControls.PixelCount",
+          "attributes": [],
+          "description": "Adjusts the left position of this control, in pixels, relative to the container"
+        },
+        {
+          "name": "Name",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public Name As String",
+          "attributes": [],
+          "description": "A unique name for the control on this form"
+        },
+        {
+          "name": "OnPropertyChanged",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub OnPropertyChanged() Handles Left.OnPropertyLet, Top.OnPropertyLet, Width.OnPropertyLet, Height.OnPropertyLet, Anchors.OnChanged, Anchors.OnPropertySet, Dock.OnPropertyLet, Visible.OnPropertyLet",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Top",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public Top As CustomControls.PixelCount",
+          "attributes": [],
+          "description": "Adjusts top position of this control, in pixels, relative to the container"
+        },
+        {
+          "name": "Visible",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public Visible As Boolean = True",
+          "attributes": [],
+          "description": "Adjusts the visibility of this control at runtime"
+        },
+        {
+          "name": "Width",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public Width As CustomControls.PixelCount",
+          "attributes": [],
+          "description": "Adjusts the width of this control, in pixels"
+        }
+      ],
+      "events": [
+        {
+          "name": "OnChanged",
+          "signature": "Event OnChanged()",
+          "attributes": []
+        }
+      ]
+    },
+    {
+      "name": "BaseControlFocusable",
+      "kind": "Class",
+      "file": "zTemporarySupport.twin",
+      "access": "Private",
+      "attributes": [
+        "ClassId"
+      ],
+      "implements": [],
+      "inherits": null,
+      "members": [
+        {
+          "name": "Anchors",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public WithEvents Anchors As Anchors = New Anchors",
+          "attributes": [],
+          "description": "Determines how the sides of this control are anchored to its container"
+        },
+        {
+          "name": "ControlContext",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public ControlContext As CustomControls.CustomControlContext",
+          "attributes": [
+            "Serialize(False)"
+          ],
+          "description": null
+        },
+        {
+          "name": "Dock",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public Dock As CustomControls.DockMode = CustomControls.DockMode.tbDockNone",
+          "attributes": [],
+          "description": "Adjusts how the control is docked inside of its container"
+        },
+        {
+          "name": "Height",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public Height As CustomControls.PixelCount",
+          "attributes": [],
+          "description": "Adjusts the height of this control, in pixels"
+        },
+        {
+          "name": "Left",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public Left As CustomControls.PixelCount",
+          "attributes": [],
+          "description": "Adjusts the left position of this control, in pixels, relative to the container"
+        },
+        {
+          "name": "Name",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public Name As String",
+          "attributes": [],
+          "description": "A unique name for the control on this form"
+        },
+        {
+          "name": "OnPropertyChanged",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub OnPropertyChanged() Handles Left.OnPropertyLet, Top.OnPropertyLet, Width.OnPropertyLet, Height.OnPropertyLet, Anchors.OnChanged, Anchors.OnPropertySet, Dock.OnPropertyLet, Visible.OnPropertyLet, TabIndex.OnPropertyLet, TabStop.OnPropertyLet",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "TabIndex",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public TabIndex As Long",
+          "attributes": [],
+          "description": "Adjusts the TAB key order of this control at runtime"
+        },
+        {
+          "name": "TabStop",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public TabStop As Boolean = True",
+          "attributes": [],
+          "description": "Indicates if the user can use the TAB key to focus on this control at runtime"
+        },
+        {
+          "name": "Top",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public Top As CustomControls.PixelCount",
+          "attributes": [],
+          "description": "Adjusts top position of this control, in pixels, relative to the container"
+        },
+        {
+          "name": "Visible",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public Visible As Boolean = True",
+          "attributes": [],
+          "description": "Adjusts the visibility of this control at runtime"
+        },
+        {
+          "name": "Width",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public Width As CustomControls.PixelCount",
+          "attributes": [],
+          "description": "Adjusts the width of this control, in pixels"
+        }
+      ],
+      "events": [
+        {
+          "name": "OnChanged",
+          "signature": "Event OnChanged()",
+          "attributes": []
+        }
+      ]
+    },
+    {
+      "name": "BaseForm",
+      "kind": "Class",
+      "file": "zTemporarySupport.twin",
+      "access": "Private",
+      "attributes": [
+        "ClassId"
+      ],
+      "implements": [],
+      "inherits": null,
+      "members": [
+        {
+          "name": "ControlContext",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public ControlContext As CustomControls.CustomFormContext",
+          "attributes": [
+            "Serialize(False)"
+          ],
+          "description": null
+        },
+        {
+          "name": "Controls",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public Controls As CustomControls.CustomControlsCollection",
+          "attributes": [
+            "Serialize(False)"
+          ],
+          "description": "A collection of all controls attached to this form"
+        },
+        {
+          "name": "FormDesignerId",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public FormDesignerId As String",
+          "attributes": [],
+          "description": "A unique GUID that is used for associating a class with a form"
+        },
+        {
+          "name": "Height",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public Height As CustomControls.PixelCount",
+          "attributes": [],
+          "description": "Adjusts the height of this form, in pixels"
+        },
+        {
+          "name": "Left",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public Left As CustomControls.PixelCount",
+          "attributes": [],
+          "description": "Adjusts the left position of this form, in pixels, only if the StartupPosition is tbStartUpManual"
+        },
+        {
+          "name": "Name",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public Name As String",
+          "attributes": [],
+          "description": "A unique name for this form in your project"
+        },
+        {
+          "name": "OnPropertyChanged",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub OnPropertyChanged() Handles Left.OnPropertyLet, Top.OnPropertyLet, Width.OnPropertyLet, Height.OnPropertyLet",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Top",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public Top As CustomControls.PixelCount",
+          "attributes": [],
+          "description": "Adjusts the top position of this form, in pixels, only if the StartupPosition is tbStartUpManual"
+        },
+        {
+          "name": "Width",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public Width As CustomControls.PixelCount",
+          "attributes": [],
+          "description": "Adjusts the width of this form, in pixels"
+        }
+      ],
+      "events": [
+        {
+          "name": "OnChanged",
+          "signature": "Event OnChanged()",
+          "attributes": []
+        }
+      ]
+    },
+    {
+      "name": "Border",
+      "kind": "Class",
+      "file": "zTemporarySupport.twin",
+      "access": "Private",
+      "attributes": [
+        "ClassId"
+      ],
+      "implements": [],
+      "inherits": null,
+      "members": [
+        {
+          "name": "BlendWithBackgroundFill",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public BlendWithBackgroundFill As Boolean = False",
+          "attributes": [],
+          "description": "Border colors can be alpha blended with either the background fill of the control, or with the underneath control/container"
+        },
+        {
+          "name": "Fill",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public WithEvents Fill As Fill = New Fill",
+          "attributes": [],
+          "description": "Controls the fill colors and pattern used to draw the border"
+        },
+        {
+          "name": "New",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub New()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "OnPropertyChanged",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub OnPropertyChanged() Handles StrokeSize.OnPropertyLet, Fill.OnChanged, Fill.OnPropertySet, BlendWithBackgroundFill.OnPropertyLet",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "StrokeSize",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public StrokeSize As CustomControls.PixelCount = 1",
+          "attributes": [],
+          "description": "The width of the brush stroke, in pixels"
+        }
+      ],
+      "events": [
+        {
+          "name": "OnChanged",
+          "signature": "Event OnChanged()",
+          "attributes": []
+        }
+      ]
+    },
+    {
+      "name": "Borders",
+      "kind": "Class",
+      "file": "zTemporarySupport.twin",
+      "access": "Private",
+      "attributes": [
+        "ClassId"
+      ],
+      "implements": [],
+      "inherits": null,
+      "members": [
+        {
+          "name": "OnPropertyChanged",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub OnPropertyChanged() Handles Elements.OnChanged, Elements.OnPropertyLet",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SetSimpleBorder",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub SetSimpleBorder(StrokeSize As Long, ColorRGB As Long)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SetSimpleBorderRGBA",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub SetSimpleBorderRGBA(StrokeSize As Long, ColorRGBA As Long)",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": [
+        {
+          "name": "OnChanged",
+          "signature": "Event OnChanged()",
+          "attributes": []
+        }
+      ]
+    },
+    {
+      "name": "CellRenderingOptions",
+      "kind": "Class",
+      "file": "WaynesGrid.twin",
+      "access": "Public",
+      "attributes": [
+        "ClassId"
+      ],
+      "implements": [],
+      "inherits": null,
+      "members": [
+        {
+          "name": "Borders",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public WithEvents Borders As Borders = New Borders",
+          "attributes": [],
+          "description": "Controls how the cell borders are rendered"
+        },
+        {
+          "name": "Corners",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public WithEvents Corners As Corners = New Corners",
+          "attributes": [],
+          "description": "Controls how the cell corner shapes are rendered"
+        },
+        {
+          "name": "Cursor",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public Cursor As MousePointerConstants",
+          "attributes": [],
+          "description": "Adjusts the mouse cursor used when hovering over this type of cell"
+        },
+        {
+          "name": "Fill",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public WithEvents Fill As Fill = New Fill",
+          "attributes": [],
+          "description": "Controls the fill colors and pattern used to draw the background of the cell"
+        },
+        {
+          "name": "New",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub New()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "OnChanged",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub OnChanged() Handles Fill.OnChanged, Fill.OnPropertySet, TextRendering.OnChanged, TextRendering.OnPropertySet, Borders.OnChanged, Borders.OnPropertySet, Corners.OnChanged, Corners.OnPropertySet, Cursor.OnPropertyLet",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "TextRendering",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public WithEvents TextRendering As TextRendering = New TextRendering",
+          "attributes": [],
+          "description": "Controls how the cell text is rendered"
+        }
+      ],
+      "events": [
+        {
+          "name": "OnChanged",
+          "signature": "Event OnChanged()",
+          "attributes": []
+        }
+      ]
+    },
+    {
+      "name": "ColorSupport",
+      "kind": "Module",
+      "file": "zTemporarySupport.twin",
+      "access": "Private",
+      "attributes": [],
+      "implements": [],
+      "inherits": null,
+      "members": [
+        {
+          "name": "OPAQUE",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const OPAQUE = &HFF000000",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "WAYNESCOLOR_BLUE",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const WAYNESCOLOR_BLUE = &HAC7220",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "WAYNESCOLOR_GREY",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const WAYNESCOLOR_GREY = &H808080",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "WAYNESCOLOR_LIGHTGREY",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const WAYNESCOLOR_LIGHTGREY = &HD0D0D0",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "Column",
+      "kind": "Class",
+      "file": "WaynesGrid.twin",
+      "access": "Public",
+      "attributes": [
+        "ClassId"
+      ],
+      "implements": [],
+      "inherits": null,
+      "members": [
+        {
+          "name": "Caption",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public Caption As String = \"\"",
+          "attributes": [],
+          "description": "Adjusts the text displayed in the header of this column"
+        },
+        {
+          "name": "OnChanged",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub OnChanged() Handles Caption.OnPropertyLet, Width.OnPropertyLet",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Width",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public Width As CustomControls.PixelCount = 100",
+          "attributes": [],
+          "description": "Adjusts the width, in pixels, of this column"
+        }
+      ],
+      "events": [
+        {
+          "name": "OnChanged",
+          "signature": "Event OnChanged()",
+          "attributes": []
+        }
+      ]
+    },
+    {
+      "name": "Corner",
+      "kind": "Class",
+      "file": "zTemporarySupport.twin",
+      "access": "Private",
+      "attributes": [
+        "ClassId"
+      ],
+      "implements": [],
+      "inherits": null,
+      "members": [
+        {
+          "name": "OnPropertyChanged",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub OnPropertyChanged() Handles Radius.OnPropertyLet, Shape.OnPropertyLet",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Radius",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public Radius As CustomControls.PixelCount = 0",
+          "attributes": [],
+          "description": "Controls the radius of the individual corner, in pixels"
+        },
+        {
+          "name": "Shape",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public Shape As CornerShape = CornerShape.tbCurve",
+          "attributes": [],
+          "description": "Controls the shape of the individual corner"
+        }
+      ],
+      "events": [
+        {
+          "name": "OnChanged",
+          "signature": "Event OnChanged()",
+          "attributes": []
+        }
+      ]
+    },
+    {
+      "name": "Corners",
+      "kind": "Class",
+      "file": "zTemporarySupport.twin",
+      "access": "Private",
+      "attributes": [
+        "ClassId"
+      ],
+      "implements": [],
+      "inherits": null,
+      "members": [
+        {
+          "name": "BottomLeft",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public WithEvents BottomLeft As Corner = New Corner",
+          "attributes": [],
+          "description": "Controls the style and radius of the bottom left corner"
+        },
+        {
+          "name": "BottomRight",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public WithEvents BottomRight As Corner = New Corner",
+          "attributes": [],
+          "description": "Controls the style and radius of the bottom right corner"
+        },
+        {
+          "name": "OnPropertyChanged",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub OnPropertyChanged() Handles TopLeft.OnChanged, TopLeft.OnPropertySet, TopRight.OnChanged, TopRight.OnPropertySet, BottomLeft.OnChanged, BottomLeft.OnPropertySet, BottomRight.OnChanged, BottomRight.OnPropertySet",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SetAll",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub SetAll(Shape As CornerShape, Radius As CustomControls.PixelCount)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "TopLeft",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public WithEvents TopLeft As Corner = New Corner",
+          "attributes": [],
+          "description": "Controls the style and radius of the top left corner"
+        },
+        {
+          "name": "TopRight",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public WithEvents TopRight As Corner = New Corner",
+          "attributes": [],
+          "description": "Controls the style and radius of the top right corner"
+        }
+      ],
+      "events": [
+        {
+          "name": "OnChanged",
+          "signature": "Event OnChanged()",
+          "attributes": []
+        }
+      ]
+    },
+    {
+      "name": "Fill",
+      "kind": "Class",
+      "file": "zTemporarySupport.twin",
+      "access": "Private",
+      "attributes": [
+        "ClassId"
+      ],
+      "implements": [],
+      "inherits": null,
+      "members": [
+        {
+          "name": "ColorPoints",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public WithEvents ColorPoints As FillColorPoints = New FillColorPoints",
+          "attributes": [
+            "CustomDesigner(\"designer_Grapick\")"
+          ],
+          "description": null
+        },
+        {
+          "name": "OnPropertyChanged",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub OnPropertyChanged() Handles Pattern.OnPropertyLet, ColorPoints.OnChanged, ColorPoints.OnPropertySet",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Pattern",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public Pattern As CustomControls.FillPattern = tbGradientNorthToSouth",
+          "attributes": [],
+          "description": "Determines the pattern to use alongside the color table to produce a fill effect"
+        },
+        {
+          "name": "SetSimplePattern",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub SetSimplePattern(ByVal Value1RGB As Long, ByVal Value2RGB As Long, ByVal Granularity As Long = 100&, ByVal Pattern As CustomControls.FillPattern = tbGradientNorthToSouth)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SetSimplePatternRGBA",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub SetSimplePatternRGBA(ByVal Value1RGB As Long, ByVal Value2RGB As Long, ByVal Granularity As Long = 100&, ByVal Pattern As CustomControls.FillPattern = tbGradientNorthToSouth)",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": [
+        {
+          "name": "OnChanged",
+          "signature": "Event OnChanged()",
+          "attributes": []
+        }
+      ]
+    },
+    {
+      "name": "FillColorPoint",
+      "kind": "Class",
+      "file": "zTemporarySupport.twin",
+      "access": "Private",
+      "attributes": [
+        "ClassId"
+      ],
+      "implements": [],
+      "inherits": null,
+      "members": [
+        {
+          "name": "Color",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public Color As CustomControls.ColorRGBA",
+          "attributes": [
+            "CustomDesigner(\"designer_Spectrum\")"
+          ],
+          "description": "The color pixel value in ABGR format"
+        },
+        {
+          "name": "New",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub New()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "New",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub New(ColorRGBA As CustomControls.ColorRGBA, PositionPercent As Double)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "OnPropertyChanged",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub OnPropertyChanged() Handles Color.OnPropertyLet, PositionPercent.OnPropertyLet",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "PositionPercent",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public PositionPercent As Double",
+          "attributes": [],
+          "description": "The position of this color point within the color table for this gradient, in percent (0-100)"
+        }
+      ],
+      "events": [
+        {
+          "name": "OnChanged",
+          "signature": "Event OnChanged()",
+          "attributes": []
+        }
+      ]
+    },
+    {
+      "name": "FillColorPoints",
+      "kind": "Class",
+      "file": "zTemporarySupport.twin",
+      "access": "Private",
+      "attributes": [
+        "ClassId"
+      ],
+      "implements": [],
+      "inherits": null,
+      "members": [
+        {
+          "name": "Granularity",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public Granularity As Long = 100",
+          "attributes": [],
+          "description": "The granularity of the generated color table.  For example, a value of 2 produces a gradient color table comprising of only 2 individual colors"
+        },
+        {
+          "name": "OnPropertyChanged",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub OnPropertyChanged() Handles Values.OnChanged, Values.OnPropertyLet, Granularity.OnPropertyLet",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SetColorPoints",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub SetColorPoints(ParamArray ColorPoints() As Variant)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SetColorPointsArray",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub SetColorPointsArray(ColorPoints() As FillColorPoint)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SetSolidColor",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub SetSolidColor(ByVal ValueRGB As Long)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SetSolidColorRGBA",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub SetSolidColorRGBA(ByVal ValueRGBA As CustomControls.ColorRGBA)",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": [
+        {
+          "name": "OnChanged",
+          "signature": "Event OnChanged()",
+          "attributes": []
+        }
+      ]
+    },
+    {
+      "name": "FontStyle",
+      "kind": "Class",
+      "file": "zTemporarySupport.twin",
+      "access": "Private",
+      "attributes": [
+        "ClassId"
+      ],
+      "implements": [],
+      "inherits": null,
+      "members": [
+        {
+          "name": "Italic",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public Italic As Boolean = False",
+          "attributes": [],
+          "description": "Determines whether the text will be rendered with italics"
+        },
+        {
+          "name": "OnPropertyChanged",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub OnPropertyChanged() Handles Size.OnPropertyLet, Weight.OnPropertyLet, Underline.OnPropertyLet, Italic.OnPropertyLet, Strikeout.OnPropertyLet",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Size",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public Size As CustomControls.PointSize = 12",
+          "attributes": [],
+          "description": "Determines the font size to use for rendering the text"
+        },
+        {
+          "name": "Strikeout",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public Strikeout As Boolean = False",
+          "attributes": [],
+          "description": "Determines whether the text will be rendered with a strikeout line"
+        },
+        {
+          "name": "Underline",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public Underline As Boolean = False",
+          "attributes": [],
+          "description": "Determines whether the text will be rendered with an underline"
+        },
+        {
+          "name": "Weight",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public Weight As CustomControls.FontWeight = CustomControls.FontWeight.tbNormal",
+          "attributes": [],
+          "description": "Determines the weight of font to use for rendering the text"
+        }
+      ],
+      "events": [
+        {
+          "name": "OnChanged",
+          "signature": "Event OnChanged()",
+          "attributes": []
+        }
+      ]
+    },
+    {
+      "name": "Line",
+      "kind": "Class",
+      "file": "zTemporarySupport.twin",
+      "access": "Private",
+      "attributes": [
+        "ClassId"
+      ],
+      "implements": [],
+      "inherits": null,
+      "members": [
+        {
+          "name": "Fill",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public WithEvents Fill As Fill = New Fill",
+          "attributes": [],
+          "description": "Controls the fill colors and pattern used to draw the line"
+        },
+        {
+          "name": "OnPropertyChanged",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub OnPropertyChanged() Handles StrokeSize.OnPropertyLet, Fill.OnChanged, Fill.OnPropertySet",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "StrokeSize",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public StrokeSize As CustomControls.PixelCount = 0",
+          "attributes": [],
+          "description": "The width of the brush stroke, in pixels"
+        }
+      ],
+      "events": [
+        {
+          "name": "OnChanged",
+          "signature": "Event OnChanged()",
+          "attributes": []
+        }
+      ]
+    },
+    {
+      "name": "MathSupport",
+      "kind": "Module",
+      "file": "zTemporarySupport.twin",
+      "access": "Private",
+      "attributes": [],
+      "implements": [],
+      "inherits": null,
+      "members": [
+        {
+          "name": "Max",
+          "kind": "Function",
+          "access": null,
+          "signature": "Function Max(Of T)(A As T, B As T) As T",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Min",
+          "kind": "Function",
+          "access": null,
+          "signature": "Function Min(Of T)(A As T, B As T) As T",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "Padding",
+      "kind": "Class",
+      "file": "zTemporarySupport.twin",
+      "access": "Private",
+      "attributes": [
+        "ClassId"
+      ],
+      "implements": [],
+      "inherits": null,
+      "members": [
+        {
+          "name": "Bottom",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public Bottom As CustomControls.PixelCount = 0",
+          "attributes": [],
+          "description": "Controls the padding applied at the bottom side, in pixels"
+        },
+        {
+          "name": "Left",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public Left As CustomControls.PixelCount = 0",
+          "attributes": [],
+          "description": "Controls the padding applied at the left side, in pixels"
+        },
+        {
+          "name": "OnPropertyChanged",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub OnPropertyChanged() Handles Left.OnPropertyLet, Top.OnPropertyLet, Right.OnPropertyLet, Bottom.OnPropertyLet",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Right",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public Right As CustomControls.PixelCount = 0",
+          "attributes": [],
+          "description": "Controls the padding applied at the right side, in pixels"
+        },
+        {
+          "name": "Top",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public Top As CustomControls.PixelCount = 0",
+          "attributes": [],
+          "description": "Controls the padding applied at the top side, in pixels"
+        }
+      ],
+      "events": [
+        {
+          "name": "OnChanged",
+          "signature": "Event OnChanged()",
+          "attributes": []
+        }
+      ]
+    },
+    {
+      "name": "TextDecorator",
+      "kind": "Class",
+      "file": "zTemporarySupport.twin",
+      "access": "Private",
+      "attributes": [],
+      "implements": [],
+      "inherits": null,
+      "members": [
+        {
+          "name": "Fill",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public Fill As Fill",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Length",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public Length As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Range",
+          "kind": "Type",
+          "access": null,
+          "signature": "Type Range",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Start",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public Start As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "StrokeWidth",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public StrokeWidth As Long = 1",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Style",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public Style As TextDecoratorStyle",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "TextDecoratorStyle",
+          "kind": "Enum",
+          "access": null,
+          "signature": "Enum TextDecoratorStyle",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "TextDecorators",
+      "kind": "Class",
+      "file": "zTemporarySupport.twin",
+      "access": "Private",
+      "attributes": [],
+      "implements": [],
+      "inherits": null,
+      "members": [
+        {
+          "name": "Add",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub Add(Start As Long, Length As Long, Style As TextDecoratorStyle, Fill As Fill, Optional StrokeWidth As Long = 1)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "AddBackgroundFill",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub AddBackgroundFill(Start As Long, Length As Long, Fill As Fill)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "AddCaret",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub AddCaret(Start As Long, Fill As Fill, Optional StrokeWidth As Long = 1)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "AddSquiggle",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub AddSquiggle(Start As Long, Length As Long, Fill As Fill)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "AddUnderline",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub AddUnderline(Start As Long, Length As Long, Fill As Fill, Optional StrokeWidth As Long = 1)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ChangeTextFill",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub ChangeTextFill(Start As Long, Length As Long, Fill As Fill)",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "TextRendering",
+      "kind": "Class",
+      "file": "zTemporarySupport.twin",
+      "access": "Private",
+      "attributes": [
+        "ClassId"
+      ],
+      "implements": [],
+      "inherits": null,
+      "members": [
+        {
+          "name": "Alignment",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public Alignment As CustomControls.TextAlignment = tbAlignMiddleCenter",
+          "attributes": [],
+          "description": "Determines the horizontal and vertical alignment of the text within its boundaries"
+        },
+        {
+          "name": "Fill",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public WithEvents Fill As Fill = New Fill",
+          "attributes": [],
+          "description": "Controls the fill colors and pattern used to draw the text"
+        },
+        {
+          "name": "Font",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public WithEvents Font As FontStyle = New FontStyle",
+          "attributes": [],
+          "description": "Controls how the text looks"
+        },
+        {
+          "name": "New",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub New()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "OnPropertyChanged",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub OnPropertyChanged() Handles Font.OnChanged, Font.OnPropertySet, Padding.OnChanged, Padding.OnPropertySet, Fill.OnChanged, Fill.OnPropertySet, Outlines.OnChanged, Outlines.OnPropertyLet, Alignment.OnPropertyLet, OverflowMode.OnPropertyLet",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "OverflowMode",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public OverflowMode As CustomControls.TextOverflowMode = tbAppendEllipsis",
+          "attributes": [],
+          "description": "Controls how text that is longer than the display area gets truncated"
+        },
+        {
+          "name": "Padding",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public WithEvents Padding As Padding = New Padding",
+          "attributes": [],
+          "description": "Controls the padding around the text"
+        }
+      ],
+      "events": [
+        {
+          "name": "OnChanged",
+          "signature": "Event OnChanged()",
+          "attributes": []
+        }
+      ]
+    },
+    {
+      "name": "UDTs",
+      "kind": "Class",
+      "file": "zTemporarySupport.twin",
+      "access": "Private",
+      "attributes": [],
+      "implements": [],
+      "inherits": null,
+      "members": [
+        {
+          "name": "CaretPosition",
+          "kind": "Enum",
+          "access": "Public",
+          "signature": "Public Enum CaretPosition",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ElementDescriptor",
+          "kind": "Type",
+          "access": "Public",
+          "signature": "Public Type ElementDescriptor",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "FocusEvent",
+          "kind": "Type",
+          "access": "Public",
+          "signature": "Public Type FocusEvent",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "KeyEvent",
+          "kind": "Type",
+          "access": "Public",
+          "signature": "Public Type KeyEvent",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "MouseEvent",
+          "kind": "Type",
+          "access": "Public",
+          "signature": "Public Type MouseEvent",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SpecialKeyCodes",
+          "kind": "Enum",
+          "access": "Public",
+          "signature": "Public Enum SpecialKeyCodes",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "WaynesButton",
+      "kind": "Class",
+      "file": "WaynesButton.twin",
+      "access": "Public",
+      "attributes": [
+        "CustomControl(\"/miscellaneous/frmButton.png\")",
+        "ClassId",
+        "COMCreatable(False)"
+      ],
+      "implements": [
+        "BaseControlFocusable",
+        "CustomControls.ICustomControl"
+      ],
+      "inherits": null,
+      "members": [
+        {
+          "name": "BtnClick",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub BtnClick(ByRef EventInfo As MouseEvent)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "BtnDown",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub BtnDown(ByRef EventInfo As MouseEvent)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "BtnGotFocus",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub BtnGotFocus(ByRef EventInfo As FocusEvent)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "BtnKeyDown",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub BtnKeyDown(EventInfo As KeyEvent)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "BtnKeyPress",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub BtnKeyPress(EventInfo As KeyEvent)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "BtnKeyUp",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub BtnKeyUp(EventInfo As KeyEvent)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "BtnLostFocus",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub BtnLostFocus(ByRef EventInfo As FocusEvent)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "BtnMouseEnter",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub BtnMouseEnter(ByRef EventInfo As MouseEvent)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "BtnMouseLeave",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub BtnMouseLeave(ByRef EventInfo As MouseEvent)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "BtnMove",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub BtnMove(ByRef EventInfo As MouseEvent)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "BtnUp",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub BtnUp(ByRef EventInfo As MouseEvent)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Caption",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public Caption As String = \"\"",
+          "attributes": [],
+          "description": "Adjusts the text displayed on this button"
+        },
+        {
+          "name": "Class_Terminate",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub Class_Terminate()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "FocusedState",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public WithEvents FocusedState As WaynesButtonState = New WaynesButtonState",
+          "attributes": [],
+          "description": "Controls how the control is rendered when it is focused"
+        },
+        {
+          "name": "HoverState",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public WithEvents HoverState As WaynesButtonState = New WaynesButtonState",
+          "attributes": [],
+          "description": "Controls how the control is rendered when the mouse is hovered over it"
+        },
+        {
+          "name": "InitializeDefaultValues",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub InitializeDefaultValues()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "NormalState",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public WithEvents NormalState As WaynesButtonState = New WaynesButtonState",
+          "attributes": [],
+          "description": "Controls how the control is rendered in its normal state"
+        },
+        {
+          "name": "OnChanged",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub OnChanged() Handles _BaseControl.OnChanged, NormalState.OnChanged, HoverState.OnChanged, FocusedState.OnChanged, PressedState.OnChanged, Caption.OnPropertyLet",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "OnDestroy",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub OnDestroy() Implements ICustomControl.Destroy",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "OnInitialize",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub OnInitialize(ByVal ControlContext As CustomControls.CustomControlContext) Implements ICustomControl.Initialize",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "OnPaint",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub OnPaint(ByVal Canvas As CustomControls.Canvas) Implements ICustomControl.Paint",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "PressedState",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public WithEvents PressedState As WaynesButtonState = New WaynesButtonState",
+          "attributes": [],
+          "description": "Controls how the control is rendered when it is pressed down"
+        }
+      ],
+      "events": [
+        {
+          "name": "Click",
+          "signature": "Event Click()",
+          "attributes": []
+        },
+        {
+          "name": "GotFocus",
+          "signature": "Event GotFocus()",
+          "attributes": []
+        },
+        {
+          "name": "KeyDown",
+          "signature": "Event KeyDown(KeyCode As Integer, Shift As Integer)",
+          "attributes": []
+        },
+        {
+          "name": "KeyPress",
+          "signature": "Event KeyPress(KeyCode As Integer)",
+          "attributes": []
+        },
+        {
+          "name": "KeyUp",
+          "signature": "Event KeyUp(KeyCode As Integer, Shift As Integer)",
+          "attributes": []
+        },
+        {
+          "name": "LostFocus",
+          "signature": "Event LostFocus()",
+          "attributes": []
+        },
+        {
+          "name": "MouseDown",
+          "signature": "Event MouseDown(Button As Integer, Shift As Integer, X As Single, Y As Single)",
+          "attributes": []
+        },
+        {
+          "name": "MouseEnter",
+          "signature": "Event MouseEnter()",
+          "attributes": []
+        },
+        {
+          "name": "MouseLeave",
+          "signature": "Event MouseLeave()",
+          "attributes": []
+        },
+        {
+          "name": "MouseMove",
+          "signature": "Event MouseMove(Button As Integer, Shift As Integer, X As Single, Y As Single)",
+          "attributes": []
+        },
+        {
+          "name": "MouseUp",
+          "signature": "Event MouseUp(Button As Integer, Shift As Integer, X As Single, Y As Single)",
+          "attributes": []
+        }
+      ]
+    },
+    {
+      "name": "WaynesButtonState",
+      "kind": "Class",
+      "file": "WaynesButton.twin",
+      "access": "Private",
+      "attributes": [
+        "ClassId"
+      ],
+      "implements": [],
+      "inherits": null,
+      "members": [
+        {
+          "name": "BackgroundFill",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public WithEvents BackgroundFill As Fill = New Fill",
+          "attributes": [],
+          "description": "Controls the fill colors and pattern used to draw the background of the button"
+        },
+        {
+          "name": "Borders",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public WithEvents Borders As Borders = New Borders",
+          "attributes": [],
+          "description": "Controls how the borders of the button are rendered"
+        },
+        {
+          "name": "Corners",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public WithEvents Corners As Corners = New Corners",
+          "attributes": [],
+          "description": "Controls how the corner shapes are rendered"
+        },
+        {
+          "name": "InitializeDefaults",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub InitializeDefaults()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "OnChanged",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub OnChanged() Handles Corners.OnChanged, Corners.OnPropertySet, BackgroundFill.OnChanged, BackgroundFill.OnPropertySet, Borders.OnChanged, Borders.OnPropertySet, TextRendering.OnChanged, TextRendering.OnPropertySet",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "TextRendering",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public WithEvents TextRendering As TextRendering = New TextRendering",
+          "attributes": [],
+          "description": "Controls how the button Caption text is rendered"
+        }
+      ],
+      "events": [
+        {
+          "name": "OnChanged",
+          "signature": "Event OnChanged()",
+          "attributes": []
+        }
+      ]
+    },
+    {
+      "name": "WaynesForm",
+      "kind": "Class",
+      "file": "WaynesForm.twin",
+      "access": "Public",
+      "attributes": [
+        "CustomControl(\"/miscellaneous/frmFrame.png\")",
+        "ClassId",
+        "COMCreatable(False)"
+      ],
+      "implements": [
+        "BaseForm",
+        "CustomControls.ICustomControl"
+      ],
+      "inherits": null,
+      "members": [
+        {
+          "name": "BackgroundFill",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public WithEvents BackgroundFill As Fill",
+          "attributes": [],
+          "description": "Controls the fill colors and pattern used to draw the background of the form"
+        },
+        {
+          "name": "Caption",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public Caption As String",
+          "attributes": [],
+          "description": "Adjusts the caption of the title bar for this form"
+        },
+        {
+          "name": "Class_Terminate",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub Class_Terminate()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Close",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub Close()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "InitializeDefaultValues",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub InitializeDefaultValues()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "OnChanged",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub OnChanged() Handles _BaseForm.OnChanged, Caption.OnPropertyLet, BackgroundFill.OnChanged, BackgroundFill.OnPropertySet, WindowsOptions.OnChanged, WindowsOptions.OnPropertySet",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "OnClick",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub OnClick(ByRef EventInfo As MouseEvent)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "OnDestroy",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub OnDestroy() Implements ICustomControl.Destroy",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "OnInitialize",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub OnInitialize(ByVal ControlContext As CustomControls.CustomControlContext) Implements ICustomControl.Initialize",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "OnPaint",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub OnPaint(ByVal Canvas As CustomControls.Canvas) Implements ICustomControl.Paint",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Show",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub Show(Optional ByVal Modal As FormShowConstants)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "StartupShow",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub StartupShow()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "WindowsOptions",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public WithEvents WindowsOptions As WindowsFormOptions = New WindowsFormOptions",
+          "attributes": [],
+          "description": "Controls Windows-specific options about the form position and window state"
+        }
+      ],
+      "events": [
+        {
+          "name": "Click",
+          "signature": "Event Click()",
+          "attributes": []
+        }
+      ]
+    },
+    {
+      "name": "WaynesFrame",
+      "kind": "Class",
+      "file": "WaynesFrame.twin",
+      "access": "Public",
+      "attributes": [
+        "CustomControl(\"/miscellaneous/frmFrame.png\")",
+        "ClassId",
+        "COMCreatable(False)"
+      ],
+      "implements": [
+        "BaseControl",
+        "CustomControls.ICustomControl"
+      ],
+      "inherits": null,
+      "members": [
+        {
+          "name": "BackgroundFill",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public WithEvents BackgroundFill As Fill = New Fill",
+          "attributes": [],
+          "description": "Controls the fill colors and pattern used to draw the background of the frame"
+        },
+        {
+          "name": "InitializeDefaultValues",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub InitializeDefaultValues()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "OnChanged",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub OnChanged() Handles _BaseControl.OnChanged, BackgroundFill.OnChanged, BackgroundFill.OnPropertySet",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "OnDestroy",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub OnDestroy() Implements ICustomControl.Destroy",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "OnInitialize",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub OnInitialize(ByVal ControlContext As CustomControls.CustomControlContext) Implements ICustomControl.Initialize",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "OnPaint",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub OnPaint(ByVal Canvas As CustomControls.Canvas) Implements ICustomControl.Paint",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "WaynesGrid",
+      "kind": "Class",
+      "file": "WaynesGrid.twin",
+      "access": "Public",
+      "attributes": [
+        "CustomControl(\"/miscellaneous/frmGrid.png\")",
+        "ClassId",
+        "COMCreatable(False)"
+      ],
+      "implements": [
+        "BaseControlFocusable",
+        "CustomControls.ICustomControl"
+      ],
+      "inherits": null,
+      "members": [
+        {
+          "name": "CellClick",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub CellClick(ByRef EventInfo As MouseEvent)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CellDblClick",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub CellDblClick(ByRef EventInfo As MouseEvent)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CellGotFocus",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub CellGotFocus(ByRef EventInfo As FocusEvent)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CellKeyDown",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub CellKeyDown(ByRef EventInfo As KeyEvent)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CellKeyUp",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub CellKeyUp(ByRef EventInfo As KeyEvent)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CellLostFocus",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub CellLostFocus(ByRef EventInfo As FocusEvent)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CellMouseEnter",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub CellMouseEnter(ByRef EventInfo As MouseEvent)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CellMouseLeave",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub CellMouseLeave(ByRef EventInfo As MouseEvent)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CellOptions",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public WithEvents CellOptions As CellRenderingOptions = New CellRenderingOptions",
+          "attributes": [],
+          "description": "Controls how normal cells are rendered"
+        },
+        {
+          "name": "CellWheelH",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub CellWheelH(ByRef EventInfo As MouseEvent)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CellWheelV",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub CellWheelV(ByRef EventInfo As MouseEvent)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Class_Terminate",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub Class_Terminate()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ColumnHeader_OnClick",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub ColumnHeader_OnClick(ByRef EventInfo As MouseEvent)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ColumnHeaderOptions",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public WithEvents ColumnHeaderOptions As CellRenderingOptions = New CellRenderingOptions",
+          "attributes": [],
+          "description": "Controls how the column header cells (first row) are rendered"
+        },
+        {
+          "name": "HeaderRowHeight",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public HeaderRowHeight As Long = 60",
+          "attributes": [],
+          "description": "Indicates the height, in pixels, of the header (first) row"
+        },
+        {
+          "name": "HorizontalLineOptions",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public WithEvents HorizontalLineOptions As Line = New Line",
+          "attributes": [],
+          "description": "Controls whether, and how, a horizontal line is rendered between each row"
+        },
+        {
+          "name": "HoverCellOptions",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public WithEvents HoverCellOptions As CellRenderingOptions = New CellRenderingOptions",
+          "attributes": [],
+          "description": "Controls how a cell being hovered over is rendered"
+        },
+        {
+          "name": "InitializeDefaultValues",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub InitializeDefaultValues()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "MultiSelectCellOptions",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public WithEvents MultiSelectCellOptions As CellRenderingOptions = New CellRenderingOptions",
+          "attributes": [],
+          "description": "Controls how cells are rendered when multi-selected"
+        },
+        {
+          "name": "OnChanged",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub OnChanged() Handles _BaseControl.OnChanged, ColumnHeaderOptions.OnChanged, ColumnHeaderOptions.OnPropertySet, RowHeaderOptions.OnChanged, RowHeaderOptions.OnPropertySet, CellOptions.OnChanged, CellOptions.OnPropertySet, HoverCellOptions.OnChanged, HoverCellOptions.OnPropertySet, SelectedCellOptions.OnChanged, SelectedCellOptions.OnPropertySet, MultiSelectCellOptions.OnChanged, MultiSelectCellOptions.OnPropertySet, HeaderRowHeight.OnPropertyLet, RowHeight.OnPropertyLet, SelectedCellX.OnPropertyLet, SelectedCellY.OnPropertyLet, SelectedFullColumnX.OnPropertyLet, SelectedFullRowY.OnPropertyLet, RowCount.OnPropertyLet, Columns.OnChanged, Columns.OnPropertyLet, VerticalLineOptions.OnChanged, VerticalLineOptions.OnPropertySet, HorizontalLineOptions.OnChanged, HorizontalLineOptions.OnPropertySet, ResizerBar.OnChanged, ResizerBar.OnPropertySet",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "OnDestroy",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub OnDestroy() Implements ICustomControl.Destroy",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "OnInitialize",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub OnInitialize(ByVal ControlContext As CustomControls.CustomControlContext) Implements ICustomControl.Initialize",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "OnPaint",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub OnPaint(ByVal Canvas As CustomControls.Canvas) Implements ICustomControl.Paint",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Repaint",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub Repaint()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ResizeBarColumn_OnHover",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub ResizeBarColumn_OnHover(ByRef EventInfo As MouseEvent)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ResizeBarColumn_OnLeave",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub ResizeBarColumn_OnLeave(ByRef EventInfo As MouseEvent)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ResizeBarColumn_OnMouseDown",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub ResizeBarColumn_OnMouseDown(ByRef EventInfo As MouseEvent)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ResizeBarColumn_OnMouseUp",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub ResizeBarColumn_OnMouseUp(ByRef EventInfo As MouseEvent)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ResizeBarColumn_OnMove",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub ResizeBarColumn_OnMove(ByRef EventInfo As MouseEvent)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ResizeBarRow_OnHover",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub ResizeBarRow_OnHover(ByRef EventInfo As MouseEvent)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ResizeBarRow_OnLeave",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub ResizeBarRow_OnLeave(ByRef EventInfo As MouseEvent)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ResizeBarRow_OnMouseDown",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub ResizeBarRow_OnMouseDown(ByRef EventInfo As MouseEvent)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ResizeBarRow_OnMouseUp",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub ResizeBarRow_OnMouseUp(ByRef EventInfo As MouseEvent)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ResizeBarRow_OnMove",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub ResizeBarRow_OnMove(ByRef EventInfo As MouseEvent)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ResizerBar",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public WithEvents ResizerBar As Line = New Line",
+          "attributes": [],
+          "description": "Controls how the resizer-bar is rendered"
+        },
+        {
+          "name": "RowCount",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public RowCount As Long = -1",
+          "attributes": [],
+          "description": "Sets the maximum number of rows that are visible. -1 means infinite"
+        },
+        {
+          "name": "RowHeader_OnClick",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub RowHeader_OnClick(ByRef EventInfo As MouseEvent)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "RowHeaderOptions",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public WithEvents RowHeaderOptions As CellRenderingOptions = New CellRenderingOptions",
+          "attributes": [],
+          "description": "Controls how the row header cells (first column) are rendered"
+        },
+        {
+          "name": "RowHeight",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public RowHeight As Long = 40",
+          "attributes": [],
+          "description": "Indicates the height, in pixels, of all rows (except the header)"
+        },
+        {
+          "name": "SelectedCellOptions",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public WithEvents SelectedCellOptions As CellRenderingOptions = New CellRenderingOptions",
+          "attributes": [],
+          "description": "Controls how a selected cell is rendered"
+        },
+        {
+          "name": "SelectedCellX",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public SelectedCellX As Long = -1",
+          "attributes": [],
+          "description": "Indicates the index of the selected cell on the X-axis"
+        },
+        {
+          "name": "SelectedCellY",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public SelectedCellY As Long = -1",
+          "attributes": [],
+          "description": "Indicates the index of the selected cell on the Y-axis"
+        },
+        {
+          "name": "SelectedFullColumnX",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public SelectedFullColumnX As Long = -1",
+          "attributes": [],
+          "description": "Indicates the index of the selected full column on the X-axis"
+        },
+        {
+          "name": "SelectedFullRowY",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public SelectedFullRowY As Long = -1",
+          "attributes": [],
+          "description": "Indicates the index of the selected full row on the Y-axis"
+        },
+        {
+          "name": "VerticalLineOptions",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public WithEvents VerticalLineOptions As Line = New Line",
+          "attributes": [],
+          "description": "Controls whether, and how, a vertical line is rendered between each column"
+        }
+      ],
+      "events": [
+        {
+          "name": "GetCellText",
+          "signature": "Event GetCellText(ByVal X As Long, ByVal Y As Long, ByRef Value As String)",
+          "attributes": []
+        }
+      ]
+    },
+    {
+      "name": "WaynesLabel",
+      "kind": "Class",
+      "file": "WaynesLabel.twin",
+      "access": "Public",
+      "attributes": [
+        "CustomControl(\"/miscellaneous/frmLabel.png\")",
+        "ClassId",
+        "COMCreatable(False)"
+      ],
+      "implements": [
+        "BaseControl",
+        "CustomControls.ICustomControl"
+      ],
+      "inherits": null,
+      "members": [
+        {
+          "name": "BackgroundFill",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public WithEvents BackgroundFill As Fill = New Fill",
+          "attributes": [],
+          "description": "Controls the fill colors and pattern used to draw the background of the label"
+        },
+        {
+          "name": "Caption",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public Caption As String = \"\"",
+          "attributes": [],
+          "description": "Adjusts the text displayed on this label"
+        },
+        {
+          "name": "OnChanged",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub OnChanged() Handles _BaseControl.OnChanged, BackgroundFill.OnChanged, BackgroundFill.OnPropertySet, TextRendering.OnChanged, TextRendering.OnPropertySet, Caption.OnPropertyLet",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "OnDestroy",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub OnDestroy() Implements ICustomControl.Destroy",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "OnInitialize",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub OnInitialize(ByVal ControlContext As CustomControls.CustomControlContext) Implements ICustomControl.Initialize",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "OnPaint",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub OnPaint(ByVal Canvas As CustomControls.Canvas) Implements ICustomControl.Paint",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "TextRendering",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public WithEvents TextRendering As TextRendering = New TextRendering",
+          "attributes": [],
+          "description": "Controls how the Value text is rendered"
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "WaynesSlider",
+      "kind": "Class",
+      "file": "WaynesSlider.twin",
+      "access": "Public",
+      "attributes": [
+        "CustomControl(\"/miscellaneous/frmSlider.png\")",
+        "ClassId",
+        "COMCreatable(False)"
+      ],
+      "implements": [
+        "BaseControlFocusable",
+        "CustomControls.ICustomControl"
+      ],
+      "inherits": null,
+      "members": [
+        {
+          "name": "BlockDragEnd",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub BlockDragEnd(ByRef EventInfo As MouseEvent)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "BlockDragMove",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub BlockDragMove(ByRef EventInfo As MouseEvent)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "BlockDragStart",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub BlockDragStart(ByRef EventInfo As MouseEvent)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Direction",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public Direction As SliderDirection = SliderDirection.Horizontal",
+          "attributes": [],
+          "description": "Adjust the direction in which the control is painted"
+        },
+        {
+          "name": "DisplayFormat",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public DisplayFormat As SliderDisplayValueFormat = SliderDisplayValueFormat.DisplayValue",
+          "attributes": [],
+          "description": "Adjust how the Value is display on the control"
+        },
+        {
+          "name": "FocusedState",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public WithEvents FocusedState As WaynesSliderState = New WaynesSliderState",
+          "attributes": [],
+          "description": "Controls how the control is rendered when it is focused"
+        },
+        {
+          "name": "HoverState",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public WithEvents HoverState As WaynesSliderState = New WaynesSliderState",
+          "attributes": [],
+          "description": "Controls how the control is rendered when the mouse is hovered over it"
+        },
+        {
+          "name": "InitializeDefaultValues",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub InitializeDefaultValues()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "MaxValue",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public MaxValue As Long = 100",
+          "attributes": [],
+          "description": "Adjusts the maximum part of the range of acceptable values"
+        },
+        {
+          "name": "MinValue",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public MinValue As Long = 0",
+          "attributes": [],
+          "description": "Adjusts the minimum part of the range of acceptable values"
+        },
+        {
+          "name": "MOUSEDOWN_TIMER_INTERVAL",
+          "kind": "Const",
+          "access": null,
+          "signature": "Const MOUSEDOWN_TIMER_INTERVAL As Long = 40",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "MOUSEDOWN_TIMER_INTERVAL_INITIAL_DELAY",
+          "kind": "Const",
+          "access": null,
+          "signature": "Const MOUSEDOWN_TIMER_INTERVAL_INITIAL_DELAY As Long = 500",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "MouseDownRepeatTimerEvent",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub MouseDownRepeatTimerEvent() Handles MouseDownRepeatTimer.OnTimer",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "MoveInterval",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public MoveInterval As Long",
+          "attributes": [],
+          "description": "Adjusts the interval at which the Value is incremented automatically.  A value of 0 indicates that the control does not move without user interaction."
+        },
+        {
+          "name": "NormalState",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public WithEvents NormalState As WaynesSliderState = New WaynesSliderState",
+          "attributes": [],
+          "description": "Controls how the control is rendered in its normal state"
+        },
+        {
+          "name": "OnBackgroundMouseDown",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub OnBackgroundMouseDown(ByRef EventInfo As MouseEvent)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "OnBackgroundMouseUp",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub OnBackgroundMouseUp(ByRef EventInfo As MouseEvent)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "OnChanged",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub OnChanged() Handles _BaseControl.OnChanged, MoveInterval.OnPropertyLet, WrapAround.OnPropertyLet, Value.OnPropertyLet, MinValue.OnPropertyLet, MaxValue.OnPropertyLet, StepValue.OnPropertyLet, PagingStepValue.OnPropertyLet, NormalState.OnChanged, NormalState.OnPropertySet, HoverState.OnChanged, HoverState.OnPropertySet, FocusedState.OnChanged, FocusedState.OnPropertySet, Direction.OnPropertyLet, DisplayFormat.OnPropertyLet",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "OnDestroy",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub OnDestroy() Implements ICustomControl.Destroy",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "OnGotFocus",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub OnGotFocus(ByRef EventInfo As FocusEvent)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "OnHoverEnter",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub OnHoverEnter(ByRef EventInfo As MouseEvent)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "OnHoverLeave",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub OnHoverLeave(ByRef EventInfo As MouseEvent)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "OnInitialize",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub OnInitialize(ByVal ControlContext As CustomControls.CustomControlContext) Implements ICustomControl.Initialize",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "OnKeyDown",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub OnKeyDown(ByRef EventInfo As KeyEvent)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "OnKeyUp",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub OnKeyUp(ByRef EventInfo As KeyEvent)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "OnLostFocus",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub OnLostFocus(ByRef EventInfo As FocusEvent)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "OnPaint",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub OnPaint(ByVal Canvas As CustomControls.Canvas) Implements ICustomControl.Paint",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "PagingStepValue",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public PagingStepValue As Long = 1",
+          "attributes": [],
+          "description": "Adjusts the paging step amount by which the Value is incremented or decremented when moving the Block via clicking on the Background element"
+        },
+        {
+          "name": "SliderDirection",
+          "kind": "Enum",
+          "access": null,
+          "signature": "Enum SliderDirection",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SliderDisplayValueFormat",
+          "kind": "Enum",
+          "access": null,
+          "signature": "Enum SliderDisplayValueFormat",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "StepValue",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public StepValue As Long = 1",
+          "attributes": [],
+          "description": "Adjusts the step amount by which the Value is incremented or decremented"
+        },
+        {
+          "name": "Value",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public Value As Long",
+          "attributes": [],
+          "description": "Adjusts the position of the Block element"
+        },
+        {
+          "name": "WrapAround",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public WrapAround As Boolean",
+          "attributes": [],
+          "description": "Indicates whether the MinValue and MaxValue properties are strictly enforced.  If not, values outside of the range are allowed and the Block will overflow repeatedly"
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "WaynesSliderState",
+      "kind": "Class",
+      "file": "WaynesSlider.twin",
+      "access": "Public",
+      "attributes": [
+        "ClassId"
+      ],
+      "implements": [],
+      "inherits": null,
+      "members": [
+        {
+          "name": "BackgroundBorders",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public WithEvents BackgroundBorders As Borders = New Borders",
+          "attributes": [],
+          "description": "Controls the border used to draw around the background of the control"
+        },
+        {
+          "name": "BackgroundCorners",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public WithEvents BackgroundCorners As Corners = New Corners",
+          "attributes": [],
+          "description": "Controls the coner shapes used to draw around the background of the control"
+        },
+        {
+          "name": "BackgroundFill",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public WithEvents BackgroundFill As Fill = New Fill",
+          "attributes": [],
+          "description": "Controls the fill colors and pattern used to draw the background of the control"
+        },
+        {
+          "name": "BlockBorders",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public WithEvents BlockBorders As Borders = New Borders",
+          "attributes": [],
+          "description": "Controls the border used to draw around the background of the movable block"
+        },
+        {
+          "name": "BlockCorners",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public WithEvents BlockCorners As Corners = New Corners",
+          "attributes": [],
+          "description": "Controls the coner shapes used to draw around the background of the movable block"
+        },
+        {
+          "name": "BlockFill",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public WithEvents BlockFill As Fill = New Fill",
+          "attributes": [],
+          "description": "Controls the fill colors and pattern used to draw the background of the movable block"
+        },
+        {
+          "name": "BlockWidth",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public BlockWidth As CustomControls.PixelCount = 100",
+          "attributes": [],
+          "description": "The width, in pixels, of the Block element of this control"
+        },
+        {
+          "name": "InitializeDefaultValues",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub InitializeDefaultValues()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "OnChanged",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub OnChanged() Handles BackgroundFill.OnChanged, BackgroundFill.OnPropertySet, BackgroundBorders.OnChanged, BackgroundBorders.OnPropertySet, BackgroundCorners.OnChanged, BackgroundCorners.OnPropertySet, BlockFill.OnChanged, BlockFill.OnPropertySet, BlockBorders.OnChanged, BlockBorders.OnPropertySet, BlockCorners.OnChanged, BlockCorners.OnPropertySet, BlockWidth.OnPropertyLet, TextRendering.OnChanged, TextRendering.OnPropertySet",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "TextRendering",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public WithEvents TextRendering As TextRendering = New TextRendering",
+          "attributes": [],
+          "description": "Controls how the Value text is rendered inside the movable block"
+        }
+      ],
+      "events": [
+        {
+          "name": "OnChanged",
+          "signature": "Event OnChanged()",
+          "attributes": []
+        }
+      ]
+    },
+    {
+      "name": "WaynesTextBox",
+      "kind": "Class",
+      "file": "WaynesTextBox.twin",
+      "access": "Public",
+      "attributes": [
+        "CustomControl(\"/miscellaneous/frmTextbox.png\")",
+        "ClassId",
+        "COMCreatable(False)"
+      ],
+      "implements": [
+        "BaseControlFocusable",
+        "CustomControls.ICustomControl"
+      ],
+      "inherits": null,
+      "members": [
+        {
+          "name": "FocusedState",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public WithEvents FocusedState As WaynesTextBoxState = New WaynesTextBoxState",
+          "attributes": [],
+          "description": "Controls how the control is rendered when it is focused"
+        },
+        {
+          "name": "GetCaretPosition",
+          "kind": "Function",
+          "access": "Private",
+          "signature": "Private Function GetCaretPosition() As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GetCurrentSelectedText",
+          "kind": "Function",
+          "access": "Private",
+          "signature": "Private Function GetCurrentSelectedText() As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GetWordRangeAtPosition",
+          "kind": "Function",
+          "access": "Private",
+          "signature": "Private Function GetWordRangeAtPosition(X As Long, AdvanceWord As Long = 0) As Range",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "HandleKeyArrowLeft",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub HandleKeyArrowLeft(EventInfo As KeyEvent)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "HandleKeyArrowRight",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub HandleKeyArrowRight(EventInfo As KeyEvent)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "HoverState",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public WithEvents HoverState As WaynesTextBoxState = New WaynesTextBoxState",
+          "attributes": [],
+          "description": "Controls how the control is rendered when the mouse is hovered over it"
+        },
+        {
+          "name": "InitializeDefaultValues",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub InitializeDefaultValues()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "IsSelEndSurrogateLast",
+          "kind": "Function",
+          "access": "Private",
+          "signature": "Private Function IsSelEndSurrogateLast() As Boolean",
+          "attributes": [],
+          "description": "Indicates if the end of the selection range lands on a surrogate pair end character"
+        },
+        {
+          "name": "IsSelStartSurrogateFirst",
+          "kind": "Function",
+          "access": "Private",
+          "signature": "Private Function IsSelStartSurrogateFirst() As Boolean",
+          "attributes": [],
+          "description": "Indicates if the start of the selection range lands on a surrogate pair start character"
+        },
+        {
+          "name": "IsSelStartSurrogateLast",
+          "kind": "Function",
+          "access": "Private",
+          "signature": "Private Function IsSelStartSurrogateLast() As Boolean",
+          "attributes": [],
+          "description": "Indicates if the start of the selection range lands on a surrogate pair end character"
+        },
+        {
+          "name": "IsSurrogateHighPart",
+          "kind": "Function",
+          "access": "Private",
+          "signature": "Private Function IsSurrogateHighPart(CharValue As Long) As Boolean",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "IsSurrogateLowPart",
+          "kind": "Function",
+          "access": "Private",
+          "signature": "Private Function IsSurrogateLowPart(CharValue As Long) As Boolean",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "MoveCaretBackwards",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub MoveCaretBackwards()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "NormalState",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public WithEvents NormalState As WaynesTextBoxState = New WaynesTextBoxState",
+          "attributes": [],
+          "description": "Controls how the control is rendered in its normal state"
+        },
+        {
+          "name": "OnChanged",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub OnChanged() Handles _BaseControl.OnChanged, NormalState.OnChanged, NormalState.OnPropertySet, HoverState.OnChanged, HoverState.OnPropertySet, FocusedState.OnChanged, FocusedState.OnPropertySet, Value.OnPropertyLet",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "OnDblClick",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub OnDblClick(ByRef EventInfo As MouseEvent)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "OnDestroy",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub OnDestroy() Implements ICustomControl.Destroy",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "OnGotFocus",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub OnGotFocus(ByRef EventInfo As FocusEvent)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "OnInitialize",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub OnInitialize(ByVal ControlContext As CustomControls.CustomControlContext) Implements ICustomControl.Initialize",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "OnKeyDown",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub OnKeyDown(EventInfo As KeyEvent)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "OnKeyPress",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub OnKeyPress(EventInfo As KeyEvent)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "OnLostFocus",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub OnLostFocus(ByRef EventInfo As FocusEvent)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "OnMouseDown",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub OnMouseDown(EventInfo As MouseEvent)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "OnMouseEnter",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub OnMouseEnter(ByRef EventInfo As MouseEvent)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "OnMouseLeave",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub OnMouseLeave(ByRef EventInfo As MouseEvent)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "OnMouseMove",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub OnMouseMove(EventInfo As MouseEvent)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "OnMouseUp",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub OnMouseUp(EventInfo As MouseEvent)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "OnPaint",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub OnPaint(ByVal Canvas As CustomControls.Canvas) Implements ICustomControl.Paint",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ReplaceSelectedText",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub ReplaceSelectedText(replaceValue As String)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Value",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public Value As String = \"\"",
+          "attributes": [],
+          "description": "Adjusts the text displayed on this label"
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "WaynesTextBoxState",
+      "kind": "Class",
+      "file": "WaynesTextBox.twin",
+      "access": "Public",
+      "attributes": [
+        "ClassId",
+        "COMCreatable(False)"
+      ],
+      "implements": [],
+      "inherits": null,
+      "members": [
+        {
+          "name": "BackgroundFill",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public WithEvents BackgroundFill As Fill = New Fill",
+          "attributes": [],
+          "description": "Controls the fill colors and pattern used to draw the background of the label"
+        },
+        {
+          "name": "Borders",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public WithEvents Borders As Borders = New Borders",
+          "attributes": [],
+          "description": "Controls how the borders of the textbox are rendered"
+        },
+        {
+          "name": "CaretFill",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public WithEvents CaretFill As Fill = New Fill",
+          "attributes": [],
+          "description": "Controls how the caret is rendered"
+        },
+        {
+          "name": "CaretWidth",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public CaretWidth As Long",
+          "attributes": [],
+          "description": "Controls the width of the caret, in pixels"
+        },
+        {
+          "name": "Corners",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public WithEvents Corners As Corners = New Corners",
+          "attributes": [],
+          "description": "Controls how the corner shapes are rendered"
+        },
+        {
+          "name": "DecorationERROR",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public WithEvents DecorationERROR As Fill = New Fill",
+          "attributes": [],
+          "description": "Controls the color of the squiggle decorator for ERROR text"
+        },
+        {
+          "name": "DecorationINFO",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public WithEvents DecorationINFO As Fill = New Fill",
+          "attributes": [],
+          "description": "Controls the color of the squiggle decorator for INFO text"
+        },
+        {
+          "name": "DecorationWARNING",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public WithEvents DecorationWARNING As Fill = New Fill",
+          "attributes": [],
+          "description": "Controls the color of the squiggle decorator for WARNING text"
+        },
+        {
+          "name": "InitializeDefaultValues",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub InitializeDefaultValues()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "InitializeDefaultValues_Focused",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub InitializeDefaultValues_Focused()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "OnChanged",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub OnChanged() Handles BackgroundFill.OnChanged, BackgroundFill.OnPropertySet, TextRendering.OnChanged, TextRendering.OnPropertySet, Corners.OnChanged, Corners.OnPropertySet, Borders.OnChanged, Borders.OnPropertySet, SelectedBackgroundFill.OnChanged, SelectedBackgroundFill.OnPropertySet, SelectedTextFill.OnChanged, SelectedTextFill.OnPropertySet, CaretFill.OnChanged, CaretFill.OnPropertySet, CaretWidth.OnPropertyLet, DecorationERROR.OnChanged, DecorationERROR.OnPropertySet, DecorationWARNING.OnChanged, DecorationWARNING.OnPropertySet, DecorationINFO.OnChanged, DecorationINFO.OnPropertySet",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SelectedBackgroundFill",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public WithEvents SelectedBackgroundFill As Fill = New Fill",
+          "attributes": [],
+          "description": "Controls how the background color of selected text part of Value is rendered"
+        },
+        {
+          "name": "SelectedTextFill",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public WithEvents SelectedTextFill As Fill = New Fill",
+          "attributes": [],
+          "description": "Controls how the font text color of selected text part of Value is rendered"
+        },
+        {
+          "name": "TextRendering",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public WithEvents TextRendering As TextRendering = New TextRendering",
+          "attributes": [],
+          "description": "Controls how the Value text is rendered"
+        }
+      ],
+      "events": [
+        {
+          "name": "OnChanged",
+          "signature": "Event OnChanged()",
+          "attributes": []
+        }
+      ]
+    },
+    {
+      "name": "WaynesTimer",
+      "kind": "Class",
+      "file": "WaynesTimer.twin",
+      "access": "Public",
+      "attributes": [
+        "CustomControl(\"/miscellaneous/frmTimer.png\")",
+        "ClassId",
+        "COMCreatable(False)"
+      ],
+      "implements": [
+        "BaseControl",
+        "CustomControls.ICustomControl"
+      ],
+      "inherits": null,
+      "members": [
+        {
+          "name": "Enabled",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public Enabled As Boolean",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Interval",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public Interval As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "OnChanged",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub OnChanged() Handles _BaseControl.OnChanged",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "OnChangedTimer",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub OnChangedTimer() Handles Interval.OnPropertyLet, Enabled.OnPropertyLet",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "OnDestroy",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub OnDestroy() Implements ICustomControl.Destroy",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "OnInitialize",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub OnInitialize(ByVal ControlContext As CustomControls.CustomControlContext) Implements ICustomControl.Initialize",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "OnPaint",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub OnPaint(ByVal Canvas As CustomControls.Canvas) Implements ICustomControl.Paint",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "OnTimer",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub OnTimer() Handles InternalTimer.OnTimer",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": [
+        {
+          "name": "Timer",
+          "signature": "Event Timer()",
+          "attributes": []
+        }
+      ]
+    },
+    {
+      "name": "WindowsFormOptions",
+      "kind": "Class",
+      "file": "zTemporarySupport.twin",
+      "access": "Private",
+      "attributes": [
+        "ClassId"
+      ],
+      "implements": [],
+      "inherits": null,
+      "members": [
+        {
+          "name": "BorderStyle",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public BorderStyle As CustomControls.BorderStyle = CustomControls.BorderStyle.tbFixedSizable",
+          "attributes": [],
+          "description": "Determines the style of the form window when it is first opened"
+        },
+        {
+          "name": "ControlBox",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public ControlBox As Boolean = True",
+          "attributes": [],
+          "description": "Determines whether the window has a controlbox in the titlebar"
+        },
+        {
+          "name": "MaximizeButton",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public MaximizeButton As Boolean = True",
+          "attributes": [],
+          "description": "Determines whether the window has a Maximize button available in the titlebar"
+        },
+        {
+          "name": "MinimizeButton",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public MinimizeButton As Boolean = True",
+          "attributes": [],
+          "description": "Determines whether the window has a Minimize button available in the titlebar"
+        },
+        {
+          "name": "OnPropertyChanged",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub OnPropertyChanged() Handles StartUpPosition.OnPropertyLet, WindowState.OnPropertyLet, BorderStyle.OnPropertyLet, ShowInTaskbar.OnPropertyLet, MinimizeButton.OnPropertyLet, MaximizeButton.OnPropertyLet, ControlBox.OnPropertyLet",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ShowInTaskbar",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public ShowInTaskbar As Boolean = True",
+          "attributes": [],
+          "description": "Determines whether the form is shown in the Windows taskbar"
+        },
+        {
+          "name": "StartUpPosition",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public StartUpPosition As CustomControls.StartUpPosition = CustomControls.StartUpPosition.tbStartUpWindowsDefault",
+          "attributes": [],
+          "description": "Determines the position of the form when it is first opened"
+        },
+        {
+          "name": "WindowState",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public WindowState As CustomControls.WindowState = CustomControls.WindowState.tbNormal",
+          "attributes": [],
+          "description": "Determines the window state of the form when it is first opened"
+        }
+      ],
+      "events": [
+        {
+          "name": "OnChanged",
+          "signature": "Event OnChanged()",
+          "attributes": []
+        }
+      ]
+    }
+  ],
+  "enums": [],
+  "types": []
+}

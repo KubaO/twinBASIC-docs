@@ -93,10 +93,37 @@ async function writeToStore(group, symbol, rawFiles, apiJsonStr) {
   await fs.writeFile(path.join(pkgDir, 'api.json'), apiJsonStr, 'utf-8');
 }
 
-async function findPackageDocsDir(name, group) {
+async function buildPackageNameMap() {
+  const map = new Map();
+  for (const group of ['Default', 'Built-In', 'Contributed']) {
+    const groupDir = path.join(DOCS_REF_DIR, group);
+    try {
+      const entries = await fs.readdir(groupDir, { withFileTypes: true });
+      for (const entry of entries) {
+        if (!entry.isDirectory()) continue;
+        const indexPath = path.join(groupDir, entry.name, 'index.md');
+        try {
+          const content = await fs.readFile(indexPath, 'utf-8');
+          const m = content.match(/^package_name:\s*(.+)$/m);
+          if (m) {
+            for (const n of m[1].split(',')) {
+              map.set(n.trim(), path.join(groupDir, entry.name));
+            }
+          }
+        } catch { /* no index.md */ }
+      }
+    } catch { /* group dir doesn't exist */ }
+  }
+  return map;
+}
+
+async function findPackageDocsDir(name, group, packageNameMap) {
   const docsGroup = groupDocsName(group);
   const newPath = path.join(DOCS_REF_DIR, docsGroup, name);
   try { await fs.access(newPath); return newPath; } catch {}
+  if (packageNameMap && packageNameMap.has(name)) {
+    return packageNameMap.get(name);
+  }
   const oldPath = path.join(DOCS_REF_DIR, name);
   try { await fs.access(oldPath); return oldPath; } catch {}
   return null;
@@ -352,6 +379,7 @@ async function runSync(filter) {
 // --- analyze command ---
 
 async function runAnalyze(filter) {
+  const packageNameMap = await buildPackageNameMap();
   const groups = ['default', 'built-in', 'contributed'];
   const packageList = [];
 
@@ -383,7 +411,7 @@ async function runAnalyze(filter) {
     console.log(`\nAnalyzing ${name} (${group})...`);
     const current = JSON.parse(await fs.readFile(apiPath, 'utf-8'));
 
-    const docsDir = await findPackageDocsDir(name, group);
+    const docsDir = await findPackageDocsDir(name, group, packageNameMap);
     const indexMdPath = docsDir ? path.join(docsDir, 'index.md') : null;
     const indexedFrom = indexMdPath ? await readIndexedFrom(indexMdPath) : null;
 

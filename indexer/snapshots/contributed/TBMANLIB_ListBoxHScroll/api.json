@@ -1,0 +1,484 @@
+{
+  "package": "TBMANLIB_ListBoxHScroll",
+  "version": "1.0.0.0",
+  "modules": [
+    {
+      "name": "cListboxHScroll",
+      "kind": "Class",
+      "file": "cListboxHScroll.twin",
+      "access": "Public",
+      "attributes": [],
+      "implements": [],
+      "inherits": null,
+      "members": [
+        {
+          "name": "AutoSetHorizontalExtent",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub AutoSetHorizontalExtent(ByVal ctrl As Object)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Class_Initialize",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub Class_Initialize()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Class_Terminate",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub Class_Terminate()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "DefSubclassProc",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare PtrSafe Function DefSubclassProc Lib \"\" ( ByVal hWnd As LongPtr, ByVal uMsg As Long, ByVal wParam As LongPtr, ByVal lParam As LongPtr ) As LongPtr",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GetClientRect",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare PtrSafe Function GetClientRect Lib \"\" ( ByVal hWnd As LongPtr, ByRef lpRect As RECT ) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GetControlHandle",
+          "kind": "Function",
+          "access": "Private",
+          "signature": "Private Function GetControlHandle(ByVal ctrl As Object) As LongPtr",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GetDC",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare PtrSafe Function GetDC Lib \"\" (ByVal hWnd As LongPtr) As LongPtr",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GetScrollInfo",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare PtrSafe Function GetScrollInfo Lib \"\" ( ByVal hWnd As LongPtr, ByVal nBar As Long, ByRef lpScrollInfo As SCROLLINFO ) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GetScrollPos",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare PtrSafe Function GetScrollPos Lib \"\" ( ByVal hWnd As LongPtr, ByVal nBar As Long ) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GetTextExtentPoint32",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare PtrSafe Function GetTextExtentPoint32 Lib \"\" Alias \"\" ( ByVal hDC As LongPtr, ByVal lpString As LongPtr, ByVal cbString As Long, ByRef lpSize As SIZE ) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "HideHorizontalScrollbar",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub HideHorizontalScrollbar(ByVal ctrl As Object)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "InitListBoxSubclass",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub InitListBoxSubclass(ByVal ctrl As Object)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "LB_GETCOUNT",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const LB_GETCOUNT As Long = &H18B",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "LB_GETHORIZONTALEXTENT",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const LB_GETHORIZONTALEXTENT As Long = &H193",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "LB_GETTEXT",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const LB_GETTEXT As Long = &H189",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "LB_GETTEXTLEN",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const LB_GETTEXTLEN As Long = &H18A",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "LB_SETHORIZONTALEXTENT",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const LB_SETHORIZONTALEXTENT As Long = &H194",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ListBoxSubclassProc",
+          "kind": "Function",
+          "access": "Private",
+          "signature": "Private Function ListBoxSubclassProc(ByVal hWnd As LongPtr, ByVal uMsg As Long, ByVal wParam As LongPtr, ByVal lParam As LongPtr, ByVal uIdSubclass As LongPtr, ByVal dwRefData As LongPtr) As LongPtr",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "RECT",
+          "kind": "Type",
+          "access": "Private",
+          "signature": "Private Type RECT",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ReleaseDC",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare PtrSafe Function ReleaseDC Lib \"\" (ByVal hWnd As LongPtr, ByVal hDC As LongPtr) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "RemoveListBoxSubclass",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub RemoveListBoxSubclass(ByVal ctrl As Object)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "RemoveWindowSubclass",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare PtrSafe Function RemoveWindowSubclass Lib \"\" ( ByVal hWnd As LongPtr, ByVal pfnSubclass As LongPtr, ByVal uIdSubclass As LongPtr ) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SB_BOTH",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const SB_BOTH As Long = 3",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SB_CTL",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const SB_CTL As Long = 2",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SB_ENDSCROLL",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const SB_ENDSCROLL As Long = 8",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SB_HORZ",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const SB_HORZ As Long = 0",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SB_LEFT",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const SB_LEFT As Long = 6",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SB_LINELEFT",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const SB_LINELEFT As Long = 0",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SB_LINERIGHT",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const SB_LINERIGHT As Long = 1",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SB_PAGELEFT",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const SB_PAGELEFT As Long = 2",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SB_PAGERIGHT",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const SB_PAGERIGHT As Long = 3",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SB_RIGHT",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const SB_RIGHT As Long = 7",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SB_THUMBPOSITION",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const SB_THUMBPOSITION As Long = 4",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SB_THUMBTRACK",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const SB_THUMBTRACK As Long = 5",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SB_VERT",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const SB_VERT As Long = 1",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SCROLLINFO",
+          "kind": "Type",
+          "access": "Private",
+          "signature": "Private Type SCROLLINFO",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SelectObject",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare PtrSafe Function SelectObject Lib \"\" (ByVal hDC As LongPtr, ByVal hObject As LongPtr) As LongPtr",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SendHorizontalScroll",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub SendHorizontalScroll(ByVal ctrl As Object, ByVal scrollType As Long)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SendMessage",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare PtrSafe Function SendMessage Lib \"\" Alias \"\" ( ByVal hWnd As LongPtr, ByVal wMsg As Long, ByVal wParam As LongPtr, ByVal lParam As LongPtr ) As LongPtr",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SetListBoxHorizontalExtent",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub SetListBoxHorizontalExtent(ByVal ctrl As Object, ByVal extent As Long)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SetScrollBarInfo",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub SetScrollBarInfo(ByVal ctrl As Object, ByVal contentWidth As Long)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SetScrollInfo",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare PtrSafe Function SetScrollInfo Lib \"\" ( ByVal hWnd As LongPtr, ByVal nBar As Long, ByRef lpScrollInfo As SCROLLINFO, ByVal bRedraw As Long ) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SetScrollPos",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare PtrSafe Function SetScrollPos Lib \"\" ( ByVal hWnd As LongPtr, ByVal nBar As Long, ByVal nPos As Long, ByVal bRedraw As Long ) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SetWindowSubclass",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare PtrSafe Function SetWindowSubclass Lib \"\" ( ByVal hWnd As LongPtr, ByVal pfnSubclass As LongPtr, ByVal uIdSubclass As LongPtr, ByVal dwRefData As LongPtr ) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Show",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub Show(ByRef ListBoxInst As Object)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ShowHorizontalScrollbar",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub ShowHorizontalScrollbar(ByVal ctrl As Object)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ShowScrollBar",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare PtrSafe Function ShowScrollBar Lib \"\" ( ByVal hWnd As LongPtr, ByVal wBar As Long, ByVal bShow As Long ) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SIF_ALL",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const SIF_ALL As Long = SIF_RANGE Or SIF_PAGE Or SIF_POS Or SIF_TRACKPOS",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SIF_PAGE",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const SIF_PAGE As Long = &H2",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SIF_POS",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const SIF_POS As Long = &H4",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SIF_RANGE",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const SIF_RANGE As Long = &H1",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SIF_TRACKPOS",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const SIF_TRACKPOS As Long = &H10",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SIZE",
+          "kind": "Type",
+          "access": "Private",
+          "signature": "Private Type SIZE",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SUBCLASS_ID",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const SUBCLASS_ID As LongPtr = 1",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "UnShow",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub UnShow()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "WM_DESTROY",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const WM_DESTROY As Long = &H2",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "WM_GETFONT",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const WM_GETFONT As Long = &H31",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "WM_HSCROLL",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const WM_HSCROLL As Long = &H114",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    }
+  ],
+  "enums": [],
+  "types": []
+}

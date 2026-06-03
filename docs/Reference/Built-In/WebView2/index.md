@@ -1,5 +1,6 @@
 ---
 title: WebView2 Package
+package_name: WebView2Package
 parent: Built-In Packages
 nav_order: 7
 permalink: /tB/Packages/WebView2/

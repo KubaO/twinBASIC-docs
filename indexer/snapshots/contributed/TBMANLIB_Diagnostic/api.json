@@ -1,0 +1,3225 @@
+{
+  "package": "TBMANLIB_Diagnostic",
+  "version": "0.0.0.0",
+  "modules": [
+    {
+      "name": "CPUInfoCollector",
+      "kind": "Class",
+      "file": "Collectors/Static/CPUInfoCollector.twin",
+      "access": "Public",
+      "attributes": [],
+      "implements": [
+        "IDiagnosticCollector"
+      ],
+      "inherits": null,
+      "members": [
+        {
+          "name": "GetCPUMHzFromRegistry",
+          "kind": "Function",
+          "access": "Private",
+          "signature": "Private Function GetCPUMHzFromRegistry() As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GetCPUNameFromRegistry",
+          "kind": "Function",
+          "access": "Private",
+          "signature": "Private Function GetCPUNameFromRegistry() As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "IDiagnosticCollector_CategoryName",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get IDiagnosticCollector_CategoryName() As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "IDiagnosticCollector_Collect",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function IDiagnosticCollector_Collect() As DiagnosticResult(Of KeyValuePair(Of String, String))",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "IDiagnosticCollector_CollectSummary",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function IDiagnosticCollector_CollectSummary() As DiagnosticResult(Of KeyValuePair(Of String, String))",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "IDiagnosticCollector_Description",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get IDiagnosticCollector_Description() As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "IDiagnosticCollector_RefreshMode",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get IDiagnosticCollector_RefreshMode() As RefreshMode",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "IDiagnosticCollector_RequiresElevation",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get IDiagnosticCollector_RequiresElevation() As Boolean",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "IDiagnosticCollector_SupportsSummary",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get IDiagnosticCollector_SupportsSummary() As Boolean",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "CPULoadCollector",
+      "kind": "Class",
+      "file": "Collectors/Dynamic/CPULoadCollector.twin",
+      "access": "Public",
+      "attributes": [],
+      "implements": [
+        "IDiagnosticCollector"
+      ],
+      "inherits": null,
+      "members": [
+        {
+          "name": "IDiagnosticCollector_CategoryName",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get IDiagnosticCollector_CategoryName() As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "IDiagnosticCollector_Collect",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function IDiagnosticCollector_Collect() As DiagnosticResult(Of KeyValuePair(Of String, String))",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "IDiagnosticCollector_CollectSummary",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function IDiagnosticCollector_CollectSummary() As DiagnosticResult(Of KeyValuePair(Of String, String))",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "IDiagnosticCollector_Description",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get IDiagnosticCollector_Description() As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "IDiagnosticCollector_RefreshMode",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get IDiagnosticCollector_RefreshMode() As RefreshMode",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "IDiagnosticCollector_RequiresElevation",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get IDiagnosticCollector_RequiresElevation() As Boolean",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "IDiagnosticCollector_SupportsSummary",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get IDiagnosticCollector_SupportsSummary() As Boolean",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "New",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub New()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Reset",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub Reset()",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "DelegatesModule",
+      "kind": "Module",
+      "file": "Delegates/Delegates.twin",
+      "access": "Public",
+      "attributes": [],
+      "implements": [],
+      "inherits": null,
+      "members": [],
+      "events": []
+    },
+    {
+      "name": "DiagnosticEngine",
+      "kind": "Class",
+      "file": "Core/DiagnosticEngine.twin",
+      "access": "Public",
+      "attributes": [],
+      "implements": [],
+      "inherits": null,
+      "members": [
+        {
+          "name": "Cancel",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub Cancel()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CollectorCount",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get CollectorCount() As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Collectors",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get Collectors() As List(Of IDiagnosticCollector)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "IsElevated",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function IsElevated() As Boolean",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "IsRunning",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get IsRunning() As Boolean",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "New",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub New()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "OnCollectorCompleted",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Let OnCollectorCompleted(ByVal handler As DiagnosticCompleteHandler)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "OnCollectorStarted",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Let OnCollectorStarted(ByVal handler As DiagnosticCompleteHandler)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "OnError",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Let OnError(ByVal handler As DiagnosticErrorHandler)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "OnProgress",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Let OnProgress(ByVal handler As DiagnosticProgressHandler)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "RaiseCollectorCompleted",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub RaiseCollectorCompleted(ByVal category As String, ByVal success As Boolean, ByVal itemCount As Long)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "RaiseCollectorStarted",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub RaiseCollectorStarted(ByVal category As String)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "RaiseError",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub RaiseError(ByVal category As String, ByVal errorMessage As String)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "RaiseProgress",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub RaiseProgress(ByVal percent As Long, ByVal message As String)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "RegisterCollector",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub RegisterCollector(ByVal collector As IDiagnosticCollector)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Results",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get Results() As List(Of DiagnosticResult(Of KeyValuePair(Of String, String)))",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "RunAll",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function RunAll(Optional ByVal useSummary As Boolean = False) As List(Of DiagnosticResult(Of KeyValuePair(Of String, String)))",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "RunByRefreshMode",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function RunByRefreshMode(ByVal mode As RefreshMode, Optional ByVal useSummary As Boolean = False) As List(Of DiagnosticResult(Of KeyValuePair(Of String, String)))",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "RunCategory",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function RunCategory(ByVal categoryName As String, Optional ByVal useSummary As Boolean = False) As DiagnosticResult(Of KeyValuePair(Of String, String))",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "UnregisterCollector",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub UnregisterCollector(ByVal categoryName As String)",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": [
+        {
+          "name": "AllCompleted",
+          "signature": "Public Event AllCompleted(ByVal results As List(Of DiagnosticResult(Of KeyValuePair(Of String, String))))",
+          "attributes": []
+        },
+        {
+          "name": "CollectorCompleted",
+          "signature": "Public Event CollectorCompleted(ByVal category As String, ByVal success As Boolean, ByVal itemCount As Long)",
+          "attributes": []
+        },
+        {
+          "name": "CollectorStarted",
+          "signature": "Public Event CollectorStarted(ByVal category As String)",
+          "attributes": []
+        },
+        {
+          "name": "Error",
+          "signature": "Public Event Error(ByVal category As String, ByVal errorMessage As String)",
+          "attributes": []
+        },
+        {
+          "name": "Progress",
+          "signature": "Public Event Progress(ByVal percent As Long, ByVal message As String)",
+          "attributes": []
+        }
+      ]
+    },
+    {
+      "name": "DiagnosticResult",
+      "kind": "Class",
+      "file": "Generics/DiagnosticResult.twin",
+      "access": "Public",
+      "attributes": [
+        "COMCreatable(False)",
+        "ClassId",
+        "InterfaceId"
+      ],
+      "implements": [],
+      "inherits": null,
+      "members": [
+        {
+          "name": "AddItem",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub AddItem(ByVal item As T)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Category",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get Category() As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Category",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Let Category(ByVal value As String)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CollectedAt",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get CollectedAt() As Date",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CollectedAt",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Let CollectedAt(ByVal value As Date)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ErrorMessage",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get ErrorMessage() As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ErrorMessage",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Let ErrorMessage(ByVal value As String)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "IsSummary",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get IsSummary() As Boolean",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "IsSummary",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Let IsSummary(ByVal value As Boolean)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ItemCount",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get ItemCount() As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Items",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get Items() As List(Of T)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "New",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub New()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "New",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub New(ByVal categoryName As String)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SetError",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub SetError(ByVal errMsg As String)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Success",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get Success() As Boolean",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Success",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Let Success(ByVal value As Boolean)",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "Dictionary",
+      "kind": "Class",
+      "file": "Generics/Dictionary.twin",
+      "access": "Public",
+      "attributes": [],
+      "implements": [],
+      "inherits": null,
+      "members": [
+        {
+          "name": "Add",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub Add(ByVal key As TKey, ByVal value As TValue)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Clear",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub Clear()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ContainsKey",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function ContainsKey(ByVal key As TKey) As Boolean",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Count",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get Count() As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "FindKeyIndex",
+          "kind": "Function",
+          "access": "Private",
+          "signature": "Private Function FindKeyIndex(ByVal key As TKey) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Item",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function Item(ByVal key As TKey) As TValue",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Keys",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get Keys() As List(Of TKey)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "New",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub New()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Remove",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function Remove(ByVal key As TKey) As Boolean",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SetItem",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub SetItem(ByVal key As TKey, ByVal value As TValue)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "TryGetValue",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function TryGetValue(ByVal key As TKey, ByRef value As TValue) As Boolean",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Values",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get Values() As List(Of TValue)",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "DiskInfoCollector",
+      "kind": "Class",
+      "file": "Collectors/SemiDynamic/DiskInfoCollector.twin",
+      "access": "Public",
+      "attributes": [],
+      "implements": [
+        "IDiagnosticCollector"
+      ],
+      "inherits": null,
+      "members": [
+        {
+          "name": "IDiagnosticCollector_CategoryName",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get IDiagnosticCollector_CategoryName() As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "IDiagnosticCollector_Collect",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function IDiagnosticCollector_Collect() As DiagnosticResult(Of KeyValuePair(Of String, String))",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "IDiagnosticCollector_CollectSummary",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function IDiagnosticCollector_CollectSummary() As DiagnosticResult(Of KeyValuePair(Of String, String))",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "IDiagnosticCollector_Description",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get IDiagnosticCollector_Description() As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "IDiagnosticCollector_RefreshMode",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get IDiagnosticCollector_RefreshMode() As RefreshMode",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "IDiagnosticCollector_RequiresElevation",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get IDiagnosticCollector_RequiresElevation() As Boolean",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "IDiagnosticCollector_SupportsSummary",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get IDiagnosticCollector_SupportsSummary() As Boolean",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "EnvironmentCollector",
+      "kind": "Class",
+      "file": "Collectors/Static/EnvironmentCollector.twin",
+      "access": "Public",
+      "attributes": [],
+      "implements": [
+        "IDiagnosticCollector"
+      ],
+      "inherits": null,
+      "members": [
+        {
+          "name": "IDiagnosticCollector_CategoryName",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get IDiagnosticCollector_CategoryName() As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "IDiagnosticCollector_Collect",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function IDiagnosticCollector_Collect() As DiagnosticResult(Of KeyValuePair(Of String, String))",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "IDiagnosticCollector_CollectSummary",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function IDiagnosticCollector_CollectSummary() As DiagnosticResult(Of KeyValuePair(Of String, String))",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "IDiagnosticCollector_Description",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get IDiagnosticCollector_Description() As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "IDiagnosticCollector_RefreshMode",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get IDiagnosticCollector_RefreshMode() As RefreshMode",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "IDiagnosticCollector_RequiresElevation",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get IDiagnosticCollector_RequiresElevation() As Boolean",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "IDiagnosticCollector_SupportsSummary",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get IDiagnosticCollector_SupportsSummary() As Boolean",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "KEY_VARS",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const KEY_VARS As String = \"\" & \"\" & \"\"",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SUMMARY_VARS",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const SUMMARY_VARS As String = \"\"",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "FileHelper",
+      "kind": "Module",
+      "file": "Utilities/FileHelper.twin",
+      "access": "Public",
+      "attributes": [],
+      "implements": [],
+      "inherits": null,
+      "members": [
+        {
+          "name": "AppendFile",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function AppendFile(ByVal content As String, ByVal filePath As String) As Variant",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "DeleteFile",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function DeleteFile(ByVal filePath As String) As Boolean",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "DirectoryExists",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function DirectoryExists(ByVal dirPath As String) As Boolean",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "EnsureDirectoryExists",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub EnsureDirectoryExists(ByVal path As String)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "FileExists",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function FileExists(ByVal filePath As String) As Boolean",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GetDirectoryName",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function GetDirectoryName(ByVal path As String) As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GetExtension",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function GetExtension(ByVal path As String) As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GetFileName",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function GetFileName(ByVal path As String) As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GetFileNameWithoutExtension",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function GetFileNameWithoutExtension(ByVal path As String) As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GetFileSize",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function GetFileSize(ByVal filePath As String) As LongLong",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GetFullPath",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function GetFullPath(ByVal path As String) As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "IsAbsolutePath",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function IsAbsolutePath(ByVal path As String) As Boolean",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "NormalizePath",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function NormalizePath(ByVal path As String) As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ReadFile",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function ReadFile(ByVal filePath As String) As Variant",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "WriteFile",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function WriteFile(ByVal content As String, ByVal filePath As String) As Variant",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "FormatHelper",
+      "kind": "Module",
+      "file": "Utilities/FormatHelper.twin",
+      "access": "Public",
+      "attributes": [],
+      "implements": [],
+      "inherits": null,
+      "members": [
+        {
+          "name": "EscapeHtml",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function EscapeHtml(ByVal text As String) As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "EscapeJson",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function EscapeJson(ByVal text As String) As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "FormatBytes",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function FormatBytes(ByVal bytes As LongLong, Optional ByVal decimals As Long = 1) As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "FormatDateTime",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function FormatDateTime(ByVal dt As Date) As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "FormatDateTimeISO",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function FormatDateTimeISO(ByVal dt As Date) As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "FormatPercent",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function FormatPercent(ByVal value As Double, ByVal total As Double, Optional ByVal decimals As Long = 0) As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "FormatPercentValue",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function FormatPercentValue(ByVal percent As Double, Optional ByVal decimals As Long = 0) As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "FormatTime",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function FormatTime(ByVal dt As Date) As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "FormatUptime",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function FormatUptime(ByVal milliseconds As LongLong) As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "PadLeft",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function PadLeft(ByVal text As String, ByVal width As Long, Optional ByVal padChar As String = \"\") As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "PadRight",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function PadRight(ByVal text As String, ByVal width As Long, Optional ByVal padChar As String = \"\") As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Truncate",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function Truncate(ByVal text As String, ByVal maxLength As Long, Optional ByVal ellipsis As String = \"\") As String",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "FormatterFactory",
+      "kind": "Module",
+      "file": "Formatters/FormatterFactory.twin",
+      "access": "Public",
+      "attributes": [],
+      "implements": [],
+      "inherits": null,
+      "members": [
+        {
+          "name": "CreateFormatter",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function CreateFormatter(ByVal formatName As String) As IOutputFormatter",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CreateFormatterFromArg",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function CreateFormatterFromArg(ByVal arg As String) As IOutputFormatter",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "FormatResults",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function FormatResults( ByVal results As List(Of DiagnosticResult(Of KeyValuePair(Of String, String))), ByVal formatter As IOutputFormatter) As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GetSupportedFormats",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function GetSupportedFormats() As String",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "HtmlFormatter",
+      "kind": "Class",
+      "file": "Formatters/HtmlFormatter.twin",
+      "access": "Public",
+      "attributes": [],
+      "implements": [
+        "IOutputFormatter"
+      ],
+      "inherits": null,
+      "members": [
+        {
+          "name": "GetCSSStyles",
+          "kind": "Function",
+          "access": "Private",
+          "signature": "Private Function GetCSSStyles() As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "IOutputFormatter_BeginFormat",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub IOutputFormatter_BeginFormat()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "IOutputFormatter_EndCategory",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub IOutputFormatter_EndCategory()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "IOutputFormatter_EndFormat",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function IOutputFormatter_EndFormat() As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "IOutputFormatter_FileExtension",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get IOutputFormatter_FileExtension() As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "IOutputFormatter_FormatCategory",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub IOutputFormatter_FormatCategory(ByVal categoryName As String)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "IOutputFormatter_FormatItem",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub IOutputFormatter_FormatItem(ByVal key As String, ByVal value As String)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "IOutputFormatter_FormatterName",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get IOutputFormatter_FormatterName() As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "New",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub New()",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "IDiagnosticCollector",
+      "kind": "Interface",
+      "file": "Interfaces/IDiagnosticCollector.twin",
+      "access": "Public",
+      "attributes": [],
+      "implements": [],
+      "inherits": null,
+      "members": [
+        {
+          "name": "CategoryName",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Get CategoryName() As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Collect",
+          "kind": "Function",
+          "access": null,
+          "signature": "Function Collect() As DiagnosticResult(Of KeyValuePair(Of String, String))",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CollectSummary",
+          "kind": "Function",
+          "access": null,
+          "signature": "Function CollectSummary() As DiagnosticResult(Of KeyValuePair(Of String, String))",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Description",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Get Description() As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "RefreshMode",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Get RefreshMode() As RefreshMode",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "RequiresElevation",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Get RequiresElevation() As Boolean",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SupportsSummary",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Get SupportsSummary() As Boolean",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "IOutputFormatter",
+      "kind": "Interface",
+      "file": "Interfaces/IOutputFormatter.twin",
+      "access": "Public",
+      "attributes": [],
+      "implements": [],
+      "inherits": null,
+      "members": [
+        {
+          "name": "BeginFormat",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub BeginFormat()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "EndCategory",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub EndCategory()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "EndFormat",
+          "kind": "Function",
+          "access": null,
+          "signature": "Function EndFormat() As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "FileExtension",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Get FileExtension() As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "FormatCategory",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub FormatCategory(ByVal categoryName As String)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "FormatItem",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub FormatItem(ByVal key As String, ByVal value As String)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "FormatterName",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Get FormatterName() As String",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "JsonFormatter",
+      "kind": "Class",
+      "file": "Formatters/JsonFormatter.twin",
+      "access": "Public",
+      "attributes": [
+        "ClassId",
+        "InterfaceId"
+      ],
+      "implements": [
+        "IOutputFormatter"
+      ],
+      "inherits": null,
+      "members": [
+        {
+          "name": "IOutputFormatter_BeginFormat",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub IOutputFormatter_BeginFormat()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "IOutputFormatter_EndCategory",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub IOutputFormatter_EndCategory()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "IOutputFormatter_EndFormat",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function IOutputFormatter_EndFormat() As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "IOutputFormatter_FileExtension",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get IOutputFormatter_FileExtension() As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "IOutputFormatter_FormatCategory",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub IOutputFormatter_FormatCategory(ByVal categoryName As String)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "IOutputFormatter_FormatItem",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub IOutputFormatter_FormatItem(ByVal key As String, ByVal value As String)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "IOutputFormatter_FormatterName",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get IOutputFormatter_FormatterName() As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "New",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub New()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ToCamelCase",
+          "kind": "Function",
+          "access": "Private",
+          "signature": "Private Function ToCamelCase(ByVal text As String) As String",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "KeyValuePair",
+      "kind": "Class",
+      "file": "Generics/KeyValuePair.twin",
+      "access": "Public",
+      "attributes": [],
+      "implements": [],
+      "inherits": null,
+      "members": [
+        {
+          "name": "Key",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get Key() As TKey",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Key",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Let Key(ByVal value As TKey)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "New",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub New(ByVal key As TKey, ByVal value As TValue)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "New",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub New()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ToString",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function ToString() As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Value",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get Value() As TValue",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Value",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Let Value(ByVal v As TValue)",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "List",
+      "kind": "Class",
+      "file": "Generics/List.twin",
+      "access": "Public",
+      "attributes": [],
+      "implements": [],
+      "inherits": null,
+      "members": [
+        {
+          "name": "Add",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub Add(ByVal item As T)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Capacity",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get Capacity() As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Clear",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub Clear()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Contains",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function Contains(ByVal item As T) As Boolean",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Count",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get Count() As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "IndexOf",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function IndexOf(ByVal item As T) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Insert",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub Insert(ByVal index As Long, ByVal item As T)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Item",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function Item(ByVal index As Long) As T",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "New",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub New()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "New",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub New(ByVal initialCapacity As Long)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Remove",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function Remove(ByVal item As T) As Boolean",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "RemoveAt",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub RemoveAt(ByVal index As Long)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SetItem",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub SetItem(ByVal index As Long, ByVal item As T)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ToArray",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function ToArray() As Variant()",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "LocaleCollector",
+      "kind": "Class",
+      "file": "Collectors/Static/LocaleCollector.twin",
+      "access": "Public",
+      "attributes": [],
+      "implements": [
+        "IDiagnosticCollector"
+      ],
+      "inherits": null,
+      "members": [
+        {
+          "name": "GetLocaleString",
+          "kind": "Function",
+          "access": "Private",
+          "signature": "Private Function GetLocaleString(ByVal lcid As Long, ByVal lcType As Long) As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "IDiagnosticCollector_CategoryName",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get IDiagnosticCollector_CategoryName() As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "IDiagnosticCollector_Collect",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function IDiagnosticCollector_Collect() As DiagnosticResult(Of KeyValuePair(Of String, String))",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "IDiagnosticCollector_CollectSummary",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function IDiagnosticCollector_CollectSummary() As DiagnosticResult(Of KeyValuePair(Of String, String))",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "IDiagnosticCollector_Description",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get IDiagnosticCollector_Description() As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "IDiagnosticCollector_RefreshMode",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get IDiagnosticCollector_RefreshMode() As RefreshMode",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "IDiagnosticCollector_RequiresElevation",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get IDiagnosticCollector_RequiresElevation() As Boolean",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "IDiagnosticCollector_SupportsSummary",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get IDiagnosticCollector_SupportsSummary() As Boolean",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "MemoryInfoCollector",
+      "kind": "Class",
+      "file": "Collectors/Dynamic/MemoryInfoCollector.twin",
+      "access": "Public",
+      "attributes": [],
+      "implements": [
+        "IDiagnosticCollector"
+      ],
+      "inherits": null,
+      "members": [
+        {
+          "name": "IDiagnosticCollector_CategoryName",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get IDiagnosticCollector_CategoryName() As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "IDiagnosticCollector_Collect",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function IDiagnosticCollector_Collect() As DiagnosticResult(Of KeyValuePair(Of String, String))",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "IDiagnosticCollector_CollectSummary",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function IDiagnosticCollector_CollectSummary() As DiagnosticResult(Of KeyValuePair(Of String, String))",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "IDiagnosticCollector_Description",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get IDiagnosticCollector_Description() As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "IDiagnosticCollector_RefreshMode",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get IDiagnosticCollector_RefreshMode() As RefreshMode",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "IDiagnosticCollector_RequiresElevation",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get IDiagnosticCollector_RequiresElevation() As Boolean",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "IDiagnosticCollector_SupportsSummary",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get IDiagnosticCollector_SupportsSummary() As Boolean",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "NetworkInfoCollector",
+      "kind": "Class",
+      "file": "Collectors/SemiDynamic/NetworkInfoCollector.twin",
+      "access": "Public",
+      "attributes": [
+        "ClassId",
+        "InterfaceId"
+      ],
+      "implements": [
+        "IDiagnosticCollector"
+      ],
+      "inherits": null,
+      "members": [
+        {
+          "name": "CopyMemory",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare PtrSafe Sub CopyMemory Lib \"\" Alias \"\" ( ByVal dest As LongPtr, ByVal src As LongPtr, ByVal length As LongPtr)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GetAdapterInfoSize",
+          "kind": "Function",
+          "access": "Private",
+          "signature": "Private Function GetAdapterInfoSize() As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GetHostNameValue",
+          "kind": "Function",
+          "access": "Private",
+          "signature": "Private Function GetHostNameValue() As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GetPrimaryIPAddress",
+          "kind": "Function",
+          "access": "Private",
+          "signature": "Private Function GetPrimaryIPAddress() As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GetStringFromByteArray",
+          "kind": "Function",
+          "access": "Private",
+          "signature": "Private Function GetStringFromByteArray(ByRef buffer() As Byte, ByVal offset As Long, ByVal maxLen As Long) As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "IDiagnosticCollector_CategoryName",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get IDiagnosticCollector_CategoryName() As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "IDiagnosticCollector_Collect",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function IDiagnosticCollector_Collect() As DiagnosticResult(Of KeyValuePair(Of String, String))",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "IDiagnosticCollector_CollectSummary",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function IDiagnosticCollector_CollectSummary() As DiagnosticResult(Of KeyValuePair(Of String, String))",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "IDiagnosticCollector_Description",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get IDiagnosticCollector_Description() As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "IDiagnosticCollector_RefreshMode",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get IDiagnosticCollector_RefreshMode() As RefreshMode",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "IDiagnosticCollector_RequiresElevation",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get IDiagnosticCollector_RequiresElevation() As Boolean",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "IDiagnosticCollector_SupportsSummary",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get IDiagnosticCollector_SupportsSummary() As Boolean",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "OSInfoCollector",
+      "kind": "Class",
+      "file": "Collectors/Static/OSInfoCollector.twin",
+      "access": "Public",
+      "attributes": [],
+      "implements": [
+        "IDiagnosticCollector"
+      ],
+      "inherits": null,
+      "members": [
+        {
+          "name": "GetWindowsVersionName",
+          "kind": "Function",
+          "access": "Private",
+          "signature": "Private Function GetWindowsVersionName(ByVal major As Long, ByVal minor As Long, ByVal build As Long) As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "IDiagnosticCollector_CategoryName",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get IDiagnosticCollector_CategoryName() As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "IDiagnosticCollector_Collect",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function IDiagnosticCollector_Collect() As DiagnosticResult(Of KeyValuePair(Of String, String))",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "IDiagnosticCollector_CollectSummary",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function IDiagnosticCollector_CollectSummary() As DiagnosticResult(Of KeyValuePair(Of String, String))",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "IDiagnosticCollector_Description",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get IDiagnosticCollector_Description() As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "IDiagnosticCollector_RefreshMode",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get IDiagnosticCollector_RefreshMode() As RefreshMode",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "IDiagnosticCollector_RequiresElevation",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get IDiagnosticCollector_RequiresElevation() As Boolean",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "IDiagnosticCollector_SupportsSummary",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get IDiagnosticCollector_SupportsSummary() As Boolean",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "ProcessInfoCollector",
+      "kind": "Class",
+      "file": "Collectors/Dynamic/ProcessInfoCollector.twin",
+      "access": "Public",
+      "attributes": [
+        "ClassId",
+        "InterfaceId"
+      ],
+      "implements": [
+        "IDiagnosticCollector"
+      ],
+      "inherits": null,
+      "members": [
+        {
+          "name": "IDiagnosticCollector_CategoryName",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get IDiagnosticCollector_CategoryName() As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "IDiagnosticCollector_Collect",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function IDiagnosticCollector_Collect() As DiagnosticResult(Of KeyValuePair(Of String, String))",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "IDiagnosticCollector_CollectSummary",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function IDiagnosticCollector_CollectSummary() As DiagnosticResult(Of KeyValuePair(Of String, String))",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "IDiagnosticCollector_Description",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get IDiagnosticCollector_Description() As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "IDiagnosticCollector_RefreshMode",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get IDiagnosticCollector_RefreshMode() As RefreshMode",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "IDiagnosticCollector_RequiresElevation",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get IDiagnosticCollector_RequiresElevation() As Boolean",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "IDiagnosticCollector_SupportsSummary",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get IDiagnosticCollector_SupportsSummary() As Boolean",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "RefreshModeModule",
+      "kind": "Module",
+      "file": "Core/RefreshMode.twin",
+      "access": "Public",
+      "attributes": [],
+      "implements": [],
+      "inherits": null,
+      "members": [
+        {
+          "name": "RefreshMode",
+          "kind": "Enum",
+          "access": "Public",
+          "signature": "Public Enum RefreshMode",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "RuntimesCollector",
+      "kind": "Class",
+      "file": "Collectors/Static/RuntimesCollector.twin",
+      "access": "Public",
+      "attributes": [],
+      "implements": [
+        "IDiagnosticCollector"
+      ],
+      "inherits": null,
+      "members": [
+        {
+          "name": "CollectDotNetCore",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub CollectDotNetCore(ByRef result As DiagnosticResult(Of KeyValuePair(Of String, String)))",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CollectDotNetFramework",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub CollectDotNetFramework(ByRef result As DiagnosticResult(Of KeyValuePair(Of String, String)))",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CollectVCRedist",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub CollectVCRedist(ByRef result As DiagnosticResult(Of KeyValuePair(Of String, String)))",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GetDotNetVersionFromRelease",
+          "kind": "Function",
+          "access": "Private",
+          "signature": "Private Function GetDotNetVersionFromRelease(ByVal release As Long) As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GetLatestDotNetCore",
+          "kind": "Function",
+          "access": "Private",
+          "signature": "Private Function GetLatestDotNetCore() As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GetLatestDotNetFramework",
+          "kind": "Function",
+          "access": "Private",
+          "signature": "Private Function GetLatestDotNetFramework() As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GetLatestVCRedist",
+          "kind": "Function",
+          "access": "Private",
+          "signature": "Private Function GetLatestVCRedist() As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "IDiagnosticCollector_CategoryName",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get IDiagnosticCollector_CategoryName() As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "IDiagnosticCollector_Collect",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function IDiagnosticCollector_Collect() As DiagnosticResult(Of KeyValuePair(Of String, String))",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "IDiagnosticCollector_CollectSummary",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function IDiagnosticCollector_CollectSummary() As DiagnosticResult(Of KeyValuePair(Of String, String))",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "IDiagnosticCollector_Description",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get IDiagnosticCollector_Description() As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "IDiagnosticCollector_RefreshMode",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get IDiagnosticCollector_RefreshMode() As RefreshMode",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "IDiagnosticCollector_RequiresElevation",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get IDiagnosticCollector_RequiresElevation() As Boolean",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "IDiagnosticCollector_SupportsSummary",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get IDiagnosticCollector_SupportsSummary() As Boolean",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "StringBuilder",
+      "kind": "Class",
+      "file": "Utilities/StringBuilder.twin",
+      "access": "Public",
+      "attributes": [],
+      "implements": [],
+      "inherits": null,
+      "members": [
+        {
+          "name": "Append",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function Append(ByVal text As String) As StringBuilder",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "AppendFormat",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function AppendFormat(ByVal format As String, ParamArray args() As Variant) As StringBuilder",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "AppendLine",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function AppendLine(Optional ByVal text As String = \"\") As StringBuilder",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "AppendRepeat",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function AppendRepeat(ByVal char As String, ByVal count As Long) As StringBuilder",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Capacity",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get Capacity() As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Clear",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub Clear()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "EnsureCapacity",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub EnsureCapacity(ByVal minCapacity As Long)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GROWTH_FACTOR",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const GROWTH_FACTOR As Long = 2",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "INITIAL_CAPACITY",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const INITIAL_CAPACITY As Long = 256",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Insert",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function Insert(ByVal index As Long, ByVal text As String) As StringBuilder",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Length",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get Length() As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Length",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Let Length(ByVal value As Long)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "New",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub New()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "New",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub New(ByVal initialCapacity As Long)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ToString",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function ToString() As String",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "TextFormatter",
+      "kind": "Class",
+      "file": "Formatters/TextFormatter.twin",
+      "access": "Public",
+      "attributes": [
+        "ClassId",
+        "InterfaceId"
+      ],
+      "implements": [
+        "IOutputFormatter"
+      ],
+      "inherits": null,
+      "members": [
+        {
+          "name": "BOX_WIDTH",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const BOX_WIDTH As Long = 50",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GetBottomBorder",
+          "kind": "Function",
+          "access": "Private",
+          "signature": "Private Function GetBottomBorder() As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GetCategoryFooter",
+          "kind": "Function",
+          "access": "Private",
+          "signature": "Private Function GetCategoryFooter() As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GetCategoryHeader",
+          "kind": "Function",
+          "access": "Private",
+          "signature": "Private Function GetCategoryHeader(ByVal categoryName As String) As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GetCenteredLine",
+          "kind": "Function",
+          "access": "Private",
+          "signature": "Private Function GetCenteredLine(ByVal text As String) As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GetItemLine",
+          "kind": "Function",
+          "access": "Private",
+          "signature": "Private Function GetItemLine(ByVal key As String, ByVal value As String) As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GetTopBorder",
+          "kind": "Function",
+          "access": "Private",
+          "signature": "Private Function GetTopBorder() As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "IOutputFormatter_BeginFormat",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub IOutputFormatter_BeginFormat()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "IOutputFormatter_EndCategory",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub IOutputFormatter_EndCategory()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "IOutputFormatter_EndFormat",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function IOutputFormatter_EndFormat() As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "IOutputFormatter_FileExtension",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get IOutputFormatter_FileExtension() As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "IOutputFormatter_FormatCategory",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub IOutputFormatter_FormatCategory(ByVal categoryName As String)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "IOutputFormatter_FormatItem",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub IOutputFormatter_FormatItem(ByVal key As String, ByVal value As String)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "IOutputFormatter_FormatterName",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get IOutputFormatter_FormatterName() As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "New",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub New()",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "UptimeCollector",
+      "kind": "Class",
+      "file": "Collectors/Dynamic/UptimeCollector.twin",
+      "access": "Public",
+      "attributes": [],
+      "implements": [
+        "IDiagnosticCollector"
+      ],
+      "inherits": null,
+      "members": [
+        {
+          "name": "IDiagnosticCollector_CategoryName",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get IDiagnosticCollector_CategoryName() As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "IDiagnosticCollector_Collect",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function IDiagnosticCollector_Collect() As DiagnosticResult(Of KeyValuePair(Of String, String))",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "IDiagnosticCollector_CollectSummary",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function IDiagnosticCollector_CollectSummary() As DiagnosticResult(Of KeyValuePair(Of String, String))",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "IDiagnosticCollector_Description",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get IDiagnosticCollector_Description() As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "IDiagnosticCollector_RefreshMode",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get IDiagnosticCollector_RefreshMode() As RefreshMode",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "IDiagnosticCollector_RequiresElevation",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get IDiagnosticCollector_RequiresElevation() As Boolean",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "IDiagnosticCollector_SupportsSummary",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get IDiagnosticCollector_SupportsSummary() As Boolean",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "WinAPI",
+      "kind": "Module",
+      "file": "WinAPI/Declarations.twin",
+      "access": "Public",
+      "attributes": [],
+      "implements": [],
+      "inherits": null,
+      "members": [
+        {
+          "name": "CloseHandle",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public Declare PtrSafe Function CloseHandle Lib \"\" ( ByVal hObject As LongPtr) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CreateToolhelp32Snapshot",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public Declare PtrSafe Function CreateToolhelp32Snapshot Lib \"\" ( ByVal dwFlags As Long, ByVal th32ProcessID As Long) As LongPtr",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "FileTimeToLongLong",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function FileTimeToLongLong(ByRef ft As FILETIME) As LongLong",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "FillConsoleOutputAttribute",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public Declare PtrSafe Function FillConsoleOutputAttribute Lib \"\" ( ByVal hConsoleOutput As LongPtr, ByVal wAttribute As Integer, ByVal nLength As Long, ByVal dwWriteCoord As Long, ByRef lpNumberOfAttrsWritten As Long) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "FillConsoleOutputCharacterW",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public Declare PtrSafe Function FillConsoleOutputCharacterW Lib \"\" ( ByVal hConsoleOutput As LongPtr, ByVal cCharacter As Integer, ByVal nLength As Long, ByVal dwWriteCoord As Long, ByRef lpNumberOfCharsWritten As Long) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GetACP",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public Declare PtrSafe Function GetACP Lib \"\" () As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GetAdaptersInfo",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public Declare PtrSafe Function GetAdaptersInfo Lib \"\" ( ByVal pAdapterInfo As LongPtr, ByRef pOutBufLen As Long) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GetComputerNameW",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public Declare PtrSafe Function GetComputerNameW Lib \"\" ( ByVal lpBuffer As LongPtr, ByRef nSize As Long) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GetConsoleScreenBufferInfo",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public Declare PtrSafe Function GetConsoleScreenBufferInfo Lib \"\" ( ByVal hConsoleOutput As LongPtr, ByRef lpConsoleScreenBufferInfo As CONSOLE_SCREEN_BUFFER_INFO) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GetCurrentProcessId",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public Declare PtrSafe Function GetCurrentProcessId Lib \"\" () As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GetDiskFreeSpaceExW",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public Declare PtrSafe Function GetDiskFreeSpaceExW Lib \"\" ( ByVal lpDirectoryName As LongPtr, ByRef lpFreeBytesAvailableToCaller As LongLong, ByRef lpTotalNumberOfBytes As LongLong, ByRef lpTotalNumberOfFreeBytes As LongLong) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GetDriveTypeW",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public Declare PtrSafe Function GetDriveTypeW Lib \"\" ( ByVal lpRootPathName As LongPtr) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "gethostname",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public Declare PtrSafe Function gethostname Lib \"\" ( ByVal name As LongPtr, ByVal namelen As Long) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GetLocaleInfoW",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public Declare PtrSafe Function GetLocaleInfoW Lib \"\" ( ByVal Locale As Long, ByVal LCType As Long, ByVal lpLCData As LongPtr, ByVal cchData As Long) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GetLogicalDrives",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public Declare PtrSafe Function GetLogicalDrives Lib \"\" () As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GetNativeSystemInfo",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public Declare PtrSafe Sub GetNativeSystemInfo Lib \"\" ( ByRef lpSystemInfo As SYSTEM_INFO)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GetOEMCP",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public Declare PtrSafe Function GetOEMCP Lib \"\" () As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GetStdHandle",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public Declare PtrSafe Function GetStdHandle Lib \"\" ( ByVal nStdHandle As Long) As LongPtr",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GetStringFromBuffer",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function GetStringFromBuffer(ByRef buffer() As Integer) As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GetStringFromByteBuffer",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function GetStringFromByteBuffer(ByRef buffer() As Byte) As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GetSystemTimes",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public Declare PtrSafe Function GetSystemTimes Lib \"\" ( ByRef lpIdleTime As FILETIME, ByRef lpKernelTime As FILETIME, ByRef lpUserTime As FILETIME) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GetTickCount64",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public Declare PtrSafe Function GetTickCount64 Lib \"\" () As LongLong",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GetTimeZoneInformation",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public Declare PtrSafe Function GetTimeZoneInformation Lib \"\" ( ByRef lpTimeZoneInformation As TIME_ZONE_INFORMATION) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GetUserDefaultLCID",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public Declare PtrSafe Function GetUserDefaultLCID Lib \"\" () As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GetUserNameW",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public Declare PtrSafe Function GetUserNameW Lib \"\" ( ByVal lpBuffer As LongPtr, ByRef nSize As Long) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GlobalMemoryStatusEx",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public Declare PtrSafe Function GlobalMemoryStatusEx Lib \"\" ( ByRef lpBuffer As MEMORYSTATUSEX) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "IsUserAnAdmin",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public Declare PtrSafe Function IsUserAnAdmin Lib \"\" () As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "MakeCOORD",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function MakeCOORD(ByVal X As Integer, ByVal Y As Integer) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Process32FirstW",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public Declare PtrSafe Function Process32FirstW Lib \"\" ( ByVal hSnapshot As LongPtr, ByRef lppe As PROCESSENTRY32W) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Process32NextW",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public Declare PtrSafe Function Process32NextW Lib \"\" ( ByVal hSnapshot As LongPtr, ByRef lppe As PROCESSENTRY32W) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "RegCloseKey",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public Declare PtrSafe Function RegCloseKey Lib \"\" ( ByVal hKey As LongPtr) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "RegEnumKeyExW",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public Declare PtrSafe Function RegEnumKeyExW Lib \"\" ( ByVal hKey As LongPtr, ByVal dwIndex As Long, ByVal lpName As LongPtr, ByRef lpcName As Long, ByVal lpReserved As LongPtr, ByVal lpClass As LongPtr, ByVal lpcClass As LongPtr, ByVal lpftLastWriteTime As LongPtr) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "RegOpenKeyExW",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public Declare PtrSafe Function RegOpenKeyExW Lib \"\" ( ByVal hKey As LongPtr, ByVal lpSubKey As LongPtr, ByVal ulOptions As Long, ByVal samDesired As Long, ByRef phkResult As LongPtr) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "RegQueryValueExW",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public Declare PtrSafe Function RegQueryValueExW Lib \"\" ( ByVal hKey As LongPtr, ByVal lpValueName As LongPtr, ByVal lpReserved As LongPtr, ByRef lpType As Long, ByVal lpData As LongPtr, ByRef lpcbData As Long) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "RtlGetVersion",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public Declare PtrSafe Function RtlGetVersion Lib \"\" ( ByRef lpVersionInformation As OSVERSIONINFOEXW) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SetConsoleCtrlHandler",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public Declare PtrSafe Function SetConsoleCtrlHandler Lib \"\" ( ByVal HandlerRoutine As LongPtr, ByVal Add As Long) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SetConsoleCursorPosition",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public Declare PtrSafe Function SetConsoleCursorPosition Lib \"\" ( ByVal hConsoleOutput As LongPtr, ByVal dwCursorPosition As Long) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SetConsoleTextAttribute",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public Declare PtrSafe Function SetConsoleTextAttribute Lib \"\" ( ByVal hConsoleOutput As LongPtr, ByVal wAttributes As Integer) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "WSACleanup",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public Declare PtrSafe Function WSACleanup Lib \"\" () As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "WSAStartup",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public Declare PtrSafe Function WSAStartup Lib \"\" ( ByVal wVersionRequested As Integer, ByVal lpWSAData As LongPtr) As Long",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "WinAPIStructures",
+      "kind": "Module",
+      "file": "WinAPI/Structures.twin",
+      "access": "Public",
+      "attributes": [],
+      "implements": [],
+      "inherits": null,
+      "members": [
+        {
+          "name": "BACKGROUND_BLUE",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const BACKGROUND_BLUE As Integer = &H10",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "BACKGROUND_GREEN",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const BACKGROUND_GREEN As Integer = &H20",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "BACKGROUND_INTENSITY",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const BACKGROUND_INTENSITY As Integer = &H80",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "BACKGROUND_RED",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const BACKGROUND_RED As Integer = &H40",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CONSOLE_SCREEN_BUFFER_INFO",
+          "kind": "Type",
+          "access": "Public",
+          "signature": "Public Type CONSOLE_SCREEN_BUFFER_INFO",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "COORD",
+          "kind": "Type",
+          "access": "Public",
+          "signature": "Public Type COORD",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "DRIVE_CDROM",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const DRIVE_CDROM As Long = 5",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "DRIVE_FIXED",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const DRIVE_FIXED As Long = 3",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "DRIVE_NO_ROOT_DIR",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const DRIVE_NO_ROOT_DIR As Long = 1",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "DRIVE_RAMDISK",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const DRIVE_RAMDISK As Long = 6",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "DRIVE_REMOTE",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const DRIVE_REMOTE As Long = 4",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "DRIVE_REMOVABLE",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const DRIVE_REMOVABLE As Long = 2",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "DRIVE_UNKNOWN",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const DRIVE_UNKNOWN As Long = 0",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "FILETIME",
+          "kind": "Type",
+          "access": "Public",
+          "signature": "Public Type FILETIME",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "FOREGROUND_BLUE",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const FOREGROUND_BLUE As Integer = &H1",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "FOREGROUND_GREEN",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const FOREGROUND_GREEN As Integer = &H2",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "FOREGROUND_INTENSITY",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const FOREGROUND_INTENSITY As Integer = &H8",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "FOREGROUND_RED",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const FOREGROUND_RED As Integer = &H4",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "HKEY_CURRENT_USER",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const HKEY_CURRENT_USER As LongPtr = &H80000001",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "HKEY_LOCAL_MACHINE",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const HKEY_LOCAL_MACHINE As LongPtr = &H80000002",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "IP_ADAPTER_INFO",
+          "kind": "Type",
+          "access": "Public",
+          "signature": "Public Type IP_ADAPTER_INFO",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "IP_ADDR_STRING",
+          "kind": "Type",
+          "access": "Public",
+          "signature": "Public Type IP_ADDR_STRING",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "KEY_READ",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const KEY_READ As Long = &H20019",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "KEY_WOW64_32KEY",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const KEY_WOW64_32KEY As Long = &H200",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "KEY_WOW64_64KEY",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const KEY_WOW64_64KEY As Long = &H100",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "LOCALE_SENGLISHCOUNTRYNAME",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const LOCALE_SENGLISHCOUNTRYNAME As Long = &H1002",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "LOCALE_SENGLISHLANGUAGENAME",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const LOCALE_SENGLISHLANGUAGENAME As Long = &H1001",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "LOCALE_SISO3166CTRYNAME",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const LOCALE_SISO3166CTRYNAME As Long = &H5A",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "LOCALE_SISO639LANGNAME",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const LOCALE_SISO639LANGNAME As Long = &H59",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "MEMORYSTATUSEX",
+          "kind": "Type",
+          "access": "Public",
+          "signature": "Public Type MEMORYSTATUSEX",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "OSVERSIONINFOEXW",
+          "kind": "Type",
+          "access": "Public",
+          "signature": "Public Type OSVERSIONINFOEXW",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "PROCESSENTRY32W",
+          "kind": "Type",
+          "access": "Public",
+          "signature": "Public Type PROCESSENTRY32W",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "PROCESSOR_ARCHITECTURE_AMD64",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const PROCESSOR_ARCHITECTURE_AMD64 As Integer = 9",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "PROCESSOR_ARCHITECTURE_ARM",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const PROCESSOR_ARCHITECTURE_ARM As Integer = 5",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "PROCESSOR_ARCHITECTURE_ARM64",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const PROCESSOR_ARCHITECTURE_ARM64 As Integer = 12",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "PROCESSOR_ARCHITECTURE_IA64",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const PROCESSOR_ARCHITECTURE_IA64 As Integer = 6",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "PROCESSOR_ARCHITECTURE_INTEL",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const PROCESSOR_ARCHITECTURE_INTEL As Integer = 0",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "PROCESSOR_ARCHITECTURE_UNKNOWN",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const PROCESSOR_ARCHITECTURE_UNKNOWN As Integer = &HFFFF",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "REG_DWORD",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const REG_DWORD As Long = 4",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "REG_EXPAND_SZ",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const REG_EXPAND_SZ As Long = 2",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "REG_QWORD",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const REG_QWORD As Long = 11",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "REG_SZ",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const REG_SZ As Long = 1",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SMALL_RECT",
+          "kind": "Type",
+          "access": "Public",
+          "signature": "Public Type SMALL_RECT",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "STD_ERROR_HANDLE",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const STD_ERROR_HANDLE As Long = -12",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "STD_INPUT_HANDLE",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const STD_INPUT_HANDLE As Long = -10",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "STD_OUTPUT_HANDLE",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const STD_OUTPUT_HANDLE As Long = -11",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SYSTEM_INFO",
+          "kind": "Type",
+          "access": "Public",
+          "signature": "Public Type SYSTEM_INFO",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SYSTEMTIME",
+          "kind": "Type",
+          "access": "Public",
+          "signature": "Public Type SYSTEMTIME",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "TH32CS_SNAPPROCESS",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const TH32CS_SNAPPROCESS As Long = &H2",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "TIME_ZONE_INFORMATION",
+          "kind": "Type",
+          "access": "Public",
+          "signature": "Public Type TIME_ZONE_INFORMATION",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    }
+  ],
+  "enums": [],
+  "types": []
+}

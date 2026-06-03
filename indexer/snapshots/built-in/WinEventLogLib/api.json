@@ -1,0 +1,195 @@
+{
+  "package": "WinEventLogLib",
+  "version": "beta-x-0983",
+  "modules": [
+    {
+      "name": "EventLog",
+      "kind": "Class",
+      "file": "EventLog.twin",
+      "access": "Public",
+      "attributes": [
+        "COMCreatable(False)",
+        "ClassId"
+      ],
+      "implements": [],
+      "inherits": null,
+      "members": [
+        {
+          "name": "LogArray",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub LogArray(ByVal Type As EventLogTypeConstants, ByVal EventId As T1, ByVal CategoryId As T2, AdditionalStrings() As Variant)",
+          "attributes": [],
+          "description": "The main Logging routine.  Use this to create a new log entry"
+        },
+        {
+          "name": "LogFailure",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub LogFailure(ByVal EventId As T1, ByVal CategoryId As T2, ParamArray AdditionalStrings())",
+          "attributes": [],
+          "description": "Creates a log entry into the system, using the provided arguments"
+        },
+        {
+          "name": "LogSuccess",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub LogSuccess(ByVal EventId As T1, ByVal CategoryId As T2, ParamArray AdditionalStrings())",
+          "attributes": [],
+          "description": "Creates a log entry into the system, using the provided arguments"
+        },
+        {
+          "name": "New",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub New(LogName As String)",
+          "attributes": [],
+          "description": "Creates a new instance of the event log class.  LogPath can be a simple string, e.g. 'MyService', or can be a full path such as 'System\\MyService'"
+        },
+        {
+          "name": "Register",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub Register()",
+          "attributes": [],
+          "description": "Registers the event log source on this machine, using the Windows Registry"
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "EventLogAPIs",
+      "kind": "Module",
+      "file": "APIs.twin",
+      "access": "Private",
+      "attributes": [],
+      "implements": [],
+      "inherits": null,
+      "members": [
+        {
+          "name": "RegCloseKey",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function RegCloseKey Lib \"\" (ByVal hKey As LongPtr) As Long",
+          "attributes": [
+            "DLLStackCheck(False)"
+          ],
+          "description": null
+        },
+        {
+          "name": "RegCreateKeyExW",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function RegCreateKeyExW Lib \"\" (ByVal hKey As LongPtr, ByVal lpSubKey As String, ByVal Reserved As Long, ByVal lpClass As String, ByVal dwOptions As Long, ByVal samDesired As Long, ByVal lpSecurityAttributes As LongPtr, phkResult As LongPtr, lpdwDisposition As LongPtr) As Long",
+          "attributes": [
+            "DLLStackCheck(False)"
+          ],
+          "description": null
+        },
+        {
+          "name": "RegDeleteKeyExW",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function RegDeleteKeyExW Lib \"\" (ByVal hKey As LongPtr, ByVal lpSubKey As String, ByVal samDesired As Long, ByVal Reserved As Long) As Long",
+          "attributes": [
+            "DLLStackCheck(False)"
+          ],
+          "description": null
+        },
+        {
+          "name": "RegisterEventSourceW",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function RegisterEventSourceW Lib \"\" (ByVal lpUNCServerName As String, ByVal lpSourceName As String) As LongPtr",
+          "attributes": [
+            "DLLStackCheck(False)"
+          ],
+          "description": null
+        },
+        {
+          "name": "RegSetValueExW",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function RegSetValueExW Lib \"\" (ByVal hKey As LongPtr, ByVal lpValueName As String, ByVal Reserved As Long, ByVal dwType As Long, lpData As Any, ByVal cbData As Long) As Long",
+          "attributes": [
+            "DLLStackCheck(False)"
+          ],
+          "description": null
+        },
+        {
+          "name": "ReportEventW",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function ReportEventW Lib \"\" (ByVal hEventLog As LongPtr, ByVal wType As Integer, ByVal wCategory As Integer, ByVal dwEventID As Long, ByVal lpUserSid As LongPtr, ByVal wNumStrings As Integer, ByVal dwDataSize As Long, ByVal lpStrings As LongPtr, ByVal lpRawData As LongPtr) As Long",
+          "attributes": [
+            "DLLStackCheck(False)"
+          ],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "EventLogConstants",
+      "kind": "Module",
+      "file": "Constants.twin",
+      "access": "Private",
+      "attributes": [],
+      "implements": [],
+      "inherits": null,
+      "members": [
+        {
+          "name": "EventLogTypeConstants",
+          "kind": "Enum",
+          "access": "Public",
+          "signature": "Public Enum EventLogTypeConstants",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "EventLogHelperPrivate",
+      "kind": "Module",
+      "file": "Helper.twin",
+      "access": "Public",
+      "attributes": [],
+      "implements": [],
+      "inherits": null,
+      "members": [
+        {
+          "name": "VariantArrayToStringArray",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function VariantArrayToStringArray(array() As Variant, Optional ByRef outCount As Long) As String()",
+          "attributes": [],
+          "description": "Converts a variant array into a string array"
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "EventLogHelperPublic",
+      "kind": "Module",
+      "file": "Helper.twin",
+      "access": "Public",
+      "attributes": [],
+      "implements": [],
+      "inherits": null,
+      "members": [
+        {
+          "name": "RegisterEventLogInternal",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub RegisterEventLogInternal(ByVal LogPath As String, ByVal CategoryCount As Long)",
+          "attributes": [],
+          "description": "Registers an event source into the Window Registry.  LogPath can be a simple name like 'MyService' which would be registered as 'Application\\MyService', or can be a full path like 'System\\MyService'"
+        }
+      ],
+      "events": []
+    }
+  ],
+  "enums": [],
+  "types": []
+}

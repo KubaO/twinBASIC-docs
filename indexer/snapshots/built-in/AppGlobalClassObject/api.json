@@ -1,0 +1,827 @@
+{
+  "package": "AppGlobalClassObject",
+  "version": "beta-x-0983",
+  "modules": [
+    {
+      "name": "_App",
+      "kind": "Interface",
+      "file": "AppClass.twin",
+      "access": "Public",
+      "attributes": [
+        "InterfaceId"
+      ],
+      "implements": [],
+      "inherits": "stdole.IUnknown",
+      "members": [
+        {
+          "name": "Build",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Get Build() As Integer",
+          "attributes": [
+            "RedirectToStaticImplementation(\"InternalStuff.GetAppBuild\")"
+          ],
+          "description": null
+        },
+        {
+          "name": "Comments",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Get Comments() As String",
+          "attributes": [
+            "RedirectToStaticImplementation(\"InternalStuff.GetAppComments\")"
+          ],
+          "description": null
+        },
+        {
+          "name": "CompanyName",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Get CompanyName() As String",
+          "attributes": [
+            "RedirectToStaticImplementation(\"InternalStuff.GetAppCompanyName\")"
+          ],
+          "description": null
+        },
+        {
+          "name": "EXEName",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Get EXEName() As String",
+          "attributes": [
+            "RedirectToStaticImplementation(\"InternalStuff.GetAppEXEName\")"
+          ],
+          "description": null
+        },
+        {
+          "name": "FileDescription",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Get FileDescription() As String",
+          "attributes": [
+            "RedirectToStaticImplementation(\"InternalStuff.GetAppFileDescription\")"
+          ],
+          "description": null
+        },
+        {
+          "name": "HelpFile",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Get HelpFile() As String",
+          "attributes": [
+            "RedirectToStaticImplementation(\"InternalStuff.GetAppHelpFile\")"
+          ],
+          "description": null
+        },
+        {
+          "name": "HelpFile",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Let HelpFile(ByVal Value As String)",
+          "attributes": [
+            "RedirectToStaticImplementation(\"InternalStuff.LetAppHelpFile\")"
+          ],
+          "description": null
+        },
+        {
+          "name": "hInstance",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Get hInstance() As LongPtr",
+          "attributes": [
+            "RedirectToStaticImplementation(\"InternalStuff.GetApphInstance\")"
+          ],
+          "description": null
+        },
+        {
+          "name": "IsInIDE",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Get IsInIDE() As Boolean",
+          "attributes": [
+            "RedirectToStaticImplementation(\"InternalStuff.GetAppIsInIDE\")"
+          ],
+          "description": null
+        },
+        {
+          "name": "LastBuildPath",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Get LastBuildPath() As String",
+          "attributes": [
+            "RedirectToStaticImplementation(\"InternalStuff.GetAppLastBuildPath\")"
+          ],
+          "description": null
+        },
+        {
+          "name": "LegalCopyright",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Get LegalCopyright() As String",
+          "attributes": [
+            "RedirectToStaticImplementation(\"InternalStuff.GetAppLegalCopyright\")"
+          ],
+          "description": null
+        },
+        {
+          "name": "LegalTrademarks",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Get LegalTrademarks() As String",
+          "attributes": [
+            "RedirectToStaticImplementation(\"InternalStuff.GetAppLegalTrademarks\")"
+          ],
+          "description": null
+        },
+        {
+          "name": "LogEvent",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub LogEvent(ByVal LogBuffer As String, ByVal EventType As Variant)",
+          "attributes": [
+            "Unimplemented"
+          ],
+          "description": null
+        },
+        {
+          "name": "LogMode",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Get LogMode() As LogModeConstants",
+          "attributes": [
+            "RedirectToStaticImplementation(\"InternalStuff.GetAppLogMode\")"
+          ],
+          "description": null
+        },
+        {
+          "name": "LogPath",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Get LogPath() As String",
+          "attributes": [
+            "Unimplemented"
+          ],
+          "description": null
+        },
+        {
+          "name": "Major",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Get Major() As Integer",
+          "attributes": [
+            "RedirectToStaticImplementation(\"InternalStuff.GetAppMajor\")"
+          ],
+          "description": null
+        },
+        {
+          "name": "Minor",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Get Minor() As Integer",
+          "attributes": [
+            "RedirectToStaticImplementation(\"InternalStuff.GetAppMinor\")"
+          ],
+          "description": null
+        },
+        {
+          "name": "ModulePath",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Get ModulePath() As String",
+          "attributes": [
+            "RedirectToStaticImplementation(\"InternalStuff.GetAppModulePath\")"
+          ],
+          "description": null
+        },
+        {
+          "name": "NonModalAllowed",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Get NonModalAllowed() As Boolean",
+          "attributes": [
+            "Unimplemented"
+          ],
+          "description": null
+        },
+        {
+          "name": "OleRequestPendingMsgText",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Get OleRequestPendingMsgText() As String",
+          "attributes": [
+            "Unimplemented"
+          ],
+          "description": null
+        },
+        {
+          "name": "OleRequestPendingMsgText",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Let OleRequestPendingMsgText(ByVal value As String)",
+          "attributes": [
+            "Unimplemented"
+          ],
+          "description": null
+        },
+        {
+          "name": "OleRequestPendingMsgTitle",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Get OleRequestPendingMsgTitle() As String",
+          "attributes": [
+            "Unimplemented"
+          ],
+          "description": null
+        },
+        {
+          "name": "OleRequestPendingMsgTitle",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Let OleRequestPendingMsgTitle(ByVal value As String)",
+          "attributes": [
+            "Unimplemented"
+          ],
+          "description": null
+        },
+        {
+          "name": "OleRequestPendingTimeout",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Get OleRequestPendingTimeout() As Long",
+          "attributes": [
+            "Unimplemented"
+          ],
+          "description": null
+        },
+        {
+          "name": "OleRequestPendingTimeout",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Let OleRequestPendingTimeout(ByVal value As Long)",
+          "attributes": [
+            "Unimplemented"
+          ],
+          "description": null
+        },
+        {
+          "name": "OleServerBusyMsgText",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Get OleServerBusyMsgText() As String",
+          "attributes": [
+            "Unimplemented"
+          ],
+          "description": null
+        },
+        {
+          "name": "OleServerBusyMsgText",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Let OleServerBusyMsgText(ByVal value As String)",
+          "attributes": [
+            "Unimplemented"
+          ],
+          "description": null
+        },
+        {
+          "name": "OleServerBusyMsgTitle",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Get OleServerBusyMsgTitle() As String",
+          "attributes": [
+            "Unimplemented"
+          ],
+          "description": null
+        },
+        {
+          "name": "OleServerBusyMsgTitle",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Let OleServerBusyMsgTitle(ByVal value As String)",
+          "attributes": [
+            "Unimplemented"
+          ],
+          "description": null
+        },
+        {
+          "name": "OleServerBusyRaiseError",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Get OleServerBusyRaiseError() As Boolean",
+          "attributes": [
+            "Unimplemented"
+          ],
+          "description": null
+        },
+        {
+          "name": "OleServerBusyRaiseError",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Let OleServerBusyRaiseError(ByVal value As Boolean)",
+          "attributes": [
+            "Unimplemented"
+          ],
+          "description": null
+        },
+        {
+          "name": "OleServerBusyTimeout",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Get OleServerBusyTimeout() As Long",
+          "attributes": [
+            "Unimplemented"
+          ],
+          "description": null
+        },
+        {
+          "name": "OleServerBusyTimeout",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Let OleServerBusyTimeout(ByVal value As Long)",
+          "attributes": [
+            "Unimplemented"
+          ],
+          "description": null
+        },
+        {
+          "name": "Path",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Get Path() As String",
+          "attributes": [
+            "RedirectToStaticImplementation(\"InternalStuff.GetAppPath\")"
+          ],
+          "description": null
+        },
+        {
+          "name": "PrevInstance",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Get PrevInstance() As Boolean",
+          "attributes": [
+            "RedirectToStaticImplementation(\"InternalStuff.GetAppPrevInstance\")"
+          ],
+          "description": null
+        },
+        {
+          "name": "ProductName",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Get ProductName() As String",
+          "attributes": [
+            "RedirectToStaticImplementation(\"InternalStuff.GetAppProductName\")"
+          ],
+          "description": null
+        },
+        {
+          "name": "RetainedProject",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Get RetainedProject() As Boolean",
+          "attributes": [
+            "Unimplemented"
+          ],
+          "description": null
+        },
+        {
+          "name": "Revision",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Get Revision() As Integer",
+          "attributes": [
+            "RedirectToStaticImplementation(\"InternalStuff.GetAppRevision\")"
+          ],
+          "description": null
+        },
+        {
+          "name": "StartLogging",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub StartLogging(ByVal LogTarget As String, ByVal LogModes As Long)",
+          "attributes": [
+            "Unimplemented"
+          ],
+          "description": null
+        },
+        {
+          "name": "StartMode",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Get StartMode() As Integer",
+          "attributes": [
+            "Unimplemented"
+          ],
+          "description": null
+        },
+        {
+          "name": "TaskVisible",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Get TaskVisible() As Boolean",
+          "attributes": [
+            "Unimplemented"
+          ],
+          "description": null
+        },
+        {
+          "name": "TaskVisible",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Let TaskVisible(ByVal value As Boolean)",
+          "attributes": [
+            "Unimplemented"
+          ],
+          "description": null
+        },
+        {
+          "name": "ThreadID",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Get ThreadID() As Long",
+          "attributes": [
+            "RedirectToStaticImplementation(\"InternalStuff.GetAppThreadID\")"
+          ],
+          "description": null
+        },
+        {
+          "name": "Title",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Get Title() As String",
+          "attributes": [
+            "RedirectToStaticImplementation(\"InternalStuff.GetAppTitle\")"
+          ],
+          "description": null
+        },
+        {
+          "name": "Title",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Let Title(ByVal Value As String)",
+          "attributes": [
+            "RedirectToStaticImplementation(\"InternalStuff.LetAppTitle\")"
+          ],
+          "description": null
+        },
+        {
+          "name": "UnattendedApp",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Get UnattendedApp() As Boolean",
+          "attributes": [
+            "Unimplemented"
+          ],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "_App",
+      "kind": "Interface",
+      "file": "AppClass.twin",
+      "access": "Public",
+      "attributes": [
+        "Default"
+      ],
+      "implements": [],
+      "inherits": null,
+      "members": [],
+      "events": []
+    },
+    {
+      "name": "InternalStuff",
+      "kind": "Module",
+      "file": "Misc.twin",
+      "access": "Public",
+      "attributes": [],
+      "implements": [],
+      "inherits": null,
+      "members": [
+        {
+          "name": "CreateGlobalObject",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function CreateGlobalObject Lib \"\" Alias \"\" () As stdole.IUnknown",
+          "attributes": [
+            "PreserveSig(False)",
+            "DLLStackCheck(False)",
+            "Hidden",
+            "Restricted"
+          ],
+          "description": null
+        },
+        {
+          "name": "GetAppBuild",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function GetAppBuild Lib \"\" Alias \"\" () As Integer",
+          "attributes": [
+            "PreserveSig(False)",
+            "DLLStackCheck(False)",
+            "Hidden",
+            "Restricted"
+          ],
+          "description": null
+        },
+        {
+          "name": "GetAppComments",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function GetAppComments Lib \"\" Alias \"\" () As String",
+          "attributes": [
+            "PreserveSig(False)",
+            "DLLStackCheck(False)",
+            "Hidden",
+            "Restricted"
+          ],
+          "description": null
+        },
+        {
+          "name": "GetAppCompanyName",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function GetAppCompanyName Lib \"\" Alias \"\" () As String",
+          "attributes": [
+            "PreserveSig(False)",
+            "DLLStackCheck(False)",
+            "Hidden",
+            "Restricted"
+          ],
+          "description": null
+        },
+        {
+          "name": "GetAppEXEName",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function GetAppEXEName Lib \"\" Alias \"\" () As String",
+          "attributes": [
+            "PreserveSig(False)",
+            "DLLStackCheck(False)",
+            "Hidden",
+            "Restricted"
+          ],
+          "description": null
+        },
+        {
+          "name": "GetAppFileDescription",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function GetAppFileDescription Lib \"\" Alias \"\" () As String",
+          "attributes": [
+            "PreserveSig(False)",
+            "DLLStackCheck(False)",
+            "Hidden",
+            "Restricted"
+          ],
+          "description": null
+        },
+        {
+          "name": "GetAppHelpFile",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function GetAppHelpFile Lib \"\" Alias \"\" () As String",
+          "attributes": [
+            "PreserveSig(False)",
+            "DLLStackCheck(False)",
+            "Hidden",
+            "Restricted"
+          ],
+          "description": null
+        },
+        {
+          "name": "GetApphInstance",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function GetApphInstance Lib \"\" Alias \"\" () As LongPtr",
+          "attributes": [
+            "PreserveSig(False)",
+            "DLLStackCheck(False)",
+            "Hidden",
+            "Restricted"
+          ],
+          "description": null
+        },
+        {
+          "name": "GetAppIsInIDE",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function GetAppIsInIDE Lib \"\" Alias \"\" () As Boolean",
+          "attributes": [
+            "PreserveSig(False)",
+            "DLLStackCheck(False)",
+            "Hidden",
+            "Restricted"
+          ],
+          "description": null
+        },
+        {
+          "name": "GetAppLastBuildPath",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function GetAppLastBuildPath Lib \"\" Alias \"\" () As String",
+          "attributes": [
+            "PreserveSig(False)",
+            "DLLStackCheck(False)",
+            "Hidden",
+            "Restricted"
+          ],
+          "description": null
+        },
+        {
+          "name": "GetAppLegalCopyright",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function GetAppLegalCopyright Lib \"\" Alias \"\" () As String",
+          "attributes": [
+            "PreserveSig(False)",
+            "DLLStackCheck(False)",
+            "Hidden",
+            "Restricted"
+          ],
+          "description": null
+        },
+        {
+          "name": "GetAppLegalTrademarks",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function GetAppLegalTrademarks Lib \"\" Alias \"\" () As String",
+          "attributes": [
+            "PreserveSig(False)",
+            "DLLStackCheck(False)",
+            "Hidden",
+            "Restricted"
+          ],
+          "description": null
+        },
+        {
+          "name": "GetAppLogMode",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function GetAppLogMode Lib \"\" Alias \"\" () As LogModeConstants",
+          "attributes": [
+            "PreserveSig(False)",
+            "DLLStackCheck(False)",
+            "Hidden",
+            "Restricted"
+          ],
+          "description": null
+        },
+        {
+          "name": "GetAppMajor",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function GetAppMajor Lib \"\" Alias \"\" () As Integer",
+          "attributes": [
+            "PreserveSig(False)",
+            "DLLStackCheck(False)",
+            "Hidden",
+            "Restricted"
+          ],
+          "description": null
+        },
+        {
+          "name": "GetAppMinor",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function GetAppMinor Lib \"\" Alias \"\" () As Integer",
+          "attributes": [
+            "PreserveSig(False)",
+            "DLLStackCheck(False)",
+            "Hidden",
+            "Restricted"
+          ],
+          "description": null
+        },
+        {
+          "name": "GetAppModulePath",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function GetAppModulePath Lib \"\" Alias \"\" () As String",
+          "attributes": [
+            "PreserveSig(False)",
+            "DLLStackCheck(False)",
+            "Hidden",
+            "Restricted"
+          ],
+          "description": null
+        },
+        {
+          "name": "GetAppPath",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function GetAppPath Lib \"\" Alias \"\" () As String",
+          "attributes": [
+            "PreserveSig(False)",
+            "DLLStackCheck(False)",
+            "Hidden",
+            "Restricted"
+          ],
+          "description": null
+        },
+        {
+          "name": "GetAppPrevInstance",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function GetAppPrevInstance Lib \"\" Alias \"\" () As Boolean",
+          "attributes": [
+            "PreserveSig(False)",
+            "DLLStackCheck(False)",
+            "Hidden",
+            "Restricted"
+          ],
+          "description": null
+        },
+        {
+          "name": "GetAppProductName",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function GetAppProductName Lib \"\" Alias \"\" () As String",
+          "attributes": [
+            "PreserveSig(False)",
+            "DLLStackCheck(False)",
+            "Hidden",
+            "Restricted"
+          ],
+          "description": null
+        },
+        {
+          "name": "GetAppRevision",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function GetAppRevision Lib \"\" Alias \"\" () As Integer",
+          "attributes": [
+            "PreserveSig(False)",
+            "DLLStackCheck(False)",
+            "Hidden",
+            "Restricted"
+          ],
+          "description": null
+        },
+        {
+          "name": "GetAppThreadID",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function GetAppThreadID Lib \"\" Alias \"\" () As Long",
+          "attributes": [
+            "PreserveSig(False)",
+            "DLLStackCheck(False)",
+            "Hidden",
+            "Restricted"
+          ],
+          "description": null
+        },
+        {
+          "name": "GetAppTitle",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function GetAppTitle Lib \"\" Alias \"\" () As String",
+          "attributes": [
+            "PreserveSig(False)",
+            "DLLStackCheck(False)",
+            "Hidden",
+            "Restricted"
+          ],
+          "description": null
+        },
+        {
+          "name": "LetAppHelpFile",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Sub LetAppHelpFile Lib \"\" Alias \"\" (ByVal Value As String)",
+          "attributes": [
+            "PreserveSig(False)",
+            "DLLStackCheck(False)",
+            "Hidden",
+            "Restricted"
+          ],
+          "description": null
+        },
+        {
+          "name": "LetAppTitle",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Sub LetAppTitle Lib \"\" Alias \"\" (ByVal Value As String)",
+          "attributes": [
+            "PreserveSig(False)",
+            "DLLStackCheck(False)",
+            "Hidden",
+            "Restricted"
+          ],
+          "description": null
+        },
+        {
+          "name": "LogModeConstants",
+          "kind": "Enum",
+          "access": null,
+          "signature": "Enum LogModeConstants",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    }
+  ],
+  "enums": [],
+  "types": []
+}

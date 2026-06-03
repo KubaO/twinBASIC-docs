@@ -1,0 +1,1140 @@
+{
+  "package": "tbKMode",
+  "version": "0.1.0.1",
+  "modules": [
+    {
+      "name": "modDisk",
+      "kind": "Module",
+      "file": "modDisk.twin",
+      "access": "Public",
+      "attributes": [],
+      "implements": [],
+      "inherits": null,
+      "members": [
+        {
+          "name": "BOOT_SECTOR",
+          "kind": "Type",
+          "access": "Public",
+          "signature": "Public Type BOOT_SECTOR",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "DEFAULT_DISK_SIZE",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const DEFAULT_DISK_SIZE = (1024 * 1024)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "DEFAULT_ROOT_DIR_ENTRIES",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const DEFAULT_ROOT_DIR_ENTRIES = 512",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "DEFAULT_SECTORS_PER_CLUSTER",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const DEFAULT_SECTORS_PER_CLUSTER = 2",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "DEVICE_EXTENSION",
+          "kind": "Type",
+          "access": "Public",
+          "signature": "Public Type DEVICE_EXTENSION",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "DEVICE_STATE",
+          "kind": "Enum",
+          "access": "Public",
+          "signature": "Public Enum DEVICE_STATE",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "DIR_ENTRIES_PER_SECTOR",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const DIR_ENTRIES_PER_SECTOR = 16",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "DIR_ENTRY",
+          "kind": "Type",
+          "access": "Public",
+          "signature": "Public Type DIR_ENTRY",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "DISK_GEOMETRY",
+          "kind": "Type",
+          "access": "Public",
+          "signature": "Public Type DISK_GEOMETRY",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "DISK_INFO",
+          "kind": "Type",
+          "access": "Public",
+          "signature": "Public Type DISK_INFO",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "DOS_DEVNAME_BUFFER_SIZE",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const DOS_DEVNAME_BUFFER_SIZE As Long = ((24) / 2) + 10",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "DOS_DEVNAME_LENGTH",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const DOS_DEVNAME_LENGTH As Long = (24 + 2 * 10)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "DRIVE_LETTER_BUFFER_SIZE",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const DRIVE_LETTER_BUFFER_SIZE = 10&",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "DRIVE_LETTER_LENGTH",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const DRIVE_LETTER_LENGTH As Long = 2 * 10",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "FLAG_LINK_CREATED",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const FLAG_LINK_CREATED = &H1",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "MEDIA_TYPE",
+          "kind": "Enum",
+          "access": "Public",
+          "signature": "Public Enum MEDIA_TYPE",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "MOUNTDEV_NAME",
+          "kind": "Type",
+          "access": "Public",
+          "signature": "Public Type MOUNTDEV_NAME",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "PARTITION_INFORMATION",
+          "kind": "Type",
+          "access": "Public",
+          "signature": "Public Type PARTITION_INFORMATION",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "RAMDISK_DRIVER_EXTENSION",
+          "kind": "Type",
+          "access": "Public",
+          "signature": "Public Type RAMDISK_DRIVER_EXTENSION",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "RAMDISK_MEDIA_TYPE",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const RAMDISK_MEDIA_TYPE = &HF8",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "REMLOCK_HIGHWATER",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const REMLOCK_HIGHWATER = 10",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "REMLOCK_MAXIMUM",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const REMLOCK_MAXIMUM = 1",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "modFltMgr",
+      "kind": "Module",
+      "file": "modFltMgr.twin",
+      "access": "Public",
+      "attributes": [],
+      "implements": [],
+      "inherits": null,
+      "members": [
+        {
+          "name": "_FLT_REGISTRATION",
+          "kind": "Type",
+          "access": "Public",
+          "signature": "Public Type _FLT_REGISTRATION",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "_FLT_RELATED_OBJECTS",
+          "kind": "Type",
+          "access": "Public",
+          "signature": "Public Type _FLT_RELATED_OBJECTS",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "FLT_ALLOCATE_CALLBACK_DATA_FLAGS",
+          "kind": "Enum",
+          "access": "Public",
+          "signature": "Public Enum FLT_ALLOCATE_CALLBACK_DATA_FLAGS",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "FLT_CALLBACK_DATA",
+          "kind": "Type",
+          "access": "Public",
+          "signature": "Public Type FLT_CALLBACK_DATA",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "FLT_CALLBACK_DATA_FLAGS",
+          "kind": "Enum",
+          "access": "Public",
+          "signature": "Public Enum FLT_CALLBACK_DATA_FLAGS",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "FLT_FILE_NAME_INFORMATION",
+          "kind": "Type",
+          "access": "Public",
+          "signature": "Public Type FLT_FILE_NAME_INFORMATION",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "FLT_FILE_NAME_OPTIONS",
+          "kind": "Enum",
+          "access": "Public",
+          "signature": "Public Enum FLT_FILE_NAME_OPTIONS",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "FLT_FILE_NAME_PARSED_FLAGS",
+          "kind": "Enum",
+          "access": "Public",
+          "signature": "Public Enum FLT_FILE_NAME_PARSED_FLAGS",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "FLT_FILTER_UNLOAD_FLAGS",
+          "kind": "Enum",
+          "access": "Public",
+          "signature": "Public Enum FLT_FILTER_UNLOAD_FLAGS",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "FLT_IO_PARAMETER_BLOCK",
+          "kind": "Type",
+          "access": "Public",
+          "signature": "Public Type FLT_IO_PARAMETER_BLOCK",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "FLT_OPERATION_REGISTRATION",
+          "kind": "Type",
+          "access": "Public",
+          "signature": "Public Type FLT_OPERATION_REGISTRATION",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "FLT_POSTOP_CALLBACK_STATUS",
+          "kind": "Enum",
+          "access": "Public",
+          "signature": "Public Enum FLT_POSTOP_CALLBACK_STATUS",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "FLT_PREOP_CALLBACK_STATUS",
+          "kind": "Enum",
+          "access": "Public",
+          "signature": "Public Enum FLT_PREOP_CALLBACK_STATUS",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "FLT_REGISTRATION_FLAGS",
+          "kind": "Enum",
+          "access": "Public",
+          "signature": "Public Enum FLT_REGISTRATION_FLAGS",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "FLT_REGISTRATION_VERSION",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const FLT_REGISTRATION_VERSION = FLT_REGISTRATION_VERSION_0203",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "FLT_REGISTRATION_VERSION",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const FLT_REGISTRATION_VERSION = FLT_REGISTRATION_VERSION_0202",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "FLT_REGISTRATION_VERSION_0200",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const FLT_REGISTRATION_VERSION_0200 = &H0200",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "FLT_REGISTRATION_VERSION_0201",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const FLT_REGISTRATION_VERSION_0201 = &H0201",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "FLT_REGISTRATION_VERSION_0202",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const FLT_REGISTRATION_VERSION_0202 = &H0202",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "FLT_REGISTRATION_VERSION_0203",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const FLT_REGISTRATION_VERSION_0203 = &H0203",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "FltGetFileNameInformation",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public Declare PtrSafe Function FltGetFileNameInformation Lib \"\" (CallbackData As FLT_CALLBACK_DATA, NameOptions As FLT_FILE_NAME_OPTIONS, FileNameInformation As FLT_FILE_NAME_INFORMATION) As NTSTATUS",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "FltRegisterFilter",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public Declare PtrSafe Function FltRegisterFilter Lib \"\" (Driver As DRIVER_OBJECT, Registration As _FLT_REGISTRATION, RetFilter As LongPtr) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "FltStartFiltering",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public Declare PtrSafe Function FltStartFiltering Lib \"\" (ByVal Filter As LongPtr) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "FltUnregisterFilter",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public Declare PtrSafe Function FltUnregisterFilter Lib \"\" (ByVal Filter As LongPtr) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "IRP_MJ_ACQUIRE_FOR_CC_FLUSH",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const IRP_MJ_ACQUIRE_FOR_CC_FLUSH As Byte = &HFB",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "IRP_MJ_ACQUIRE_FOR_MOD_WRITE",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const IRP_MJ_ACQUIRE_FOR_MOD_WRITE As Byte = &HFD",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "IRP_MJ_ACQUIRE_FOR_SECTION_SYNCHRONIZATION",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const IRP_MJ_ACQUIRE_FOR_SECTION_SYNCHRONIZATION As Byte = &HFF",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "IRP_MJ_FAST_IO_CHECK_IF_POSSIBLE",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const IRP_MJ_FAST_IO_CHECK_IF_POSSIBLE As Byte = &HF4",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "IRP_MJ_MDL_READ",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const IRP_MJ_MDL_READ As Byte = &HF2",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "IRP_MJ_MDL_READ_COMPLETE",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const IRP_MJ_MDL_READ_COMPLETE As Byte = &HF1",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "IRP_MJ_MDL_WRITE_COMPLETE",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const IRP_MJ_MDL_WRITE_COMPLETE As Byte = &HEF",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "IRP_MJ_NETWORK_QUERY_OPEN",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const IRP_MJ_NETWORK_QUERY_OPEN As Byte = &HF3",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "IRP_MJ_PREPARE_MDL_WRITE",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const IRP_MJ_PREPARE_MDL_WRITE As Byte = &HF0",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "IRP_MJ_QUERY_OPEN",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const IRP_MJ_QUERY_OPEN As Byte = &HF9",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "IRP_MJ_RELEASE_FOR_CC_FLUSH",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const IRP_MJ_RELEASE_FOR_CC_FLUSH As Byte = &HFA",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "IRP_MJ_RELEASE_FOR_MOD_WRITE",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const IRP_MJ_RELEASE_FOR_MOD_WRITE As Byte = &HFC",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "IRP_MJ_RELEASE_FOR_SECTION_SYNCHRONIZATION",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const IRP_MJ_RELEASE_FOR_SECTION_SYNCHRONIZATION As Byte = &HFE",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "IRP_MJ_VOLUME_DISMOUNT",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const IRP_MJ_VOLUME_DISMOUNT As Byte = &HEC",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "IRP_MJ_VOLUME_MOUNT",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const IRP_MJ_VOLUME_MOUNT As Byte = &HED",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "modKmOpaque",
+      "kind": "Module",
+      "file": "modKmOpaque.twin",
+      "access": "Public",
+      "attributes": [],
+      "implements": [],
+      "inherits": null,
+      "members": [
+        {
+          "name": "EPROCESS_TOKEN_OFFSET_10",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const EPROCESS_TOKEN_OFFSET_10 = &H0358",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "EPROCESS_TOKEN_OFFSET_1903",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const EPROCESS_TOKEN_OFFSET_1903 = &H0360",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "EPROCESS_TOKEN_OFFSET_1909",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const EPROCESS_TOKEN_OFFSET_1909 = &H04B8",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "EPROCESS_TOKEN_OFFSET_7",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const EPROCESS_TOKEN_OFFSET_7 = &H0208",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "EPROCESS_TOKEN_OFFSET_7x86",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const EPROCESS_TOKEN_OFFSET_7x86 = &HF8",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "modSysInfo",
+      "kind": "Module",
+      "file": "modSysInfo.twin",
+      "access": "Public",
+      "attributes": [],
+      "implements": [],
+      "inherits": null,
+      "members": [
+        {
+          "name": "DuplicateObjectOptions",
+          "kind": "Enum",
+          "access": "Public",
+          "signature": "Public Enum DuplicateObjectOptions",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GENERIC_MAPPING",
+          "kind": "Type",
+          "access": "Public",
+          "signature": "Public Type GENERIC_MAPPING",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "LDR_DATA_TABLE_FLAGS",
+          "kind": "Enum",
+          "access": "Public",
+          "signature": "Public Enum LDR_DATA_TABLE_FLAGS",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "OBJECT_BASIC_INFORMATION",
+          "kind": "Type",
+          "access": "Public",
+          "signature": "Public Type OBJECT_BASIC_INFORMATION",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "OBJECT_DIRECTORY_INFORMATION",
+          "kind": "Type",
+          "access": "Public",
+          "signature": "Public Type OBJECT_DIRECTORY_INFORMATION",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "OBJECT_HANDLE_FLAG_INFORMATION",
+          "kind": "Type",
+          "access": "Public",
+          "signature": "Public Type OBJECT_HANDLE_FLAG_INFORMATION",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "OBJECT_INFORMATION_CLASS",
+          "kind": "Enum",
+          "access": "Public",
+          "signature": "Public Enum OBJECT_INFORMATION_CLASS",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "OBJECT_NAME_INFORMATION",
+          "kind": "Type",
+          "access": "Public",
+          "signature": "Public Type OBJECT_NAME_INFORMATION",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "OBJECT_TYPE_INFORMATION",
+          "kind": "Type",
+          "access": "Public",
+          "signature": "Public Type OBJECT_TYPE_INFORMATION",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "PROCESSOR_ARCHITECTURE",
+          "kind": "Enum",
+          "access": "Public",
+          "signature": "Public Enum PROCESSOR_ARCHITECTURE",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "RTL_PROCESS_LOCK_INFORMATION",
+          "kind": "Type",
+          "access": "Public",
+          "signature": "Public Type RTL_PROCESS_LOCK_INFORMATION",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "RTL_PROCESS_MODULE_INFORMATION",
+          "kind": "Type",
+          "access": "Public",
+          "signature": "Public Type RTL_PROCESS_MODULE_INFORMATION",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "RTL_PROCESS_MODULES",
+          "kind": "Type",
+          "access": "Public",
+          "signature": "Public Type RTL_PROCESS_MODULES",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SYSTEM_BASIC_INFORMATION",
+          "kind": "Type",
+          "access": "Public",
+          "signature": "Public Type SYSTEM_BASIC_INFORMATION",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SYSTEM_CALL_COUNT_INFORMATION",
+          "kind": "Type",
+          "access": "Public",
+          "signature": "Public Type SYSTEM_CALL_COUNT_INFORMATION",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SYSTEM_CALL_TIME_INFORMATION",
+          "kind": "Type",
+          "access": "Public",
+          "signature": "Public Type SYSTEM_CALL_TIME_INFORMATION",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SYSTEM_DEVICE_INFORMATION",
+          "kind": "Type",
+          "access": "Public",
+          "signature": "Public Type SYSTEM_DEVICE_INFORMATION",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SYSTEM_FLAGS_INFORMATION",
+          "kind": "Type",
+          "access": "Public",
+          "signature": "Public Type SYSTEM_FLAGS_INFORMATION",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SYSTEM_INFORMATION_CLASS",
+          "kind": "Enum",
+          "access": "Public",
+          "signature": "Public Enum SYSTEM_INFORMATION_CLASS",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SYSTEM_PERFORMANCE_INFORMATION",
+          "kind": "Type",
+          "access": "Public",
+          "signature": "Public Type SYSTEM_PERFORMANCE_INFORMATION",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SYSTEM_PROCESS_INFORMATION",
+          "kind": "Type",
+          "access": "Public",
+          "signature": "Public Type SYSTEM_PROCESS_INFORMATION",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SYSTEM_PROCESSOR_INFORMATION",
+          "kind": "Type",
+          "access": "Public",
+          "signature": "Public Type SYSTEM_PROCESSOR_INFORMATION",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SYSTEM_PROCESSOR_PERFORMANCE_INFORMATION",
+          "kind": "Type",
+          "access": "Public",
+          "signature": "Public Type SYSTEM_PROCESSOR_PERFORMANCE_INFORMATION",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SYSTEM_THREAD_INFORMATION",
+          "kind": "Type",
+          "access": "Public",
+          "signature": "Public Type SYSTEM_THREAD_INFORMATION",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SYSTEM_TIMEOFDAY_INFORMATION",
+          "kind": "Type",
+          "access": "Public",
+          "signature": "Public Type SYSTEM_TIMEOFDAY_INFORMATION",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "modWDM",
+      "kind": "Module",
+      "file": "MainModule.twin",
+      "access": "Public",
+      "attributes": [],
+      "implements": [],
+      "inherits": null,
+      "members": [
+        {
+          "name": "_SLIST_HEADER",
+          "kind": "Type",
+          "access": "Public",
+          "signature": "Public Type _SLIST_HEADER",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "_SLIST_HEADER",
+          "kind": "Type",
+          "access": "Public",
+          "signature": "Public Type _SLIST_HEADER",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "BOOL",
+          "kind": "Enum",
+          "access": "Public",
+          "signature": "Public Enum BOOL",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "DEVICE_TYPE",
+          "kind": "Enum",
+          "access": "Public",
+          "signature": "Public Enum DEVICE_TYPE",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "FILE_ATTRIBUTES",
+          "kind": "Enum",
+          "access": "Public",
+          "signature": "Public Enum FILE_ATTRIBUTES",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "FileAccessFlags",
+          "kind": "Enum",
+          "access": "Public",
+          "signature": "Public Enum FileAccessFlags",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "FileAccessRights",
+          "kind": "Enum",
+          "access": "Public",
+          "signature": "Public Enum FileAccessRights",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "FileCreateDisposition",
+          "kind": "Enum",
+          "access": "Public",
+          "signature": "Public Enum FileCreateDisposition",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "FileCreateOutcome",
+          "kind": "Enum",
+          "access": "Public",
+          "signature": "Public Enum FileCreateOutcome",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "FileShareMode",
+          "kind": "Enum",
+          "access": "Public",
+          "signature": "Public Enum FileShareMode",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "FILETIME",
+          "kind": "Type",
+          "access": "Public",
+          "signature": "Public Type FILETIME",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "FTTYPE",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const FTTYPE As Long = &H66",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GENERAL_LOOKASIDE_LAYOUT",
+          "kind": "Type",
+          "access": "Public",
+          "signature": "Public Type GENERAL_LOOKASIDE_LAYOUT",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GenericRights",
+          "kind": "Enum",
+          "access": "Public",
+          "signature": "Public Enum GenericRights",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GROUP_SID_ATTRIBUTES",
+          "kind": "Enum",
+          "access": "Public",
+          "signature": "Public Enum GROUP_SID_ATTRIBUTES",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "IOCTL_DISK_BASE",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const IOCTL_DISK_BASE = FILE_DEVICE_DISK",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "LARGE_INTEGER",
+          "kind": "Type",
+          "access": "Public",
+          "signature": "Public Type LARGE_INTEGER",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "LUID",
+          "kind": "Type",
+          "access": "Public",
+          "signature": "Public Type LUID",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "LUID_AND_ATTRIBUTES",
+          "kind": "Type",
+          "access": "Public",
+          "signature": "Public Type LUID_AND_ATTRIBUTES",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "MAX_PATH",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const MAX_PATH As Long = 260",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "MessageBoxFlags",
+          "kind": "Enum",
+          "access": "Public",
+          "signature": "Public Enum MessageBoxFlags",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "MOUNTDEVCONTROLTYPE",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const MOUNTDEVCONTROLTYPE = &H0000004",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "MOUNTMGRCONTROLTYPE",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const MOUNTMGRCONTROLTYPE = &H0000006",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "OBJECT_ATTRIBUTES",
+          "kind": "Type",
+          "access": "Public",
+          "signature": "Public Type OBJECT_ATTRIBUTES",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ObjectAttributeValues",
+          "kind": "Enum",
+          "access": "Public",
+          "signature": "Public Enum ObjectAttributeValues",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SE_PRIVILEGE_ATTR",
+          "kind": "Enum",
+          "access": "Public",
+          "signature": "Public Enum SE_PRIVILEGE_ATTR",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SECURITY_IMPERSONATION_LEVEL",
+          "kind": "Enum",
+          "access": "Public",
+          "signature": "Public Enum SECURITY_IMPERSONATION_LEVEL",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SECURITY_MAX_SID_SIZE",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const SECURITY_MAX_SID_SIZE = (60)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SID",
+          "kind": "Type",
+          "access": "Public",
+          "signature": "Public Type SID",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SID_AND_ATTRIBUTES",
+          "kind": "Type",
+          "access": "Public",
+          "signature": "Public Type SID_AND_ATTRIBUTES",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SID_AND_ATTRIBUTES_HASH",
+          "kind": "Type",
+          "access": "Public",
+          "signature": "Public Type SID_AND_ATTRIBUTES_HASH",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SID_HASH_SIZE",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const SID_HASH_SIZE = 32",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SID_IDENTIFIER_AUTHORITY",
+          "kind": "Type",
+          "access": "Public",
+          "signature": "Public Type SID_IDENTIFIER_AUTHORITY",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SID_MAX_SUB_AUTHORITIES",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const SID_MAX_SUB_AUTHORITIES = (15)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SID_NAME_USE",
+          "kind": "Enum",
+          "access": "Public",
+          "signature": "Public Enum SID_NAME_USE",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SID_RECOMMENDED_SUB_AUTHORITIES",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const SID_RECOMMENDED_SUB_AUTHORITIES = (1)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SID_REVISION",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const SID_REVISION = (1)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "StandardAccessTypes",
+          "kind": "Enum",
+          "access": "Public",
+          "signature": "Public Enum StandardAccessTypes",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "TOKEN_PRIVILEGES",
+          "kind": "Type",
+          "access": "Public",
+          "signature": "Public Type TOKEN_PRIVILEGES",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "TOKEN_TYPE",
+          "kind": "Enum",
+          "access": "Public",
+          "signature": "Public Enum TOKEN_TYPE",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ULARGE_INTEGER",
+          "kind": "Type",
+          "access": "Public",
+          "signature": "Public Type ULARGE_INTEGER",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "UNICODE_STRING",
+          "kind": "Type",
+          "access": "Public",
+          "signature": "Public Type UNICODE_STRING",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "UUID",
+          "kind": "Type",
+          "access": "Public",
+          "signature": "Public Type UUID",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    }
+  ],
+  "enums": [],
+  "types": []
+}

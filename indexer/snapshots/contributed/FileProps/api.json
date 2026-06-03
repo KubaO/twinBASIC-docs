@@ -1,0 +1,382 @@
+{
+  "package": "FileProps",
+  "version": "1.7.1.0",
+  "modules": [
+    {
+      "name": "Example",
+      "kind": "Module",
+      "file": "Example.twin",
+      "access": "Public",
+      "attributes": [],
+      "implements": [],
+      "inherits": null,
+      "members": [
+        {
+          "name": "DisplayInDebugConsole",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub DisplayInDebugConsole(Optional FilePath As String)",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "FileProperties",
+      "kind": "Class",
+      "file": "FileProperties.twin",
+      "access": "Public",
+      "attributes": [],
+      "implements": [],
+      "inherits": null,
+      "members": [
+        {
+          "name": "Count",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Get Count() As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "FilePath",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Get FilePath() As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Item",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Get Item(ByVal IndexOrNameOrID As Variant) As FileProperty",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "VCOMObject",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public VCOMObject As Object",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "FileProperty",
+      "kind": "Class",
+      "file": "FileProperty.twin",
+      "access": "Public",
+      "attributes": [],
+      "implements": [],
+      "inherits": null,
+      "members": [
+        {
+          "name": "ID",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Get ID() As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Name",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Get Name() As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "NameDesc",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Get NameDesc() As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Value",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Get Value() As Variant",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Value",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Let Value(ByVal Value As Variant)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ValueDesc",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Get ValueDesc() As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "VCOMObject",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public VCOMObject As Object",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "FilePropertyExplorer",
+      "kind": "Class",
+      "file": "FilePropertyExplorer.twin",
+      "access": "Public",
+      "attributes": [
+        "PredeclaredId"
+      ],
+      "implements": [],
+      "inherits": null,
+      "members": [
+        {
+          "name": "BrowseAndOpenFile",
+          "kind": "Function",
+          "access": null,
+          "signature": "Function BrowseAndOpenFile(Optional ByVal WriteSupport As Boolean) As FileProperties",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CastToObject",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare Sub CastToObject Lib \"\" Alias \"\" (ByRef Dest As Object, ByRef Source As Long, ByVal Size As Long)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CastToObject",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare PtrSafe Sub CastToObject Lib \"\" Alias \"\" (ByRef Dest As Object, ByRef Source As LongPtr, ByVal Size As LongPtr)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Class_Initialize",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub Class_Initialize()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CopyMemoryAnsi",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare Sub CopyMemoryAnsi Lib \"\" Alias \"\" (ByVal Dest As Long, ByVal Source As String, ByVal Size As Long)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CopyMemoryAnsi",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare PtrSafe Sub CopyMemoryAnsi Lib \"\" Alias \"\" (ByVal Dest As LongPtr, ByVal Source As String, ByVal Size As LongPtr)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "DECOMPRESSED_EXT",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const DECOMPRESSED_EXT As Long = 56493",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ERR_OUT_OF_MEMORY",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const ERR_OUT_OF_MEMORY As Long = &H7",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GetModuleHandleA",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare Function GetModuleHandleA Lib \"\" (ByVal ProcName As String) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GetModuleHandleA",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare PtrSafe Function GetModuleHandleA Lib \"\" (ByVal ProcName As String) As LongPtr",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GetProcAddress",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare Function GetProcAddress Lib \"\" (ByVal Module As Long, ByVal ProcName As String) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GetProcAddress",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare PtrSafe Function GetProcAddress Lib \"\" (ByVal Module As LongPtr, ByVal ProcName As String) As LongPtr",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "IDispatchVTable",
+          "kind": "Type",
+          "access": "Private",
+          "signature": "Private Type IDispatchVTable",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "IDispatchVTable",
+          "kind": "Type",
+          "access": "Private",
+          "signature": "Private Type IDispatchVTable",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "MEM_RESERVE_AND_COMMIT",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const MEM_RESERVE_AND_COMMIT As Long = &H3000",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "OpenFile",
+          "kind": "Function",
+          "access": null,
+          "signature": "Function OpenFile(ByVal FilePath As String, Optional ByVal WriteSupport As Boolean) As FileProperties",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "OPTION_BASE",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const OPTION_BASE As Long = 0",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "OPTION_DISABLEDCLASSES",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const OPTION_DISABLEDCLASSES As String = \"\"",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "OPTION_FLAGS",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const OPTION_FLAGS As Long = 2",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "OPTION_INCLUDE_REFERENCEDOCS",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const OPTION_INCLUDE_REFERENCEDOCS As Long = 0",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "PAGE_EXECUTE_RW",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const PAGE_EXECUTE_RW As Long = &H40",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SIZEOF_PTR32",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const SIZEOF_PTR32 As Long = &H4",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SIZEOF_PTR64",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const SIZEOF_PTR64 As Long = &H8",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "VirtualAlloc",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare Function VirtualAlloc Lib \"\" (ByVal Address As Long, ByVal Size As Long, ByVal AllocationType As Long, ByVal Protect As Long) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "VirtualAlloc",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare PtrSafe Function VirtualAlloc Lib \"\" (ByVal Address As LongPtr, ByVal Size As LongPtr, ByVal AllocationType As Long, ByVal Protect As Long) As LongPtr",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "FilePropertyExplorer_Helper",
+      "kind": "Class",
+      "file": "FilePropertyExplorer_Helper.twin",
+      "access": "Private",
+      "attributes": [],
+      "implements": [],
+      "inherits": null,
+      "members": [
+        {
+          "name": "New_FileProperties",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public New_FileProperties As New FileProperties",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "New_FileProperty",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public New_FileProperty As New FileProperty",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    }
+  ],
+  "enums": [],
+  "types": []
+}

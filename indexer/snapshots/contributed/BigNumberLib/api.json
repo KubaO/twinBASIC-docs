@@ -1,0 +1,852 @@
+{
+  "package": "BigNumberLib",
+  "version": "0.0.0.0",
+  "modules": [
+    {
+      "name": "Absolute",
+      "kind": "Module",
+      "file": "Tests/Absolute.twin",
+      "access": "Public",
+      "attributes": [],
+      "implements": [],
+      "inherits": null,
+      "members": [
+        {
+          "name": "RunTests",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub RunTests()",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "Addition",
+      "kind": "Module",
+      "file": "Tests/Addition.twin",
+      "access": "Public",
+      "attributes": [],
+      "implements": [],
+      "inherits": null,
+      "members": [
+        {
+          "name": "RunTests",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub RunTests()",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "AddModulus",
+      "kind": "Module",
+      "file": "Tests/AddModulus.twin",
+      "access": "Public",
+      "attributes": [],
+      "implements": [],
+      "inherits": null,
+      "members": [
+        {
+          "name": "RunTests",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub RunTests()",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "BigNumber",
+      "kind": "Class",
+      "file": "BigNumber.twin",
+      "access": "Public",
+      "attributes": [],
+      "implements": [],
+      "inherits": null,
+      "members": [
+        {
+          "name": "AssignAbsolute",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function AssignAbsolute(ByRef a As BigNumber) As Boolean",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "AssignAddition",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub AssignAddition(ByRef a As BigNumber, ByRef b As BigNumber)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "AssignAdditionModulus",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub AssignAdditionModulus(ByRef a As BigNumber, ByRef b As BigNumber, ByRef mod_c As BigNumber)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "AssignDivision",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub AssignDivision(ByRef a As BigNumber, ByRef b As BigNumber)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "AssignFromLong",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub AssignFromLong(ByVal a As Long)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "AssignGreatestCommonDivisor",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub AssignGreatestCommonDivisor(ByRef a As BigNumber, ByRef b As BigNumber)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "AssignLeastCommonMultiple",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub AssignLeastCommonMultiple(ByRef a As BigNumber, ByRef b As BigNumber)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "AssignModularMultiplicativeInverse",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub AssignModularMultiplicativeInverse(ByRef a As BigNumber, ByRef mod_b As BigNumber)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "AssignModulus",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub AssignModulus(ByRef a As BigNumber, ByRef b As BigNumber)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "AssignMultiplication",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub AssignMultiplication(ByRef a As BigNumber, ByRef b As BigNumber)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "AssignMultiplicationModulus",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub AssignMultiplicationModulus(ByRef a As BigNumber, ByRef b As BigNumber, ByRef mod_c As BigNumber)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "AssignNegation",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function AssignNegation(ByRef a As BigNumber) As Boolean",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "AssignShiftLeft",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub AssignShiftLeft(ByRef a As BigNumber, ByVal shiftAmount_b As Long)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "AssignShiftRight",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub AssignShiftRight(ByRef a As BigNumber, ByVal shiftAmount_b As Long)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "AssignSquared",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub AssignSquared(ByRef a As BigNumber)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "AssignSquaredModulus",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub AssignSquaredModulus(ByRef a As BigNumber, ByRef mod_b As BigNumber)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "AssignSubtraction",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub AssignSubtraction(ByRef a As BigNumber, ByRef b As BigNumber)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "AssignSubtractionModulus",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub AssignSubtractionModulus(ByRef a As BigNumber, ByRef b As BigNumber, ByRef mod_c As BigNumber)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "BinaryRadix",
+          "kind": "Const",
+          "access": null,
+          "signature": "Const BinaryRadix As Long = 2",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "DecimalRadix",
+          "kind": "Const",
+          "access": null,
+          "signature": "Const DecimalRadix As Long = 10",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "FP_EQ",
+          "kind": "Const",
+          "access": null,
+          "signature": "Const FP_EQ As Long = 0 /* equal to */",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "FP_GT",
+          "kind": "Const",
+          "access": null,
+          "signature": "Const FP_GT As Long = 1 /* greater than */",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "fp_int",
+          "kind": "Type",
+          "access": null,
+          "signature": "Type fp_int",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "FP_LT",
+          "kind": "Const",
+          "access": null,
+          "signature": "Const FP_LT As Long = -1 /* less than */",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "FP_MEM",
+          "kind": "Const",
+          "access": null,
+          "signature": "Const FP_MEM = 2",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "FP_OKAY",
+          "kind": "Const",
+          "access": null,
+          "signature": "Const FP_OKAY = 0",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "FP_VAL",
+          "kind": "Const",
+          "access": null,
+          "signature": "Const FP_VAL = 1",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "HandleError",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub HandleError()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "HexRadix",
+          "kind": "Const",
+          "access": null,
+          "signature": "Const HexRadix As Long = 16",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "IsEqualTo",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function IsEqualTo(ByRef b As BigNumber) As Boolean",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "IsGreaterThan",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function IsGreaterThan(ByRef b As BigNumber) As Boolean",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "IsGreaterThanOrEqualTo",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function IsGreaterThanOrEqualTo(ByRef b As BigNumber) As Boolean",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "IsLessThan",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function IsLessThan(ByRef b As BigNumber) As Boolean",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "IsLessThanOrEqualTo",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function IsLessThanOrEqualTo(ByRef b As BigNumber) As Boolean",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "IsNegative",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get IsNegative() As Boolean",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "IsNegative",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Let IsNegative(Value As Boolean)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "OctalRadix",
+          "kind": "Const",
+          "access": null,
+          "signature": "Const OctalRadix As Long = 8",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ValueBinary",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Get ValueBinary() As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ValueBinary",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Let ValueBinary(ByVal Value As String)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ValueHex",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Get ValueHex() As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ValueHex",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Let ValueHex(ByVal Value As String)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ValueOctal",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Get ValueOctal() As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ValueOctal",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Let ValueOctal(ByVal Value As String)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ValueString",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Get ValueString() As String",
+          "attributes": [
+            "DefaultMember"
+          ],
+          "description": null
+        },
+        {
+          "name": "ValueString",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Let ValueString(ByVal Value As String)",
+          "attributes": [
+            "DefaultMember"
+          ],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "BigNumberTests",
+      "kind": "Module",
+      "file": "Tests.twin",
+      "access": "Public",
+      "attributes": [],
+      "implements": [],
+      "inherits": null,
+      "members": [
+        {
+          "name": "Example",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub Example()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "RunAllTests",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub RunAllTests()",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "Comparisons",
+      "kind": "Module",
+      "file": "Tests/Comparisons.twin",
+      "access": "Public",
+      "attributes": [],
+      "implements": [],
+      "inherits": null,
+      "members": [
+        {
+          "name": "RunTests",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub RunTests()",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "Divide",
+      "kind": "Module",
+      "file": "Tests/Divide.twin",
+      "access": "Public",
+      "attributes": [],
+      "implements": [],
+      "inherits": null,
+      "members": [
+        {
+          "name": "RunTests",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub RunTests()",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "GreatestCommonDivisor",
+      "kind": "Module",
+      "file": "Tests/GreatestCommonDivisor.twin",
+      "access": "Public",
+      "attributes": [],
+      "implements": [],
+      "inherits": null,
+      "members": [
+        {
+          "name": "RunTests",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub RunTests()",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "LeastCommonMultiple",
+      "kind": "Module",
+      "file": "Tests/LeastCommonMultiple.twin",
+      "access": "Public",
+      "attributes": [],
+      "implements": [],
+      "inherits": null,
+      "members": [
+        {
+          "name": "RunTests",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub RunTests()",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "ModularMultiplicativeInverse",
+      "kind": "Module",
+      "file": "Tests/ModularMultiplicativeInverse.twin",
+      "access": "Public",
+      "attributes": [],
+      "implements": [],
+      "inherits": null,
+      "members": [
+        {
+          "name": "RunTests",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub RunTests()",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "Modulus",
+      "kind": "Module",
+      "file": "Tests/Modulus.twin",
+      "access": "Public",
+      "attributes": [],
+      "implements": [],
+      "inherits": null,
+      "members": [
+        {
+          "name": "RunTests",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub RunTests()",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "Multiply",
+      "kind": "Module",
+      "file": "Tests/Multiply.twin",
+      "access": "Public",
+      "attributes": [],
+      "implements": [],
+      "inherits": null,
+      "members": [
+        {
+          "name": "RunTests",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub RunTests()",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "MultiplyModulus",
+      "kind": "Module",
+      "file": "Tests/MultiplyModulus.twin",
+      "access": "Public",
+      "attributes": [],
+      "implements": [],
+      "inherits": null,
+      "members": [
+        {
+          "name": "RunTests",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub RunTests()",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "Negate",
+      "kind": "Module",
+      "file": "Tests/Negate.twin",
+      "access": "Public",
+      "attributes": [],
+      "implements": [],
+      "inherits": null,
+      "members": [
+        {
+          "name": "RunTests",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub RunTests()",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "ShiftLeft",
+      "kind": "Module",
+      "file": "Tests/ShiftLeft.twin",
+      "access": "Public",
+      "attributes": [],
+      "implements": [],
+      "inherits": null,
+      "members": [
+        {
+          "name": "RunTests",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub RunTests()",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "ShiftRight",
+      "kind": "Module",
+      "file": "Tests/ShiftRight.twin",
+      "access": "Public",
+      "attributes": [],
+      "implements": [],
+      "inherits": null,
+      "members": [
+        {
+          "name": "RunTests",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub RunTests()",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "Square",
+      "kind": "Module",
+      "file": "Tests/Square.twin",
+      "access": "Public",
+      "attributes": [],
+      "implements": [],
+      "inherits": null,
+      "members": [
+        {
+          "name": "RunTests",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub RunTests()",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "SquareModulus",
+      "kind": "Module",
+      "file": "Tests/SquareModulus.twin",
+      "access": "Public",
+      "attributes": [],
+      "implements": [],
+      "inherits": null,
+      "members": [
+        {
+          "name": "RunTests",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub RunTests()",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "Subtract",
+      "kind": "Module",
+      "file": "Tests/Subtract.twin",
+      "access": "Public",
+      "attributes": [],
+      "implements": [],
+      "inherits": null,
+      "members": [
+        {
+          "name": "RunTests",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub RunTests()",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "SubtractModulus",
+      "kind": "Module",
+      "file": "Tests/SubtractModulus.twin",
+      "access": "Public",
+      "attributes": [],
+      "implements": [],
+      "inherits": null,
+      "members": [
+        {
+          "name": "RunTests",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub RunTests()",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "ValueBinary",
+      "kind": "Module",
+      "file": "Tests/ValueBinary.twin",
+      "access": "Public",
+      "attributes": [],
+      "implements": [],
+      "inherits": null,
+      "members": [
+        {
+          "name": "RunTests",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub RunTests()",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "ValueHex",
+      "kind": "Module",
+      "file": "Tests/ValueHex.twin",
+      "access": "Public",
+      "attributes": [],
+      "implements": [],
+      "inherits": null,
+      "members": [
+        {
+          "name": "RunTests",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub RunTests()",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "ValueOctal",
+      "kind": "Module",
+      "file": "Tests/ValueOctal.twin",
+      "access": "Public",
+      "attributes": [],
+      "implements": [],
+      "inherits": null,
+      "members": [
+        {
+          "name": "RunTests",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub RunTests()",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "ValueString",
+      "kind": "Module",
+      "file": "Tests/ValueString.twin",
+      "access": "Public",
+      "attributes": [],
+      "implements": [],
+      "inherits": null,
+      "members": [
+        {
+          "name": "RunTests",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub RunTests()",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    }
+  ],
+  "enums": [],
+  "types": []
+}

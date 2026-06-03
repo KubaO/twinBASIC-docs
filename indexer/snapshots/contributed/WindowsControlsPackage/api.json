@@ -1,0 +1,4696 @@
+{
+  "package": "WindowsControlsPackage",
+  "version": "0.0.9.0",
+  "modules": [
+    {
+      "name": "Anchors",
+      "kind": "Class",
+      "file": "SUPPORT/Anchors.twin",
+      "access": "Private",
+      "attributes": [],
+      "implements": [],
+      "inherits": null,
+      "members": [],
+      "events": []
+    },
+    {
+      "name": "BaseControl",
+      "kind": "Class",
+      "file": "BASE/BaseControl.twin",
+      "access": "Public",
+      "attributes": [],
+      "implements": [],
+      "inherits": null,
+      "members": [
+        {
+          "name": "Height",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public Height As Single",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Left",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public Left As Single",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "New",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub New(ByVal ControlType As ControlTypeConstants)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "OnPropertyChanged",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub OnPropertyChanged() Handles Left.OnPropertyLet, Top.OnPropertyLet, Width.OnPropertyLet, Height.OnPropertyLet",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Tag",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public Tag As String = vbNullString",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Top",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public Top As Single",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Width",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public Width As Single",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "BaseControlFocusable",
+      "kind": "Class",
+      "file": "BASE/BaseControlFocusable.twin",
+      "access": "Public",
+      "attributes": [],
+      "implements": [
+        "BaseControl"
+      ],
+      "inherits": null,
+      "members": [
+        {
+          "name": "Appearance",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public Appearance As VBRUN.AppearanceConstants = VBRUN.AppearanceConstants.vbAppear3d",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Class_Terminate",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub Class_Terminate()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ControlContext",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public ControlContext As WindowsControls.WindowsControlContext",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CreateBackBrush",
+          "kind": "Function",
+          "access": "Friend",
+          "signature": "Friend Function CreateBackBrush(ByVal Color As OLE_COLOR) As LongPtr",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CreateRootWindowElement",
+          "kind": "Function",
+          "access": "Friend",
+          "signature": "Friend Function CreateRootWindowElement(ByVal ControlContext As WindowsControls.WindowsControlContext, ByVal ClassName As String, ByVal Caption As String, ByVal WindowStyles As Long, ByVal ExtendedStyles As Long) As WindowElement",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Enabled",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Get Enabled() As Boolean",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Enabled",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Let Enabled(Value As Boolean)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Font",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public Font As StdFont",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "FontBold",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public FontBold As Boolean = False",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "FontItalic",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public FontItalic As Boolean = False",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "FontName",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public FontName As String = \"\"",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "FontSize",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public FontSize As Single = 8",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "FontStrikethru",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public FontStrikethru As Boolean = False",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "FontUnderline",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public FontUnderline As Boolean = False",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "HandleCreate",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub HandleCreate() Handles RootWindowElementBase.Create",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "HandleDPIChange",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub HandleDPIChange() Handles RootWindowElementBase.DPIChange",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "MousePointer",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public MousePointer As VBRUN.MousePointerConstants = VBRUN.MousePointerConstants.vbDefault",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "New",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub New(ByVal ControlType As ControlTypeConstants)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "OnPropertyChanged",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub OnPropertyChanged() Handles TabIndex.OnPropertyLet, Appearance.OnPropertyLet",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Refresh",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub Refresh()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SetFocus",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub SetFocus()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SyncFont",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub SyncFont() Handles Font.OnPropertySet",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SyncFontProperties",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub SyncFontProperties() Handles FontBold.OnPropertyLet, FontItalic.OnPropertyLet, FontName.OnPropertyLet, FontSize.OnPropertyLet, FontStrikethru.OnPropertyLet, FontUnderline.OnPropertyLet",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "TabIndex",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public TabIndex As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "TabStop",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Get TabStop() As Boolean",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "TabStop",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Let TabStop(Value As Boolean)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Visible",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Get Visible() As Boolean",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Visible",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Let Visible(Value As Boolean)",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "BaseControlFocusableNoFont",
+      "kind": "Class",
+      "file": "BASE/BaseControlFocusableNoFont.twin",
+      "access": "Public",
+      "attributes": [],
+      "implements": [
+        "BaseControl"
+      ],
+      "inherits": null,
+      "members": [
+        {
+          "name": "ControlContext",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public ControlContext As WindowsControls.WindowsControlContext",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CreateRootWindowElement",
+          "kind": "Function",
+          "access": "Friend",
+          "signature": "Friend Function CreateRootWindowElement(ByVal ControlContext As WindowsControls.WindowsControlContext, ByVal ClassName As String, ByVal Caption As String, ByVal WindowStyles As Long, ByVal ExtendedStyles As Long) As WindowElement",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Enabled",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Get Enabled() As Boolean",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Enabled",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Let Enabled(Value As Boolean)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "MousePointer",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public MousePointer As VBRUN.MousePointerConstants = VBRUN.MousePointerConstants.vbDefault",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "New",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub New(ByVal ControlType As ControlTypeConstants)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "OnPropertyChanged",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub OnPropertyChanged() Handles TabIndex.OnPropertyLet",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Refresh",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub Refresh()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SetFocus",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub SetFocus()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "TabIndex",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public TabIndex As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "TabStop",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Get TabStop() As Boolean",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "TabStop",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Let TabStop(Value As Boolean)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Visible",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Get Visible() As Boolean",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Visible",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Let Visible(Value As Boolean)",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "BaseControlNotFocusable",
+      "kind": "Class",
+      "file": "BASE/BaseControlNotFocusable.twin",
+      "access": "Public",
+      "attributes": [],
+      "implements": [
+        "BaseControl"
+      ],
+      "inherits": null,
+      "members": [
+        {
+          "name": "ControlContext",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public ControlContext As WindowsControls.WindowsControlContext",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Initialize",
+          "kind": "Sub",
+          "access": "Friend",
+          "signature": "Friend Sub Initialize(ControlContext As WindowsControls.WindowsControlContext)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "New",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub New(ByVal ControlType As ControlTypeConstants)",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "BaseForm",
+      "kind": "Class",
+      "file": "BASE/BaseForm.twin",
+      "access": "Public",
+      "attributes": [],
+      "implements": [
+        "BaseControl"
+      ],
+      "inherits": null,
+      "members": [
+        {
+          "name": "Appearance",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public Appearance As VBRUN.AppearanceConstants = VBRUN.AppearanceConstants.vbAppear3d",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "BorderStyle",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public BorderStyle As FormBorderStyleConstants = FormBorderStyleConstants.vbSizable",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Caption",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Get Caption() As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Caption",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Let Caption(Value As String)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Class_Terminate",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub Class_Terminate()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ControlContext",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public ControlContext As WindowsControls.WindowsFormContext",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Controls",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public Controls As WindowsControls.WindowsControlsCollection",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CreateBackBrush",
+          "kind": "Function",
+          "access": "Friend",
+          "signature": "Friend Function CreateBackBrush(ByVal Color As OLE_COLOR) As LongPtr",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CreateRootWindowElement",
+          "kind": "Function",
+          "access": "Friend",
+          "signature": "Friend Function CreateRootWindowElement(ByVal ControlContext As WindowsControls.WindowsControlContext, ByVal ClassName As String, ByVal WindowStyles As Long, ByVal ExtendedStyles As Long) As WindowElement",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Enabled",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Get Enabled() As Boolean",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Enabled",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Let Enabled(Value As Boolean)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "FormDesignerId",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public FormDesignerId As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "KeyPreview",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public KeyPreview As Boolean = False",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "MousePointer",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public MousePointer As VBRUN.MousePointerConstants = VBRUN.MousePointerConstants.vbDefault",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Moveable",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public Moveable As Boolean = True",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "New",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub New()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Refresh",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub Refresh()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Visible",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Get Visible() As Boolean",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Visible",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Let Visible(Value As Boolean)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "WindowState",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public WindowState As FormWindowStateConstants = FormWindowStateConstants.vbNormal",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "ButtonConsts",
+      "kind": "Module",
+      "file": "SUPPORT/ButtonConsts.twin",
+      "access": "Public",
+      "attributes": [],
+      "implements": [],
+      "inherits": null,
+      "members": [
+        {
+          "name": "ButtonStateFlags",
+          "kind": "Enum",
+          "access": "Public",
+          "signature": "Public Enum ButtonStateFlags",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Messages",
+          "kind": "Enum",
+          "access": "Public",
+          "signature": "Public Enum Messages",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Notifications",
+          "kind": "Enum",
+          "access": "Public",
+          "signature": "Public Enum Notifications",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Styles",
+          "kind": "Enum",
+          "access": "Public",
+          "signature": "Public Enum Styles",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "CheckBox",
+      "kind": "Class",
+      "file": "CONTROLS/CheckBox.twin",
+      "access": "Public",
+      "attributes": [],
+      "implements": [
+        "BaseControlFocusable",
+        "WindowsControls.IWindowsControl"
+      ],
+      "inherits": null,
+      "members": [
+        {
+          "name": "Alignment",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Get Alignment() As VBRUN.AlignmentConstantsNoCenter",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Alignment",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Let Alignment(Value As VBRUN.AlignmentConstantsNoCenter)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "BackColor",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public BackColor As OLE_COLOR = VBRUN.SystemColorConstants.vb3DFace",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Caption",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get Caption() As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Caption",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Let Caption(ByVal Value As String)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Class_Terminate",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub Class_Terminate()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ColorsChanged",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub ColorsChanged() Handles BackColor.OnPropertyLet, ForeColor.OnPropertyLet",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ForeColor",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public ForeColor As OLE_COLOR = VBRUN.SystemColorConstants.vbButtonText",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "HandleCommand",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub HandleCommand(ByVal NotificationCode As ButtonConsts.Notifications, ByVal Identifier As Integer) Handles RootWindowElement.Command",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "HandleCreate",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub HandleCreate() Handles RootWindowElement.Create",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "HandleDestroy",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub HandleDestroy() Implements IWindowsControl.Destroy",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "HandleGetColors",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub HandleGetColors(ByVal hdc As LongPtr, ByRef BackBrushOut As LongPtr, ByVal ControlType As ControlTypeConstants) Handles RootWindowElement.GetColors",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "HandleGotFocus",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub HandleGotFocus() Handles RootWindowElement.GotFocus",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "HandleInitialize",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub HandleInitialize(ByVal ControlContext As WindowsControls.WindowsControlContext) Implements IWindowsControl.Initialize",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "HandleKeyDown",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub HandleKeyDown(ByRef KeyCode As VBRUN.KeyCodeConstants, ByVal ShiftState As VBRUN.ShiftConstants) Handles RootWindowElement.KeyDown",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "HandleKeyPress",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub HandleKeyPress(ByRef Key As Integer) Handles RootWindowElement.KeyPress",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "HandleKeyUp",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub HandleKeyUp(ByRef KeyCode As VBRUN.KeyCodeConstants, ByVal ShiftState As VBRUN.ShiftConstants) Handles RootWindowElement.KeyUp",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "HandleLostFocus",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub HandleLostFocus() Handles RootWindowElement.LostFocus",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "HandleMouseDown",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub HandleMouseDown(ByVal Button As VBRUN.MouseButtonConstants, ByVal ShiftState As VBRUN.ShiftConstants, ByVal X As Single, ByVal Y As Single) Handles RootWindowElement.MouseDown",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "HandleMouseMove",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub HandleMouseMove(ByVal Button As VBRUN.MouseButtonConstants, ByVal ShiftState As VBRUN.ShiftConstants, ByVal X As Single, ByVal Y As Single) Handles RootWindowElement.MouseMove",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "HandleMouseUp",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub HandleMouseUp(ByVal Button As VBRUN.MouseButtonConstants, ByVal ShiftState As VBRUN.ShiftConstants, ByVal X As Single, ByVal Y As Single) Handles RootWindowElement.MouseUp",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "hWnd",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get hWnd() As LongPtr",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "New",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub New()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "New",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub New(Serializer As WindowsControls.SerializationInfo)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Value",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get Value() As VBRUN.CheckBoxConstants",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Value",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Let Value(ByVal Value As VBRUN.CheckBoxConstants)",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": [
+        {
+          "name": "Click",
+          "signature": "Event Click()",
+          "attributes": [
+            "DefaultDesignerEvent"
+          ]
+        },
+        {
+          "name": "GotFocus",
+          "signature": "Event GotFocus()",
+          "attributes": []
+        },
+        {
+          "name": "Initialize",
+          "signature": "Event Initialize()",
+          "attributes": []
+        },
+        {
+          "name": "KeyDown",
+          "signature": "Event KeyDown(KeyCode As Integer, Shift As Integer)",
+          "attributes": []
+        },
+        {
+          "name": "KeyPress",
+          "signature": "Event KeyPress(KeyAscii As Integer)",
+          "attributes": []
+        },
+        {
+          "name": "KeyUp",
+          "signature": "Event KeyUp(KeyCode As Integer, Shift As Integer)",
+          "attributes": []
+        },
+        {
+          "name": "LostFocus",
+          "signature": "Event LostFocus()",
+          "attributes": []
+        },
+        {
+          "name": "MouseDown",
+          "signature": "Event MouseDown(Button As Integer, Shift As Integer, X As Single, Y As Single)",
+          "attributes": []
+        },
+        {
+          "name": "MouseMove",
+          "signature": "Event MouseMove(Button As Integer, Shift As Integer, X As Single, Y As Single)",
+          "attributes": []
+        },
+        {
+          "name": "MouseUp",
+          "signature": "Event MouseUp(Button As Integer, Shift As Integer, X As Single, Y As Single)",
+          "attributes": []
+        }
+      ]
+    },
+    {
+      "name": "ComboBox",
+      "kind": "Class",
+      "file": "CONTROLS/CombBox.twin",
+      "access": "Public",
+      "attributes": [],
+      "implements": [
+        "BaseControlFocusable",
+        "WindowsControls.IWindowsControl"
+      ],
+      "inherits": null,
+      "members": [
+        {
+          "name": "AddItem",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub AddItem(ByVal Value As String, Optional ByVal Index As Variant)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "BackColor",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public BackColor As OLE_COLOR = VBRUN.SystemColorConstants.vbWindowBackground",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Class_Terminate",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub Class_Terminate()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Clear",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub Clear()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ColorsChanged",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub ColorsChanged() Handles BackColor.OnPropertyLet, ForeColor.OnPropertyLet",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ForeColor",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public ForeColor As OLE_COLOR = VBRUN.SystemColorConstants.vbWindowText",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "HandleCommand",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub HandleCommand(ByVal NotificationCode As ComboBoxConsts.Notifications, ByVal Identifier As Integer) Handles RootWindowElement.Command",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "HandleCreate",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub HandleCreate() Handles RootWindowElement.Create",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "HandleDestroy",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub HandleDestroy() Implements IWindowsControl.Destroy",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "HandleGetColors",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub HandleGetColors(ByVal hdc As LongPtr, ByRef BackBrushOut As LongPtr, ByVal ControlType As ControlTypeConstants) Handles RootWindowElement.GetColors",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "HandleGotFocus",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub HandleGotFocus() Handles RootWindowElement.GotFocus, WindowHandleEDIT.GotFocus, WindowHandleLIST.GotFocus",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "HandleInitialize",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub HandleInitialize(ByVal ControlContext As WindowsControls.WindowsControlContext) Implements IWindowsControl.Initialize",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "HandleKeyDown",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub HandleKeyDown(ByRef KeyCode As VBRUN.KeyCodeConstants, ByVal ShiftState As VBRUN.ShiftConstants) Handles RootWindowElement.KeyDown, WindowHandleEDIT.KeyDown, WindowHandleLIST.KeyDown",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "HandleKeyPress",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub HandleKeyPress(ByRef Key As Integer) Handles RootWindowElement.KeyPress, WindowHandleEDIT.KeyPress, WindowHandleLIST.KeyPress",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "HandleKeyUp",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub HandleKeyUp(ByRef KeyCode As VBRUN.KeyCodeConstants, ByVal ShiftState As VBRUN.ShiftConstants) Handles RootWindowElement.KeyUp, WindowHandleEDIT.KeyUp, WindowHandleLIST.KeyUp",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "HandleLostFocus",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub HandleLostFocus() Handles RootWindowElement.LostFocus, WindowHandleEDIT.LostFocus, WindowHandleLIST.LostFocus",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "hWnd",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get hWnd() As LongPtr",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ItemData",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get ItemData(ByVal Index As Long) As LongPtr",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ItemData",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Let ItemData(ByVal Index As Long, ByVal Value As LongPtr)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "List",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get List(ByVal Index As Long) As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "List",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Let List(ByVal Index As Long, ByVal Value As String)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ListCount",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get ListCount() As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ListIndex",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get ListIndex() As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ListIndex",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Let ListIndex(ByVal Value As Long)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Locked",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Get Locked() As Boolean",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Locked",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Let Locked(Value As Boolean)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "New",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub New()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "New",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub New(Serializer As WindowsControls.SerializationInfo)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "NewIndex",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public NewIndex As Long = -1",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "RemoveItem",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub RemoveItem(ByVal Index As Variant)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Text",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get Text() As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Text",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Let Text(ByVal Value As String)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "TopIndex",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get TopIndex() As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "TopIndex",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Let TopIndex(ByVal Value As Long)",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": [
+        {
+          "name": "Change",
+          "signature": "Event Change()",
+          "attributes": [
+            "DefaultDesignerEvent"
+          ]
+        },
+        {
+          "name": "Click",
+          "signature": "Event Click()",
+          "attributes": []
+        },
+        {
+          "name": "DblClick",
+          "signature": "Event DblClick()",
+          "attributes": []
+        },
+        {
+          "name": "DropDown",
+          "signature": "Event DropDown()",
+          "attributes": []
+        },
+        {
+          "name": "GotFocus",
+          "signature": "Event GotFocus()",
+          "attributes": []
+        },
+        {
+          "name": "Initialize",
+          "signature": "Event Initialize()",
+          "attributes": []
+        },
+        {
+          "name": "KeyDown",
+          "signature": "Event KeyDown(KeyCode As Integer, Shift As Integer)",
+          "attributes": []
+        },
+        {
+          "name": "KeyPress",
+          "signature": "Event KeyPress(KeyAscii As Integer)",
+          "attributes": []
+        },
+        {
+          "name": "KeyUp",
+          "signature": "Event KeyUp(KeyCode As Integer, Shift As Integer)",
+          "attributes": []
+        },
+        {
+          "name": "LostFocus",
+          "signature": "Event LostFocus()",
+          "attributes": []
+        }
+      ]
+    },
+    {
+      "name": "ComboBoxConsts",
+      "kind": "Module",
+      "file": "SUPPORT/ComboBoxConsts.twin",
+      "access": "Public",
+      "attributes": [],
+      "implements": [],
+      "inherits": null,
+      "members": [
+        {
+          "name": "Messages",
+          "kind": "Enum",
+          "access": "Public",
+          "signature": "Public Enum Messages",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Notifications",
+          "kind": "Enum",
+          "access": "Public",
+          "signature": "Public Enum Notifications",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Styles",
+          "kind": "Enum",
+          "access": "Public",
+          "signature": "Public Enum Styles",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "CommandButton",
+      "kind": "Class",
+      "file": "CONTROLS/CommandButton.twin",
+      "access": "Public",
+      "attributes": [],
+      "implements": [
+        "BaseControlFocusable",
+        "WindowsControls.IWindowsControl"
+      ],
+      "inherits": null,
+      "members": [
+        {
+          "name": "BackColor",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public BackColor As OLE_COLOR = VBRUN.SystemColorConstants.vb3DFace",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Caption",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get Caption() As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Caption",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Let Caption(ByVal Value As String)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Class_Terminate",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub Class_Terminate()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ColorsChanged",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub ColorsChanged() Handles BackColor.OnPropertyLet",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "HandleCommand",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub HandleCommand(ByVal NotificationCode As ButtonConsts.Notifications, ByVal Identifier As Integer) Handles RootWindowElement.Command",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "HandleCreate",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub HandleCreate() Handles RootWindowElement.Create",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "HandleDestroy",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub HandleDestroy() Implements IWindowsControl.Destroy",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "HandleGetColors",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub HandleGetColors(ByVal hdc As LongPtr, ByRef BackBrushOut As LongPtr, ByVal ControlType As ControlTypeConstants) Handles RootWindowElement.GetColors",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "HandleGotFocus",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub HandleGotFocus() Handles RootWindowElement.GotFocus",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "HandleInitialize",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub HandleInitialize(ByVal ControlContext As WindowsControls.WindowsControlContext) Implements IWindowsControl.Initialize",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "HandleKeyDown",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub HandleKeyDown(ByRef KeyCode As VBRUN.KeyCodeConstants, ByVal ShiftState As VBRUN.ShiftConstants) Handles RootWindowElement.KeyDown",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "HandleKeyPress",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub HandleKeyPress(ByRef Key As Integer) Handles RootWindowElement.KeyPress",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "HandleKeyUp",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub HandleKeyUp(ByRef KeyCode As VBRUN.KeyCodeConstants, ByVal ShiftState As VBRUN.ShiftConstants) Handles RootWindowElement.KeyUp",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "HandleLostFocus",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub HandleLostFocus() Handles RootWindowElement.LostFocus",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "HandleMouseDown",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub HandleMouseDown(ByVal Button As VBRUN.MouseButtonConstants, ByVal ShiftState As VBRUN.ShiftConstants, ByVal X As Single, ByVal Y As Single) Handles RootWindowElement.MouseDown",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "HandleMouseMove",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub HandleMouseMove(ByVal Button As VBRUN.MouseButtonConstants, ByVal ShiftState As VBRUN.ShiftConstants, ByVal X As Single, ByVal Y As Single) Handles RootWindowElement.MouseMove",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "HandleMouseUp",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub HandleMouseUp(ByVal Button As VBRUN.MouseButtonConstants, ByVal ShiftState As VBRUN.ShiftConstants, ByVal X As Single, ByVal Y As Single) Handles RootWindowElement.MouseUp",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "hWnd",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get hWnd() As LongPtr",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "New",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub New()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "New",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub New(Serializer As WindowsControls.SerializationInfo)",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": [
+        {
+          "name": "Click",
+          "signature": "Event Click()",
+          "attributes": [
+            "DefaultDesignerEvent"
+          ]
+        },
+        {
+          "name": "GotFocus",
+          "signature": "Event GotFocus()",
+          "attributes": []
+        },
+        {
+          "name": "Initialize",
+          "signature": "Event Initialize()",
+          "attributes": []
+        },
+        {
+          "name": "KeyDown",
+          "signature": "Event KeyDown(KeyCode As Integer, Shift As Integer)",
+          "attributes": []
+        },
+        {
+          "name": "KeyPress",
+          "signature": "Event KeyPress(KeyAscii As Integer)",
+          "attributes": []
+        },
+        {
+          "name": "KeyUp",
+          "signature": "Event KeyUp(KeyCode As Integer, Shift As Integer)",
+          "attributes": []
+        },
+        {
+          "name": "LostFocus",
+          "signature": "Event LostFocus()",
+          "attributes": []
+        },
+        {
+          "name": "MouseDown",
+          "signature": "Event MouseDown(Button As Integer, Shift As Integer, X As Single, Y As Single)",
+          "attributes": []
+        },
+        {
+          "name": "MouseMove",
+          "signature": "Event MouseMove(Button As Integer, Shift As Integer, X As Single, Y As Single)",
+          "attributes": []
+        },
+        {
+          "name": "MouseUp",
+          "signature": "Event MouseUp(Button As Integer, Shift As Integer, X As Single, Y As Single)",
+          "attributes": []
+        }
+      ]
+    },
+    {
+      "name": "Form",
+      "kind": "Class",
+      "file": "CONTROLS/Form.twin",
+      "access": "Public",
+      "attributes": [],
+      "implements": [
+        "BaseForm",
+        "WindowsControls.IWindowsControl"
+      ],
+      "inherits": null,
+      "members": [
+        {
+          "name": "BackColor",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public BackColor As OLE_COLOR = VBRUN.SystemColorConstants.vb3DFace",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Class_Terminate",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub Class_Terminate()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Close",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub Close()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ColorsChanged",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub ColorsChanged() Handles BackColor.OnPropertyLet",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "HandleActivate",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub HandleActivate() Handles RootWindowElement.Activate",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "HandleCreate",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub HandleCreate() Handles RootWindowElement.Create",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "HandleDeactivate",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub HandleDeactivate() Handles RootWindowElement.Deactivate",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "HandleDestroy",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub HandleDestroy() Implements IWindowsControl.Destroy",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "HandleEraseBackground",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub HandleEraseBackground(ByVal hdc As LongPtr, ByRef Handled As Boolean) Handles RootWindowElement.EraseBackground",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "HandleGotFocus",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub HandleGotFocus() Handles RootWindowElement.GotFocus",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "HandleInitialize",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub HandleInitialize(ByVal ControlContext As WindowsControls.WindowsControlContext) Implements IWindowsControl.Initialize",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "HandleKeyDown",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub HandleKeyDown(ByRef KeyCode As VBRUN.KeyCodeConstants, ByVal ShiftState As VBRUN.ShiftConstants) Handles RootWindowElement.KeyDown",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "HandleKeyPress",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub HandleKeyPress(ByRef Key As Integer) Handles RootWindowElement.KeyPress",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "HandleKeyUp",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub HandleKeyUp(ByRef KeyCode As VBRUN.KeyCodeConstants, ByVal ShiftState As VBRUN.ShiftConstants) Handles RootWindowElement.KeyUp",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "HandleLostFocus",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub HandleLostFocus() Handles RootWindowElement.LostFocus",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "HandleMouseDoubleClick",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub HandleMouseDoubleClick(ByVal Button As VBRUN.MouseButtonConstants, ByVal X As Single, ByVal Y As Single) Handles RootWindowElement.MouseDoubleClick",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "HandleMouseDown",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub HandleMouseDown(ByVal Button As VBRUN.MouseButtonConstants, ByVal ShiftState As VBRUN.ShiftConstants, ByVal X As Single, ByVal Y As Single) Handles RootWindowElement.MouseDown",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "HandleMouseMove",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub HandleMouseMove(ByVal Button As VBRUN.MouseButtonConstants, ByVal ShiftState As VBRUN.ShiftConstants, ByVal X As Single, ByVal Y As Single) Handles RootWindowElement.MouseMove",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "HandleMouseUp",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub HandleMouseUp(ByVal Button As VBRUN.MouseButtonConstants, ByVal ShiftState As VBRUN.ShiftConstants, ByVal X As Single, ByVal Y As Single) Handles RootWindowElement.MouseUp",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "HandlePaint",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub HandlePaint(ByRef Handled As Boolean) Handles RootWindowElement.Paint",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "HandleResize",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub HandleResize() Handles RootWindowElement.Resize",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "InitializeDefaultValues",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub InitializeDefaultValues()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "New",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub New()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "New",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub New(Serializer As WindowsControls.SerializationInfo)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Show",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub Show()",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": [
+        {
+          "name": "Activate",
+          "signature": "Event Activate()",
+          "attributes": [
+            "DefaultDesignerEvent"
+          ]
+        },
+        {
+          "name": "Click",
+          "signature": "Event Click()",
+          "attributes": []
+        },
+        {
+          "name": "DblClick",
+          "signature": "Event DblClick()",
+          "attributes": []
+        },
+        {
+          "name": "Deactivate",
+          "signature": "Event Deactivate()",
+          "attributes": []
+        },
+        {
+          "name": "GotFocus",
+          "signature": "Event GotFocus()",
+          "attributes": []
+        },
+        {
+          "name": "Initialize",
+          "signature": "Event Initialize()",
+          "attributes": []
+        },
+        {
+          "name": "KeyDown",
+          "signature": "Event KeyDown(KeyCode As Integer, Shift As Integer)",
+          "attributes": []
+        },
+        {
+          "name": "KeyPress",
+          "signature": "Event KeyPress(KeyAscii As Integer)",
+          "attributes": []
+        },
+        {
+          "name": "KeyUp",
+          "signature": "Event KeyUp(KeyCode As Integer, Shift As Integer)",
+          "attributes": []
+        },
+        {
+          "name": "Load",
+          "signature": "Event Load()",
+          "attributes": []
+        },
+        {
+          "name": "LostFocus",
+          "signature": "Event LostFocus()",
+          "attributes": []
+        },
+        {
+          "name": "MouseDown",
+          "signature": "Event MouseDown(Button As Integer, Shift As Integer, X As Single, Y As Single)",
+          "attributes": []
+        },
+        {
+          "name": "MouseMove",
+          "signature": "Event MouseMove(Button As Integer, Shift As Integer, X As Single, Y As Single)",
+          "attributes": []
+        },
+        {
+          "name": "MouseUp",
+          "signature": "Event MouseUp(Button As Integer, Shift As Integer, X As Single, Y As Single)",
+          "attributes": []
+        },
+        {
+          "name": "Paint",
+          "signature": "Event Paint()",
+          "attributes": []
+        },
+        {
+          "name": "Resize",
+          "signature": "Event Resize()",
+          "attributes": []
+        },
+        {
+          "name": "Terminate",
+          "signature": "Event Terminate()",
+          "attributes": []
+        }
+      ]
+    },
+    {
+      "name": "Frame",
+      "kind": "Class",
+      "file": "CONTROLS/Frame.twin",
+      "access": "Public",
+      "attributes": [],
+      "implements": [
+        "BaseControlFocusable",
+        "WindowsControls.IWindowsControl"
+      ],
+      "inherits": null,
+      "members": [
+        {
+          "name": "BackColor",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public BackColor As OLE_COLOR = VBRUN.SystemColorConstants.vb3DFace",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Caption",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get Caption() As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Caption",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Let Caption(ByVal Value As String)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Class_Terminate",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub Class_Terminate()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ColorsChanged",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub ColorsChanged() Handles BackColor.OnPropertyLet, ForeColor.OnPropertyLet",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ForeColor",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public ForeColor As OLE_COLOR = VBRUN.SystemColorConstants.vbButtonText",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "HandleCommand",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub HandleCommand(ByVal NotificationCode As ButtonConsts.Notifications, ByVal Identifier As Integer) Handles RootWindowElement.Command",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "HandleCreate",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub HandleCreate() Handles RootWindowElement.Create",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "HandleDestroy",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub HandleDestroy() Implements IWindowsControl.Destroy",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "HandleEraseBackground",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub HandleEraseBackground(ByVal hdc As LongPtr, ByRef Handled As Boolean) Handles RootWindowElement.EraseBackground",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "HandleGetColors",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub HandleGetColors(ByVal hdc As LongPtr, ByRef BackBrushOut As LongPtr, ByVal ControlType As ControlTypeConstants) Handles RootWindowElement.GetColors",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "HandleInitialize",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub HandleInitialize(ByVal ControlContext As WindowsControls.WindowsControlContext) Implements IWindowsControl.Initialize",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "HandleMouseDoubleClick",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub HandleMouseDoubleClick(ByVal Button As VBRUN.MouseButtonConstants, ByVal X As Single, ByVal Y As Single) Handles RootWindowElement.MouseDoubleClick",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "HandleMouseDown",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub HandleMouseDown(ByVal Button As VBRUN.MouseButtonConstants, ByVal ShiftState As VBRUN.ShiftConstants, ByVal X As Single, ByVal Y As Single) Handles RootWindowElement.MouseDown",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "HandleMouseMove",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub HandleMouseMove(ByVal Button As VBRUN.MouseButtonConstants, ByVal ShiftState As VBRUN.ShiftConstants, ByVal X As Single, ByVal Y As Single) Handles RootWindowElement.MouseMove",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "HandleMouseUp",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub HandleMouseUp(ByVal Button As VBRUN.MouseButtonConstants, ByVal ShiftState As VBRUN.ShiftConstants, ByVal X As Single, ByVal Y As Single) Handles RootWindowElement.MouseUp",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "hWnd",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get hWnd() As LongPtr",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "New",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub New()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "New",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub New(Serializer As WindowsControls.SerializationInfo)",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": [
+        {
+          "name": "Click",
+          "signature": "Event Click()",
+          "attributes": [
+            "DefaultDesignerEvent"
+          ]
+        },
+        {
+          "name": "DblClick",
+          "signature": "Event DblClick()",
+          "attributes": []
+        },
+        {
+          "name": "Initialize",
+          "signature": "Event Initialize()",
+          "attributes": []
+        },
+        {
+          "name": "MouseDown",
+          "signature": "Event MouseDown(Button As Integer, Shift As Integer, X As Single, Y As Single)",
+          "attributes": []
+        },
+        {
+          "name": "MouseMove",
+          "signature": "Event MouseMove(Button As Integer, Shift As Integer, X As Single, Y As Single)",
+          "attributes": []
+        },
+        {
+          "name": "MouseUp",
+          "signature": "Event MouseUp(Button As Integer, Shift As Integer, X As Single, Y As Single)",
+          "attributes": []
+        }
+      ]
+    },
+    {
+      "name": "GeneralConsts",
+      "kind": "Module",
+      "file": "SUPPORT/GeneralConsts.twin",
+      "access": "Public",
+      "attributes": [],
+      "implements": [],
+      "inherits": null,
+      "members": [
+        {
+          "name": "BackgroundModes",
+          "kind": "Enum",
+          "access": "Public",
+          "signature": "Public Enum BackgroundModes",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "COMBOBOXINFO",
+          "kind": "Type",
+          "access": null,
+          "signature": "Type COMBOBOXINFO",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "FontQuality",
+          "kind": "Enum",
+          "access": "Public",
+          "signature": "Public Enum FontQuality",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "LF_FACESIZE",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const LF_FACESIZE As Long = 32",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "LOGFONT",
+          "kind": "Type",
+          "access": null,
+          "signature": "Type LOGFONT",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "PAINTSTRUCT",
+          "kind": "Type",
+          "access": null,
+          "signature": "Type PAINTSTRUCT",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "RECT",
+          "kind": "Type",
+          "access": null,
+          "signature": "Type RECT",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "RedrawFlags",
+          "kind": "Enum",
+          "access": "Public",
+          "signature": "Public Enum RedrawFlags",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ShowWindowCommands",
+          "kind": "Enum",
+          "access": "Public",
+          "signature": "Public Enum ShowWindowCommands",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "WindowEnumerationMode",
+          "kind": "Enum",
+          "access": "Public",
+          "signature": "Public Enum WindowEnumerationMode",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "WindowExtendedStyles",
+          "kind": "Enum",
+          "access": "Public",
+          "signature": "Public Enum WindowExtendedStyles",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "WindowGDIObjectTypes",
+          "kind": "Enum",
+          "access": "Public",
+          "signature": "Public Enum WindowGDIObjectTypes",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "WindowMessages",
+          "kind": "Enum",
+          "access": "Public",
+          "signature": "Public Enum WindowMessages",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "WindowProperties",
+          "kind": "Enum",
+          "access": "Public",
+          "signature": "Public Enum WindowProperties",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "WindowStyles",
+          "kind": "Enum",
+          "access": "Public",
+          "signature": "Public Enum WindowStyles",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "HScrollBar",
+      "kind": "Class",
+      "file": "CONTROLS/HScrollBar.twin",
+      "access": "Public",
+      "attributes": [],
+      "implements": [
+        "BaseControlFocusableNoFont",
+        "WindowsControls.IWindowsControl"
+      ],
+      "inherits": null,
+      "members": [
+        {
+          "name": "Class_Terminate",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub Class_Terminate()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "HandleCreate",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub HandleCreate() Handles RootWindowElement.Create",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "HandleDestroy",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub HandleDestroy() Implements IWindowsControl.Destroy",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "HandleGotFocus",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub HandleGotFocus() Handles RootWindowElement.GotFocus",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "HandleInitialize",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub HandleInitialize(ByVal ControlContext As WindowsControls.WindowsControlContext) Implements IWindowsControl.Initialize",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "HandleKeyDown",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub HandleKeyDown(ByRef KeyCode As VBRUN.KeyCodeConstants, ByVal ShiftState As VBRUN.ShiftConstants) Handles RootWindowElement.KeyDown",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "HandleKeyPress",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub HandleKeyPress(ByRef Key As Integer) Handles RootWindowElement.KeyPress",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "HandleKeyUp",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub HandleKeyUp(ByRef KeyCode As VBRUN.KeyCodeConstants, ByVal ShiftState As VBRUN.ShiftConstants) Handles RootWindowElement.KeyUp",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "HandleLostFocus",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub HandleLostFocus() Handles RootWindowElement.LostFocus",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "HandleScroll",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub HandleScroll(ByVal ScrollType As SCROLLNOTIFY) Handles RootWindowElement.Scroll",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "hWnd",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get hWnd() As LongPtr",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "LargeChange",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public LargeChange As Long = 1",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Max",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get Max() As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Max",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Let Max(ByVal Value As Long)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Min",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get Min() As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Min",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Let Min(ByVal Value As Long)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "New",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub New()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "New",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub New(Serializer As WindowsControls.SerializationInfo)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SmallChange",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public SmallChange As Long = 1",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Value",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get Value() As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Value",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Let Value(ByVal NewValue As Long)",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": [
+        {
+          "name": "Change",
+          "signature": "Event Change()",
+          "attributes": [
+            "DefaultDesignerEvent"
+          ]
+        },
+        {
+          "name": "GotFocus",
+          "signature": "Event GotFocus()",
+          "attributes": []
+        },
+        {
+          "name": "Initialize",
+          "signature": "Event Initialize()",
+          "attributes": []
+        },
+        {
+          "name": "KeyDown",
+          "signature": "Event KeyDown(KeyCode As Integer, Shift As Integer)",
+          "attributes": []
+        },
+        {
+          "name": "KeyPress",
+          "signature": "Event KeyPress(KeyAscii As Integer)",
+          "attributes": []
+        },
+        {
+          "name": "KeyUp",
+          "signature": "Event KeyUp(KeyCode As Integer, Shift As Integer)",
+          "attributes": []
+        },
+        {
+          "name": "LostFocus",
+          "signature": "Event LostFocus()",
+          "attributes": []
+        }
+      ]
+    },
+    {
+      "name": "Label",
+      "kind": "Class",
+      "file": "CONTROLS/Label.twin",
+      "access": "Public",
+      "attributes": [],
+      "implements": [
+        "BaseControlFocusable",
+        "WindowsControls.IWindowsControl"
+      ],
+      "inherits": null,
+      "members": [
+        {
+          "name": "Alignment",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Get Alignment() As VBRUN.AlignmentConstants",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Alignment",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Let Alignment(Value As VBRUN.AlignmentConstants)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "BackColor",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public BackColor As OLE_COLOR = VBRUN.SystemColorConstants.vb3DFace",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Caption",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get Caption() As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Caption",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Let Caption(ByVal NewValue As String)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Class_Terminate",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub Class_Terminate()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ColorsChanged",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub ColorsChanged() Handles BackColor.OnPropertyLet, ForeColor.OnPropertyLet",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ForeColor",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public ForeColor As OLE_COLOR = VBRUN.SystemColorConstants.vbButtonText",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "HandleCommand",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub HandleCommand(ByVal NotificationCode As StaticControlConsts.Notifications, ByVal Identifier As Integer) Handles RootWindowElement.Command",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "HandleCreate",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub HandleCreate() Handles RootWindowElement.Create",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "HandleDestroy",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub HandleDestroy() Implements IWindowsControl.Destroy",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "HandleGetColors",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub HandleGetColors(ByVal hdc As LongPtr, ByRef BackBrushOut As LongPtr, ByVal ControlType As ControlTypeConstants) Handles RootWindowElement.GetColors",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "HandleInitialize",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub HandleInitialize(ByVal ControlContext As WindowsControls.WindowsControlContext) Implements IWindowsControl.Initialize",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "HandleMouseDoubleClick",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub HandleMouseDoubleClick(ByVal Button As VBRUN.MouseButtonConstants, ByVal X As Single, ByVal Y As Single) Handles RootWindowElement.MouseDoubleClick",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "HandleMouseDown",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub HandleMouseDown(ByVal Button As VBRUN.MouseButtonConstants, ByVal ShiftState As VBRUN.ShiftConstants, ByVal X As Single, ByVal Y As Single) Handles RootWindowElement.MouseDown",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "HandleMouseMove",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub HandleMouseMove(ByVal Button As VBRUN.MouseButtonConstants, ByVal ShiftState As VBRUN.ShiftConstants, ByVal X As Single, ByVal Y As Single) Handles RootWindowElement.MouseMove",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "HandleMouseUp",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub HandleMouseUp(ByVal Button As VBRUN.MouseButtonConstants, ByVal ShiftState As VBRUN.ShiftConstants, ByVal X As Single, ByVal Y As Single) Handles RootWindowElement.MouseUp",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "hWnd",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get hWnd() As LongPtr",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "New",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub New()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "New",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub New(Serializer As WindowsControls.SerializationInfo)",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": [
+        {
+          "name": "Change",
+          "signature": "Event Change()",
+          "attributes": []
+        },
+        {
+          "name": "Click",
+          "signature": "Event Click()",
+          "attributes": [
+            "DefaultDesignerEvent"
+          ]
+        },
+        {
+          "name": "DblClick",
+          "signature": "Event DblClick()",
+          "attributes": []
+        },
+        {
+          "name": "Initialize",
+          "signature": "Event Initialize()",
+          "attributes": []
+        },
+        {
+          "name": "MouseDown",
+          "signature": "Event MouseDown(Button As Integer, Shift As Integer, X As Single, Y As Single)",
+          "attributes": []
+        },
+        {
+          "name": "MouseMove",
+          "signature": "Event MouseMove(Button As Integer, Shift As Integer, X As Single, Y As Single)",
+          "attributes": []
+        },
+        {
+          "name": "MouseUp",
+          "signature": "Event MouseUp(Button As Integer, Shift As Integer, X As Single, Y As Single)",
+          "attributes": []
+        }
+      ]
+    },
+    {
+      "name": "ListBox",
+      "kind": "Class",
+      "file": "CONTROLS/ListBox.twin",
+      "access": "Public",
+      "attributes": [],
+      "implements": [
+        "BaseControlFocusable",
+        "WindowsControls.IWindowsControl"
+      ],
+      "inherits": null,
+      "members": [
+        {
+          "name": "AddItem",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub AddItem(ByVal Value As String, Optional ByVal Index As Variant)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "BackColor",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public BackColor As OLE_COLOR = VBRUN.SystemColorConstants.vbWindowBackground",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Class_Terminate",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub Class_Terminate()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Clear",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub Clear()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ColorsChanged",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub ColorsChanged() Handles BackColor.OnPropertyLet, ForeColor.OnPropertyLet",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Columns",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public Columns As Long = 0",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ForeColor",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public ForeColor As OLE_COLOR = VBRUN.SystemColorConstants.vbWindowText",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "HandleCommand",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub HandleCommand(ByVal NotificationCode As ListBoxConsts.Notifications, ByVal Identifier As Integer) Handles RootWindowElement.Command",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "HandleCreate",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub HandleCreate() Handles RootWindowElement.Create",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "HandleDestroy",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub HandleDestroy() Implements IWindowsControl.Destroy",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "HandleGetColors",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub HandleGetColors(ByVal hdc As LongPtr, ByRef BackBrushOut As LongPtr, ByVal ControlType As ControlTypeConstants) Handles RootWindowElement.GetColors",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "HandleGotFocus",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub HandleGotFocus() Handles RootWindowElement.GotFocus",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "HandleInitialize",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub HandleInitialize(ByVal ControlContext As WindowsControls.WindowsControlContext) Implements IWindowsControl.Initialize",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "HandleKeyDown",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub HandleKeyDown(ByRef KeyCode As VBRUN.KeyCodeConstants, ByVal ShiftState As VBRUN.ShiftConstants) Handles RootWindowElement.KeyDown",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "HandleKeyPress",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub HandleKeyPress(ByRef Key As Integer) Handles RootWindowElement.KeyPress",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "HandleKeyUp",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub HandleKeyUp(ByRef KeyCode As VBRUN.KeyCodeConstants, ByVal ShiftState As VBRUN.ShiftConstants) Handles RootWindowElement.KeyUp",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "HandleLostFocus",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub HandleLostFocus() Handles RootWindowElement.LostFocus",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "HandleMouseDoubleClick",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub HandleMouseDoubleClick(ByVal Button As VBRUN.MouseButtonConstants, ByVal X As Single, ByVal Y As Single) Handles RootWindowElement.MouseDoubleClick",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "HandleMouseDown",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub HandleMouseDown(ByVal Button As VBRUN.MouseButtonConstants, ByVal ShiftState As VBRUN.ShiftConstants, ByVal X As Single, ByVal Y As Single) Handles RootWindowElement.MouseDown",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "HandleMouseMove",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub HandleMouseMove(ByVal Button As VBRUN.MouseButtonConstants, ByVal ShiftState As VBRUN.ShiftConstants, ByVal X As Single, ByVal Y As Single) Handles RootWindowElement.MouseMove",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "HandleMouseUp",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub HandleMouseUp(ByVal Button As VBRUN.MouseButtonConstants, ByVal ShiftState As VBRUN.ShiftConstants, ByVal X As Single, ByVal Y As Single) Handles RootWindowElement.MouseUp",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "hWnd",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get hWnd() As LongPtr",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ItemData",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get ItemData(ByVal Index As Long) As LongPtr",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ItemData",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Let ItemData(ByVal Index As Long, ByVal Value As LongPtr)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "List",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get List(ByVal Index As Long) As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "List",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Let List(ByVal Index As Long, ByVal Value As String)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ListCount",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get ListCount() As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ListIndex",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get ListIndex() As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ListIndex",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Let ListIndex(ByVal NewValue As Long)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "New",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub New()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "New",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub New(Serializer As WindowsControls.SerializationInfo)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "NewIndex",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public NewIndex As Long = -1",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "RemoveItem",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub RemoveItem(ByVal Index As Variant)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SelCount",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get SelCount() As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Selected",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get Selected(ByVal Index As Long) As Boolean",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Selected",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Let Selected(ByVal Index As Long, ByVal NewValue As Boolean)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SyncColumns",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub SyncColumns() Handles Columns.OnPropertyLet",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Text",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get Text() As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Text",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Let Text(ByVal Value As String)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "TopIndex",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get TopIndex() As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "TopIndex",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Let TopIndex(ByVal Value As Long)",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": [
+        {
+          "name": "Click",
+          "signature": "Event Click()",
+          "attributes": [
+            "DefaultDesignerEvent"
+          ]
+        },
+        {
+          "name": "DblClick",
+          "signature": "Event DblClick()",
+          "attributes": []
+        },
+        {
+          "name": "GotFocus",
+          "signature": "Event GotFocus()",
+          "attributes": []
+        },
+        {
+          "name": "Initialize",
+          "signature": "Event Initialize()",
+          "attributes": []
+        },
+        {
+          "name": "KeyDown",
+          "signature": "Event KeyDown(KeyCode As Integer, Shift As Integer)",
+          "attributes": []
+        },
+        {
+          "name": "KeyPress",
+          "signature": "Event KeyPress(KeyAscii As Integer)",
+          "attributes": []
+        },
+        {
+          "name": "KeyUp",
+          "signature": "Event KeyUp(KeyCode As Integer, Shift As Integer)",
+          "attributes": []
+        },
+        {
+          "name": "LostFocus",
+          "signature": "Event LostFocus()",
+          "attributes": []
+        },
+        {
+          "name": "MouseDown",
+          "signature": "Event MouseDown(Button As Integer, Shift As Integer, X As Single, Y As Single)",
+          "attributes": []
+        },
+        {
+          "name": "MouseMove",
+          "signature": "Event MouseMove(Button As Integer, Shift As Integer, X As Single, Y As Single)",
+          "attributes": []
+        },
+        {
+          "name": "MouseUp",
+          "signature": "Event MouseUp(Button As Integer, Shift As Integer, X As Single, Y As Single)",
+          "attributes": []
+        }
+      ]
+    },
+    {
+      "name": "ListBoxConsts",
+      "kind": "Module",
+      "file": "SUPPORT/ListBoxConsts.twin",
+      "access": "Public",
+      "attributes": [],
+      "implements": [],
+      "inherits": null,
+      "members": [
+        {
+          "name": "Messages",
+          "kind": "Enum",
+          "access": "Public",
+          "signature": "Public Enum Messages",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Notifications",
+          "kind": "Enum",
+          "access": "Public",
+          "signature": "Public Enum Notifications",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Styles",
+          "kind": "Enum",
+          "access": "Public",
+          "signature": "Public Enum Styles",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "Math",
+      "kind": "Module",
+      "file": "SUPPORT/Math.twin",
+      "access": "Public",
+      "attributes": [],
+      "implements": [],
+      "inherits": null,
+      "members": [
+        {
+          "name": "Max",
+          "kind": "Function",
+          "access": null,
+          "signature": "Function Max(Of T)(A As T, B As T) As T",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Min",
+          "kind": "Function",
+          "access": null,
+          "signature": "Function Min(Of T)(A As T, B As T) As T",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "OptionButton",
+      "kind": "Class",
+      "file": "CONTROLS/OptionButton.twin",
+      "access": "Public",
+      "attributes": [],
+      "implements": [
+        "BaseControlFocusable",
+        "WindowsControls.IWindowsControl"
+      ],
+      "inherits": null,
+      "members": [
+        {
+          "name": "Alignment",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Get Alignment() As VBRUN.AlignmentConstantsNoCenter",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Alignment",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Let Alignment(Value As VBRUN.AlignmentConstantsNoCenter)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "BackColor",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public BackColor As OLE_COLOR = VBRUN.SystemColorConstants.vb3DFace",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Caption",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get Caption() As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Caption",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Let Caption(ByVal Value As String)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Class_Terminate",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub Class_Terminate()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ColorsChanged",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub ColorsChanged() Handles BackColor.OnPropertyLet, ForeColor.OnPropertyLet",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ForeColor",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public ForeColor As OLE_COLOR = VBRUN.SystemColorConstants.vbButtonText",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "HandleCommand",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub HandleCommand(ByVal NotificationCode As ButtonConsts.Notifications, ByVal Identifier As Integer) Handles RootWindowElement.Command",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "HandleCreate",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub HandleCreate() Handles RootWindowElement.Create",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "HandleDestroy",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub HandleDestroy() Implements IWindowsControl.Destroy",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "HandleGetColors",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub HandleGetColors(ByVal hdc As LongPtr, ByRef BackBrushOut As LongPtr, ByVal ControlType As ControlTypeConstants) Handles RootWindowElement.GetColors",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "HandleGotFocus",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub HandleGotFocus() Handles RootWindowElement.GotFocus",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "HandleInitialize",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub HandleInitialize(ByVal ControlContext As WindowsControls.WindowsControlContext) Implements IWindowsControl.Initialize",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "HandleKeyDown",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub HandleKeyDown(ByRef KeyCode As VBRUN.KeyCodeConstants, ByVal ShiftState As VBRUN.ShiftConstants) Handles RootWindowElement.KeyDown",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "HandleKeyPress",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub HandleKeyPress(ByRef Key As Integer) Handles RootWindowElement.KeyPress",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "HandleKeyUp",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub HandleKeyUp(ByRef KeyCode As VBRUN.KeyCodeConstants, ByVal ShiftState As VBRUN.ShiftConstants) Handles RootWindowElement.KeyUp",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "HandleLostFocus",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub HandleLostFocus() Handles RootWindowElement.LostFocus",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "HandleMouseDoubleClick",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub HandleMouseDoubleClick(ByVal Button As VBRUN.MouseButtonConstants, ByVal X As Single, ByVal Y As Single) Handles RootWindowElement.MouseDoubleClick",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "HandleMouseDown",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub HandleMouseDown(ByVal Button As VBRUN.MouseButtonConstants, ByVal ShiftState As VBRUN.ShiftConstants, ByVal X As Single, ByVal Y As Single) Handles RootWindowElement.MouseDown",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "HandleMouseMove",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub HandleMouseMove(ByVal Button As VBRUN.MouseButtonConstants, ByVal ShiftState As VBRUN.ShiftConstants, ByVal X As Single, ByVal Y As Single) Handles RootWindowElement.MouseMove",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "HandleMouseUp",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub HandleMouseUp(ByVal Button As VBRUN.MouseButtonConstants, ByVal ShiftState As VBRUN.ShiftConstants, ByVal X As Single, ByVal Y As Single) Handles RootWindowElement.MouseUp",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "hWnd",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get hWnd() As LongPtr",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "New",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub New()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "New",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub New(Serializer As WindowsControls.SerializationInfo)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Value",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get Value() As Boolean",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Value",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Let Value(ByVal Value As Boolean)",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": [
+        {
+          "name": "Click",
+          "signature": "Event Click()",
+          "attributes": [
+            "DefaultDesignerEvent"
+          ]
+        },
+        {
+          "name": "DblClick",
+          "signature": "Event DblClick()",
+          "attributes": []
+        },
+        {
+          "name": "GotFocus",
+          "signature": "Event GotFocus()",
+          "attributes": []
+        },
+        {
+          "name": "Initialize",
+          "signature": "Event Initialize()",
+          "attributes": []
+        },
+        {
+          "name": "KeyDown",
+          "signature": "Event KeyDown(KeyCode As Integer, Shift As Integer)",
+          "attributes": []
+        },
+        {
+          "name": "KeyPress",
+          "signature": "Event KeyPress(KeyAscii As Integer)",
+          "attributes": []
+        },
+        {
+          "name": "KeyUp",
+          "signature": "Event KeyUp(KeyCode As Integer, Shift As Integer)",
+          "attributes": []
+        },
+        {
+          "name": "LostFocus",
+          "signature": "Event LostFocus()",
+          "attributes": []
+        },
+        {
+          "name": "MouseDown",
+          "signature": "Event MouseDown(Button As Integer, Shift As Integer, X As Single, Y As Single)",
+          "attributes": []
+        },
+        {
+          "name": "MouseMove",
+          "signature": "Event MouseMove(Button As Integer, Shift As Integer, X As Single, Y As Single)",
+          "attributes": []
+        },
+        {
+          "name": "MouseUp",
+          "signature": "Event MouseUp(Button As Integer, Shift As Integer, X As Single, Y As Single)",
+          "attributes": []
+        }
+      ]
+    },
+    {
+      "name": "PrivateWindowsAPI",
+      "kind": "Module",
+      "file": "SUPPORT/WindowAPI.twin",
+      "access": "Private",
+      "attributes": [],
+      "implements": [],
+      "inherits": null,
+      "members": [
+        {
+          "name": "CreateFontIndirectW",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function CreateFontIndirectW Lib \"\" (ByRef lpLogFont As LOGFONT) As LongPtr",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CreateFontW",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function CreateFontW Lib \"\" (ByVal cHeight As Long, ByVal cWidth As Long, ByVal cEscapement As Long, ByVal cOrientation As Long, ByVal cWeight As Long, ByVal bItalic As Long, ByVal bUnderline As Long, ByVal bStrikeOut As Long, ByVal iCharSet As Long, ByVal iOutPrecision As Long, ByVal iClipPrecision As Long, ByVal iQuality As Long, ByVal iPitchAndFamily As Long, ByVal pszFaceName As String) As LongPtr",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CreateSolidBrush",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function CreateSolidBrush Lib \"\" (ByVal Color As Long) As LongPtr",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "DeleteObject",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function DeleteObject Lib \"\" (ByVal handle As LongPtr) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "EnableWindow",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function EnableWindow Lib \"\" (ByVal hWnd As LongPtr, ByVal bEnable As Long) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "FillRect",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function FillRect Lib \"\" (ByVal hdc As LongPtr, ByRef outRect As RECT, ByVal brush As LongPtr) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GetCapture",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function GetCapture Lib \"\" () As LongPtr",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GetClientRect",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function GetClientRect Lib \"\" (ByVal hWnd As LongPtr, ByRef outRect As RECT) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GetCurrentObject",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function GetCurrentObject Lib \"\" (ByVal HDC As LongPtr, ByVal Type As WindowGDIObjectTypes) As LongPtr",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GetObjectW",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function GetObjectW Lib \"\" (ByVal hObject As LongPtr, ByVal nCount As Long, ByRef lpObject As Any) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GetParent",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function GetParent Lib \"\" (ByVal hWnd As LongPtr) As LongPtr",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GetWindow",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function GetWindow Lib \"\" (ByVal hWnd As LongPtr, ByVal uCmd As Long) As LongPtr",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GetWindowLongW",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function GetWindowLongW Lib \"\" (ByVal HWnd As LongPtr, ByVal Index As Long) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GetWindowTextLengthW",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function GetWindowTextLengthW Lib \"\" (ByVal hWnd As LongPtr) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GetWindowTextW",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function GetWindowTextW Lib \"\" (ByVal hWnd As LongPtr, ByVal Text As String, ByVal TextLen As Long) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "MulDiv",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function MulDiv Lib \"\" (ByVal nNumber As Long, ByVal nNumerator As Long, ByVal nDenominator As Long) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "RedrawWindow",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function RedrawWindow Lib \"\" (ByVal hWnd As LongPtr, ByVal lprcUpdate As LongPtr, ByVal hrgnUpdate As LongPtr, ByVal flags As RedrawFlags) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "RtlMoveMemory",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Sub RtlMoveMemory Lib \"\" (ByVal lpDest As LongPtr, ByVal lpSource As LongPtr, ByVal Size As LongPtr)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SendMessageW",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function SendMessageW Lib \"\" (ByVal HWnd As LongPtr, ByVal wMsg As Long, ByVal wParam As LongPtr, ByVal lParam As LongPtr) As LongPtr",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SetBkMode",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function SetBkMode Lib \"\" (ByVal HDC As LongPtr, ByVal Mode As Long) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SetFocus",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function SetFocus Lib \"\" (ByVal hWnd As LongPtr) As LongPtr",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SetTextColor",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function SetTextColor Lib \"\" (ByVal HDC As LongPtr, ByVal Color As Long) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SetWindowLongW",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function SetWindowLongW Lib \"\" (ByVal HWnd As LongPtr, ByVal Index As Long, ByVal Value As Long) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SetWindowTextW",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function SetWindowTextW Lib \"\" (ByVal hWnd As LongPtr, ByVal Text As String) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ShowWindow",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function ShowWindow Lib \"\" (ByVal hWnd As LongPtr, ByVal nCmdShow As Long) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SysAllocStringLen",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function SysAllocStringLen Lib \"\" (ByVal CopyFrom As String, ByVal Length As Long) As String",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "ScrollBarConsts",
+      "kind": "Module",
+      "file": "SUPPORT/ScrollBarConsts.twin",
+      "access": "Public",
+      "attributes": [],
+      "implements": [],
+      "inherits": null,
+      "members": [
+        {
+          "name": "Messages",
+          "kind": "Enum",
+          "access": "Public",
+          "signature": "Public Enum Messages",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SCROLLINFO",
+          "kind": "Type",
+          "access": null,
+          "signature": "Type SCROLLINFO",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SCROLLINFOMASK",
+          "kind": "Enum",
+          "access": "Public",
+          "signature": "Public Enum SCROLLINFOMASK",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SCROLLNOTIFY",
+          "kind": "Enum",
+          "access": "Public",
+          "signature": "Public Enum SCROLLNOTIFY",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Styles",
+          "kind": "Enum",
+          "access": "Public",
+          "signature": "Public Enum Styles",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "StaticControlConsts",
+      "kind": "Module",
+      "file": "SUPPORT/StaticControlConsts.twin",
+      "access": "Public",
+      "attributes": [],
+      "implements": [],
+      "inherits": null,
+      "members": [
+        {
+          "name": "Messages",
+          "kind": "Enum",
+          "access": "Public",
+          "signature": "Public Enum Messages",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Notifications",
+          "kind": "Enum",
+          "access": "Public",
+          "signature": "Public Enum Notifications",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Styles",
+          "kind": "Enum",
+          "access": "Public",
+          "signature": "Public Enum Styles",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "TextBox",
+      "kind": "Class",
+      "file": "CONTROLS/TextBox.twin",
+      "access": "Public",
+      "attributes": [],
+      "implements": [
+        "BaseControlFocusable",
+        "WindowsControls.IWindowsControl"
+      ],
+      "inherits": null,
+      "members": [
+        {
+          "name": "BackColor",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public BackColor As OLE_COLOR = VBRUN.SystemColorConstants.vbWindowBackground",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Class_Terminate",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub Class_Terminate()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ColorsChanged",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub ColorsChanged() Handles BackColor.OnPropertyLet, ForeColor.OnPropertyLet",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ForeColor",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public ForeColor As OLE_COLOR = VBRUN.SystemColorConstants.vbWindowText",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "HandleCommand",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub HandleCommand(ByVal NotificationCode As TextBoxConsts.Notifications, ByVal Identifier As Integer) Handles RootWindowElement.Command",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "HandleCreate",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub HandleCreate() Handles RootWindowElement.Create",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "HandleDestroy",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub HandleDestroy() Implements IWindowsControl.Destroy",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "HandleGetColors",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub HandleGetColors(ByVal hdc As LongPtr, ByRef BackBrushOut As LongPtr, ByVal ControlType As ControlTypeConstants) Handles RootWindowElement.GetColors",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "HandleGotFocus",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub HandleGotFocus() Handles RootWindowElement.GotFocus",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "HandleInitialize",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub HandleInitialize(ByVal ControlContext As WindowsControls.WindowsControlContext) Implements IWindowsControl.Initialize",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "HandleKeyDown",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub HandleKeyDown(ByRef KeyCode As VBRUN.KeyCodeConstants, ByVal ShiftState As VBRUN.ShiftConstants) Handles RootWindowElement.KeyDown",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "HandleKeyPress",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub HandleKeyPress(ByRef Key As Integer) Handles RootWindowElement.KeyPress",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "HandleKeyUp",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub HandleKeyUp(ByRef KeyCode As VBRUN.KeyCodeConstants, ByVal ShiftState As VBRUN.ShiftConstants) Handles RootWindowElement.KeyUp",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "HandleLostFocus",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub HandleLostFocus() Handles RootWindowElement.LostFocus",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "HandleMouseDoubleClick",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub HandleMouseDoubleClick(ByVal Button As VBRUN.MouseButtonConstants, ByVal X As Single, ByVal Y As Single) Handles RootWindowElement.MouseDoubleClick",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "HandleMouseDown",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub HandleMouseDown(ByVal Button As VBRUN.MouseButtonConstants, ByVal ShiftState As VBRUN.ShiftConstants, ByVal X As Single, ByVal Y As Single) Handles RootWindowElement.MouseDown",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "HandleMouseMove",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub HandleMouseMove(ByVal Button As VBRUN.MouseButtonConstants, ByVal ShiftState As VBRUN.ShiftConstants, ByVal X As Single, ByVal Y As Single) Handles RootWindowElement.MouseMove",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "HandleMouseUp",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub HandleMouseUp(ByVal Button As VBRUN.MouseButtonConstants, ByVal ShiftState As VBRUN.ShiftConstants, ByVal X As Single, ByVal Y As Single) Handles RootWindowElement.MouseUp",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "hWnd",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get hWnd() As LongPtr",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Locked",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Get Locked() As Boolean",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Locked",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Let Locked(Value As Boolean)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "MaxLength",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public MaxLength As Long = 0",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "New",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub New()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "New",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub New(Serializer As WindowsControls.SerializationInfo)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "PasswordChar",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public PasswordChar As String = vbNullString",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SelLength",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get SelLength() As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SelLength",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Let SelLength(Value As Long)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SelStart",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get SelStart() As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SelStart",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Let SelStart(Value As Long)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SelText",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get SelText() As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SelText",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Let SelText(Value As String)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SyncMaxLength",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub SyncMaxLength() Handles MaxLength.OnPropertyLet",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SyncPasswordChar",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub SyncPasswordChar() Handles PasswordChar.OnPropertyLet",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Text",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get Text() As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Text",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Let Text(ByVal Value As String)",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": [
+        {
+          "name": "Change",
+          "signature": "Event Change()",
+          "attributes": [
+            "DefaultDesignerEvent"
+          ]
+        },
+        {
+          "name": "Click",
+          "signature": "Event Click()",
+          "attributes": []
+        },
+        {
+          "name": "DblClick",
+          "signature": "Event DblClick()",
+          "attributes": []
+        },
+        {
+          "name": "GotFocus",
+          "signature": "Event GotFocus()",
+          "attributes": []
+        },
+        {
+          "name": "Initialize",
+          "signature": "Event Initialize()",
+          "attributes": []
+        },
+        {
+          "name": "KeyDown",
+          "signature": "Event KeyDown(KeyCode As Integer, Shift As Integer)",
+          "attributes": []
+        },
+        {
+          "name": "KeyPress",
+          "signature": "Event KeyPress(KeyAscii As Integer)",
+          "attributes": []
+        },
+        {
+          "name": "KeyUp",
+          "signature": "Event KeyUp(KeyCode As Integer, Shift As Integer)",
+          "attributes": []
+        },
+        {
+          "name": "LostFocus",
+          "signature": "Event LostFocus()",
+          "attributes": []
+        },
+        {
+          "name": "MouseDown",
+          "signature": "Event MouseDown(Button As Integer, Shift As Integer, X As Single, Y As Single)",
+          "attributes": []
+        },
+        {
+          "name": "MouseMove",
+          "signature": "Event MouseMove(Button As Integer, Shift As Integer, X As Single, Y As Single)",
+          "attributes": []
+        },
+        {
+          "name": "MouseUp",
+          "signature": "Event MouseUp(Button As Integer, Shift As Integer, X As Single, Y As Single)",
+          "attributes": []
+        }
+      ]
+    },
+    {
+      "name": "TextBoxConsts",
+      "kind": "Module",
+      "file": "SUPPORT/TextBoxConsts.twin",
+      "access": "Public",
+      "attributes": [],
+      "implements": [],
+      "inherits": null,
+      "members": [
+        {
+          "name": "Messages",
+          "kind": "Enum",
+          "access": "Public",
+          "signature": "Public Enum Messages",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Notifications",
+          "kind": "Enum",
+          "access": "Public",
+          "signature": "Public Enum Notifications",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Styles",
+          "kind": "Enum",
+          "access": "Public",
+          "signature": "Public Enum Styles",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "Timer",
+      "kind": "Class",
+      "file": "CONTROLS/Timer.twin",
+      "access": "Public",
+      "attributes": [],
+      "implements": [
+        "BaseControlNotFocusable",
+        "WindowsControls.IWindowsControl"
+      ],
+      "inherits": null,
+      "members": [
+        {
+          "name": "Class_Terminate",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub Class_Terminate()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Enabled",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public Enabled As Boolean = True",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "HandleChangedTimer",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub HandleChangedTimer() Handles Interval.OnPropertyLet, Enabled.OnPropertyLet",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "HandleDestroy",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub HandleDestroy() Implements IWindowsControl.Destroy",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "HandleInitialize",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub HandleInitialize(ByVal ControlContext As WindowsControls.WindowsControlContext) Implements IWindowsControl.Initialize",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "HandleTimer",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub HandleTimer() Handles InternalTimer.OnTimer",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Interval",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public Interval As Long = 0",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "New",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub New()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "New",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub New(Serializer As WindowsControls.SerializationInfo)",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": [
+        {
+          "name": "Timer",
+          "signature": "Event Timer()",
+          "attributes": [
+            "DefaultDesignerEvent"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "VScrollBar",
+      "kind": "Class",
+      "file": "CONTROLS/VScrollBar.twin",
+      "access": "Public",
+      "attributes": [],
+      "implements": [
+        "BaseControlFocusableNoFont",
+        "WindowsControls.IWindowsControl"
+      ],
+      "inherits": null,
+      "members": [
+        {
+          "name": "Class_Terminate",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub Class_Terminate()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "HandleCreate",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub HandleCreate() Handles RootWindowElement.Create",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "HandleDestroy",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub HandleDestroy() Implements IWindowsControl.Destroy",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "HandleGotFocus",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub HandleGotFocus() Handles RootWindowElement.GotFocus",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "HandleInitialize",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub HandleInitialize(ByVal ControlContext As WindowsControls.WindowsControlContext) Implements IWindowsControl.Initialize",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "HandleKeyDown",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub HandleKeyDown(ByRef KeyCode As VBRUN.KeyCodeConstants, ByVal ShiftState As VBRUN.ShiftConstants) Handles RootWindowElement.KeyDown",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "HandleKeyPress",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub HandleKeyPress(ByRef Key As Integer) Handles RootWindowElement.KeyPress",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "HandleKeyUp",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub HandleKeyUp(ByRef KeyCode As VBRUN.KeyCodeConstants, ByVal ShiftState As VBRUN.ShiftConstants) Handles RootWindowElement.KeyUp",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "HandleLostFocus",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub HandleLostFocus() Handles RootWindowElement.LostFocus",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "HandleScroll",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub HandleScroll(ByVal ScrollType As SCROLLNOTIFY) Handles RootWindowElement.Scroll",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "hWnd",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get hWnd() As LongPtr",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "LargeChange",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public LargeChange As Long = 1",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Max",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get Max() As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Max",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Let Max(ByVal Value As Long)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Min",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get Min() As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Min",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Let Min(ByVal Value As Long)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "New",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub New()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "New",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub New(Serializer As WindowsControls.SerializationInfo)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SmallChange",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public SmallChange As Long = 1",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Value",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get Value() As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Value",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Let Value(ByVal NewValue As Long)",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": [
+        {
+          "name": "Change",
+          "signature": "Event Change()",
+          "attributes": [
+            "DefaultDesignerEvent"
+          ]
+        },
+        {
+          "name": "GotFocus",
+          "signature": "Event GotFocus()",
+          "attributes": []
+        },
+        {
+          "name": "Initialize",
+          "signature": "Event Initialize()",
+          "attributes": []
+        },
+        {
+          "name": "KeyDown",
+          "signature": "Event KeyDown(KeyCode As Integer, Shift As Integer)",
+          "attributes": []
+        },
+        {
+          "name": "KeyPress",
+          "signature": "Event KeyPress(KeyAscii As Integer)",
+          "attributes": []
+        },
+        {
+          "name": "KeyUp",
+          "signature": "Event KeyUp(KeyCode As Integer, Shift As Integer)",
+          "attributes": []
+        },
+        {
+          "name": "LostFocus",
+          "signature": "Event LostFocus()",
+          "attributes": []
+        }
+      ]
+    },
+    {
+      "name": "WindowsAPI",
+      "kind": "Module",
+      "file": "SUPPORT/WindowAPI.twin",
+      "access": "Public",
+      "attributes": [],
+      "implements": [],
+      "inherits": null,
+      "members": [
+        {
+          "name": "CreateSolidBrush",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function CreateSolidBrush(ByVal Color As Long) As LongPtr",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "DeleteObject",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub DeleteObject(ByVal Handle As LongPtr)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "EnableWindow",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub EnableWindow(ByRef Element As WindowsControls.WindowElement, ByVal Value As Boolean)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "errInvalidArgument",
+          "kind": "Const",
+          "access": null,
+          "signature": "Const errInvalidArgument As Long = 5",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "FillWithBrush",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub FillWithBrush(ByRef Element As WindowsControls.WindowElement, ByVal hdc As LongPtr, ByVal Brush As LongPtr)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GetParent",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function GetParent(ByRef Element As WindowsControls.WindowElement) As LongPtr",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GetScrollMaximum",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function GetScrollMaximum(ByRef Element As WindowsControls.WindowElement) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GetScrollMinimum",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function GetScrollMinimum(ByRef Element As WindowsControls.WindowElement) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GetScrollPageSize",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function GetScrollPageSize(ByRef Element As WindowsControls.WindowElement) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GetScrollValue",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function GetScrollValue(ByRef Element As WindowsControls.WindowElement) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GetScrollValueHot",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function GetScrollValueHot(ByRef Element As WindowsControls.WindowElement) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GetStyleFlag",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function GetStyleFlag(ByRef Element As WindowsControls.WindowElement, ByVal Flag As Long) As Boolean",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GetWindow",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function GetWindow(ByRef Element As WindowsControls.WindowElement, ByVal uCmd As Long) As LongPtr",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GetWindowLong",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function GetWindowLong(ByRef Element As WindowsControls.WindowElement, ByVal Index As Long) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GetWindowText",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function GetWindowText(ByRef Element As WindowsControls.WindowElement) As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "RedrawWindow",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub RedrawWindow(ByRef Element As WindowsControls.WindowElement, ByVal lprcUpdate As LongPtr, ByVal hrgnUpdate As LongPtr, ByVal flags As RedrawFlags)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SendMessage",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function SendMessage(ByRef Element As WindowsControls.WindowElement, ByVal wMsg As Long, ByVal wParam As LongPtr, ByVal lParam As LongPtr) As LongPtr",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SendMessageHandle",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function SendMessageHandle(ByVal Handle As LongPtr, ByVal wMsg As Long, ByVal wParam As LongPtr, ByVal lParam As LongPtr) As LongPtr",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SetBkMode",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub SetBkMode(ByVal HDC As LongPtr, ByVal Mode As Long)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SetFocus",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub SetFocus(ByRef Element As WindowsControls.WindowElement)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SetFont",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function SetFont(ByRef Element As WindowsControls.WindowElement, ByRef Font As IFont) As LongPtr",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SetScrollPageSize",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub SetScrollPageSize(ByRef Element As WindowsControls.WindowElement, ByVal Value As Long)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SetScrollRange",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub SetScrollRange(ByRef Element As WindowsControls.WindowElement, ByVal Min As Long, ByVal Max As Long)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SetScrollValue",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub SetScrollValue(ByRef Element As WindowsControls.WindowElement, ByVal Value As Long)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SetStyleFlag",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub SetStyleFlag(ByRef Element As WindowsControls.WindowElement, ByVal Flag As Long, ByVal Value As Boolean)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SetTextColor",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub SetTextColor(ByVal HDC As LongPtr, ByVal Color As Long)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SetWindowLong",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub SetWindowLong(ByRef Element As WindowsControls.WindowElement, ByVal Index As Long, ByVal Value As Long)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SetWindowText",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub SetWindowText(ByRef Element As WindowsControls.WindowElement, ByVal Value As String)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ShowWindow",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub ShowWindow(ByRef Element As WindowsControls.WindowElement, ByVal nCmdShow As Long)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SysAllocStringLen",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function SysAllocStringLen(ByVal CopyFrom As String, ByVal Length As Long) As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "TranslateColorFromHDC",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function TranslateColorFromHDC(ByVal Color As OLE_COLOR, ByVal hdc As LongPtr) As Long",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    }
+  ],
+  "enums": [],
+  "types": []
+}

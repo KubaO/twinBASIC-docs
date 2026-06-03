@@ -110,6 +110,15 @@ function auditCoverage(apiJson, docPageMap) {
   const undocumented = [];
 
   for (const mod of apiJson.modules || []) {
+    if (mod.access !== 'Private') {
+      const page = docPageMap.get(mod.name);
+      if (page) {
+        documented.push({ name: mod.name, kind: mod.kind, access: mod.access, container: null, file: mod.file, docPage: page });
+      } else {
+        undocumented.push({ name: mod.name, kind: mod.kind, access: mod.access, container: null, file: mod.file });
+      }
+    }
+
     for (const mem of mod.members || []) {
       if (mem.access === 'Private') continue;
       const page = docPageMap.get(mem.name);

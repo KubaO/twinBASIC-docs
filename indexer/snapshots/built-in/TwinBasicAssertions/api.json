@@ -1,0 +1,539 @@
+{
+  "package": "TwinBasicAssertions",
+  "version": "beta-x-0983",
+  "modules": [
+    {
+      "name": "Exact",
+      "kind": "Module",
+      "file": "Exact.twin",
+      "access": "Public",
+      "attributes": [],
+      "implements": [],
+      "inherits": null,
+      "members": [
+        {
+          "name": "AreEqual",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Sub AreEqual Lib \"\" Alias \"\" (ByRef Expected As Variant, ByRef Actual As Variant, Optional ByVal Message As String)",
+          "attributes": [
+            "PreserveSig(False)",
+            "DebugOnly(True)"
+          ],
+          "description": null
+        },
+        {
+          "name": "AreNotEqual",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Sub AreNotEqual Lib \"\" Alias \"\" (ByRef Expected As Variant, ByRef Actual As Variant, Optional ByVal Message As String)",
+          "attributes": [
+            "PreserveSig(False)",
+            "DebugOnly(True)"
+          ],
+          "description": null
+        },
+        {
+          "name": "AreNotSame",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Sub AreNotSame Lib \"\" Alias \"\" (ByRef Expected As Variant, ByRef Actual As Variant, Optional ByVal Message As String)",
+          "attributes": [
+            "PreserveSig(False)",
+            "DebugOnly(True)"
+          ],
+          "description": null
+        },
+        {
+          "name": "AreSame",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Sub AreSame Lib \"\" Alias \"\" (ByRef Expected As Variant, ByRef Actual As Variant, Optional ByVal Message As String)",
+          "attributes": [
+            "PreserveSig(False)",
+            "DebugOnly(True)"
+          ],
+          "description": null
+        },
+        {
+          "name": "Fail",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Sub Fail Lib \"\" Alias \"\" (Optional ByVal Message As String)",
+          "attributes": [
+            "PreserveSig(False)",
+            "DebugOnly(True)"
+          ],
+          "description": null
+        },
+        {
+          "name": "Inconclusive",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Sub Inconclusive Lib \"\" Alias \"\" (Optional ByVal Message As String)",
+          "attributes": [
+            "PreserveSig(False)",
+            "DebugOnly(True)"
+          ],
+          "description": null
+        },
+        {
+          "name": "IsFalse",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Sub IsFalse Lib \"\" Alias \"\" (ByRef Condition As Variant, Optional ByVal Message As String)",
+          "attributes": [
+            "PreserveSig(False)",
+            "DebugOnly(True)"
+          ],
+          "description": null
+        },
+        {
+          "name": "IsNothing",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Sub IsNothing Lib \"\" Alias \"\" (ByRef Value As Variant, Optional ByVal Message As String)",
+          "attributes": [
+            "PreserveSig(False)",
+            "DebugOnly(True)"
+          ],
+          "description": null
+        },
+        {
+          "name": "IsNotNothing",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Sub IsNotNothing Lib \"\" Alias \"\" (ByRef Value As Variant, Optional ByVal Message As String)",
+          "attributes": [
+            "PreserveSig(False)",
+            "DebugOnly(True)"
+          ],
+          "description": null
+        },
+        {
+          "name": "IsNotNull",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Sub IsNotNull Lib \"\" Alias \"\" (ByRef Value As Variant, Optional ByVal Message As String)",
+          "attributes": [
+            "PreserveSig(False)",
+            "DebugOnly(True)"
+          ],
+          "description": null
+        },
+        {
+          "name": "IsNull",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Sub IsNull Lib \"\" Alias \"\" (ByRef Value As Variant, Optional ByVal Message As String)",
+          "attributes": [
+            "PreserveSig(False)",
+            "DebugOnly(True)"
+          ],
+          "description": null
+        },
+        {
+          "name": "IsTrue",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Sub IsTrue Lib \"\" Alias \"\" (ByRef Condition As Variant, Optional ByVal Message As String)",
+          "attributes": [
+            "PreserveSig(False)",
+            "DebugOnly(True)"
+          ],
+          "description": null
+        },
+        {
+          "name": "NotSequenceEquals",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Sub NotSequenceEquals Lib \"\" Alias \"\" (ByRef Expected As Variant, ByRef Actual As Variant, Optional ByVal FailMessage As String)",
+          "attributes": [
+            "PreserveSig(False)",
+            "DebugOnly(True)"
+          ],
+          "description": null
+        },
+        {
+          "name": "SequenceEquals",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Sub SequenceEquals Lib \"\" Alias \"\" (ByRef Expected As Variant, ByRef Actual As Variant, Optional ByVal FailMessage As String)",
+          "attributes": [
+            "PreserveSig(False)",
+            "DebugOnly(True)"
+          ],
+          "description": null
+        },
+        {
+          "name": "Succeed",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Sub Succeed Lib \"\" Alias \"\" ()",
+          "attributes": [
+            "PreserveSig(False)",
+            "DebugOnly(True)"
+          ],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "Permissive",
+      "kind": "Module",
+      "file": "Permissive.twin",
+      "access": "Public",
+      "attributes": [],
+      "implements": [],
+      "inherits": null,
+      "members": [
+        {
+          "name": "AreEqual",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Sub AreEqual Lib \"\" Alias \"\" (ByRef Expected As Variant, ByRef Actual As Variant, Optional ByVal Message As String)",
+          "attributes": [
+            "PreserveSig(False)",
+            "DebugOnly(True)"
+          ],
+          "description": null
+        },
+        {
+          "name": "AreNotEqual",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Sub AreNotEqual Lib \"\" Alias \"\" (ByRef Expected As Variant, ByRef Actual As Variant, Optional ByVal Message As String)",
+          "attributes": [
+            "PreserveSig(False)",
+            "DebugOnly(True)"
+          ],
+          "description": null
+        },
+        {
+          "name": "AreNotSame",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Sub AreNotSame Lib \"\" Alias \"\" (ByRef Expected As Variant, ByRef Actual As Variant, Optional ByVal Message As String)",
+          "attributes": [
+            "PreserveSig(False)",
+            "DebugOnly(True)"
+          ],
+          "description": null
+        },
+        {
+          "name": "AreSame",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Sub AreSame Lib \"\" Alias \"\" (ByRef Expected As Variant, ByRef Actual As Variant, Optional ByVal Message As String)",
+          "attributes": [
+            "PreserveSig(False)",
+            "DebugOnly(True)"
+          ],
+          "description": null
+        },
+        {
+          "name": "Fail",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Sub Fail Lib \"\" Alias \"\" (Optional ByVal Message As String)",
+          "attributes": [
+            "PreserveSig(False)",
+            "DebugOnly(True)"
+          ],
+          "description": null
+        },
+        {
+          "name": "Inconclusive",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Sub Inconclusive Lib \"\" Alias \"\" (Optional ByVal Message As String)",
+          "attributes": [
+            "PreserveSig(False)",
+            "DebugOnly(True)"
+          ],
+          "description": null
+        },
+        {
+          "name": "IsFalse",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Sub IsFalse Lib \"\" Alias \"\" (ByRef Condition As Variant, Optional ByVal Message As String)",
+          "attributes": [
+            "PreserveSig(False)",
+            "DebugOnly(True)"
+          ],
+          "description": null
+        },
+        {
+          "name": "IsNothing",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Sub IsNothing Lib \"\" Alias \"\" (ByRef Value As Variant, Optional ByVal Message As String)",
+          "attributes": [
+            "PreserveSig(False)",
+            "DebugOnly(True)"
+          ],
+          "description": null
+        },
+        {
+          "name": "IsNotNothing",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Sub IsNotNothing Lib \"\" Alias \"\" (ByRef Value As Variant, Optional ByVal Message As String)",
+          "attributes": [
+            "PreserveSig(False)",
+            "DebugOnly(True)"
+          ],
+          "description": null
+        },
+        {
+          "name": "IsNotNull",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Sub IsNotNull Lib \"\" Alias \"\" (ByRef Value As Variant, Optional ByVal Message As String)",
+          "attributes": [
+            "PreserveSig(False)",
+            "DebugOnly(True)"
+          ],
+          "description": null
+        },
+        {
+          "name": "IsNull",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Sub IsNull Lib \"\" Alias \"\" (ByRef Value As Variant, Optional ByVal Message As String)",
+          "attributes": [
+            "PreserveSig(False)",
+            "DebugOnly(True)"
+          ],
+          "description": null
+        },
+        {
+          "name": "IsTrue",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Sub IsTrue Lib \"\" Alias \"\" (ByRef Condition As Variant, Optional ByVal Message As String)",
+          "attributes": [
+            "PreserveSig(False)",
+            "DebugOnly(True)"
+          ],
+          "description": null
+        },
+        {
+          "name": "NotSequenceEquals",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Sub NotSequenceEquals Lib \"\" Alias \"\" (ByRef Expected As Variant, ByRef Actual As Variant, Optional ByVal FailMessage As String)",
+          "attributes": [
+            "PreserveSig(False)",
+            "DebugOnly(True)"
+          ],
+          "description": null
+        },
+        {
+          "name": "SequenceEquals",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Sub SequenceEquals Lib \"\" Alias \"\" (ByRef Expected As Variant, ByRef Actual As Variant, Optional ByVal FailMessage As String)",
+          "attributes": [
+            "PreserveSig(False)",
+            "DebugOnly(True)"
+          ],
+          "description": null
+        },
+        {
+          "name": "Succeed",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Sub Succeed Lib \"\" Alias \"\" ()",
+          "attributes": [
+            "PreserveSig(False)",
+            "DebugOnly(True)"
+          ],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "Strict",
+      "kind": "Module",
+      "file": "Strict.twin",
+      "access": "Public",
+      "attributes": [],
+      "implements": [],
+      "inherits": null,
+      "members": [
+        {
+          "name": "AreEqual",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Sub AreEqual Lib \"\" Alias \"\" (ByRef Expected As Variant, ByRef Actual As Variant, Optional ByVal Message As String)",
+          "attributes": [
+            "PreserveSig(False)",
+            "DebugOnly(True)"
+          ],
+          "description": null
+        },
+        {
+          "name": "AreNotEqual",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Sub AreNotEqual Lib \"\" Alias \"\" (ByRef Expected As Variant, ByRef Actual As Variant, Optional ByVal Message As String)",
+          "attributes": [
+            "PreserveSig(False)",
+            "DebugOnly(True)"
+          ],
+          "description": null
+        },
+        {
+          "name": "AreNotSame",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Sub AreNotSame Lib \"\" Alias \"\" (ByRef Expected As Variant, ByRef Actual As Variant, Optional ByVal Message As String)",
+          "attributes": [
+            "PreserveSig(False)",
+            "DebugOnly(True)"
+          ],
+          "description": null
+        },
+        {
+          "name": "AreSame",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Sub AreSame Lib \"\" Alias \"\" (ByRef Expected As Variant, ByRef Actual As Variant, Optional ByVal Message As String)",
+          "attributes": [
+            "PreserveSig(False)",
+            "DebugOnly(True)"
+          ],
+          "description": null
+        },
+        {
+          "name": "Fail",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Sub Fail Lib \"\" Alias \"\" (Optional ByVal Message As String)",
+          "attributes": [
+            "PreserveSig(False)",
+            "DebugOnly(True)"
+          ],
+          "description": null
+        },
+        {
+          "name": "Inconclusive",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Sub Inconclusive Lib \"\" Alias \"\" (Optional ByVal Message As String)",
+          "attributes": [
+            "PreserveSig(False)",
+            "DebugOnly(True)"
+          ],
+          "description": null
+        },
+        {
+          "name": "IsFalse",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Sub IsFalse Lib \"\" Alias \"\" (ByRef Condition As Variant, Optional ByVal Message As String)",
+          "attributes": [
+            "PreserveSig(False)",
+            "DebugOnly(True)"
+          ],
+          "description": null
+        },
+        {
+          "name": "IsNothing",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Sub IsNothing Lib \"\" Alias \"\" (ByRef Value As Variant, Optional ByVal Message As String)",
+          "attributes": [
+            "PreserveSig(False)",
+            "DebugOnly(True)"
+          ],
+          "description": null
+        },
+        {
+          "name": "IsNotNothing",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Sub IsNotNothing Lib \"\" Alias \"\" (ByRef Value As Variant, Optional ByVal Message As String)",
+          "attributes": [
+            "PreserveSig(False)",
+            "DebugOnly(True)"
+          ],
+          "description": null
+        },
+        {
+          "name": "IsNotNull",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Sub IsNotNull Lib \"\" Alias \"\" (ByRef Value As Variant, Optional ByVal Message As String)",
+          "attributes": [
+            "PreserveSig(False)",
+            "DebugOnly(True)"
+          ],
+          "description": null
+        },
+        {
+          "name": "IsNull",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Sub IsNull Lib \"\" Alias \"\" (ByRef Value As Variant, Optional ByVal Message As String)",
+          "attributes": [
+            "PreserveSig(False)",
+            "DebugOnly(True)"
+          ],
+          "description": null
+        },
+        {
+          "name": "IsTrue",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Sub IsTrue Lib \"\" Alias \"\" (ByRef Condition As Variant, Optional ByVal Message As String)",
+          "attributes": [
+            "PreserveSig(False)",
+            "DebugOnly(True)"
+          ],
+          "description": null
+        },
+        {
+          "name": "NotSequenceEquals",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Sub NotSequenceEquals Lib \"\" Alias \"\" (ByRef Expected As Variant, ByRef Actual As Variant, Optional ByVal FailMessage As String)",
+          "attributes": [
+            "PreserveSig(False)",
+            "DebugOnly(True)"
+          ],
+          "description": null
+        },
+        {
+          "name": "SequenceEquals",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Sub SequenceEquals Lib \"\" Alias \"\" (ByRef Expected As Variant, ByRef Actual As Variant, Optional ByVal FailMessage As String)",
+          "attributes": [
+            "PreserveSig(False)",
+            "DebugOnly(True)"
+          ],
+          "description": null
+        },
+        {
+          "name": "Succeed",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Sub Succeed Lib \"\" Alias \"\" ()",
+          "attributes": [
+            "PreserveSig(False)",
+            "DebugOnly(True)"
+          ],
+          "description": null
+        }
+      ],
+      "events": []
+    }
+  ],
+  "enums": [],
+  "types": []
+}

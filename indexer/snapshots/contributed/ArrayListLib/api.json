@@ -1,0 +1,1525 @@
+{
+  "package": "ArrayListLib",
+  "version": "1.4.0.134",
+  "modules": [
+    {
+      "name": "ArrayList",
+      "kind": "Class",
+      "file": "ArrayList.twin",
+      "access": "Public",
+      "attributes": [],
+      "implements": [
+        "IArrayList"
+      ],
+      "inherits": null,
+      "members": [
+        {
+          "name": "Add",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function Add(Value As Variant) As Long Implements IArrayList.Add",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "AddRange",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub AddRange(Target As Variant) Implements IArrayList.AddRange",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Assign",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub Assign(ByRef Target As Variant, ByRef Value As Variant)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "BinarySearch",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function BinarySearch(ByVal Index As Long, ByVal GetCount As Long, Value As Variant, Optional ByRef Comparer As IComparer = Nothing) As Long Implements IArrayList.BinarySearch",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "C2IArrayList",
+          "kind": "Function",
+          "access": "Private",
+          "signature": "Private Function C2IArrayList(Value As Variant) As IArrayList: Return Value: End Function",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Class_Terminate",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub Class_Terminate()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Clear",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub Clear() Implements IArrayList.Clear",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Clone",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function Clone() As Variant Implements IArrayList.Clone",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CloneTo",
+          "kind": "Sub",
+          "access": "Friend",
+          "signature": "Friend Sub CloneTo(ByVal Target As IArrayList, Source As IArrayList, ByVal Index As Long, ByVal GetCount As Long) Implements IArrayList.CloneTo",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Contains",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function Contains(Value As Variant) As Boolean Implements IArrayList.Contains",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CopyTo",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub CopyTo(Target As Variant, Index As Long) Implements IArrayList.CopyTo",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Count",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get Count() As Long Implements IArrayList.Count: Return pIndex: End Property",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GetEnumerator",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function GetEnumerator(Optional ByVal Index As Long = 0, Optional ByVal GetCount As Variant, Optional ByVal GetStep As Long = 1, Optional ByRef ThisEnumerator As IEnumerator) As stdole.IUnknown Implements IArrayList.GetEnumerator",
+          "attributes": [
+            "Enumerator"
+          ],
+          "description": null
+        },
+        {
+          "name": "GetRange",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function GetRange(ByVal Index As Long, ByVal GetCount As Long) As IListRange Implements IArrayList.GetRange",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GrowCapacity",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub GrowCapacity(ByVal Increment As Long)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "IndexOf",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function IndexOf(Value As Variant, Optional ByVal Index As Long = 0, Optional ByVal GetCount As Variant) As Long Implements IArrayList.IndexOf",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "IndexOf_2",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function IndexOf_2(ByRef Value As Variant, ByVal Index As Long, ByVal GetCount As Long) As Long: Return IndexOf(Value, Index, GetCount): End Function",
+          "attributes": [
+            "Hidden"
+          ],
+          "description": null
+        },
+        {
+          "name": "Insert",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub Insert(ByVal Index As Long, Value As Variant) Implements IArrayList.Insert",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "InsertListTo",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub InsertListTo(ByVal Index As Long, ByVal GetCount As Long, ByVal Target As IListRange)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "InsertRange",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub InsertRange(ByVal Index As Long, Target As Variant) Implements IArrayList.InsertRange",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "IsContainedInMemoryRange",
+          "kind": "Function",
+          "access": "Private",
+          "signature": "Private Function IsContainedInMemoryRange(TargetList As IListRange, Optional ByVal Index As Long = 0, Optional ByVal GetCount As Variant) As Boolean",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Item",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get Item(ByVal Index As Long) As Variant Implements IArrayList.Item",
+          "attributes": [
+            "DefaultMember"
+          ],
+          "description": null
+        },
+        {
+          "name": "Item",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Let Item(ByVal Index As Long, Value As Variant) Implements IArrayList.Item",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Item",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Set Item(ByVal Index As Long, Value As Variant) Implements IArrayList.Item",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "LastIndexOf",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function LastIndexOf(ByRef Value As Variant, Optional ByVal Index As Variant, Optional ByVal GetCount As Variant) As Long Implements IArrayList.LastIndexOf",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "QuickSort",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub QuickSort(l As Long, r As Long, ByRef Comparer As IComparer)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "QuickSortV2",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub QuickSortV2(l As Long, r As Long)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Remove",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub Remove(Value As Variant) Implements IArrayList.Remove",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "RemoveAt",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub RemoveAt(ByVal Index As Long) Implements IArrayList.RemoveAt",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "RemoveRange",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub RemoveRange(ByVal Index As Long, ByVal GetCount As Long) Implements IArrayList.RemoveRange",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ReserveSpaceForInsert",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub ReserveSpaceForInsert(ByVal Index As Long, ByVal GetCount As Long)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ReserveSpaceForInsertOfOneAtZero",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub ReserveSpaceForInsertOfOneAtZero()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Reverse",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub Reverse(Optional ByVal Index As Long = 0, Optional ByVal GetCount As Variant) Implements IArrayList.Reverse",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SetRange",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub SetRange(ByVal Index As Long, Target As Variant) Implements IArrayList.SetRange",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Sort",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub Sort(Optional ByVal Index As Long = 0, Optional ByVal GetCount As Variant, Optional Comparer As IComparer = Nothing) Implements IArrayList.Sort",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Swap",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub Swap(ByRef A As Variant, ByRef B As Variant)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ToArray",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function ToArray() As Variant() Implements IArrayList.ToArray",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "UDTVariantB",
+          "kind": "Type",
+          "access": "Private",
+          "signature": "Private Type UDTVariantB",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "UDTVariantB",
+          "kind": "Type",
+          "access": "Private",
+          "signature": "Private Type UDTVariantB",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Version",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get Version() As Long Implements IArrayList.Version: Return pVersion: End Property",
+          "attributes": [
+            "Hidden"
+          ],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "Comparer",
+      "kind": "Class",
+      "file": "Comparer.twin",
+      "access": "Public",
+      "attributes": [
+        "PredeclaredId"
+      ],
+      "implements": [
+        "IComparer"
+      ],
+      "inherits": null,
+      "members": [
+        {
+          "name": "Compare",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function Compare(X As Variant, Y As Variant) As Long Implements IComparer.Compare",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "Enumerator",
+      "kind": "Class",
+      "file": "Enumerator.twin",
+      "access": "Public",
+      "attributes": [],
+      "implements": [
+        "IEnumerator"
+      ],
+      "inherits": null,
+      "members": [
+        {
+          "name": "Assign",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub Assign(ByRef Target As Variant, ByRef Value As Variant)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Bind",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub Bind(ByRef TargetArray() As Variant, ByVal Index As Long, ByVal GetCount As Long, ByVal GetStep As Long)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Class_Terminate",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub Class_Terminate()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Clone",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub Clone(ByRef ppenum As IEnumVARIANT) Implements IEnumerator.Clone",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CurrentIndex",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get CurrentIndex() As Long Implements IEnumerator.CurrentIndex: CurrentIndex = CIndex: End Property",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "E_INVALIDARGS",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const E_INVALIDARGS As Long = &H80070057",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GetEnumerator",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function GetEnumerator() As stdole.IUnknown",
+          "attributes": [
+            "Enumerator"
+          ],
+          "description": null
+        },
+        {
+          "name": "New",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub New()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "New",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub New(ByRef TargetArray() As Variant, Optional ByVal Index As Long = 0, Optional ByVal GetCount As Variant, Optional ByVal GetStep As Long = 1, Optional ByRef ThisEnumerator As IEnumerator)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Next",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub Next(ByVal celt As Long, ByRef rgvar As Variant, ByRef pceltFetched As Long) Implements IEnumerator.Next",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Reset",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub Reset() Implements IEnumerator.Reset",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "S_FALSE",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const S_FALSE As Long = 1",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "S_OK",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const S_OK As Long = 0",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Skip",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub Skip(ByVal celt As Long) Implements IEnumerator.Skip",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "IArrayList",
+      "kind": "Interface",
+      "file": "IArrayList.twin",
+      "access": "Public",
+      "attributes": [],
+      "implements": [
+        "ICloneable"
+      ],
+      "inherits": "IListRange",
+      "members": [
+        {
+          "name": "Capacity",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Get Capacity() As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Capacity",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Let Capacity(Value As Long)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Clone",
+          "kind": "Function",
+          "access": null,
+          "signature": "Function Clone() As Variant Implements ICloneable.Clone",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CloneTo",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub CloneTo(ByVal Target As IArrayList, ByRef Source As IArrayList, ByVal Index As Long, ByVal GetCount As Long)",
+          "attributes": [
+            "Hidden"
+          ],
+          "description": null
+        },
+        {
+          "name": "Items",
+          "kind": "Function",
+          "access": null,
+          "signature": "Function Items() As Variant()",
+          "attributes": [
+            "Hidden"
+          ],
+          "description": null
+        },
+        {
+          "name": "LastIndexOf",
+          "kind": "Function",
+          "access": null,
+          "signature": "Function LastIndexOf(ByRef Value As Variant, Optional ByVal Index As Variant, Optional ByVal GetCount As Variant) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Reverse",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub Reverse(Optional ByVal Index As Long = 0, Optional ByVal GetCount As Variant)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Version",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Get Version() As Long",
+          "attributes": [
+            "Hidden"
+          ],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "ICloneable",
+      "kind": "Interface",
+      "file": "IArrayList.twin",
+      "access": "Public",
+      "attributes": [],
+      "implements": [],
+      "inherits": null,
+      "members": [
+        {
+          "name": "Clone",
+          "kind": "Function",
+          "access": null,
+          "signature": "Function Clone() As Variant",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "ICollection",
+      "kind": "Interface",
+      "file": "IArrayList.twin",
+      "access": "Public",
+      "attributes": [],
+      "implements": [],
+      "inherits": "IEnumerable",
+      "members": [
+        {
+          "name": "CopyTo",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub CopyTo(Target As Variant, Index As Long)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Count",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Get Count() As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "IsSynchronized",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Get IsSynchronized() As Boolean",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SyncRoot",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Get SyncRoot() As Variant",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "IComparer",
+      "kind": "Interface",
+      "file": "Comparer.twin",
+      "access": "Public",
+      "attributes": [],
+      "implements": [],
+      "inherits": null,
+      "members": [
+        {
+          "name": "Compare",
+          "kind": "Function",
+          "access": null,
+          "signature": "Function Compare(X As Variant, Y As Variant) As Long",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "IEnumerable",
+      "kind": "Interface",
+      "file": "IArrayList.twin",
+      "access": "Public",
+      "attributes": [],
+      "implements": [],
+      "inherits": null,
+      "members": [
+        {
+          "name": "GetEnumerator",
+          "kind": "Function",
+          "access": null,
+          "signature": "Function GetEnumerator(Optional ByVal Index As Long = 0, Optional ByVal GetCount As Variant, Optional ByVal GetStep As Long = 1, Optional ByRef ThisEnumerator As Any) As stdole.IUnknown",
+          "attributes": [
+            "Enumerator"
+          ],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "IEnumerator",
+      "kind": "Interface",
+      "file": "Enumerator.twin",
+      "access": "Public",
+      "attributes": [],
+      "implements": [],
+      "inherits": "IEnumVARIANT",
+      "members": [
+        {
+          "name": "CurrentIndex",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Get CurrentIndex() As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CurrentIndex",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Let CurrentIndex(Value As Long)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CurrentSize",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Get CurrentSize() As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CurrentSize",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Let CurrentSize(Value As Long)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CurrentStep",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Get CurrentStep() As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CurrentStep",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Let CurrentStep(Value As Long)",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "IEnumVARIANT",
+      "kind": "Interface",
+      "file": "Enumerator.twin",
+      "access": "Public",
+      "attributes": [],
+      "implements": [],
+      "inherits": "stdole.IUnknown",
+      "members": [
+        {
+          "name": "Clone",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub Clone(ByRef ppenum As IEnumVARIANT)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Next",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub Next(ByVal celt As Long, ByRef rgvar As Variant, ByRef pceltFetched As Long)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Reset",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub Reset()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Skip",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub Skip(ByVal celt As Long)",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "IList",
+      "kind": "Interface",
+      "file": "IArrayList.twin",
+      "access": "Public",
+      "attributes": [],
+      "implements": [],
+      "inherits": "ICollection",
+      "members": [
+        {
+          "name": "Add",
+          "kind": "Function",
+          "access": null,
+          "signature": "Function Add(Value As Variant) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Clear",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub Clear()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Contains",
+          "kind": "Function",
+          "access": null,
+          "signature": "Function Contains(Value As Variant) As Boolean",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "IndexOf",
+          "kind": "Function",
+          "access": null,
+          "signature": "Function IndexOf(Value As Variant, Optional ByVal Index As Long = 0, Optional ByVal GetCount As Variant) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Insert",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub Insert(ByVal Index As Long, Value As Variant)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "IsFixedSize",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Get IsFixedSize() As Boolean",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "IsReadOnly",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Get IsReadOnly() As Boolean",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Item",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Get Item(ByVal Index As Long) As Variant",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Item",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Let Item(ByVal Index As Long, Value As Variant)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Item",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Set Item(ByVal Index As Long, Value As Variant)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Remove",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub Remove(Value As Variant)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "RemoveAt",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub RemoveAt(ByVal Index As Long)",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "IListRange",
+      "kind": "Interface",
+      "file": "IArrayList.twin",
+      "access": "Public",
+      "attributes": [],
+      "implements": [],
+      "inherits": "IList",
+      "members": [
+        {
+          "name": "AddRange",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub AddRange(Target As Variant)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "BinarySearch",
+          "kind": "Function",
+          "access": null,
+          "signature": "Function BinarySearch(ByVal Index As Long, ByVal GetCount As Long, ByRef Value As Variant, Optional ByRef Comparer As IComparer = Nothing) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GetAddressOfItemAt",
+          "kind": "Function",
+          "access": null,
+          "signature": "Function GetAddressOfItemAt(Index As Long) As LongPtr",
+          "attributes": [
+            "Hidden"
+          ],
+          "description": null
+        },
+        {
+          "name": "GetRange",
+          "kind": "Function",
+          "access": null,
+          "signature": "Function GetRange(ByVal Index As Long, ByVal GetCount As Long) As IListRange",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "InsertRange",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub InsertRange(ByVal Index As Long, Target As Variant)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "RemoveRange",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub RemoveRange(ByVal Index As Long, ByVal GetCount As Long)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SetRange",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub SetRange(ByVal Index As Long, Target As Variant)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Sort",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub Sort(Optional ByVal Index As Long = 0, Optional ByVal GetCount As Variant, Optional ByRef Comparer As IComparer = Nothing)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ToArray",
+          "kind": "Function",
+          "access": null,
+          "signature": "Function ToArray() As Variant()",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "LibMemory",
+      "kind": "Module",
+      "file": "LibMemory.twin",
+      "access": "Public",
+      "attributes": [],
+      "implements": [],
+      "inherits": null,
+      "members": [
+        {
+          "name": "ArrPtr",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function ArrPtr(ByRef arr As Variant) As LongPtr",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "INT_SIZE",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const INT_SIZE As Long = 2",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "PTR_SIZE",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const PTR_SIZE As Long = 8",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "PTR_SIZE",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const PTR_SIZE As Long = 4",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SAFEARRAY_1D",
+          "kind": "Type",
+          "access": "Public",
+          "signature": "Public Type SAFEARRAY_1D",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SAFEARRAYBOUND",
+          "kind": "Type",
+          "access": "Public",
+          "signature": "Public Type SAFEARRAYBOUND",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "VARIANT_SIZE",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const VARIANT_SIZE As Long = 24",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "VARIANT_SIZE",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const VARIANT_SIZE As Long = 16",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "VarPtrArr",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function VarPtrArr(ByRef arr As Variant) As LongPtr",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "VT_BYREF",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const VT_BYREF As Long = &H4000",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "LibMemoryEx",
+      "kind": "Module",
+      "file": "LibMemoryEx.twin",
+      "access": "Public",
+      "attributes": [],
+      "implements": [],
+      "inherits": null,
+      "members": [
+        {
+          "name": "FADF_AUTO",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const FADF_AUTO As Long = &H1",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "FADF_EMBEDDED",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const FADF_EMBEDDED As Long = &H4",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "FADF_FIXEDSIZE",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const FADF_FIXEDSIZE As Long = &H10",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "FADF_HAVEVARTYPE",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const FADF_HAVEVARTYPE As Long = &H80",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "FADF_VARIANT",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const FADF_VARIANT As Long = &H800",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "FillMemory",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare PtrSafe Sub FillMemory Lib \"\" Alias \"\" (Destination As Any, ByVal Length As Long, ByVal Fill As Byte)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "LSetByVal",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub LSetByVal(ByRef Target As UDTStringPointer, ByVal Value As String)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "MemMoveBSTR",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub MemMoveBSTR(ByRef Target As LongPtr, ByRef Source As LongPtr, ByVal ByteCount As Long)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "MemMoveEx",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub MemMoveEx(ByVal Target As LongPtr, ByVal Source As LongPtr, ByVal ByteCount As LongPtr)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ReassignArrayTo",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub ReassignArrayTo(ByRef Destination As Variant, ByRef Source As Variant)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "RtlMoveMemory",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Sub RtlMoveMemory Lib \"\" (ByVal lpDest As LongPtr, ByVal lpSource As LongPtr, ByVal Size As LongPtr)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SAFEARRAY_CELEMENTS_OFFSET",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const SAFEARRAY_CELEMENTS_OFFSET As Long = VARIANT_SIZE / INT_SIZE + 4 + PTR_SIZE",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SAFEARRAY_LLBOUND_OFFSET",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const SAFEARRAY_LLBOUND_OFFSET As Long = VARIANT_SIZE / INT_SIZE + 8 + PTR_SIZE",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SAFEARRAY_PVDATA_OFFSET",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const SAFEARRAY_PVDATA_OFFSET As Long = 8 + PTR_SIZE",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SafeArrayCopyData",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare PtrSafe Function SafeArrayCopyData Lib \"\" (ByRef psaSource As Any, ByRef psaTarget As Any) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "UDTStringPointer",
+          "kind": "Type",
+          "access": null,
+          "signature": "Type UDTStringPointer",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "VariantArrayClone",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub VariantArrayClone(ByVal DestinationAddress As LongPtr, ByVal SourceAddress As LongPtr, ByVal GetCount As Long, Optional ByVal ArrayElementSize As Long = VARIANT_SIZE)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ZeroMemory",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub ZeroMemory(ByVal TargetAddress As LongPtr, ByVal ByteCount As Long)",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "ListRange",
+      "kind": "Class",
+      "file": "ListRange.twin",
+      "access": "Public",
+      "attributes": [],
+      "implements": [
+        "ArrayList",
+        "IArrayList"
+      ],
+      "inherits": null,
+      "members": [
+        {
+          "name": "Add",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function Add(Value As Variant) As Long Implements ArrayList.Add, IArrayList.Add",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "AddRange",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub AddRange(Target As Variant) Implements ArrayList.AddRange, IArrayList.AddRange",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ArrayList_Count",
+          "kind": "Property",
+          "access": "Private",
+          "signature": "Private Property Let ArrayList_Count(ByVal Value As Long) Implements ArrayList.Count: Err.Raise 17: End Property",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "BinarySearch",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function BinarySearch(ByVal Index As Long, ByVal GetCount As Long, Value As Variant, Optional ByRef Comparer As IComparer = Nothing) As Long Implements ArrayList.BinarySearch, IArrayList.BinarySearch",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "C2IArrayList",
+          "kind": "Function",
+          "access": "Private",
+          "signature": "Private Function C2IArrayList(Value As Variant) As IArrayList: Return Value: End Function",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Capacity",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get Capacity() As Long Implements ArrayList.Capacity, IArrayList.Capacity: Return pList.Capacity: End Property",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Clone",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function Clone() As Variant Implements ArrayList.Clone, IArrayList.Clone",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CloneTo",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub CloneTo(ByVal Target As IArrayList, Source As IArrayList, ByVal Index As Long, ByVal GetCount As Long) Implements ArrayList.CloneTo, IArrayList.CloneTo: End Sub",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Contains",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function Contains(Value As Variant) As Boolean Implements ArrayList.Contains, IArrayList.Contains",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CopyTo",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub CopyTo(Target As Variant, Index As Long) Implements ArrayList.CopyTo, IArrayList.CopyTo",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Count",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get Count() As Long Implements ArrayList.Count, IArrayList.Count",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Count",
+          "kind": "Property",
+          "access": "Private",
+          "signature": "Private Property Let Count(ByVal Value As Long)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GetAddressOfItemAt",
+          "kind": "Function",
+          "access": "Private",
+          "signature": "Private Function GetAddressOfItemAt(Index As Long) As LongPtr Implements ArrayList.GetAddressOfItemAt, IArrayList.GetAddressOfItemAt",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GetRange",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function GetRange(ByVal Index As Long, ByVal GetCount As Long) As IListRange Implements ArrayList.GetRange, IArrayList.GetRange",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "IndexOf",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function IndexOf(Value As Variant, Optional ByVal Index As Long = 0, Optional ByVal GetCount As Variant) As Long Implements ArrayList.IndexOf, IArrayList.IndexOf",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "IndexOf_2",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function IndexOf_2(ByRef Value As Variant, ByVal Index As Long, ByVal GetCount As Long) As Long Implements ArrayList.IndexOf_2: Return IndexOf(Value, Index, GetCount): End Function",
+          "attributes": [
+            "Hidden"
+          ],
+          "description": null
+        },
+        {
+          "name": "Insert",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub Insert(ByVal Index As Long, Value As Variant) Implements ArrayList.Insert, IArrayList.Insert",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "InsertRange",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub InsertRange(ByVal Index As Long, Target As Variant) Implements ArrayList.InsertRange, IArrayList.InsertRange",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "InternalUpdateRange",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub InternalUpdateRange()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "IsFixedSize",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get IsFixedSize() As Boolean Implements ArrayList.IsFixedSize, IArrayList.IsFixedSize: Return False: End Property",
+          "attributes": [
+            "Hidden"
+          ],
+          "description": null
+        },
+        {
+          "name": "Item",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Let Item(ByVal Index As Long, Value As Variant) Implements ArrayList.Item, IArrayList.Item",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Item",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Set Item(ByVal Index As Long, Value As Variant) Implements ArrayList.Item, IArrayList.Item",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Items",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function Items() As Variant() Implements ArrayList.Items, IArrayList.Items",
+          "attributes": [
+            "Hidden"
+          ],
+          "description": null
+        },
+        {
+          "name": "LastIndexOf",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function LastIndexOf(Value As Variant, ByVal Index As Variant, ByVal GetCount As Variant) As Long Implements ArrayList.LastIndexOf, IArrayList.LastIndexOf",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "New",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub New() Implements ArrayList.New: End Sub",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Remove",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub Remove(Value As Variant) Implements ArrayList.Remove, IArrayList.Remove",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "RemoveAt",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub RemoveAt(ByVal Index As Long) Implements ArrayList.RemoveAt, IArrayList.RemoveAt",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "RemoveRange",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub RemoveRange(ByVal Index As Long, ByVal GetCount As Long) Implements ArrayList.RemoveRange, IArrayList.RemoveRange",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Reverse",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub Reverse(ByVal Index As Long, ByVal GetCount As Variant) Implements ArrayList.Reverse, IArrayList.Reverse",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SetRange",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub SetRange(ByVal Index As Long, Target As Variant) Implements ArrayList.SetRange, IArrayList.SetRange",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Sort",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub Sort(Optional ByVal Index As Long = 0, Optional ByVal GetCount As Variant, Optional Comparer As IComparer = Nothing) Implements ArrayList.Sort, IArrayList.Sort",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ToArray",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function ToArray() As Variant() Implements ArrayList.ToArray, IArrayList.ToArray",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Version",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get Version() As Long Implements ArrayList.Version, IArrayList.Version",
+          "attributes": [
+            "Hidden"
+          ],
+          "description": null
+        }
+      ],
+      "events": []
+    }
+  ],
+  "enums": [],
+  "types": []
+}

@@ -1,0 +1,2992 @@
+{
+  "package": "TBMANLIB_ConsoleCore",
+  "version": "0.0.0.0",
+  "modules": [
+    {
+      "name": "cConsole",
+      "kind": "Class",
+      "file": "Core/cConsole.twin",
+      "access": "Public",
+      "attributes": [
+        "PredeclaredId",
+        "COMCreatable(False)"
+      ],
+      "implements": [],
+      "inherits": null,
+      "members": [
+        {
+          "name": "ApplyColors",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub ApplyColors()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "BackColor",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get BackColor() As ConsoleColor",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "BackColor",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Let BackColor(ByVal value As ConsoleColor)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Beep",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub Beep()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Buffer",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get Buffer() As cConsoleBuffer",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CenterRect",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function CenterRect(ByVal contentWidth As Long, ByVal contentHeight As Long) As ConsoleRect",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CenterX",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function CenterX(ByVal textWidth As Long) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CenterY",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function CenterY(ByVal textHeight As Long) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Class_Terminate",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub Class_Terminate()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Clear",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub Clear()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ClearLine",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub ClearLine()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CopyMemory",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare PtrSafe Sub CopyMemory Lib \"\" Alias \"\" ( ByVal Destination As LongPtr, ByVal Source As LongPtr, ByVal Length As LongPtr)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CursorSize",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get CursorSize() As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CursorSize",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Let CursorSize(ByVal value As Long)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CursorVisible",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get CursorVisible() As Boolean",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CursorVisible",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Let CursorVisible(ByVal value As Boolean)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "DisableUTF8",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub DisableUTF8()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "DisableVirtualTerminal",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub DisableVirtualTerminal()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "DrawBox",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub DrawBox(ByVal left As Long, ByVal top As Long, ByVal right As Long, ByVal bottom As Long, Optional ByVal doubleLine As Boolean = False)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "DrawProgressBar",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub DrawProgressBar(ByVal col As Long, ByVal row As Long, ByVal width As Long, ByVal percent As Double, Optional ByVal usedColor As ConsoleColor = ConsoleColor.Green, Optional ByVal freeColor As ConsoleColor = ConsoleColor.DarkGray)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "EnableUTF8",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub EnableUTF8()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "EnableVirtualTerminal",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function EnableVirtualTerminal() As Boolean",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "EnterFullScreenMode",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub EnterFullScreenMode()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ExitFullScreenMode",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub ExitFullScreenMode()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "FlushInput",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub FlushInput()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ForeColor",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get ForeColor() As ConsoleColor",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ForeColor",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Let ForeColor(ByVal value As ConsoleColor)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "FPS",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get FPS() As Double",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "FullScreenMode",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get FullScreenMode() As Boolean",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GetBufferSize",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function GetBufferSize() As ConsoleSize",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GetCursorPosition",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function GetCursorPosition() As ConsolePosition",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GetSize",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function GetSize() As ConsoleSize",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "HandleKeyEvent",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub HandleKeyEvent(ByRef ir As INPUT_RECORD)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "HandleMouseEvent",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub HandleMouseEvent(ByRef ir As INPUT_RECORD)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "HandleResizeEvent",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub HandleResizeEvent(ByRef ir As INPUT_RECORD)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Height",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get Height() As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Initialize",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub Initialize()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "InputCodePage",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get InputCodePage() As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "InputCodePage",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Let InputCodePage(ByVal value As Long)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "IsKeyPressed",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function IsKeyPressed(ByVal keyCode As Long) As Boolean",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "KeyAvailable",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function KeyAvailable() As Boolean",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "LastRenderTime",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get LastRenderTime() As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "New",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub New(Optional ByVal inputBufferSize As Long = 4096)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "OnCtrlEvent",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Let OnCtrlEvent(ByVal handler As ConsoleCtrlHandler)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "OnKeyPress",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Let OnKeyPress(ByVal handler As ConsoleKeyHandler)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "OnMouseClick",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Let OnMouseClick(ByVal handler As ConsoleMouseHandler)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "OnResize",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Let OnResize(ByVal handler As ConsoleResizeHandler)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "OutputCodePage",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get OutputCodePage() As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "OutputCodePage",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Let OutputCodePage(ByVal value As Long)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "PeekEvent",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function PeekEvent() As ConsoleKeyInfo",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "PercentX",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function PercentX(ByVal percent As Double) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "PercentY",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function PercentY(ByVal percent As Double) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ProcessEvents",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub ProcessEvents()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ReadKey",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function ReadKey(Optional ByVal intercept As Boolean = False) As ConsoleKeyInfo",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ReadKeyTimeout",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function ReadKeyTimeout(ByVal timeoutMs As Long, Optional ByVal intercept As Boolean = False) As ConsoleKeyInfo",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ReadLine",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function ReadLine(Optional ByVal prompt As String = \"\") As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ReadPassword",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function ReadPassword(Optional ByVal prompt As String = \"\", Optional ByVal maskChar As String = \"\") As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Refresh",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub Refresh()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "RefreshAll",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub RefreshAll()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ResetColors",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub ResetColors()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Restore",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub Restore()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SetBufferSize",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub SetBufferSize(ByVal width As Long, ByVal height As Long)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SetColors",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub SetColors(ByVal fore As ConsoleColor, Optional ByVal back As ConsoleColor = ConsoleColor.Black)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SetCursorPosition",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub SetCursorPosition(ByVal col As Long, ByVal row As Long)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Title",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get Title() As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Title",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Let Title(ByVal value As String)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "VirtualTerminalEnabled",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get VirtualTerminalEnabled() As Boolean",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Width",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get Width() As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "WindowHandle",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get WindowHandle() As LongPtr",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "WriteAt",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub WriteAt(ByVal col As Long, ByVal row As Long, ByVal text As String)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "WriteAtColored",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub WriteAtColored(ByVal col As Long, ByVal row As Long, ByVal text As String, ByVal fore As ConsoleColor, Optional ByVal back As ConsoleColor = ConsoleColor.Black)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "WriteColored",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub WriteColored(ByVal text As String, ByVal fore As ConsoleColor, Optional ByVal back As ConsoleColor = ConsoleColor.Black)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "WriteError",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub WriteError(ByVal text As String)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "WriteErrorLine",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub WriteErrorLine(ByVal text As String)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "WriteF",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub WriteF(ByVal format As String, ParamArray args() As Variant)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "WriteLine",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub WriteLine(Optional ByVal text As String = \"\")",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "WriteLineColored",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub WriteLineColored(ByVal text As String, ByVal fore As ConsoleColor, Optional ByVal back As ConsoleColor = ConsoleColor.Black)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "WriteLineF",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub WriteLineF(ByVal format As String, ParamArray args() As Variant)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "WriteTo",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub WriteTo(ByVal text As String)",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "cConsoleBuffer",
+      "kind": "Class",
+      "file": "Core/cConsoleBuffer.twin",
+      "access": "Public",
+      "attributes": [
+        "COMCreatable(False)"
+      ],
+      "implements": [],
+      "inherits": null,
+      "members": [
+        {
+          "name": "BeginBatchUpdate",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub BeginBatchUpdate()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "BufferPtr",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get BufferPtr() As LongPtr",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Clear",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub Clear(Optional ByVal fore As ConsoleColor = ConsoleColor.Gray, Optional ByVal back As ConsoleColor = ConsoleColor.Black, Optional ByVal fillChar As String = \"\")",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ClearDirty",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub ClearDirty()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CopyRegion",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub CopyRegion(ByVal srcLeft As Long, ByVal srcTop As Long, ByVal srcRight As Long, ByVal srcBottom As Long, ByVal dstLeft As Long, ByVal dstTop As Long)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "DrawBox",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub DrawBox(ByVal left As Long, ByVal top As Long, ByVal right As Long, ByVal bottom As Long, Optional ByVal fore As ConsoleColor = ConsoleColor.Gray, Optional ByVal back As ConsoleColor = ConsoleColor.Black, Optional ByVal doubleLine As Boolean = False)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "DrawHLine",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub DrawHLine(ByVal col As Long, ByVal row As Long, ByVal length As Long, Optional ByVal fore As ConsoleColor = ConsoleColor.Gray, Optional ByVal back As ConsoleColor = ConsoleColor.Black, Optional ByVal doubleLine As Boolean = False)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "DrawVLine",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub DrawVLine(ByVal col As Long, ByVal row As Long, ByVal length As Long, Optional ByVal fore As ConsoleColor = ConsoleColor.Gray, Optional ByVal back As ConsoleColor = ConsoleColor.Black, Optional ByVal doubleLine As Boolean = False)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "EndBatchUpdate",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub EndBatchUpdate()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ExpandDirtyRect",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub ExpandDirtyRect(ByVal col As Long, ByVal row As Long)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "FillRect",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub FillRect(ByVal left As Long, ByVal top As Long, ByVal right As Long, ByVal bottom As Long, Optional ByVal char As String = \"\", Optional ByVal fore As ConsoleColor = ConsoleColor.Gray, Optional ByVal back As ConsoleColor = ConsoleColor.Black)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Flush",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub Flush(ByVal hOutput As LongPtr, Optional ByVal forceAll As Boolean = False)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "FlushRegion",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub FlushRegion(ByVal hOutput As LongPtr, ByVal left As Long, ByVal top As Long, ByVal right As Long, ByVal bottom As Long)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GetChar",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function GetChar(ByVal col As Long, ByVal row As Long) As ConsoleCharInfo",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GetDirtyRect",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function GetDirtyRect() As ConsoleRect",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Height",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get Height() As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "IsDirty",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get IsDirty() As Boolean",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "IsInBatchMode",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get IsInBatchMode() As Boolean",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "New",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub New(ByVal width As Long, ByVal height As Long)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Resize",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub Resize(ByVal width As Long, ByVal height As Long)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ScrollRegion",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub ScrollRegion(ByVal left As Long, ByVal top As Long, ByVal right As Long, ByVal bottom As Long, ByVal deltaRow As Long, ByVal deltaCol As Long)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SetChar",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub SetChar(ByVal col As Long, ByVal row As Long, ByVal char As String, Optional ByVal fore As ConsoleColor = ConsoleColor.Gray, Optional ByVal back As ConsoleColor = ConsoleColor.Black)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Width",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get Width() As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "WriteAt",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub WriteAt(ByVal col As Long, ByVal row As Long, ByVal text As String, Optional ByVal fore As ConsoleColor = ConsoleColor.Gray, Optional ByVal back As ConsoleColor = ConsoleColor.Black)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "WriteTextEx",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub WriteTextEx(ByVal text As String, ByVal col As Long, ByVal row As Long, ByVal fore As ConsoleColor, ByVal back As ConsoleColor, ByVal maxWidth As Long, Optional ByVal ellipsis As String = \"\")",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "mConsoleAPI",
+      "kind": "Module",
+      "file": "Core/mConsoleAPI.twin",
+      "access": "Public",
+      "attributes": [],
+      "implements": [],
+      "inherits": null,
+      "members": [
+        {
+          "name": "AllocConsole",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function AllocConsole Lib \"\" () As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ATTACH_PARENT_PROCESS",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const ATTACH_PARENT_PROCESS As Long = -1",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "AttachConsole",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function AttachConsole Lib \"\" ( ByVal dwProcessId As Long) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CAPSLOCK_ON",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const CAPSLOCK_ON As Long = &H80",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CHAR_INFO",
+          "kind": "Type",
+          "access": "Public",
+          "signature": "Public Type CHAR_INFO",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ColorAttribute",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function ColorAttribute(ByVal fore As ConsoleColor, ByVal back As ConsoleColor) As Integer",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CONSOLE_CURSOR_INFO",
+          "kind": "Type",
+          "access": "Public",
+          "signature": "Public Type CONSOLE_CURSOR_INFO",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CONSOLE_FONT_INFOEX",
+          "kind": "Type",
+          "access": "Public",
+          "signature": "Public Type CONSOLE_FONT_INFOEX",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CONSOLE_SCREEN_BUFFER_INFO",
+          "kind": "Type",
+          "access": "Public",
+          "signature": "Public Type CONSOLE_SCREEN_BUFFER_INFO",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CONSOLE_SCREEN_BUFFER_INFOEX",
+          "kind": "Type",
+          "access": "Public",
+          "signature": "Public Type CONSOLE_SCREEN_BUFFER_INFOEX",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CONSOLE_TEXTMODE_BUFFER",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const CONSOLE_TEXTMODE_BUFFER As Long = &H1",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "COORD",
+          "kind": "Type",
+          "access": "Public",
+          "signature": "Public Type COORD",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CP_ACP",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const CP_ACP As Long = 0",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CP_OEMCP",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const CP_OEMCP As Long = 1",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CP_UTF7",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const CP_UTF7 As Long = 65000",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CP_UTF8",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const CP_UTF8 As Long = 65001",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CreateConsoleScreenBuffer",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function CreateConsoleScreenBuffer Lib \"\" ( ByVal dwDesiredAccess As Long, ByVal dwShareMode As Long, ByVal lpSecurityAttributes As LongPtr, ByVal dwFlags As Long, ByVal lpScreenBufferData As LongPtr) As LongPtr",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CTRL_BREAK_EVENT",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const CTRL_BREAK_EVENT As Long = 1",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CTRL_C_EVENT",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const CTRL_C_EVENT As Long = 0",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CTRL_CLOSE_EVENT",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const CTRL_CLOSE_EVENT As Long = 2",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CTRL_LOGOFF_EVENT",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const CTRL_LOGOFF_EVENT As Long = 5",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CTRL_SHUTDOWN_EVENT",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const CTRL_SHUTDOWN_EVENT As Long = 6",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "DISABLE_NEWLINE_AUTO_RETURN",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const DISABLE_NEWLINE_AUTO_RETURN As Long = &H8",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ENABLE_AUTO_POSITION",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const ENABLE_AUTO_POSITION As Long = &H100",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ENABLE_ECHO_INPUT",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const ENABLE_ECHO_INPUT As Long = &H4",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ENABLE_EXTENDED_FLAGS",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const ENABLE_EXTENDED_FLAGS As Long = &H80",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ENABLE_INSERT_MODE",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const ENABLE_INSERT_MODE As Long = &H20",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ENABLE_LINE_INPUT",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const ENABLE_LINE_INPUT As Long = &H2",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ENABLE_LVB_GRID_WORLDWIDE",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const ENABLE_LVB_GRID_WORLDWIDE As Long = &H10",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ENABLE_MOUSE_INPUT",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const ENABLE_MOUSE_INPUT As Long = &H10",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ENABLE_PROCESSED_INPUT",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const ENABLE_PROCESSED_INPUT As Long = &H1",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ENABLE_PROCESSED_OUTPUT",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const ENABLE_PROCESSED_OUTPUT As Long = &H1",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ENABLE_QUICK_EDIT_MODE",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const ENABLE_QUICK_EDIT_MODE As Long = &H40",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ENABLE_VIRTUAL_TERMINAL_INPUT",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const ENABLE_VIRTUAL_TERMINAL_INPUT As Long = &H200",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ENABLE_VIRTUAL_TERMINAL_PROCESSING",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const ENABLE_VIRTUAL_TERMINAL_PROCESSING As Long = &H4",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ENABLE_WINDOW_INPUT",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const ENABLE_WINDOW_INPUT As Long = &H8",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ENABLE_WRAP_AT_EOL_OUTPUT",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const ENABLE_WRAP_AT_EOL_OUTPUT As Long = &H2",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ENHANCED_KEY",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const ENHANCED_KEY As Long = &H100",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "FILE_SHARE_READ",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const FILE_SHARE_READ As Long = &H1",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "FILE_SHARE_WRITE",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const FILE_SHARE_WRITE As Long = &H2",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "FillConsoleOutputAttribute",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function FillConsoleOutputAttribute Lib \"\" ( ByVal hConsoleOutput As LongPtr, ByVal wAttribute As Integer, ByVal nLength As Long, ByVal dwWriteCoord As Long, ByRef lpNumberOfAttrsWritten As Long) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "FillConsoleOutputCharacterW",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function FillConsoleOutputCharacterW Lib \"\" ( ByVal hConsoleOutput As LongPtr, ByVal cCharacter As Integer, ByVal nLength As Long, ByVal dwWriteCoord As Long, ByRef lpNumberOfCharsWritten As Long) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "FlushConsoleInputBuffer",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function FlushConsoleInputBuffer Lib \"\" ( ByVal hConsoleInput As LongPtr) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "FOCUS_EVENT",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const FOCUS_EVENT As Integer = &H10",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "FreeConsole",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function FreeConsole Lib \"\" () As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GENERIC_READ",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const GENERIC_READ As Long = &H80000000",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GENERIC_WRITE",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const GENERIC_WRITE As Long = &H40000000",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GetAsyncKeyState",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function GetAsyncKeyState Lib \"\" (ByVal vKey As Long) As Integer",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GetConsoleCP",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function GetConsoleCP Lib \"\" () As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GetConsoleCursorInfo",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function GetConsoleCursorInfo Lib \"\" ( ByVal hConsoleOutput As LongPtr, ByRef lpConsoleCursorInfo As CONSOLE_CURSOR_INFO) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GetConsoleMode",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function GetConsoleMode Lib \"\" ( ByVal hConsoleHandle As LongPtr, ByRef lpMode As Long) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GetConsoleOutputCP",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function GetConsoleOutputCP Lib \"\" () As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GetConsoleScreenBufferInfo",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function GetConsoleScreenBufferInfo Lib \"\" ( ByVal hConsoleOutput As LongPtr, ByRef lpConsoleScreenBufferInfo As CONSOLE_SCREEN_BUFFER_INFO) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GetConsoleScreenBufferInfoEx",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function GetConsoleScreenBufferInfoEx Lib \"\" ( ByVal hConsoleOutput As LongPtr, ByRef lpConsoleScreenBufferInfoEx As CONSOLE_SCREEN_BUFFER_INFOEX) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GetConsoleTitleW",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function GetConsoleTitleW Lib \"\" ( ByVal lpConsoleTitle As LongPtr, ByVal nSize As Long) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GetConsoleWindow",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function GetConsoleWindow Lib \"\" () As LongPtr",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GetCurrentConsoleFontEx",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function GetCurrentConsoleFontEx Lib \"\" ( ByVal hConsoleOutput As LongPtr, ByVal bMaximumWindow As Long, ByRef lpConsoleCurrentFontEx As CONSOLE_FONT_INFOEX) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GetNumberOfConsoleInputEvents",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function GetNumberOfConsoleInputEvents Lib \"\" ( ByVal hConsoleInput As LongPtr, ByRef lpNumberOfEvents As Long) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GetStdHandle",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function GetStdHandle Lib \"\" ( ByVal nStdHandle As Long) As LongPtr",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GetTickCount",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function GetTickCount Lib \"\" () As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GetWindowRect",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function GetWindowRect Lib \"\" ( ByVal hwnd As LongPtr, ByRef lpRect As RECT) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "HiWord",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function HiWord(ByVal dw As Long) As Integer",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "INPUT_RECORD",
+          "kind": "Type",
+          "access": "Public",
+          "signature": "Public Type INPUT_RECORD",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "KEY_EVENT",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const KEY_EVENT As Integer = &H1",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "KEY_EVENT_RECORD",
+          "kind": "Type",
+          "access": "Public",
+          "signature": "Public Type KEY_EVENT_RECORD",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "KillTimer",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function KillTimer Lib \"\" ( ByVal hwnd As LongPtr, ByVal uIDEvent As LongPtr) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "LEFT_ALT_PRESSED",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const LEFT_ALT_PRESSED As Long = &H2",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "LEFT_CTRL_PRESSED",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const LEFT_CTRL_PRESSED As Long = &H8",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "LoWord",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function LoWord(ByVal dw As Long) As Integer",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "MakeCOORD",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function MakeCOORD(ByVal x As Integer, ByVal y As Integer) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "MakeDWORD",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function MakeDWORD(ByVal loWord As Integer, ByVal hiWord As Integer) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "MENU_EVENT",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const MENU_EVENT As Integer = &H8",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "MOUSE_EVENT",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const MOUSE_EVENT As Integer = &H2",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "MOUSE_EVENT_RECORD",
+          "kind": "Type",
+          "access": "Public",
+          "signature": "Public Type MOUSE_EVENT_RECORD",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "MoveWindow",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function MoveWindow Lib \"\" ( ByVal hwnd As LongPtr, ByVal x As Long, ByVal y As Long, ByVal nWidth As Long, ByVal nHeight As Long, ByVal bRepaint As Long) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "MultiByteToWideChar",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function MultiByteToWideChar Lib \"\" ( ByVal CodePage As Long, ByVal dwFlags As Long, ByVal lpMultiByteStr As LongPtr, ByVal cbMultiByte As Long, ByVal lpWideCharStr As LongPtr, ByVal cchWideChar As Long) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "NUMLOCK_ON",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const NUMLOCK_ON As Long = &H20",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "PeekConsoleInputW",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function PeekConsoleInputW Lib \"\" ( ByVal hConsoleInput As LongPtr, ByRef lpBuffer As INPUT_RECORD, ByVal nLength As Long, ByRef lpNumberOfEventsRead As Long) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ReadConsoleInputW",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function ReadConsoleInputW Lib \"\" ( ByVal hConsoleInput As LongPtr, ByRef lpBuffer As INPUT_RECORD, ByVal nLength As Long, ByRef lpNumberOfEventsRead As Long) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ReadConsoleW",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function ReadConsoleW Lib \"\" ( ByVal hConsoleInput As LongPtr, ByVal lpBuffer As LongPtr, ByVal nNumberOfCharsToRead As Long, ByRef lpNumberOfCharsRead As Long, ByVal pInputControl As LongPtr) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "RECT",
+          "kind": "Type",
+          "access": "Public",
+          "signature": "Public Type RECT",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "RIGHT_ALT_PRESSED",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const RIGHT_ALT_PRESSED As Long = &H1",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "RIGHT_CTRL_PRESSED",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const RIGHT_CTRL_PRESSED As Long = &H4",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ScrollConsoleScreenBufferW",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function ScrollConsoleScreenBufferW Lib \"\" ( ByVal hConsoleOutput As LongPtr, ByRef lpScrollRectangle As SMALL_RECT, ByVal lpClipRectangle As LongPtr, ByVal dwDestinationOrigin As Long, ByRef lpFill As CHAR_INFO) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SCROLLLOCK_ON",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const SCROLLLOCK_ON As Long = &H40",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SetConsoleActiveScreenBuffer",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function SetConsoleActiveScreenBuffer Lib \"\" ( ByVal hConsoleOutput As LongPtr) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SetConsoleCP",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function SetConsoleCP Lib \"\" ( ByVal wCodePageID As Long) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SetConsoleCtrlHandler",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function SetConsoleCtrlHandler Lib \"\" ( ByVal HandlerRoutine As LongPtr, ByVal Add As Long) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SetConsoleCursorInfo",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function SetConsoleCursorInfo Lib \"\" ( ByVal hConsoleOutput As LongPtr, ByRef lpConsoleCursorInfo As CONSOLE_CURSOR_INFO) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SetConsoleCursorPosition",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function SetConsoleCursorPosition Lib \"\" ( ByVal hConsoleOutput As LongPtr, ByVal dwCursorPosition As Long) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SetConsoleMode",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function SetConsoleMode Lib \"\" ( ByVal hConsoleHandle As LongPtr, ByVal dwMode As Long) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SetConsoleOutputCP",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function SetConsoleOutputCP Lib \"\" ( ByVal wCodePageID As Long) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SetConsoleScreenBufferInfoEx",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function SetConsoleScreenBufferInfoEx Lib \"\" ( ByVal hConsoleOutput As LongPtr, ByRef lpConsoleScreenBufferInfoEx As CONSOLE_SCREEN_BUFFER_INFOEX) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SetConsoleScreenBufferSize",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function SetConsoleScreenBufferSize Lib \"\" ( ByVal hConsoleOutput As LongPtr, ByVal dwSize As Long) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SetConsoleTextAttribute",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function SetConsoleTextAttribute Lib \"\" ( ByVal hConsoleOutput As LongPtr, ByVal wAttributes As Integer) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SetConsoleTitleW",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function SetConsoleTitleW Lib \"\" ( ByVal lpConsoleTitle As LongPtr) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SetConsoleWindowInfo",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function SetConsoleWindowInfo Lib \"\" ( ByVal hConsoleOutput As LongPtr, ByVal bAbsolute As Long, ByRef lpConsoleWindow As SMALL_RECT) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SetCurrentConsoleFontEx",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function SetCurrentConsoleFontEx Lib \"\" ( ByVal hConsoleOutput As LongPtr, ByVal bMaximumWindow As Long, ByRef lpConsoleCurrentFontEx As CONSOLE_FONT_INFOEX) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SetStdHandle",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function SetStdHandle Lib \"\" ( ByVal nStdHandle As Long, ByVal hHandle As LongPtr) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SetTimer",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function SetTimer Lib \"\" ( ByVal hwnd As LongPtr, ByVal nIDEvent As LongPtr, ByVal uElapse As Long, ByVal lpTimerFunc As LongPtr) As LongPtr",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SHIFT_PRESSED",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const SHIFT_PRESSED As Long = &H10",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ShowWindow",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function ShowWindow Lib \"\" ( ByVal hwnd As LongPtr, ByVal nCmdShow As Long) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Sleep",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Sub Sleep Lib \"\" (ByVal dwMilliseconds As Long)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SMALL_RECT",
+          "kind": "Type",
+          "access": "Public",
+          "signature": "Public Type SMALL_RECT",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "STD_ERROR_HANDLE",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const STD_ERROR_HANDLE As Long = -12",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "STD_INPUT_HANDLE",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const STD_INPUT_HANDLE As Long = -10",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "STD_OUTPUT_HANDLE",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const STD_OUTPUT_HANDLE As Long = -11",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SysAllocStringLen",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function SysAllocStringLen Lib \"\" ( ByVal olestr As LongPtr, ByVal cch As Long) As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "WideCharToMultiByte",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function WideCharToMultiByte Lib \"\" ( ByVal CodePage As Long, ByVal dwFlags As Long, ByVal lpWideCharStr As LongPtr, ByVal cchWideChar As Long, ByVal lpMultiByteStr As LongPtr, ByVal cbMultiByte As Long, ByVal lpDefaultChar As LongPtr, ByVal lpUsedDefaultChar As LongPtr) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "WINDOW_BUFFER_SIZE_EVENT",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const WINDOW_BUFFER_SIZE_EVENT As Integer = &H4",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "WINDOW_BUFFER_SIZE_RECORD",
+          "kind": "Type",
+          "access": "Public",
+          "signature": "Public Type WINDOW_BUFFER_SIZE_RECORD",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "WriteConsoleOutputAttribute",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function WriteConsoleOutputAttribute Lib \"\" ( ByVal hConsoleOutput As LongPtr, ByVal lpAttribute As LongPtr, ByVal nLength As Long, ByVal dwWriteCoord As Long, ByRef lpNumberOfAttrsWritten As Long) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "WriteConsoleOutputCharacterW",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function WriteConsoleOutputCharacterW Lib \"\" ( ByVal hConsoleOutput As LongPtr, ByVal lpCharacter As LongPtr, ByVal nLength As Long, ByVal dwWriteCoord As Long, ByRef lpNumberOfCharsWritten As Long) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "WriteConsoleOutputW",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function WriteConsoleOutputW Lib \"\" ( ByVal hConsoleOutput As LongPtr, ByVal lpBuffer As LongPtr, ByVal dwBufferSize As Long, ByVal dwBufferCoord As Long, ByRef lpWriteRegion As SMALL_RECT) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "WriteConsoleW",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function WriteConsoleW Lib \"\" ( ByVal hConsoleOutput As LongPtr, ByVal lpBuffer As LongPtr, ByVal nNumberOfCharsToWrite As Long, ByRef lpNumberOfCharsWritten As Long, ByVal lpReserved As LongPtr) As Long",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "mConsoleDelegates",
+      "kind": "Module",
+      "file": "Core/mConsoleDelegates.twin",
+      "access": "Public",
+      "attributes": [],
+      "implements": [],
+      "inherits": null,
+      "members": [],
+      "events": []
+    },
+    {
+      "name": "mConsoleStyle",
+      "kind": "Module",
+      "file": "Core/mConsoleStyle.twin",
+      "access": "Public",
+      "attributes": [],
+      "implements": [],
+      "inherits": null,
+      "members": [
+        {
+          "name": "AltScreenOff",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function AltScreenOff() As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "AltScreenOn",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function AltScreenOn() As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ARROW_DOWN",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const ARROW_DOWN As String = \"\"",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ARROW_LEFT",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const ARROW_LEFT As String = \"\"",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ARROW_LEFT_RIGHT",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const ARROW_LEFT_RIGHT As String = \"\"",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ARROW_RIGHT",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const ARROW_RIGHT As String = \"\"",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ARROW_UP",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const ARROW_UP As String = \"\"",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ARROW_UP_DOWN",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const ARROW_UP_DOWN As String = \"\"",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Bg256",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function Bg256(ByVal colorIndex As Long) As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "BgBlack",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function BgBlack() As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "BgBlue",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function BgBlue() As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "BgBrightBlack",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function BgBrightBlack() As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "BgBrightBlue",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function BgBrightBlue() As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "BgBrightCyan",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function BgBrightCyan() As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "BgBrightGreen",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function BgBrightGreen() As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "BgBrightMagenta",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function BgBrightMagenta() As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "BgBrightRed",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function BgBrightRed() As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "BgBrightWhite",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function BgBrightWhite() As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "BgBrightYellow",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function BgBrightYellow() As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "BgCyan",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function BgCyan() As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "BgDefault",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function BgDefault() As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "BgGreen",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function BgGreen() As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "BgMagenta",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function BgMagenta() As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "BgRed",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function BgRed() As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "BgRGB",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function BgRGB(ByVal r As Long, ByVal g As Long, ByVal b As Long) As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "BgWhite",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function BgWhite() As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "BgYellow",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function BgYellow() As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Blink",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function Blink() As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "BLOCK_DARK",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const BLOCK_DARK As String = \"\"",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "BLOCK_FULL",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const BLOCK_FULL As String = \"\"",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "BLOCK_LEFT_HALF",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const BLOCK_LEFT_HALF As String = \"\"",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "BLOCK_LIGHT",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const BLOCK_LIGHT As String = \"\"",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "BLOCK_LOWER_HALF",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const BLOCK_LOWER_HALF As String = \"\"",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "BLOCK_MEDIUM",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const BLOCK_MEDIUM As String = \"\"",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "BLOCK_RIGHT_HALF",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const BLOCK_RIGHT_HALF As String = \"\"",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "BLOCK_UPPER_HALF",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const BLOCK_UPPER_HALF As String = \"\"",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Bold",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function Bold() As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "BOX_BOTTOM_LEFT",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const BOX_BOTTOM_LEFT As String = \"\"",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "BOX_BOTTOM_RIGHT",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const BOX_BOTTOM_RIGHT As String = \"\"",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "BOX_CROSS",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const BOX_CROSS As String = \"\"",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "BOX_D_BOTTOM_LEFT",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const BOX_D_BOTTOM_LEFT As String = \"\"",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "BOX_D_BOTTOM_RIGHT",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const BOX_D_BOTTOM_RIGHT As String = \"\"",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "BOX_D_CROSS",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const BOX_D_CROSS As String = \"\"",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "BOX_D_HORIZONTAL",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const BOX_D_HORIZONTAL As String = \"\"",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "BOX_D_T_BOTTOM",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const BOX_D_T_BOTTOM As String = \"\"",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "BOX_D_T_LEFT",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const BOX_D_T_LEFT As String = \"\"",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "BOX_D_T_RIGHT",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const BOX_D_T_RIGHT As String = \"\"",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "BOX_D_T_TOP",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const BOX_D_T_TOP As String = \"\"",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "BOX_D_TOP_LEFT",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const BOX_D_TOP_LEFT As String = \"\"",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "BOX_D_TOP_RIGHT",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const BOX_D_TOP_RIGHT As String = \"\"",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "BOX_D_VERTICAL",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const BOX_D_VERTICAL As String = \"\"",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "BOX_HORIZONTAL",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const BOX_HORIZONTAL As String = \"\"",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "BOX_T_BOTTOM",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const BOX_T_BOTTOM As String = \"\"",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "BOX_T_LEFT",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const BOX_T_LEFT As String = \"\"",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "BOX_T_RIGHT",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const BOX_T_RIGHT As String = \"\"",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "BOX_T_TOP",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const BOX_T_TOP As String = \"\"",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "BOX_TOP_LEFT",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const BOX_TOP_LEFT As String = \"\"",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "BOX_TOP_RIGHT",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const BOX_TOP_RIGHT As String = \"\"",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "BOX_VERTICAL",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const BOX_VERTICAL As String = \"\"",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "BULLET",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const BULLET As String = \"\"",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CenterText",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function CenterText(ByVal text As String, ByVal width As Long, Optional ByVal fillChar As String = \"\") As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CHECK_MARK",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const CHECK_MARK As String = \"\"",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CIRCLE",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const CIRCLE As String = \"\"",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CIRCLE_EMPTY",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const CIRCLE_EMPTY As String = \"\"",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ClearLine",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function ClearLine(Optional ByVal mode As Long = 2) As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ClearScreen",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function ClearScreen(Optional ByVal mode As Long = 2) As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Colored",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function Colored(ByVal text As String, ByVal fgColor As String, Optional ByVal bgColor As String = \"\") As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ColoredRGB",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function ColoredRGB(ByVal text As String, ByVal fgR As Long, ByVal fgG As Long, ByVal fgB As Long, Optional ByVal bgR As Long = -1, Optional ByVal bgG As Long = -1, Optional ByVal bgB As Long = -1) As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CROSS_MARK",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const CROSS_MARK As String = \"\"",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CSI",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const CSI As String = Chr$(27) & \"\"",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CursorBack",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function CursorBack(Optional ByVal n As Long = 1) As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CursorColumn",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function CursorColumn(ByVal n As Long) As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CursorDown",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function CursorDown(Optional ByVal n As Long = 1) As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CursorForward",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function CursorForward(Optional ByVal n As Long = 1) As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CursorHide",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function CursorHide() As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CursorNextLine",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function CursorNextLine(Optional ByVal n As Long = 1) As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CursorPosition",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function CursorPosition(ByVal row As Long, ByVal col As Long) As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CursorPrevLine",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function CursorPrevLine(Optional ByVal n As Long = 1) As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CursorRestore",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function CursorRestore() As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CursorSave",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function CursorSave() As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CursorShow",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function CursorShow() As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CursorUp",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function CursorUp(Optional ByVal n As Long = 1) As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "DIAMOND",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const DIAMOND As String = \"\"",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Dim_",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function Dim_() As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ESC",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const ESC As String = Chr$(27)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Fg256",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function Fg256(ByVal colorIndex As Long) As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "FgBlack",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function FgBlack() As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "FgBlue",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function FgBlue() As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "FgBrightBlack",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function FgBrightBlack() As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "FgBrightBlue",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function FgBrightBlue() As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "FgBrightCyan",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function FgBrightCyan() As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "FgBrightGreen",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function FgBrightGreen() As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "FgBrightMagenta",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function FgBrightMagenta() As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "FgBrightRed",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function FgBrightRed() As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "FgBrightWhite",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function FgBrightWhite() As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "FgBrightYellow",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function FgBrightYellow() As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "FgCyan",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function FgCyan() As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "FgDefault",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function FgDefault() As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "FgGreen",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function FgGreen() As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "FgMagenta",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function FgMagenta() As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "FgRed",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function FgRed() As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "FgRGB",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function FgRGB(ByVal r As Long, ByVal g As Long, ByVal b As Long) As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "FgWhite",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function FgWhite() As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "FgYellow",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function FgYellow() As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Hidden",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function Hidden() As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Hyperlink",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function Hyperlink(ByVal url As String, ByVal text As String) As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Italic",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function Italic() As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "LeftAlign",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function LeftAlign(ByVal text As String, ByVal width As Long, Optional ByVal fillChar As String = \"\") As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "PROGRESS_EMPTY",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const PROGRESS_EMPTY As String = \"\"",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "PROGRESS_FILLED",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const PROGRESS_FILLED As String = \"\"",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "RepeatStr",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function RepeatStr(ByVal s As String, ByVal count As Long) As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Reset",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function Reset() As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Reverse",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function Reverse() As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "RightAlign",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function RightAlign(ByVal text As String, ByVal width As Long, Optional ByVal fillChar As String = \"\") As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ScrollDown",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function ScrollDown(Optional ByVal n As Long = 1) As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ScrollUp",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function ScrollUp(Optional ByVal n As Long = 1) As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SetTitle",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function SetTitle(ByVal title As String) As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SQUARE",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const SQUARE As String = \"\"",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SQUARE_EMPTY",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const SQUARE_EMPTY As String = \"\"",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "STAR",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const STAR As String = \"\"",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "STAR_EMPTY",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const STAR_EMPTY As String = \"\"",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Strikethrough",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function Strikethrough() As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "StripAnsi",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function StripAnsi(ByVal text As String) As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Styled",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function Styled(ByVal text As String, ByVal style As String) As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Truncate",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function Truncate(ByVal text As String, ByVal maxLen As Long, Optional ByVal ellipsis As String = \"\") As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Underline",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function Underline() As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "WordWrap",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function WordWrap(ByVal text As String, ByVal width As Long) As String",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "mConsoleTypes",
+      "kind": "Module",
+      "file": "Core/mConsoleTypes.twin",
+      "access": "Public",
+      "attributes": [],
+      "implements": [],
+      "inherits": null,
+      "members": [
+        {
+          "name": "ConsoleCharInfo",
+          "kind": "Type",
+          "access": "Public",
+          "signature": "Public Type ConsoleCharInfo",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ConsoleColor",
+          "kind": "Enum",
+          "access": "Public",
+          "signature": "Public Enum ConsoleColor",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ConsoleEventInfo",
+          "kind": "Type",
+          "access": "Public",
+          "signature": "Public Type ConsoleEventInfo",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ConsoleEventType",
+          "kind": "Enum",
+          "access": "Public",
+          "signature": "Public Enum ConsoleEventType",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ConsoleKey",
+          "kind": "Enum",
+          "access": "Public",
+          "signature": "Public Enum ConsoleKey",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ConsoleKeyInfo",
+          "kind": "Type",
+          "access": "Public",
+          "signature": "Public Type ConsoleKeyInfo",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ConsoleMode",
+          "kind": "Enum",
+          "access": "Public",
+          "signature": "Public Enum ConsoleMode",
+          "attributes": [
+            "Flags"
+          ],
+          "description": null
+        },
+        {
+          "name": "ConsoleMouseInfo",
+          "kind": "Type",
+          "access": "Public",
+          "signature": "Public Type ConsoleMouseInfo",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ConsolePosition",
+          "kind": "Type",
+          "access": "Public",
+          "signature": "Public Type ConsolePosition",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ConsoleRect",
+          "kind": "Type",
+          "access": "Public",
+          "signature": "Public Type ConsoleRect",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ConsoleRect_Contains",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function ConsoleRect_Contains(ByVal rect As ConsoleRect, ByVal x As Long, ByVal y As Long) As Boolean",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ConsoleRect_Create",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function ConsoleRect_Create(ByVal left As Long, ByVal top As Long, ByVal right As Long, ByVal bottom As Long) As ConsoleRect",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ConsoleRect_Height",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function ConsoleRect_Height(ByVal rect As ConsoleRect) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ConsoleRect_Width",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function ConsoleRect_Width(ByVal rect As ConsoleRect) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ConsoleSize",
+          "kind": "Type",
+          "access": "Public",
+          "signature": "Public Type ConsoleSize",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ConsoleTextStyle",
+          "kind": "Enum",
+          "access": "Public",
+          "signature": "Public Enum ConsoleTextStyle",
+          "attributes": [
+            "Flags"
+          ],
+          "description": null
+        },
+        {
+          "name": "ThemeColorType",
+          "kind": "Enum",
+          "access": "Public",
+          "signature": "Public Enum ThemeColorType",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    }
+  ],
+  "enums": [],
+  "types": []
+}

@@ -1,0 +1,130 @@
+{
+  "package": "TwinTimerPackage",
+  "version": "1.0.0.0",
+  "modules": [
+    {
+      "name": "TwinTimer",
+      "kind": "Class",
+      "file": "TwinTimer.cls",
+      "access": "Public",
+      "attributes": [],
+      "implements": [],
+      "inherits": null,
+      "members": [
+        {
+          "name": "Class_Initialize",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub Class_Initialize()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Class_Terminate",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub Class_Terminate()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CLngToULng",
+          "kind": "Function",
+          "access": "Private",
+          "signature": "Private Function CLngToULng(ByVal Value As Long) As LongLong",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CreateTimer",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub CreateTimer()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "DestroyTimer",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub DestroyTimer()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Enabled",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get Enabled() As Boolean",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Enabled",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Let Enabled(ByVal Value As Long)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GetTickCount",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare PtrSafe Function GetTickCount Lib \"\" () As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Interval",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get Interval() As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Interval",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Let Interval(ByVal Value As Long)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "KillTimer",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare PtrSafe Function KillTimer Lib \"\" (ByVal hWnd As LongPtr, ByVal nIDEvent As Long) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SetTimer",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare PtrSafe Function SetTimer Lib \"\" (ByVal hWnd As LongPtr, ByVal nIDEvent As Long, ByVal uElapse As Long, ByVal lpTimerFunc As LongPtr) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "TimerProc",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub TimerProc(ByVal hWnd As LongPtr, ByVal uMsg As Long, ByVal nIDEvent As Long, ByVal dwTime As Long)",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": [
+        {
+          "name": "Timer",
+          "signature": "Public Event Timer(ByVal ElapsedTime As LongLong)",
+          "attributes": []
+        }
+      ]
+    }
+  ],
+  "enums": [],
+  "types": []
+}

@@ -1,0 +1,4443 @@
+{
+  "package": "VBComDlg",
+  "version": "1.0.3.0",
+  "modules": [
+    {
+      "name": "CommonDialog",
+      "kind": "Class",
+      "file": "CommonDialog.cls",
+      "access": "Public",
+      "attributes": [],
+      "implements": [],
+      "inherits": null,
+      "members": [
+        {
+          "name": "Action",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get Action() As Integer",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Action",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Let Action(ByVal Value As Integer)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "BIF_BROWSEFILEJUNCTIONS",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const BIF_BROWSEFILEJUNCTIONS As Long = &H10000",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "BIF_BROWSEFORCOMPUTER",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const BIF_BROWSEFORCOMPUTER As Long = &H1000",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "BIF_BROWSEFORPRINTER",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const BIF_BROWSEFORPRINTER As Long = &H2000",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "BIF_BROWSEINCLUDEFILES",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const BIF_BROWSEINCLUDEFILES As Long = &H4000",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "BIF_BROWSEINCLUDEURLS",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const BIF_BROWSEINCLUDEURLS As Long = &H80",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "BIF_DONTGOBELOWDOMAIN",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const BIF_DONTGOBELOWDOMAIN As Long = &H2",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "BIF_EDITBOX",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const BIF_EDITBOX As Long = &H10",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "BIF_NEWDIALOGSTYLE",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const BIF_NEWDIALOGSTYLE As Long = &H40",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "BIF_NONEWFOLDERBUTTON",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const BIF_NONEWFOLDERBUTTON As Long = &H200",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "BIF_NOTRANSLATETARGETS",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const BIF_NOTRANSLATETARGETS As Long = &H400",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "BIF_RETURNFSANCESTORS",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const BIF_RETURNFSANCESTORS As Long = &H8",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "BIF_RETURNONLYFSDIRS",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const BIF_RETURNONLYFSDIRS As Long = &H1",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "BIF_SHAREABLE",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const BIF_SHAREABLE As Long = &H8000&",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "BIF_STATUSTEXT",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const BIF_STATUSTEXT As Long = &H4",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "BIF_UAHINT",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const BIF_UAHINT As Long = &H100",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "BIF_USENEWUI",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const BIF_USENEWUI As Long = BIF_EDITBOX Or BIF_NEWDIALOGSTYLE",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "BIF_VALIDATE",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const BIF_VALIDATE As Long = &H20",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "BN_CLICKED",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const BN_CLICKED As Long = 0",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "BROWSEINFO",
+          "kind": "Type",
+          "access": "Private",
+          "signature": "Private Type BROWSEINFO",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CallbackProcDialog",
+          "kind": "Function",
+          "access": "Private",
+          "signature": "Private Function CallbackProcDialog(ByVal hDlg As LongPtr, ByVal wMsg As Long, ByVal wParam As LongPtr, ByVal lParam As LongPtr, ByVal dwRefData As LongPtr) As LongPtr",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CancelError",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get CancelError() As Boolean",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CancelError",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Let CancelError(ByVal Value As Boolean)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CC_ANYCOLOR",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const CC_ANYCOLOR As Long = &H100",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CC_ENABLEHOOK",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const CC_ENABLEHOOK As Long = &H10",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CC_FULLOPEN",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const CC_FULLOPEN As Long = &H2",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CC_PREVENTFULLOPEN",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const CC_PREVENTFULLOPEN As Long = &H4",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CC_RGBINIT",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const CC_RGBINIT As Long = &H1",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CC_SHOWHELP",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const CC_SHOWHELP As Long = &H8",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CC_SOLIDCOLOR",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const CC_SOLIDCOLOR As Long = &H80",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CCHDEVICENAME",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const CCHDEVICENAME As Long = 32",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CCHDEVNAMESEXTRA",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const CCHDEVNAMESEXTRA As Long = 200",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CCHFORMNAME",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const CCHFORMNAME As Long = 32",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CdlBIFConstants",
+          "kind": "Enum",
+          "access": "Public",
+          "signature": "Public Enum CdlBIFConstants",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CdlCCConstants",
+          "kind": "Enum",
+          "access": "Public",
+          "signature": "Public Enum CdlCCConstants",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CdlCFConstants",
+          "kind": "Enum",
+          "access": "Public",
+          "signature": "Public Enum CdlCFConstants",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CdlErrorConstants",
+          "kind": "Enum",
+          "access": "Public",
+          "signature": "Public Enum CdlErrorConstants",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CdlFRConstants",
+          "kind": "Enum",
+          "access": "Public",
+          "signature": "Public Enum CdlFRConstants",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CdlHelpConstants",
+          "kind": "Enum",
+          "access": "Public",
+          "signature": "Public Enum CdlHelpConstants",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CdlOFNConstants",
+          "kind": "Enum",
+          "access": "Public",
+          "signature": "Public Enum CdlOFNConstants",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CdlOFNShareViResultConstants",
+          "kind": "Enum",
+          "access": "Public",
+          "signature": "Public Enum CdlOFNShareViResultConstants",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CdlPDConstants",
+          "kind": "Enum",
+          "access": "Public",
+          "signature": "Public Enum CdlPDConstants",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CdlPDResultConstants",
+          "kind": "Enum",
+          "access": "Public",
+          "signature": "Public Enum CdlPDResultConstants",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CdlPRBNConstants",
+          "kind": "Enum",
+          "access": "Public",
+          "signature": "Public Enum CdlPRBNConstants",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CdlPRCMConstants",
+          "kind": "Enum",
+          "access": "Public",
+          "signature": "Public Enum CdlPRCMConstants",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CdlPRDPConstants",
+          "kind": "Enum",
+          "access": "Public",
+          "signature": "Public Enum CdlPRDPConstants",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CdlPRORConstants",
+          "kind": "Enum",
+          "access": "Public",
+          "signature": "Public Enum CdlPRORConstants",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CdlPRPQConstants",
+          "kind": "Enum",
+          "access": "Public",
+          "signature": "Public Enum CdlPRPQConstants",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CdlPRPSConstants",
+          "kind": "Enum",
+          "access": "Public",
+          "signature": "Public Enum CdlPRPSConstants",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CdlPSDConstants",
+          "kind": "Enum",
+          "access": "Public",
+          "signature": "Public Enum CdlPSDConstants",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CF_APPLY",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const CF_APPLY As Long = &H200",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CF_EFFECTS",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const CF_EFFECTS As Long = &H100",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CF_ENABLEHOOK",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const CF_ENABLEHOOK As Long = &H8",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CF_FIXEDPITCHONLY",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const CF_FIXEDPITCHONLY As Long = &H4000",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CF_FORCEFONTEXIST",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const CF_FORCEFONTEXIST As Long = &H10000",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CF_INITTOLOGFONTSTRUCT",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const CF_INITTOLOGFONTSTRUCT As Long = &H40",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CF_LIMITSIZE",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const CF_LIMITSIZE As Long = &H2000",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CF_NOFACESEL",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const CF_NOFACESEL As Long = &H80000",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CF_NOSCRIPTSEL",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const CF_NOSCRIPTSEL As Long = &H800000",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CF_NOSIZESEL",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const CF_NOSIZESEL As Long = &H200000",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CF_NOSTYLESEL",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const CF_NOSTYLESEL As Long = &H100000",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CF_NOVECTORFONTS",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const CF_NOVECTORFONTS As Long = &H800",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CF_NOVERTFONTS",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const CF_NOVERTFONTS As Long = &H1000000",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CF_PRINTERFONTS",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const CF_PRINTERFONTS As Long = &H2",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CF_SCALABLEONLY",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const CF_SCALABLEONLY As Long = &H20000",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CF_SCREENFONTS",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const CF_SCREENFONTS As Long = &H1",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CF_SCRIPTSONLY",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const CF_SCRIPTSONLY As Long = &H400",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CF_SELECTSCRIPT",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const CF_SELECTSCRIPT As Long = &H400000",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CF_SHOWHELP",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const CF_SHOWHELP As Long = &H4",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CF_TTONLY",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const CF_TTONLY As Long = &H40000",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CFERR_MAXLESSTHANMIN",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const CFERR_MAXLESSTHANMIN As Long = &H2002",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CFERR_NOFONTS",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const CFERR_NOFONTS As Long = &H2001",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ChooseColor",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare PtrSafe Function ChooseColor Lib \"\" Alias \"\" (ByRef lpChooseColor As TCHOOSECOLOR) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ChooseColor",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare Function ChooseColor Lib \"\" Alias \"\" (ByRef lpChooseColor As TCHOOSECOLOR) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ChooseFont",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare PtrSafe Function ChooseFont Lib \"\" Alias \"\" (ByRef lpChooseFont As TCHOOSEFONT) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ChooseFont",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare Function ChooseFont Lib \"\" Alias \"\" (ByRef lpChooseFont As TCHOOSEFONT) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CIntToUInt",
+          "kind": "Function",
+          "access": "Private",
+          "signature": "Private Function CIntToUInt(ByVal Value As Integer) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Class_Initialize",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub Class_Initialize()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Class_Terminate",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub Class_Terminate()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ClosePrinter",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare PtrSafe Function ClosePrinter Lib \"\" (ByVal hPrinter As LongPtr) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ClosePrinter",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare Function ClosePrinter Lib \"\" (ByVal hPrinter As Long) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Color",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get Color() As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Color",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Let Color(ByVal Value As Long)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ColorMode",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get ColorMode() As CdlPRCMConstants",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ColorMode",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Let ColorMode(ByVal Value As CdlPRCMConstants)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "COLOROKSTRING",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const COLOROKSTRING As String = \"\"",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CommDlgExtendedError",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare PtrSafe Function CommDlgExtendedError Lib \"\" () As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CommDlgExtendedError",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare Function CommDlgExtendedError Lib \"\" () As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Copies",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get Copies() As Integer",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Copies",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Let Copies(ByVal Value As Integer)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CopyMemory",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare PtrSafe Sub CopyMemory Lib \"\" Alias \"\" (ByRef Destination As Any, ByRef Source As Any, ByVal Length As Long)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CopyMemory",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare Sub CopyMemory Lib \"\" Alias \"\" (ByRef Destination As Any, ByRef Source As Any, ByVal Length As Long)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CoTaskMemFree",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare PtrSafe Sub CoTaskMemFree Lib \"\" (ByVal hMem As LongPtr)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CoTaskMemFree",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare Sub CoTaskMemFree Lib \"\" (ByVal hMem As Long)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CUIntToInt",
+          "kind": "Function",
+          "access": "Private",
+          "signature": "Private Function CUIntToInt(ByVal Value As Long) As Integer",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CustomColors",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get CustomColors() As Variant",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CustomColors",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Let CustomColors(ByVal ArgList As Variant)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "DEFAULT_QUALITY",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const DEFAULT_QUALITY As Long = 0",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "DefaultExt",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get DefaultExt() As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "DefaultExt",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Let DefaultExt(ByVal Value As String)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "DeleteObject",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare PtrSafe Function DeleteObject Lib \"\" (ByVal hObject As LongPtr) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "DeleteObject",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare Function DeleteObject Lib \"\" (ByVal hObject As Long) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "DEVMODE",
+          "kind": "Type",
+          "access": "Private",
+          "signature": "Private Type DEVMODE",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "DEVNAMES",
+          "kind": "Type",
+          "access": "Private",
+          "signature": "Private Type DEVNAMES",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "DialogTitle",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get DialogTitle() As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "DialogTitle",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Let DialogTitle(ByVal Value As String)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "DM_COLLATE",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const DM_COLLATE As Long = &H8000&, DMCOLLATE_FALSE As Long = 0, DMCOLLATE_TRUE As Long = 1",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "DM_COLOR",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const DM_COLOR As Long = &H800",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "DM_COPIES",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const DM_COPIES As Long = &H100",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "DM_DEFAULTSOURCE",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const DM_DEFAULTSOURCE As Long = &H200",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "DM_DUPLEX",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const DM_DUPLEX As Long = &H1000",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "DM_IN_BUFFER",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const DM_IN_BUFFER As Long = 8",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "DM_ORIENTATION",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const DM_ORIENTATION As Long = &H1",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "DM_OUT_BUFFER",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const DM_OUT_BUFFER As Long = 2",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "DM_PAPERSIZE",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const DM_PAPERSIZE As Long = &H2",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "DM_PRINTQUALITY",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const DM_PRINTQUALITY As Long = &H400",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "DN_DEFAULTPRN",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const DN_DEFAULTPRN As Long = 1",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "DocumentProperties",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare PtrSafe Function DocumentProperties Lib \"\" Alias \"\" (ByVal hWnd As LongPtr, ByVal hPrinter As LongPtr, ByVal lpszDeviceName As LongPtr, ByVal lpDevModeOutput As LongPtr, ByVal lpDevModeInput As LongPtr, ByVal fMode As Long) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "DocumentProperties",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare Function DocumentProperties Lib \"\" Alias \"\" (ByVal hWnd As Long, ByVal hPrinter As Long, ByVal lpszDeviceName As Long, ByVal lpDevModeOutput As Long, ByVal lpDevModeInput As Long, ByVal fMode As Long) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "DPI_Y",
+          "kind": "Function",
+          "access": "Private",
+          "signature": "Private Function DPI_Y() As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Duplex",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get Duplex() As CdlPRDPConstants",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Duplex",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Let Duplex(ByVal Value As CdlPRDPConstants)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "DWL_MSGRESULT",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const DWL_MSGRESULT As Long = 0",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "FileName",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get FileName() As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "FileName",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Let FileName(ByVal Value As String)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "FileOffset",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get FileOffset() As Integer",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "FileOffset",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Let FileOffset(ByVal Value As Integer)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "FILEOKSTRING",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const FILEOKSTRING As String = \"\"",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "FileTitle",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get FileTitle() As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "FileTitle",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Let FileTitle(ByVal Value As String)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Filter",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get Filter() As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Filter",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Let Filter(ByVal Value As String)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "FilterIndex",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get FilterIndex() As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "FilterIndex",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Let FilterIndex(ByVal Value As Long)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "FinalizeDevModeBuffer",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub FinalizeDevModeBuffer(ByRef hPrinter As LongPtr, ByVal DeviceName As String, ByRef DMODE_B() As Byte, ByVal dwBytes As Long)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "FINDMSGSTRING",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const FINDMSGSTRING As String = \"\"",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "FINDREPLACE",
+          "kind": "Type",
+          "access": "Private",
+          "signature": "Private Type FINDREPLACE",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "FindText",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare PtrSafe Function FindText Lib \"\" Alias \"\" (ByRef lpFindReplace As FINDREPLACE) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "FindText",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare Function FindText Lib \"\" Alias \"\" (ByRef lpFindReplace As FINDREPLACE) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "FindWhat",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get FindWhat() As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "FindWhat",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Let FindWhat(ByVal Value As String)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "FindWindowEx",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare PtrSafe Function FindWindowEx Lib \"\" Alias \"\" (ByVal hWndParent As LongPtr, ByVal hWndChildAfter As LongPtr, ByVal lpszClass As LongPtr, ByVal lpszWindow As LongPtr) As LongPtr",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "FindWindowEx",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare Function FindWindowEx Lib \"\" Alias \"\" (ByVal hWndParent As Long, ByVal hWndChildAfter As Long, ByVal lpszClass As Long, ByVal lpszWindow As Long) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Flags",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get Flags() As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Flags",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Let Flags(ByVal Value As Long)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "FMessage",
+          "kind": "Function",
+          "access": "Friend",
+          "signature": "Friend Function FMessage(ByVal hWnd As LongPtr, ByVal wMsg As Long, ByVal wParam As LongPtr, ByVal lParam As LongPtr, ByVal dwRefData As LongPtr) As LongPtr",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "FNERR_BUFFERTOOSMALL",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const FNERR_BUFFERTOOSMALL As Long = &H3003",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "FNERR_INVALIDFILENAME",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const FNERR_INVALIDFILENAME As Long = &H3002",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "FNERR_SUBCLASSFAILURE",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const FNERR_SUBCLASSFAILURE As Long = &H3001",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "FontBold",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get FontBold() As Boolean",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "FontBold",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Let FontBold(ByVal Value As Boolean)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "FontCharset",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get FontCharset() As Integer",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "FontCharset",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Let FontCharset(ByVal Value As Integer)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "FontItalic",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get FontItalic() As Boolean",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "FontItalic",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Let FontItalic(ByVal Value As Boolean)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "FontName",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get FontName() As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "FontName",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Let FontName(ByVal Value As String)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "FontSize",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get FontSize() As Single",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "FontSize",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Let FontSize(ByVal Value As Single)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "FontStrikethru",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get FontStrikethru() As Boolean",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "FontStrikethru",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Let FontStrikethru(ByVal Value As Boolean)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "FontUnderline",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get FontUnderline() As Boolean",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "FontUnderline",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Let FontUnderline(ByVal Value As Boolean)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "FontWeight",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get FontWeight() As Integer",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "FontWeight",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Let FontWeight(ByVal Value As Integer)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "FR_DIALOGTERM",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const FR_DIALOGTERM As Long = &H40",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "FR_DOWN",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const FR_DOWN As Long = &H1",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "FR_ENABLEHOOK",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const FR_ENABLEHOOK As Long = &H100",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "FR_FINDNEXT",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const FR_FINDNEXT As Long = &H8",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "FR_HIDEMATCHCASE",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const FR_HIDEMATCHCASE As Long = &H8000&",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "FR_HIDEUPDOWN",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const FR_HIDEUPDOWN As Long = &H4000",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "FR_HIDEWHOLEWORD",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const FR_HIDEWHOLEWORD As Long = &H10000",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "FR_MATCHCASE",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const FR_MATCHCASE As Long = &H4",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "FR_NOMATCHCASE",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const FR_NOMATCHCASE As Long = &H800",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "FR_NOUPDOWN",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const FR_NOUPDOWN As Long = &H400",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "FR_NOWHOLEWORD",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const FR_NOWHOLEWORD As Long = &H1000",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "FR_REPLACE",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const FR_REPLACE As Long = &H10",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "FR_REPLACEALL",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const FR_REPLACEALL As Long = &H20",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "FR_SHOWHELP",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const FR_SHOWHELP As Long = &H80",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "FR_WHOLEWORD",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const FR_WHOLEWORD As Long = &H2",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "FreeLibrary",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare PtrSafe Function FreeLibrary Lib \"\" (ByVal hLibModule As LongPtr) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "FreeLibrary",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare Function FreeLibrary Lib \"\" (ByVal hLibModule As Long) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "FRERR_BUFFERLENGTHZERO",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const FRERR_BUFFERLENGTHZERO As Long = &H4001",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "FromPage",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get FromPage() As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "FromPage",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Let FromPage(ByVal Value As Long)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "FW_BOLD",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const FW_BOLD As Long = 700",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "FW_DONTCARE",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const FW_DONTCARE As Long = 0",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "FW_EXTRABOLD",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const FW_EXTRABOLD As Long = 800",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "FW_EXTRALIGHT",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const FW_EXTRALIGHT As Long = 200",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "FW_HEAVY",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const FW_HEAVY As Long = 900",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "FW_LIGHT",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const FW_LIGHT As Long = 300",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "FW_MEDIUM",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const FW_MEDIUM As Long = 500",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "FW_NORMAL",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const FW_NORMAL As Long = 400",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "FW_SEMIBOLD",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const FW_SEMIBOLD As Long = 600",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "FW_THIN",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const FW_THIN As Long = 100",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GetActiveWindow",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare PtrSafe Function GetActiveWindow Lib \"\" () As LongPtr",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GetActiveWindow",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare Function GetActiveWindow Lib \"\" () As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GetDC",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare PtrSafe Function GetDC Lib \"\" (ByVal hWnd As LongPtr) As LongPtr",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GetDC",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare Function GetDC Lib \"\" (ByVal hWnd As Long) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GetDefaultPrinter",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare PtrSafe Function GetDefaultPrinter Lib \"\" Alias \"\" (ByVal lpszPrinterName As LongPtr, ByRef cch As Long) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GetDefaultPrinter",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare Function GetDefaultPrinter Lib \"\" Alias \"\" (ByVal lpszPrinterName As Long, ByRef cch As Long) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GetDesktopWindow",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare PtrSafe Function GetDesktopWindow Lib \"\" () As LongPtr",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GetDesktopWindow",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare Function GetDesktopWindow Lib \"\" () As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GetDeviceCaps",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare PtrSafe Function GetDeviceCaps Lib \"\" (ByVal hDC As LongPtr, ByVal nIndex As Long) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GetDeviceCaps",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare Function GetDeviceCaps Lib \"\" (ByVal hDC As Long, ByVal nIndex As Long) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GetFocus",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare PtrSafe Function GetFocus Lib \"\" () As LongPtr",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GetFocus",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare Function GetFocus Lib \"\" () As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GetLocaleInfo",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare PtrSafe Function GetLocaleInfo Lib \"\" Alias \"\" (ByVal LCID As Long, ByVal LCType As Long, ByVal lpLCData As LongPtr, ByVal cchData As Long) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GetLocaleInfo",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare Function GetLocaleInfo Lib \"\" Alias \"\" (ByVal Locale As Long, ByVal LCType As Long, ByVal lpLCData As Long, ByVal cchData As Long) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GetOpenFileName",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare PtrSafe Function GetOpenFileName Lib \"\" Alias \"\" (ByRef lpOpenFileName As OPENFILENAME) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GetOpenFileName",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare Function GetOpenFileName Lib \"\" Alias \"\" (ByRef lpOpenFileName As OPENFILENAME) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GetOwnerWindow",
+          "kind": "Function",
+          "access": "Private",
+          "signature": "Private Function GetOwnerWindow() As LongPtr",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GetPrinterDefault",
+          "kind": "Function",
+          "access": "Private",
+          "signature": "Private Function GetPrinterDefault() As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GetProcAddress",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare PtrSafe Function GetProcAddress Lib \"\" (ByVal hModule As LongPtr, ByVal lpProcName As Any) As LongPtr",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GetProcAddress",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare Function GetProcAddress Lib \"\" (ByVal hModule As Long, ByVal lpProcName As Any) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GetSaveFileName",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare PtrSafe Function GetSaveFileName Lib \"\" Alias \"\" (ByRef lpOpenFileName As OPENFILENAME) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GetSaveFileName",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare Function GetSaveFileName Lib \"\" Alias \"\" (ByRef lpOpenFileName As OPENFILENAME) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GlobalAlloc",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare PtrSafe Function GlobalAlloc Lib \"\" (ByVal wFlags As Long, ByVal dwBytes As LongPtr) As LongPtr",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GlobalAlloc",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare Function GlobalAlloc Lib \"\" (ByVal wFlags As Long, ByVal dwBytes As Long) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GlobalFree",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare PtrSafe Function GlobalFree Lib \"\" (ByVal hMem As LongPtr) As LongPtr",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GlobalFree",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare Function GlobalFree Lib \"\" (ByVal hMem As Long) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GlobalLock",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare PtrSafe Function GlobalLock Lib \"\" (ByVal hMem As LongPtr) As LongPtr",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GlobalLock",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare Function GlobalLock Lib \"\" (ByVal hMem As Long) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GlobalSize",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare PtrSafe Function GlobalSize Lib \"\" (ByVal hMem As LongPtr) As LongPtr",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GlobalSize",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare Function GlobalSize Lib \"\" (ByVal hMem As Long) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GlobalUnlock",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare PtrSafe Function GlobalUnlock Lib \"\" (ByVal hMem As LongPtr) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GlobalUnlock",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare Function GlobalUnlock Lib \"\" (ByVal hMem As Long) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GMEM_MOVEABLE",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const GMEM_MOVEABLE As Long = &H2",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GMEM_ZEROINIT",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const GMEM_ZEROINIT As Long = &H40",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "hDC",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get hDC() As LongPtr",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "hDC",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Let hDC(ByVal Value As LongPtr)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "hDlg32",
+          "kind": "Function",
+          "access": "Private",
+          "signature": "Private Function hDlg32(ByVal hDlg As LongPtr) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "HELP_COMMAND",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const HELP_COMMAND As Long = &H102",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "HELP_CONTENTS",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const HELP_CONTENTS As Long = &H3",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "HELP_CONTEXT",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const HELP_CONTEXT As Long = &H1",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "HELP_CONTEXTPOPUP",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const HELP_CONTEXTPOPUP As Long = &H8",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "HELP_FORCEFILE",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const HELP_FORCEFILE As Long = &H9",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "HELP_HELPONHELP",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const HELP_HELPONHELP As Long = &H4",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "HELP_INDEX",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const HELP_INDEX As Long = &H3",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "HELP_KEY",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const HELP_KEY As Long = &H101",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "HELP_PARTIALKEY",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const HELP_PARTIALKEY As Long = &H105",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "HELP_QUIT",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const HELP_QUIT As Long = &H2",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "HELP_SETCONTENTS",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const HELP_SETCONTENTS As Long = &H5",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "HELP_SETINDEX",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const HELP_SETINDEX As Long = &H5",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "HelpCommand",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get HelpCommand() As CdlHelpConstants",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "HelpCommand",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Let HelpCommand(ByVal Value As CdlHelpConstants)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "HelpContext",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get HelpContext() As LongPtr",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "HelpContext",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Let HelpContext(ByVal Value As LongPtr)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "HelpFile",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get HelpFile() As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "HelpFile",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Let HelpFile(ByVal Value As String)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "HelpKey",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get HelpKey() As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "HelpKey",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Let HelpKey(ByVal Value As String)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "HELPMSGSTRING",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const HELPMSGSTRING As String = \"\"",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "HiWord",
+          "kind": "Function",
+          "access": "Private",
+          "signature": "Private Function HiWord(ByVal DWord As Long) As Integer",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "HookEvents",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get HookEvents() As Boolean",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "HookEvents",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Let HookEvents(ByVal Value As Boolean)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "IDOK",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const IDOK As Long = 1",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ILCreateFromPath",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare PtrSafe Function ILCreateFromPath Lib \"\" (ByVal lpszPath As LongPtr) As LongPtr",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ILCreateFromPath",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare Function ILCreateFromPath Lib \"\" (ByVal lpszPath As Long) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ILCreateFromPathW2K",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare Function ILCreateFromPathW2K Lib \"\" Alias \"\" (ByVal lpszPath As Long) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "InitDir",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get InitDir() As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "InitDir",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Let InitDir(ByVal Value As String)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "IsWindow",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare PtrSafe Function IsWindow Lib \"\" (ByVal hWnd As LongPtr) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "IsWindow",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare Function IsWindow Lib \"\" (ByVal hWnd As Long) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "LF_FACESIZE",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const LF_FACESIZE As Long = 32",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "LoadLibrary",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare PtrSafe Function LoadLibrary Lib \"\" Alias \"\" (ByVal lpLibFileName As LongPtr) As LongPTr",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "LoadLibrary",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare Function LoadLibrary Lib \"\" Alias \"\" (ByVal lpLibFileName As Long) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "LOGFONT",
+          "kind": "Type",
+          "access": "Private",
+          "signature": "Private Type LOGFONT",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "LongPtr",
+          "kind": "Enum",
+          "access": "Private",
+          "signature": "Private Enum LongPtr",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "LoWord",
+          "kind": "Function",
+          "access": "Private",
+          "signature": "Private Function LoWord(ByVal DWord As Long) As Integer",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "lstrlen",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare PtrSafe Function lstrlen Lib \"\" Alias \"\" (ByVal lpString As LongPtr) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "lstrlen",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare Function lstrlen Lib \"\" Alias \"\" (ByVal lpString As Long) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Max",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get Max() As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Max",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Let Max(ByVal Value As Long)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "MAX_PATH",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const MAX_PATH As Long = 260",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "MaxFileSize",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get MaxFileSize() As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "MaxFileSize",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Let MaxFileSize(ByVal Value As Long)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "MAXINT_2",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const MAXINT_2 As Integer = 32767",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Min",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get Min() As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Min",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Let Min(ByVal Value As Long)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "MulDiv",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare PtrSafe Function MulDiv Lib \"\" (ByVal nNumber As Long, ByVal nNumerator As Long, ByVal nDenominator As Long) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "MulDiv",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare Function MulDiv Lib \"\" (ByVal nNumber As Long, ByVal nNumerator As Long, ByVal nDenominator As Long) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "NMHDR",
+          "kind": "Type",
+          "access": "Private",
+          "signature": "Private Type NMHDR",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "NMOFNOTIFY",
+          "kind": "Type",
+          "access": "Private",
+          "signature": "Private Type NMOFNOTIFY",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "NULL_PTR",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const NULL_PTR As LongPtr = 0",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "NULL_PTR",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const NULL_PTR As Long = 0",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Object",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get Object() As Object",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "OFN_ALLOWMULTISELECT",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const OFN_ALLOWMULTISELECT As Long = &H200",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "OFN_CREATEPROMPT",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const OFN_CREATEPROMPT As Long = &H2000",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "OFN_DONTADDTORECENT",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const OFN_DONTADDTORECENT As Long = &H2000000",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "OFN_ENABLEHOOK",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const OFN_ENABLEHOOK As Long = &H20",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "OFN_ENABLESIZING",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const OFN_ENABLESIZING As Long = &H800000",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "OFN_EXPLORER",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const OFN_EXPLORER As Long = &H80000",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "OFN_EXTENSIONDIFFERENT",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const OFN_EXTENSIONDIFFERENT As Long = &H400",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "OFN_FILEMUSTEXIST",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const OFN_FILEMUSTEXIST As Long = &H1000",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "OFN_FORCESHOWHIDDEN",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const OFN_FORCESHOWHIDDEN As Long = &H10000000",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "OFN_HIDEREADONLY",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const OFN_HIDEREADONLY As Long = &H4",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "OFN_NOCHANGEDIR",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const OFN_NOCHANGEDIR As Long = &H8",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "OFN_NODEREFERENCELINKS",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const OFN_NODEREFERENCELINKS As Long = &H100000",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "OFN_NONETWORKBUTTON",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const OFN_NONETWORKBUTTON As Long = &H20000",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "OFN_NOREADONLYRETURN",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const OFN_NOREADONLYRETURN As Long = &H8000&",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "OFN_NOVALIDATE",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const OFN_NOVALIDATE As Long = &H100",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "OFN_OVERWRITEPROMPT",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const OFN_OVERWRITEPROMPT As Long = &H2",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "OFN_PATHMUSTEXIST",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const OFN_PATHMUSTEXIST As Long = &H800",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "OFN_READONLY",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const OFN_READONLY As Long = &H1",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "OFN_SHAREAWARE",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const OFN_SHAREAWARE As Long = &H4000",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "OFN_SHAREFALLTHROUGH",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const OFN_SHAREFALLTHROUGH As Long = &H2",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "OFN_SHARENOWARN",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const OFN_SHARENOWARN As Long = &H1",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "OFN_SHAREWARN",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const OFN_SHAREWARN As Long = &H0",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "OFN_SHOWHELP",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const OFN_SHOWHELP As Long = &H10",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "OleTranslateColor",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare PtrSafe Function OleTranslateColor Lib \"\" (ByVal Color As Long, ByVal hPal As LongPtr, ByRef RGBResult As Long) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "OleTranslateColor",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare Function OleTranslateColor Lib \"\" (ByVal Color As Long, ByVal hPal As Long, ByRef RGBResult As Long) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "OPENFILENAME",
+          "kind": "Type",
+          "access": "Private",
+          "signature": "Private Type OPENFILENAME",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "OpenPrinter",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare PtrSafe Function OpenPrinter Lib \"\" Alias \"\" (ByVal lpszPrinterName As LongPtr, ByRef hPrinter As LongPtr, ByVal lpDefault As LongPtr) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "OpenPrinter",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare Function OpenPrinter Lib \"\" Alias \"\" (ByVal lpszPrinterName As Long, ByRef hPrinter As Long, ByVal lpDefault As Long) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Orientation",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get Orientation() As CdlPRORConstants",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Orientation",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Let Orientation(ByVal Value As CdlPRORConstants)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "PageBottomMargin",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get PageBottomMargin() As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "PageBottomMargin",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Let PageBottomMargin(ByVal Value As Long)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "PageBottomMinMargin",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get PageBottomMinMargin() As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "PageBottomMinMargin",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Let PageBottomMinMargin(ByVal Value As Long)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "PageLeftMargin",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get PageLeftMargin() As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "PageLeftMargin",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Let PageLeftMargin(ByVal Value As Long)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "PageLeftMinMargin",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get PageLeftMinMargin() As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "PageLeftMinMargin",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Let PageLeftMinMargin(ByVal Value As Long)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "PageRightMargin",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get PageRightMargin() As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "PageRightMargin",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Let PageRightMargin(ByVal Value As Long)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "PageRightMinMargin",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get PageRightMinMargin() As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "PageRightMinMargin",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Let PageRightMinMargin(ByVal Value As Long)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "PageSetupDialog",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare PtrSafe Function PageSetupDialog Lib \"\" Alias \"\" (ByRef lpPageSetupDlg As PAGESETUPDLG) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "PageSetupDialog",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare Function PageSetupDialog Lib \"\" Alias \"\" (ByRef lpPageSetupDlg As PAGESETUPDLG) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "PAGESETUPDLG",
+          "kind": "Type",
+          "access": "Private",
+          "signature": "Private Type PAGESETUPDLG",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "PageTopMargin",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get PageTopMargin() As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "PageTopMargin",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Let PageTopMargin(ByVal Value As Long)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "PageTopMinMargin",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get PageTopMinMargin() As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "PageTopMinMargin",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Let PageTopMinMargin(ByVal Value As Long)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "PaperBin",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get PaperBin() As CdlPRBNConstants",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "PaperBin",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Let PaperBin(ByVal Value As CdlPRBNConstants)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "PaperSize",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get PaperSize() As CdlPRPSConstants",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "PaperSize",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Let PaperSize(ByVal Value As CdlPRPSConstants)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "PD_ALLPAGES",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const PD_ALLPAGES As Long = &H0",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "PD_COLLATE",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const PD_COLLATE As Long = &H10",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "PD_CURRENTPAGE",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const PD_CURRENTPAGE As Long = &H400000",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "PD_DISABLEPRINTTOFILE",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const PD_DISABLEPRINTTOFILE As Long = &H80000",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "PD_ENABLEPRINTHOOK",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const PD_ENABLEPRINTHOOK As Long = &H1000",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "PD_ENABLESETUPHOOK",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const PD_ENABLESETUPHOOK As Long = &H2000",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "PD_HIDEPRINTTOFILE",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const PD_HIDEPRINTTOFILE As Long = &H100000",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "PD_NOCURRENTPAGE",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const PD_NOCURRENTPAGE As Long = &H800000",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "PD_NONETWORKBUTTON",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const PD_NONETWORKBUTTON As Long = &H200000",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "PD_NOPAGENUMS",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const PD_NOPAGENUMS As Long = &H8",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "PD_NOSELECTION",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const PD_NOSELECTION As Long = &H4",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "PD_NOWARNING",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const PD_NOWARNING As Long = &H80",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "PD_PAGENUMS",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const PD_PAGENUMS As Long = &H2",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "PD_PRINTSETUP",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const PD_PRINTSETUP As Long = &H40",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "PD_PRINTTOFILE",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const PD_PRINTTOFILE As Long = &H20",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "PD_RESULT_APPLY",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const PD_RESULT_APPLY As Long = &H2",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "PD_RESULT_CANCEL",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const PD_RESULT_CANCEL As Long = &H0",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "PD_RESULT_PRINT",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const PD_RESULT_PRINT As Long = &H1",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "PD_RETURNDC",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const PD_RETURNDC As Long = &H100",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "PD_RETURNDEFAULT",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const PD_RETURNDEFAULT As Long = &H400",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "PD_RETURNIC",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const PD_RETURNIC As Long = &H200",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "PD_SELECTION",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const PD_SELECTION As Long = &H1",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "PD_SHOWHELP",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const PD_SHOWHELP As Long = &H800",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "PD_USEDEVMODECOPIES",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const PD_USEDEVMODECOPIES As Long = &H40000",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "PD_USEDEVMODECOPIESANDCOLLATE",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const PD_USEDEVMODECOPIESANDCOLLATE As Long = &H40000",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "PDERR_CREATEICFAILURE",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const PDERR_CREATEICFAILURE As Long = &H100A",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "PDERR_DNDMMISMATCH",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const PDERR_DNDMMISMATCH As Long = &H1009",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "PDERR_GETDEVMODEFAIL",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const PDERR_GETDEVMODEFAIL As Long = &H1005",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "PDERR_INITFAILURE",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const PDERR_INITFAILURE As Long = &H1006",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "PDERR_LOADDRVFAILURE",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const PDERR_LOADDRVFAILURE As Long = &H1004",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "PDERR_NODEFAULTPRN",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const PDERR_NODEFAULTPRN As Long = &H1008",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "PDERR_NODEVICES",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const PDERR_NODEVICES As Long = &H1007",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "PDERR_PARSEFAILURE",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const PDERR_PARSEFAILURE As Long = &H1002",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "PDERR_PRINTERNOTFOUND",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const PDERR_PRINTERNOTFOUND As Long = &H100B",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "PDERR_RETDEFFAILURE",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const PDERR_RETDEFFAILURE As Long = &H1003",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "POINTAPI",
+          "kind": "Type",
+          "access": "Private",
+          "signature": "Private Type POINTAPI",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "PrepareDevModeBuffer",
+          "kind": "Function",
+          "access": "Private",
+          "signature": "Private Function PrepareDevModeBuffer(ByRef hPrinter As LongPtr, ByVal DeviceName As String, ByRef DMODE_B() As Byte) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "PrintDialog",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare PtrSafe Function PrintDialog Lib \"\" Alias \"\" (ByRef lpPrintDlg As PRINTDLG) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "PrintDialog",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare Function PrintDialog Lib \"\" Alias \"\" (ByRef lpPrintDlg As PRINTDLG) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "PrintDialogEx",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare PtrSafe Function PrintDialogEx Lib \"\" Alias \"\" (ByRef lpPrintDlgEx As PRINTDLGEX) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "PrintDialogEx",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare Function PrintDialogEx Lib \"\" Alias \"\" (ByRef lpPrintDlgEx As PRINTDLGEX) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "PRINTDLG",
+          "kind": "Type",
+          "access": "Private",
+          "signature": "Private Type PRINTDLG",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "PRINTDLGEX",
+          "kind": "Type",
+          "access": "Private",
+          "signature": "Private Type PRINTDLGEX",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "PrinterDefault",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get PrinterDefault() As Boolean",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "PrinterDefault",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Let PrinterDefault(ByVal Value As Boolean)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "PrinterDefaultInit",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get PrinterDefaultInit() As Boolean",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "PrinterDefaultInit",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Let PrinterDefaultInit(ByVal Value As Boolean)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "PrinterDriver",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get PrinterDriver() As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "PrinterDriver",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Let PrinterDriver(ByVal Value As String)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "PrinterName",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get PrinterName() As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "PrinterName",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Let PrinterName(ByVal Value As String)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "PrinterPort",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get PrinterPort() As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "PrinterPort",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Let PrinterPort(ByVal Value As String)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "PRINTPAGERANGE",
+          "kind": "Type",
+          "access": "Private",
+          "signature": "Private Type PRINTPAGERANGE",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "PrintQuality",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get PrintQuality() As CdlPRPQConstants",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "PrintQuality",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Let PrintQuality(ByVal Value As CdlPRPQConstants)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ProcPtr",
+          "kind": "Function",
+          "access": "Private",
+          "signature": "Private Function ProcPtr(ByVal Address As LongPtr) As LongPtr",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ProperFilter",
+          "kind": "Function",
+          "access": "Private",
+          "signature": "Private Function ProperFilter(ByVal Filter As String) As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "PSD_DEFAULTMINMARGINS",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const PSD_DEFAULTMINMARGINS As Long = &H0",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "PSD_DISABLEMARGINS",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const PSD_DISABLEMARGINS As Long = &H10",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "PSD_DISABLEORIENTATION",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const PSD_DISABLEORIENTATION As Long = &H100",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "PSD_DISABLEPAGEPAINTING",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const PSD_DISABLEPAGEPAINTING As Long = &H80000",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "PSD_DISABLEPAPER",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const PSD_DISABLEPAPER As Long = &H200",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "PSD_DISABLEPRINTER",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const PSD_DISABLEPRINTER As Long = &H20",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "PSD_ENABLEPAGESETUPHOOK",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const PSD_ENABLEPAGESETUPHOOK As Long = &H2000",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "PSD_INHUNDREDTHSOFMILLIMETERS",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const PSD_INHUNDREDTHSOFMILLIMETERS As Long = &H8",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "PSD_INTHOUSANDTHSOFINCHES",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const PSD_INTHOUSANDTHSOFINCHES As Long = &H4",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "PSD_MARGINS",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const PSD_MARGINS As Long = &H2",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "PSD_MINMARGINS",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const PSD_MINMARGINS As Long = &H1",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "PSD_NONETWORKBUTTON",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const PSD_NONETWORKBUTTON As Long = &H200000",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "PSD_NOWARNING",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const PSD_NOWARNING As Long = &H80",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "PSD_RETURNDEFAULT",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const PSD_RETURNDEFAULT As Long = &H400",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "PSD_SHOWHELP",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const PSD_SHOWHELP As Long = &H800",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "PTR_SIZE",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const PTR_SIZE As Long = 8",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "PTR_SIZE",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const PTR_SIZE As Long = 4",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "RECT",
+          "kind": "Type",
+          "access": "Private",
+          "signature": "Private Type RECT",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "RegisterWindowMessage",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare PtrSafe Function RegisterWindowMessage Lib \"\" Alias \"\" (ByVal lpString As LongPtr) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "RegisterWindowMessage",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare Function RegisterWindowMessage Lib \"\" Alias \"\" (ByVal lpString As Long) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ReleaseDC",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare PtrSafe Function ReleaseDC Lib \"\" (ByVal hWnd As LongPtr, ByVal hDC As LongPtr) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ReleaseDC",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare Function ReleaseDC Lib \"\" (ByVal hWnd As Long, ByVal hDC As Long) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ReplaceText",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare PtrSafe Function ReplaceText Lib \"\" Alias \"\" (ByRef lpFindReplace As FINDREPLACE) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ReplaceText",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare Function ReplaceText Lib \"\" Alias \"\" (ByRef lpFindReplace As FINDREPLACE) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ReplaceWith",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get ReplaceWith() As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ReplaceWith",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Let ReplaceWith(ByVal Value As String)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "RootFolder",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get RootFolder() As Variant",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "RootFolder",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Let RootFolder(ByVal Value As Variant)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "S_OK",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const S_OK As Long = &H0",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SendDlgItemMessage",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare PtrSafe Function SendDlgItemMessage Lib \"\" Alias \"\" (ByVal hDlg As LongPtr, ByVal nIDDlgItem As Long, ByVal wMsg As Long, ByVal wParam As LongPtr, ByRef lParam As Any) As LongPtr",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SendDlgItemMessage",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare Function SendDlgItemMessage Lib \"\" Alias \"\" (ByVal hDlg As Long, ByVal nIDDlgItem As Long, ByVal wMsg As Long, ByVal wParam As Long, ByRef lParam As Any) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SendMessage",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare PtrSafe Function SendMessage Lib \"\" Alias \"\" (ByVal hWnd As LongPtr, ByVal wMsg As Long, ByVal wParam As LongPtr, ByRef lParam As Any) As LongPtr",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SendMessage",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare Function SendMessage Lib \"\" Alias \"\" (ByVal hWnd As Long, ByVal wMsg As Long, ByVal wParam As Long, ByRef lParam As Any) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SetDefaultPrinter",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare PtrSafe Function SetDefaultPrinter Lib \"\" Alias \"\" (ByVal lpszPrinterName As LongPtr) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SetDefaultPrinter",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare Function SetDefaultPrinter Lib \"\" Alias \"\" (ByVal lpszPrinterName As Long) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SetFocusAPI",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare PtrSafe Function SetFocusAPI Lib \"\" Alias \"\" (ByVal hWnd As LongPtr) As LongPtr",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SetFocusAPI",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare Function SetFocusAPI Lib \"\" Alias \"\" (ByVal hWnd As Long) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SetPrinterDefault",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub SetPrinterDefault(ByVal NewPrinterName As String)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SETRGBSTRING",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const SETRGBSTRING As String = \"\"",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SetWindowLong",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare PtrSafe Function SetWindowLong Lib \"\" Alias \"\" (ByVal hWnd As LongPtr, ByVal nIndex As Long, ByVal dwNewLong As Long) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SetWindowLong",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare Function SetWindowLong Lib \"\" Alias \"\" (ByVal hWnd As Long, ByVal nIndex As Long, ByVal dwNewLong As Long) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SHAREVISTRING",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const SHAREVISTRING As String = \"\"",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SHBrowseForFolder",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare PtrSafe Function SHBrowseForFolder Lib \"\" Alias \"\" (ByRef lpBrowseInfo As BROWSEINFO) As LongPtr",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SHBrowseForFolder",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare Function SHBrowseForFolder Lib \"\" Alias \"\" (ByRef lpBrowseInfo As BROWSEINFO) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SHGetFolderLocation",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare PtrSafe Function SHGetFolderLocation Lib \"\" (ByVal hWndOwner As LongPtr, ByVal nFolder As Long, ByVal hToken As LongPtr, ByVal dwReserved As Long, ByRef lpIDList As LongPtr) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SHGetFolderLocation",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare Function SHGetFolderLocation Lib \"\" (ByVal hWndOwner As Long, ByVal nFolder As Long, ByVal hToken As Long, ByVal dwReserved As Long, ByRef lpIDList As Long) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SHGetPathFromIDList",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare PtrSafe Function SHGetPathFromIDList Lib \"\" Alias \"\" (ByVal lpIDList As LongPtr, ByVal lpBuffer As LongPtr) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SHGetPathFromIDList",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare Function SHGetPathFromIDList Lib \"\" Alias \"\" (ByVal lpIDList As Long, ByVal lpBuffer As Long) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ShowColor",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function ShowColor() As Boolean",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ShowFind",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function ShowFind() As LongPtr",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ShowFolderBrowser",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function ShowFolderBrowser() As Boolean",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ShowFont",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function ShowFont() As Boolean",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ShowHelp",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub ShowHelp()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ShowOpen",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function ShowOpen() As Boolean",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ShowPageSetup",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function ShowPageSetup() As Boolean",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ShowPrinter",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function ShowPrinter() As Boolean",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ShowPrinterEx",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function ShowPrinterEx() As CdlPDResultConstants",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ShowReplace",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function ShowReplace() As LongPtr",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ShowSave",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function ShowSave() As Boolean",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Tag",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get Tag() As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Tag",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Let Tag(ByVal Value As String)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "TCHOOSECOLOR",
+          "kind": "Type",
+          "access": "Private",
+          "signature": "Private Type TCHOOSECOLOR",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "TCHOOSEFONT",
+          "kind": "Type",
+          "access": "Private",
+          "signature": "Private Type TCHOOSEFONT",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ToPage",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get ToPage() As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ToPage",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Let ToPage(ByVal Value As Long)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "UnsignedAdd",
+          "kind": "Function",
+          "access": "Private",
+          "signature": "Private Function UnsignedAdd(ByVal Start As LongPtr, ByVal Incr As LongPtr) As LongPtr",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "WinColor",
+          "kind": "Function",
+          "access": "Private",
+          "signature": "Private Function WinColor(ByVal Color As Long, Optional ByVal hPal As LongPtr) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "WindowProcOwner",
+          "kind": "Function",
+          "access": "Private",
+          "signature": "Private Function WindowProcOwner(ByVal hWnd As LongPtr, ByVal wMsg As Long, ByVal wParam As LongPtr, ByVal lParam As LongPtr, ByVal dwRefData As LongPtr) As LongPtr",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "WinHelp",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare PtrSafe Function WinHelp Lib \"\" Alias \"\" (ByVal hWnd As LongPtr, ByVal lpHelpFile As LongPtr, ByVal wCommand As Long, ByVal dwData As LongPtr) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "WinHelp",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare Function WinHelp Lib \"\" Alias \"\" (ByVal hWnd As Long, ByVal lpHelpFile As Long, ByVal wCommand As Long, ByVal dwData As Long) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "WM_COMMAND",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const WM_COMMAND As Long = &H111",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "WM_INITDIALOG",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const WM_INITDIALOG As Long = &H110",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "WM_NOTIFY",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const WM_NOTIFY As Long = &H4E",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "WM_USER",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const WM_USER As Long = &H400",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": [
+        {
+          "name": "ColorValidate",
+          "signature": "Public Event ColorValidate(ByRef RGBColor As Long, ByRef Cancel As Boolean, ByVal hDlg As Long)",
+          "attributes": []
+        },
+        {
+          "name": "FileShareViolation",
+          "signature": "Public Event FileShareViolation(ByVal FileName As String, ByRef Result As CdlOFNShareViResultConstants, ByVal hDlg As Long)",
+          "attributes": []
+        },
+        {
+          "name": "FileValidate",
+          "signature": "Public Event FileValidate(ByVal FileName As String, ByVal FileTitle As String, ByVal FileOffset As Integer, ByRef Cancel As Boolean, ByVal hDlg As Long)",
+          "attributes": []
+        },
+        {
+          "name": "FindNext",
+          "signature": "Public Event FindNext()",
+          "attributes": []
+        },
+        {
+          "name": "FolderBrowserValidateFailed",
+          "signature": "Public Event FolderBrowserValidateFailed(ByVal Text As String, ByRef Cancel As Boolean, ByVal hDlg As Long)",
+          "attributes": []
+        },
+        {
+          "name": "FontApply",
+          "signature": "Public Event FontApply(ByVal Flags As Long, ByVal FontName As String, ByVal FontSize As Single, ByVal FontBold As Boolean, ByVal FontItalic As Boolean, ByVal FontStrikethru As Boolean, ByVal FontUnderline As Boolean, ByVal FontCharset As Integer, ByVal RGBColor As Long, ByVal hDlg As Long)",
+          "attributes": []
+        },
+        {
+          "name": "Help",
+          "signature": "Public Event Help(ByRef Handled As Boolean, ByVal Action As Integer, ByVal hDlg As Long)",
+          "attributes": []
+        },
+        {
+          "name": "InitDialog",
+          "signature": "Public Event InitDialog(ByVal Action As Integer, ByVal hDlg As Long)",
+          "attributes": []
+        },
+        {
+          "name": "Replace",
+          "signature": "Public Event Replace()",
+          "attributes": []
+        },
+        {
+          "name": "ReplaceAll",
+          "signature": "Public Event ReplaceAll()",
+          "attributes": []
+        }
+      ]
+    },
+    {
+      "name": "CommonDialogBase",
+      "kind": "Module",
+      "file": "CommonDialogBase.bas",
+      "access": "Public",
+      "attributes": [],
+      "implements": [],
+      "inherits": null,
+      "members": [
+        {
+          "name": "CallNextHookEx",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare PtrSafe Function CallNextHookEx Lib \"\" (ByVal hHook As LongPtr, ByVal nCode As Long, ByVal wParam As LongPtr, ByVal lParam As LongPtr) As LongPtr",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CallNextHookEx",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare Function CallNextHookEx Lib \"\" (ByVal hHook As Long, ByVal nCode As Long, ByVal wParam As Long, ByVal lParam As Long) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CdlBIFCallbackProc",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function CdlBIFCallbackProc(ByVal hDlg As LongPtr, ByVal wMsg As Long, ByVal lParam As LongPtr, ByVal This As CommonDialog) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CdlCCCallbackProc",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function CdlCCCallbackProc(ByVal hDlg As LongPtr, ByVal wMsg As Long, ByVal wParam As LongPtr, ByVal lParam As LongPtr) As LongPtr",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CdlCFCallbackProc",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function CdlCFCallbackProc(ByVal hDlg As LongPtr, ByVal wMsg As Long, ByVal wParam As LongPtr, ByVal lParam As LongPtr) As LongPtr",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CdlDefaultProc",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function CdlDefaultProc(ByVal hWnd As LongPtr, ByVal wMsg As Long, ByVal wParam As LongPtr, ByVal lParam As LongPtr) As LongPtr",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CdlFR1CallbackProc",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function CdlFR1CallbackProc(ByVal hDlg As LongPtr, ByVal wMsg As Long, ByVal wParam As LongPtr, ByVal lParam As LongPtr) As LongPtr",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CdlFR2CallbackProc",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function CdlFR2CallbackProc(ByVal hDlg As LongPtr, ByVal wMsg As Long, ByVal wParam As LongPtr, ByVal lParam As LongPtr) As LongPtr",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CdlFRAddHook",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub CdlFRAddHook(ByVal hDlg As LongPtr)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CdlFRHookProc",
+          "kind": "Function",
+          "access": "Private",
+          "signature": "Private Function CdlFRHookProc(ByVal nCode As Long, ByVal wParam As LongPtr, ByVal lParam As LongPtr) As LongPtr",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CdlFRReleaseHook",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub CdlFRReleaseHook(ByVal hDlg As LongPtr)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CdlOFN1CallbackProc",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function CdlOFN1CallbackProc(ByVal hDlg As LongPtr, ByVal wMsg As Long, ByVal wParam As LongPtr, ByVal lParam As LongPtr) As LongPtr",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CdlOFN1CallbackProcOldStyle",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function CdlOFN1CallbackProcOldStyle(ByVal hDlg As LongPtr, ByVal wMsg As Long, ByVal wParam As LongPtr, ByVal lParam As LongPtr) As LongPtr",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CdlOFN2CallbackProc",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function CdlOFN2CallbackProc(ByVal hDlg As LongPtr, ByVal wMsg As Long, ByVal wParam As LongPtr, ByVal lParam As LongPtr) As LongPtr",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CdlOFN2CallbackProcOldStyle",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function CdlOFN2CallbackProcOldStyle(ByVal hDlg As LongPtr, ByVal wMsg As Long, ByVal wParam As LongPtr, ByVal lParam As LongPtr) As LongPtr",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CdlPDCallbackProc",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function CdlPDCallbackProc(ByVal hDlg As LongPtr, ByVal wMsg As Long, ByVal wParam As LongPtr, ByVal lParam As LongPtr) As LongPtr",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CdlPDEXCallbackPtr",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function CdlPDEXCallbackPtr(ByVal This As CommonDialog) As LongPtr",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CdlPSDCallbackProc",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function CdlPSDCallbackProc(ByVal hDlg As LongPtr, ByVal wMsg As Long, ByVal wParam As LongPtr, ByVal lParam As LongPtr) As LongPtr",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CdlRemoveSubclass",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub CdlRemoveSubclass(ByVal hWnd As LongPtr, Optional ByVal Name As String)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CdlSetSubclass",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub CdlSetSubclass(ByVal hWnd As LongPtr, ByVal This As CommonDialog, ByVal dwRefData As LongPtr, Optional ByVal Name As String)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CdlSubclassProc",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function CdlSubclassProc(ByVal hWnd As LongPtr, ByVal wMsg As Long, ByVal wParam As LongPtr, ByVal lParam As LongPtr, ByVal uIdSubclass As LongPtr, ByVal dwRefData As LongPtr) As LongPtr",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CLSID",
+          "kind": "Type",
+          "access": "Private",
+          "signature": "Private Type CLSID",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CopyMemory",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare PtrSafe Sub CopyMemory Lib \"\" Alias \"\" (ByRef Destination As Any, ByRef Source As Any, ByVal Length As Long)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CopyMemory",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare Sub CopyMemory Lib \"\" Alias \"\" (ByRef Destination As Any, ByRef Source As Any, ByVal Length As Long)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CoTaskMemAlloc",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare PtrSafe Function CoTaskMemAlloc Lib \"\" (ByVal cBytes As Long) As LongPtr",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CoTaskMemAlloc",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare Function CoTaskMemAlloc Lib \"\" (ByVal cBytes As Long) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CoTaskMemFree",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare PtrSafe Sub CoTaskMemFree Lib \"\" (ByVal hMem As LongPtr)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CoTaskMemFree",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare Sub CoTaskMemFree Lib \"\" (ByVal hMem As Long)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "DefSubclassProc",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare PtrSafe Function DefSubclassProc Lib \"\" (ByVal hWnd As LongPtr, ByVal wMsg As Long, ByVal wParam As LongPtr, ByVal lParam As LongPtr) As LongPtr",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "DefSubclassProc",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare Function DefSubclassProc Lib \"\" (ByVal hWnd As Long, ByVal wMsg As Long, ByVal wParam As Long, ByVal lParam As Long) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "E_NOINTERFACE",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const E_NOINTERFACE As Long = &H80004002",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "E_POINTER",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const E_POINTER As Long = &H80004003",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GetProp",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare PtrSafe Function GetProp Lib \"\" Alias \"\" (ByVal hWnd As LongPtr, ByVal lpString As LongPtr) As LongPtr",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GetProp",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare Function GetProp Lib \"\" Alias \"\" (ByVal hWnd As Long, ByVal lpString As Long) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GetVTableIPDCB",
+          "kind": "Function",
+          "access": "Private",
+          "signature": "Private Function GetVTableIPDCB() As LongPtr",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "IPDCB_AddRef",
+          "kind": "Function",
+          "access": "Private",
+          "signature": "Private Function IPDCB_AddRef(ByVal Ptr As LongPtr) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "IPDCB_HandleMessage",
+          "kind": "Function",
+          "access": "Private",
+          "signature": "Private Function IPDCB_HandleMessage(ByVal Ptr As LongPtr, ByVal hDlg As LongPtr, ByVal wMsg As Long, ByVal wParam As LongPtr, ByVal lParam As LongPtr, ByRef Result As LongPtr) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "IPDCB_InitDone",
+          "kind": "Function",
+          "access": "Private",
+          "signature": "Private Function IPDCB_InitDone(ByVal Ptr As LongPtr) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "IPDCB_QueryInterface",
+          "kind": "Function",
+          "access": "Private",
+          "signature": "Private Function IPDCB_QueryInterface(ByVal Ptr As LongPtr, ByRef IID As CLSID, ByRef pvObj As LongPtr) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "IPDCB_Release",
+          "kind": "Function",
+          "access": "Private",
+          "signature": "Private Function IPDCB_Release(ByVal Ptr As LongPtr) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "IPDCB_SelectionChange",
+          "kind": "Function",
+          "access": "Private",
+          "signature": "Private Function IPDCB_SelectionChange(ByVal Ptr As LongPtr) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "IsDialogMessage",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare PtrSafe Function IsDialogMessage Lib \"\" Alias \"\" (ByVal hDlg As LongPtr, ByRef lpMsg As TMSG) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "IsDialogMessage",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare Function IsDialogMessage Lib \"\" Alias \"\" (ByVal hDlg As Long, ByRef lpMsg As TMSG) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "LongPtr",
+          "kind": "Enum",
+          "access": "Private",
+          "signature": "Private Enum LongPtr",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "NULL_PTR",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const NULL_PTR As LongPtr = 0",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "NULL_PTR",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const NULL_PTR As Long = 0",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "POINTAPI",
+          "kind": "Type",
+          "access": "Private",
+          "signature": "Private Type POINTAPI",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ProcPtr",
+          "kind": "Function",
+          "access": "Private",
+          "signature": "Private Function ProcPtr(ByVal Address As LongPtr) As LongPtr",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "PTR_SIZE",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const PTR_SIZE As Long = 8",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "PTR_SIZE",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const PTR_SIZE As Long = 4",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "PtrToObj",
+          "kind": "Function",
+          "access": "Private",
+          "signature": "Private Function PtrToObj(ByVal ObjectPointer As LongPtr) As Object",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "RemoveProp",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare PtrSafe Function RemoveProp Lib \"\" Alias \"\" (ByVal hWnd As LongPtr, ByVal lpString As LongPtr) As LongPtr",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "RemoveProp",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare Function RemoveProp Lib \"\" Alias \"\" (ByVal hWnd As Long, ByVal lpString As Long) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "RemoveWindowSubclass",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare PtrSafe Function RemoveWindowSubclass Lib \"\" (ByVal hWnd As LongPtr, ByVal pfnSubclass As LongPtr, ByVal uIdSubclass As LongPtr) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "RemoveWindowSubclass",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare Function RemoveWindowSubclass Lib \"\" (ByVal hWnd As Long, ByVal pfnSubclass As Long, ByVal uIdSubclass As Long) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "S_FALSE",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const S_FALSE As Long = &H1",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "S_OK",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const S_OK As Long = &H0",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SetProp",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare PtrSafe Function SetProp Lib \"\" Alias \"\" (ByVal hWnd As LongPtr, ByVal lpString As LongPtr, ByVal hData As LongPtr) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SetProp",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare Function SetProp Lib \"\" Alias \"\" (ByVal hWnd As Long, ByVal lpString As Long, ByVal hData As Long) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SetWindowsHookEx",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare PtrSafe Function SetWindowsHookEx Lib \"\" Alias \"\" (ByVal IDHook As Long, ByVal lpfn As LongPtr, ByVal hMod As LongPtr, ByVal dwThreadID As Long) As LongPtr",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SetWindowsHookEx",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare Function SetWindowsHookEx Lib \"\" Alias \"\" (ByVal IDHook As Long, ByVal lpfn As Long, ByVal hMod As Long, ByVal dwThreadID As Long) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SetWindowSubclass",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare PtrSafe Function SetWindowSubclass Lib \"\" (ByVal hWnd As LongPtr, ByVal pfnSubclass As LongPtr, ByVal uIdSubclass As LongPtr, ByVal dwRefData As LongPtr) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SetWindowSubclass",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare Function SetWindowSubclass Lib \"\" (ByVal hWnd As Long, ByVal pfnSubclass As Long, ByVal uIdSubclass As Long, ByVal dwRefData As Long) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "TMSG",
+          "kind": "Type",
+          "access": "Private",
+          "signature": "Private Type TMSG",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "UnhookWindowsHookEx",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare PtrSafe Function UnhookWindowsHookEx Lib \"\" (ByVal hHook As LongPtr) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "UnhookWindowsHookEx",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare Function UnhookWindowsHookEx Lib \"\" (ByVal hHook As Long) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "UnsignedAdd",
+          "kind": "Function",
+          "access": "Private",
+          "signature": "Private Function UnsignedAdd(ByVal Start As LongPtr, ByVal Incr As LongPtr) As LongPtr",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "VTablePDEXCallbackDataStruct",
+          "kind": "Type",
+          "access": "Private",
+          "signature": "Private Type VTablePDEXCallbackDataStruct",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "WM_DESTROY",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const WM_DESTROY As Long = &H2",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "WM_INITDIALOG",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const WM_INITDIALOG As Long = &H110",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "WM_NCDESTROY",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const WM_NCDESTROY As Long = &H82",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "WM_UAHDESTROYWINDOW",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const WM_UAHDESTROYWINDOW As Long = &H90",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    }
+  ],
+  "enums": [],
+  "types": []
+}

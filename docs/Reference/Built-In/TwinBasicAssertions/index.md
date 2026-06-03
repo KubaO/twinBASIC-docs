@@ -1,5 +1,6 @@
 ---
 title: Assert Package
+package_name: TwinBasicAssertions
 parent: Built-In Packages
 nav_order: 4
 permalink: /tB/Packages/Assert/

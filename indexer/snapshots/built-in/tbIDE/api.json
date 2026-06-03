@@ -1,0 +1,2035 @@
+{
+  "package": "tbIDE",
+  "version": "beta-x-0983",
+  "modules": [
+    {
+      "name": "AddinTimer",
+      "kind": "Class",
+      "file": "AddinTimer.twin",
+      "access": "Public",
+      "attributes": [
+        "ClassId",
+        "InterfaceId",
+        "EventInterfaceId"
+      ],
+      "implements": [],
+      "inherits": null,
+      "members": [
+        {
+          "name": "Changed",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub Changed() Handles Enabled.OnPropertyLet, Interval.OnPropertyLet",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Class_Terminate",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub Class_Terminate()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Enabled",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public Enabled As Boolean",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Interval",
+          "kind": "Field",
+          "access": "Public",
+          "signature": "Public Interval As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "KillTimer",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare PtrSafe Function KillTimer Lib \"\" (ByVal hWnd As LongPtr, ByVal uIDEvent As LongPtr) As LongPtr",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SetTimer",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare PtrSafe Function SetTimer Lib \"\" (ByVal hWnd As LongPtr, ByVal nIDEvent As LongPtr, ByVal uElapse As Long, ByVal lpTimerFunc As LongPtr) As LongPtr",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "TimerCallback",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub TimerCallback(ByVal hWnd As LongPtr, ByVal uMsg As Long, ByVal TimerID As Long, ByVal Tick As Long)",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": [
+        {
+          "name": "Timer",
+          "signature": "Public Event Timer()",
+          "attributes": []
+        }
+      ]
+    },
+    {
+      "name": "CodeEditor",
+      "kind": "CoClass",
+      "file": "CodeEditor.twin",
+      "access": "Public",
+      "attributes": [
+        "CoClassId"
+      ],
+      "implements": [],
+      "inherits": null,
+      "members": [
+        {
+          "name": "ICodeEditorV1",
+          "kind": "CoClassInterface",
+          "access": null,
+          "signature": "[Default] Interface ICodeEditorV1",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "DebugConsole",
+      "kind": "CoClass",
+      "file": "DebugConsole.twin",
+      "access": "Public",
+      "attributes": [
+        "CoClassId"
+      ],
+      "implements": [],
+      "inherits": null,
+      "members": [
+        {
+          "name": "IDebugConsoleV1",
+          "kind": "CoClassInterface",
+          "access": null,
+          "signature": "[Default] Interface IDebugConsoleV1",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "Editor",
+      "kind": "CoClass",
+      "file": "Editor.twin",
+      "access": "Public",
+      "attributes": [
+        "CoClassId"
+      ],
+      "implements": [],
+      "inherits": null,
+      "members": [
+        {
+          "name": "IEditorV1",
+          "kind": "CoClassInterface",
+          "access": null,
+          "signature": "[Default] Interface IEditorV1",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "Editors",
+      "kind": "CoClass",
+      "file": "Editors.twin",
+      "access": "Public",
+      "attributes": [
+        "CoClassId"
+      ],
+      "implements": [],
+      "inherits": null,
+      "members": [
+        {
+          "name": "IEditorsV1",
+          "kind": "CoClassInterface",
+          "access": null,
+          "signature": "[Default] Interface IEditorsV1",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "File",
+      "kind": "CoClass",
+      "file": "File.twin",
+      "access": "Public",
+      "attributes": [
+        "CoClassId"
+      ],
+      "implements": [],
+      "inherits": null,
+      "members": [
+        {
+          "name": "IFileV2",
+          "kind": "CoClassInterface",
+          "access": null,
+          "signature": "[Default] Interface IFileV2",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "FileSystem",
+      "kind": "CoClass",
+      "file": "FileSystem.twin",
+      "access": "Public",
+      "attributes": [
+        "CoClassId"
+      ],
+      "implements": [],
+      "inherits": null,
+      "members": [
+        {
+          "name": "IFileSystemV1",
+          "kind": "CoClassInterface",
+          "access": null,
+          "signature": "[Default] Interface IFileSystemV1",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "FileSystemItem",
+      "kind": "CoClass",
+      "file": "FileSystemItem.twin",
+      "access": "Public",
+      "attributes": [
+        "CoClassId"
+      ],
+      "implements": [],
+      "inherits": null,
+      "members": [
+        {
+          "name": "IFileSystemItemV1",
+          "kind": "CoClassInterface",
+          "access": null,
+          "signature": "[Default] Interface IFileSystemItemV1",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "Folder",
+      "kind": "CoClass",
+      "file": "Folder.twin",
+      "access": "Public",
+      "attributes": [
+        "CoClassId"
+      ],
+      "implements": [],
+      "inherits": null,
+      "members": [
+        {
+          "name": "IFolderV1",
+          "kind": "CoClassInterface",
+          "access": null,
+          "signature": "[Default] Interface IFolderV1",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "HtmlElement",
+      "kind": "CoClass",
+      "file": "HtmlElement.twin",
+      "access": "Public",
+      "attributes": [
+        "CoClassId"
+      ],
+      "implements": [],
+      "inherits": null,
+      "members": [
+        {
+          "name": "IHtmlElementV1",
+          "kind": "CoClassInterface",
+          "access": null,
+          "signature": "[Default] Interface IHtmlElementV1",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "HtmlElementProperties",
+      "kind": "CoClass",
+      "file": "HtmlElementProperties.twin",
+      "access": "Public",
+      "attributes": [
+        "CoClassId"
+      ],
+      "implements": [],
+      "inherits": null,
+      "members": [
+        {
+          "name": "IHtmlElementPropertiesV1",
+          "kind": "CoClassInterface",
+          "access": null,
+          "signature": "[Default] Interface IHtmlElementPropertiesV1",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "HtmlElementProperty",
+      "kind": "CoClass",
+      "file": "HtmlElementProperty.twin",
+      "access": "Public",
+      "attributes": [
+        "CoClassId"
+      ],
+      "implements": [],
+      "inherits": null,
+      "members": [
+        {
+          "name": "IHtmlElementPropertyV1",
+          "kind": "CoClassInterface",
+          "access": null,
+          "signature": "[Default] Interface IHtmlElementPropertyV1",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "HtmlElements",
+      "kind": "CoClass",
+      "file": "HtmlElements.twin",
+      "access": "Public",
+      "attributes": [
+        "CoClassId"
+      ],
+      "implements": [],
+      "inherits": null,
+      "members": [
+        {
+          "name": "IHtmlElementsV1",
+          "kind": "CoClassInterface",
+          "access": null,
+          "signature": "[Default] Interface IHtmlElementsV1",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "HtmlEventProperties",
+      "kind": "CoClass",
+      "file": "IHtmlEventProperties.twin",
+      "access": "Public",
+      "attributes": [
+        "CoClassId"
+      ],
+      "implements": [],
+      "inherits": null,
+      "members": [
+        {
+          "name": "IHtmlEventPropertiesV1",
+          "kind": "CoClassInterface",
+          "access": null,
+          "signature": "[Default] Interface IHtmlEventPropertiesV1",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "HtmlEventProperty",
+      "kind": "CoClass",
+      "file": "IHtmlEventProperty.twin",
+      "access": "Public",
+      "attributes": [
+        "CoClassId"
+      ],
+      "implements": [],
+      "inherits": null,
+      "members": [
+        {
+          "name": "IHtmlEventPropertyV1",
+          "kind": "CoClassInterface",
+          "access": null,
+          "signature": "[Default] Interface IHtmlEventPropertyV1",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "IAddInV1",
+      "kind": "Interface",
+      "file": "Addin.twin",
+      "access": "Public",
+      "attributes": [
+        "InterfaceId"
+      ],
+      "implements": [],
+      "inherits": "stdole.IUnknown",
+      "members": [
+        {
+          "name": "Name",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Get Name() As String",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "IAddInV1",
+      "kind": "Interface",
+      "file": "Addin.twin",
+      "access": "Public",
+      "attributes": [
+        "Default"
+      ],
+      "implements": [],
+      "inherits": null,
+      "members": [],
+      "events": []
+    },
+    {
+      "name": "IButtonEventsV1",
+      "kind": "Interface",
+      "file": "Button.twin",
+      "access": "Public",
+      "attributes": [
+        "InterfaceId"
+      ],
+      "implements": [],
+      "inherits": "stdole.IUnknown",
+      "members": [
+        {
+          "name": "OnClick",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub OnClick()",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "IButtonV1",
+      "kind": "Interface",
+      "file": "Button.twin",
+      "access": "Public",
+      "attributes": [
+        "InterfaceId"
+      ],
+      "implements": [],
+      "inherits": "stdole.IUnknown",
+      "members": [
+        {
+          "name": "Caption",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Get Caption() As String",
+          "attributes": [],
+          "description": "The caption of the button.  If IconData is set, and this is a toolbar button, the caption will only be displayed when hovering over the icon"
+        },
+        {
+          "name": "Caption",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Let Caption(ByVal value As String)",
+          "attributes": [],
+          "description": "The caption of the button.  If IconData is set, and this is a toolbar button, the caption will only be displayed when hovering over the icon"
+        },
+        {
+          "name": "IconData",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Get IconData() As Variant",
+          "attributes": [],
+          "description": "Byte-array data of a graphic that will be displayed for the button, or EMPTY to show the Caption instead"
+        },
+        {
+          "name": "IconData",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Let IconData(ByVal value As Variant)",
+          "attributes": [],
+          "description": "Byte-array data of a graphic that will be displayed for the button, or EMPTY to show the Caption instead"
+        },
+        {
+          "name": "ID",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Get ID() As String",
+          "attributes": [],
+          "description": "A unique ID, assigned to the button during creation"
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "IButtonV1",
+      "kind": "Interface",
+      "file": "Button.twin",
+      "access": "Public",
+      "attributes": [
+        "Default"
+      ],
+      "implements": [],
+      "inherits": null,
+      "members": [
+        {
+          "name": "IButtonEventsV1",
+          "kind": "Interface",
+          "access": null,
+          "signature": "Interface IButtonEventsV1",
+          "attributes": [
+            "Default",
+            "Source"
+          ],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "ICodeEditorV1",
+      "kind": "Interface",
+      "file": "CodeEditor.twin",
+      "access": "Public",
+      "attributes": [
+        "InterfaceId"
+      ],
+      "implements": [],
+      "inherits": "IEditorV1",
+      "members": [
+        {
+          "name": "AddMonacoWidget",
+          "kind": "Function",
+          "access": null,
+          "signature": "Function AddMonacoWidget(ByVal LineNumber As Long, ByVal ColumnNumber As Long, ByVal Html As String, Optional ByVal Css As String) As HtmlElement",
+          "attributes": [],
+          "description": "Adds an overlay HTML element attached to a line of code.  If you pass zero for ColumnNumber, the content will be added immediately below the specified line and space will be added so that the content doesn't overlap the next line."
+        },
+        {
+          "name": "ExecuteMonacoCommand",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub ExecuteMonacoCommand(ByVal Command As String, ParamArray Args() As Variant)",
+          "attributes": [],
+          "description": "Sends a direct command to the monaco editor"
+        },
+        {
+          "name": "GetSelectionInfo",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub GetSelectionInfo(ByRef StartLine As Long, ByRef StartColumn As Long, ByRef EndLine As Long, ByRef EndColumn As Long)",
+          "attributes": [],
+          "description": "Returns the start and end positions for the selected text in the code pane"
+        },
+        {
+          "name": "RevealArea",
+          "kind": "Enum",
+          "access": null,
+          "signature": "Enum RevealArea",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "RevealRange",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub RevealRange(ByVal StartLine As Long, ByVal StartColumn As Long, ByVal EndLine As Long, ByVal EndColumn As Long, Optional ByVal SmoothScroll As Boolean = True, Optional ByVal Area As RevealArea = RevealArea.Any)",
+          "attributes": [],
+          "description": "Sets the start and end positions for the selected text in the code pane"
+        },
+        {
+          "name": "SelectedText",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Get SelectedText() As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SelectedText",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Let SelectedText(ByVal Value As String)",
+          "attributes": [],
+          "description": "Sets the selected text in the code pane"
+        },
+        {
+          "name": "SetSelectionInfo",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub SetSelectionInfo(ByVal StartLine As Long, ByVal StartColumn As Long, ByVal EndLine As Long, ByVal EndColumn As Long)",
+          "attributes": [],
+          "description": "Sets the start and end positions for the selected text in the code pane"
+        },
+        {
+          "name": "Text",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Get Text() As String",
+          "attributes": [],
+          "description": "Returns the full code pane text"
+        },
+        {
+          "name": "Text",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Let Text(ByVal Value As String)",
+          "attributes": [],
+          "description": "Replaces the full code pane text"
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "IDebugConsoleV1",
+      "kind": "Interface",
+      "file": "DebugConsole.twin",
+      "access": "Public",
+      "attributes": [
+        "InterfaceId"
+      ],
+      "implements": [],
+      "inherits": "stdole.IUnknown",
+      "members": [
+        {
+          "name": "Clear",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub Clear()",
+          "attributes": [],
+          "description": "Clears the whole content of the DEBUG CONSOLE panel"
+        },
+        {
+          "name": "PrintText",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub PrintText(ByVal Prompt As String, Optional ByVal ColorRGB As Long)",
+          "attributes": [],
+          "description": "Prints a message to the DEBUG CONSOLE pane"
+        },
+        {
+          "name": "SetFocus",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub SetFocus()",
+          "attributes": [],
+          "description": "Sets focus on the DEBUG CONSOLE text entry point"
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "IEditorsV1",
+      "kind": "Interface",
+      "file": "Editors.twin",
+      "access": "Public",
+      "attributes": [
+        "InterfaceId"
+      ],
+      "implements": [],
+      "inherits": "stdole.IUnknown",
+      "members": [
+        {
+          "name": "Count",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Get Count() As Long",
+          "attributes": [],
+          "description": "Count of active editors"
+        },
+        {
+          "name": "EditorOpenOptions",
+          "kind": "Enum",
+          "access": null,
+          "signature": "Enum EditorOpenOptions",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Item",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Get Item(ByVal Index As Variant) As Editor",
+          "attributes": [
+            "DefaultMember"
+          ],
+          "description": "There is currently only ONE active editor, accessible via the Editors(0) syntax"
+        },
+        {
+          "name": "Open",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub Open(ByVal Path As String, Optional ByVal LineNumber As Long, Optional ByVal ColumnNumber As Long, Optional ByVal Options As EditorOpenOptions)",
+          "attributes": [],
+          "description": "Opens the editor associated with the given file"
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "IEditorV1",
+      "kind": "Interface",
+      "file": "Editor.twin",
+      "access": "Public",
+      "attributes": [
+        "InterfaceId"
+      ],
+      "implements": [],
+      "inherits": "stdole.IUnknown",
+      "members": [
+        {
+          "name": "Close",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub Close()",
+          "attributes": [],
+          "description": "Closes the editor"
+        },
+        {
+          "name": "IsDirty",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Get IsDirty() As Boolean",
+          "attributes": [],
+          "description": "Determines if the editor is in a dirty (unsaved) state"
+        },
+        {
+          "name": "Path",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Get Path() As String",
+          "attributes": [],
+          "description": "Returns the tB internal path representing the codepane"
+        },
+        {
+          "name": "Save",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub Save()",
+          "attributes": [],
+          "description": "Saves the editor"
+        },
+        {
+          "name": "SetFocus",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub SetFocus()",
+          "attributes": [],
+          "description": "Sets the focus to the editor"
+        },
+        {
+          "name": "Type",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Get Type() As String",
+          "attributes": [],
+          "description": "Gets the type of the editor, e.g. 'CodeEditor'"
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "IFileSystemItemV1",
+      "kind": "Interface",
+      "file": "FileSystemItem.twin",
+      "access": "Public",
+      "attributes": [
+        "InterfaceId"
+      ],
+      "implements": [],
+      "inherits": "stdole.IUnknown",
+      "members": [
+        {
+          "name": "FileSystemItemType",
+          "kind": "Enum",
+          "access": null,
+          "signature": "Enum FileSystemItemType",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Name",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Get Name() As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Parent",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Get Parent() As Folder",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Path",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Get Path() As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Type",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Get Type() As FileSystemItemType",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "IFileSystemV1",
+      "kind": "Interface",
+      "file": "FileSystem.twin",
+      "access": "Public",
+      "attributes": [
+        "InterfaceId"
+      ],
+      "implements": [],
+      "inherits": "stdole.IUnknown",
+      "members": [
+        {
+          "name": "ResolvePath",
+          "kind": "Function",
+          "access": null,
+          "signature": "Function ResolvePath(ByVal Path As String) As FileSystemItem",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "RootFolder",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Get RootFolder() As Folder",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "IFileV1",
+      "kind": "Interface",
+      "file": "File.twin",
+      "access": "Public",
+      "attributes": [
+        "InterfaceId"
+      ],
+      "implements": [],
+      "inherits": "IFileSystemItemV1",
+      "members": [
+        {
+          "name": "Data",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Get Data() As Byte()",
+          "attributes": [],
+          "description": "gives access to the raw current binary data for the file, accessed via a byte array"
+        },
+        {
+          "name": "Data",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Let Data(Value() As Byte)",
+          "attributes": [
+            "Unimplemented"
+          ],
+          "description": "gives access to the raw current binary data for the file, accessed via a byte array"
+        },
+        {
+          "name": "DataLen",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Get DataLen() As LongLong",
+          "attributes": [],
+          "description": "provides the length of the current raw byte data, without needing to access it via a byte array"
+        },
+        {
+          "name": "IsDirty",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Get IsDirty() As Boolean",
+          "attributes": [],
+          "description": "indicates whether the file is considered dirty (has unsaved changes)"
+        },
+        {
+          "name": "Text",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Get Text() As String",
+          "attributes": [],
+          "description": "appropriate UTF-16 conversion of the current data, for known types (e.g. UTF8 to UTF16 for TWIN, ANSI to UTF16 for BAS/CLS)"
+        },
+        {
+          "name": "Text",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Let Text(ByVal Value As String)",
+          "attributes": [
+            "Unimplemented"
+          ],
+          "description": "appropriate UTF-16 conversion of the current data, for known types (e.g. UTF8 to UTF16 for TWIN, ANSI to UTF16 for BAS/CLS)"
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "IFileV2",
+      "kind": "Interface",
+      "file": "File.twin",
+      "access": "Public",
+      "attributes": [
+        "InterfaceId"
+      ],
+      "implements": [],
+      "inherits": "IFileV1",
+      "members": [
+        {
+          "name": "ReadText",
+          "kind": "Function",
+          "access": null,
+          "signature": "Function ReadText(ByVal Options As ReadTextFlags) As String",
+          "attributes": [],
+          "description": "appropriate UTF-16 conversion of the current data, for known types (e.g. UTF8 to UTF16 for TWIN, ANSI to UTF16 for BAS/CLS)"
+        },
+        {
+          "name": "ReadTextFlags",
+          "kind": "Enum",
+          "access": null,
+          "signature": "Enum ReadTextFlags",
+          "attributes": [
+            "Flags"
+          ],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "IFolderV1",
+      "kind": "Interface",
+      "file": "Folder.twin",
+      "access": "Public",
+      "attributes": [
+        "InterfaceId"
+      ],
+      "implements": [],
+      "inherits": "IFileSystemItemV1",
+      "members": [
+        {
+          "name": "Count",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Get Count() As Long",
+          "attributes": [],
+          "description": "CAREFUL: tb IDE is multi-threaded, and so the Count can potentially change after you've read the value. For example, using it for a loop counter is wrong, use For-Each syntax instead"
+        },
+        {
+          "name": "IsPackagesFolder",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Get IsPackagesFolder() As Boolean",
+          "attributes": [],
+          "description": "Returns True if this folder is a representation of the special Packages folder"
+        },
+        {
+          "name": "Item",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Get Item(ByVal IndexOrName As Variant) As FileSystemItem",
+          "attributes": [],
+          "description": "CAREFUL: tb IDE is multi-threaded, try to avoid accessing entries by their index positions since the index might change by another thread.  Use the For-Each syntax instead."
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "IHostV1",
+      "kind": "Interface",
+      "file": "Host.twin",
+      "access": "Public",
+      "attributes": [
+        "InterfaceId"
+      ],
+      "implements": [],
+      "inherits": "stdole.IUnknown",
+      "members": [
+        {
+          "name": "ActiveEditors",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Get ActiveEditors() As Editors",
+          "attributes": [],
+          "description": "Provides access to a collection of editors that are currently active in the IDE.  Zero based index.  An editor might be a CodePane, or a UIDesigner for example"
+        },
+        {
+          "name": "CompilerVersion",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Get CompilerVersion() As String",
+          "attributes": [],
+          "description": "Returns the full compiler version string, e.g. '0.15.371'"
+        },
+        {
+          "name": "CurrentProject",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Get CurrentProject() As Project",
+          "attributes": [],
+          "description": "Provides access to project features, such as retrieving the project name, or evaluating a string of text containing code"
+        },
+        {
+          "name": "DebugConsole",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Get DebugConsole() As DebugConsole",
+          "attributes": [],
+          "description": "Provides access to DEBUG CONSOLE features, such as adding entries and clearing it"
+        },
+        {
+          "name": "DebuggerEvaluateOptions",
+          "kind": "Enum",
+          "access": null,
+          "signature": "Enum DebuggerEvaluateOptions",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "FileSystem",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Get FileSystem() As FileSystem",
+          "attributes": [],
+          "description": "Provides access to the virtual filesystem used inside twinBASIC"
+        },
+        {
+          "name": "IDEProcessID",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Get IDEProcessID() As Long",
+          "attributes": [],
+          "description": "The process ID relating to the IDE process"
+        },
+        {
+          "name": "IDEWindowHandle",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Get IDEWindowHandle() As LongPtr",
+          "attributes": [],
+          "description": "The IDE window HWND handle"
+        },
+        {
+          "name": "KeyboardShortcuts",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Get KeyboardShortcuts() As KeyboardShortcuts",
+          "attributes": [],
+          "description": "Provides methods for adding keyboard shortcuts to the twinBASIC IDE"
+        },
+        {
+          "name": "ShowMessageBox",
+          "kind": "Function",
+          "access": null,
+          "signature": "Function ShowMessageBox(ByVal Prompt As String, ByVal Buttons As String, ByVal Title As String) As Long",
+          "attributes": [],
+          "description": "Displays a modal popup message in the IDE. The Buttons string argument accepts multiple values delimited by '|'.  Return value is the zero-based index of the button that was pressed, or -1 for closure"
+        },
+        {
+          "name": "ShowNotification",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub ShowNotification(ByVal Prompt As String)",
+          "attributes": [],
+          "description": "Displays a non-modal, discreet notification popup message in the IDE"
+        },
+        {
+          "name": "Themes",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Get Themes() As Themes",
+          "attributes": [],
+          "description": "Provides methods for retrieving info about themes from the twinBASIC IDE"
+        },
+        {
+          "name": "Toolbars",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Get Toolbars() As Toolbars",
+          "attributes": [],
+          "description": "Provides access to TOOLBAR features, such as adding buttons"
+        },
+        {
+          "name": "ToolWindows",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Get ToolWindows() As ToolWindows",
+          "attributes": [],
+          "description": "Provides access to a collection of toolwindows.  Zero based index."
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "IHostV1",
+      "kind": "Interface",
+      "file": "Host.twin",
+      "access": "Public",
+      "attributes": [
+        "Default"
+      ],
+      "implements": [],
+      "inherits": null,
+      "members": [
+        {
+          "name": "ItbHostEventsV3",
+          "kind": "Interface",
+          "access": null,
+          "signature": "Interface ItbHostEventsV3",
+          "attributes": [
+            "Default",
+            "Source"
+          ],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "IHtmlElementPropertiesV1",
+      "kind": "Interface",
+      "file": "HtmlElementProperties.twin",
+      "access": "Public",
+      "attributes": [
+        "InterfaceId",
+        "COMExtensible(True)"
+      ],
+      "implements": [],
+      "inherits": null,
+      "members": [
+        {
+          "name": "Item",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Get Item(ByVal DomPropertyName As String) As HtmlElementProperty",
+          "attributes": [
+            "DefaultMember"
+          ],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "IHtmlElementPropertyV1",
+      "kind": "Interface",
+      "file": "HtmlElementProperty.twin",
+      "access": "Public",
+      "attributes": [
+        "InterfaceId",
+        "COMExtensible(True)"
+      ],
+      "implements": [],
+      "inherits": null,
+      "members": [
+        {
+          "name": "Properties",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Get Properties() As HtmlElementProperties",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Value",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Get Value() As Variant",
+          "attributes": [
+            "DefaultMember"
+          ],
+          "description": null
+        },
+        {
+          "name": "Value",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Let Value(ByVal Value As Variant)",
+          "attributes": [
+            "DefaultMember"
+          ],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "IHtmlElementsV1",
+      "kind": "Interface",
+      "file": "HtmlElements.twin",
+      "access": "Public",
+      "attributes": [
+        "InterfaceId"
+      ],
+      "implements": [],
+      "inherits": "stdole.IUnknown",
+      "members": [
+        {
+          "name": "Add",
+          "kind": "Function",
+          "access": null,
+          "signature": "Function Add(ByVal ElementID As String, ByVal TagName As String) As HtmlElement",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Item",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Get Item(ByVal ID As Variant) As HtmlElement",
+          "attributes": [
+            "DefaultMember"
+          ],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "IHtmlElementV1",
+      "kind": "Interface",
+      "file": "HtmlElement.twin",
+      "access": "Public",
+      "attributes": [
+        "InterfaceId"
+      ],
+      "implements": [],
+      "inherits": "stdole.IUnknown",
+      "members": [
+        {
+          "name": "AddEventListener",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub AddEventListener(ByVal DomEventName As String, ByVal CallbackFunc As LongPtr, Optional ByVal Data As Variant)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "AddEventListenerOLD1",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub AddEventListenerOLD1(ByVal DomEventName As String, ByVal CallbackFunc As LongPtr)",
+          "attributes": [
+            "Hidden"
+          ],
+          "description": null
+        },
+        {
+          "name": "ChildDomElements",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Get ChildDomElements() As HtmlElements",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Name",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Get Name() As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Properties",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Get Properties() As HtmlElementProperties",
+          "attributes": [
+            "DefaultMember"
+          ],
+          "description": null
+        },
+        {
+          "name": "Remove",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub Remove()",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "IHtmlEventPropertiesV1",
+      "kind": "Interface",
+      "file": "IHtmlEventProperties.twin",
+      "access": "Public",
+      "attributes": [
+        "InterfaceId",
+        "COMExtensible(True)"
+      ],
+      "implements": [],
+      "inherits": null,
+      "members": [
+        {
+          "name": "Item",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Get Item(ByVal DomPropertyName As String) As HtmlEventProperty",
+          "attributes": [
+            "DefaultMember"
+          ],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "IHtmlEventPropertyV1",
+      "kind": "Interface",
+      "file": "IHtmlEventProperty.twin",
+      "access": "Public",
+      "attributes": [
+        "InterfaceId",
+        "COMExtensible(True)"
+      ],
+      "implements": [],
+      "inherits": null,
+      "members": [
+        {
+          "name": "Properties",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Get Properties() As HtmlEventProperties",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Value",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Get Value() As Variant",
+          "attributes": [
+            "DefaultMember"
+          ],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "IKeyboardShortcutsV1",
+      "kind": "Interface",
+      "file": "KeyboardShortcuts.twin",
+      "access": "Public",
+      "attributes": [
+        "InterfaceId"
+      ],
+      "implements": [],
+      "inherits": "stdole.IUnknown",
+      "members": [
+        {
+          "name": "Add",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub Add(ByVal keyString As String, ByVal Callback As LongPtr)",
+          "attributes": [],
+          "description": "keyString: accepts a simple string value indicating the key that press to match to.  Prefix with any of {CTRL} {SHIFT} {ALT}, e.g. '{CTRL}{SHIFT}d'"
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "IProjectV1",
+      "kind": "Interface",
+      "file": "Project.twin",
+      "access": "Public",
+      "attributes": [
+        "InterfaceId"
+      ],
+      "implements": [],
+      "inherits": "stdole.IUnknown",
+      "members": [
+        {
+          "name": "Architecture",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Get Architecture() As VbArchitecture",
+          "attributes": [],
+          "description": "Returns the current Project architecture"
+        },
+        {
+          "name": "BaseFolderPath",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Get BaseFolderPath() As String",
+          "attributes": [],
+          "description": "Returns the folder path where the current Project twinproj file resides"
+        },
+        {
+          "name": "Build",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub Build()",
+          "attributes": [],
+          "description": "Builds the project (like menu File > Make/Build...)"
+        },
+        {
+          "name": "BuildFileExtension",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Get BuildFileExtension() As String",
+          "attributes": [],
+          "description": "Returns the current Project build output file extension"
+        },
+        {
+          "name": "BuildOutputPath",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Get BuildOutputPath() As String",
+          "attributes": [],
+          "description": "Returns the current Project full build output path, including file name"
+        },
+        {
+          "name": "BuildType",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Get BuildType() As VbBuildType",
+          "attributes": [],
+          "description": "Returns the current Project build type enumeration"
+        },
+        {
+          "name": "Clean",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub Clean()",
+          "attributes": [],
+          "description": "Deregisters and deletes any built executables relating to this project"
+        },
+        {
+          "name": "Close",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub Close()",
+          "attributes": [],
+          "description": "Closes the project (like menu File > Close Project)"
+        },
+        {
+          "name": "Evaluate",
+          "kind": "Function",
+          "access": null,
+          "signature": "Function Evaluate(ByVal EvalString As String, Optional ByVal Options As DebuggerEvaluateOptions = DebuggerEvaluateOptions.NONE) As Variant",
+          "attributes": [],
+          "description": "Evaluates an expression in the context of the current project, as if entered in the DEBUG CONSOLE"
+        },
+        {
+          "name": "LoadMetaData",
+          "kind": "Function",
+          "access": null,
+          "signature": "Function LoadMetaData(ByVal Key As String) As String",
+          "attributes": [],
+          "description": "Meta data can be used for storing persistant data int he twinproj file for use by your addin"
+        },
+        {
+          "name": "Name",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Get Name() As String",
+          "attributes": [],
+          "description": "Returns the current project name, as specified in the Settings file"
+        },
+        {
+          "name": "Path",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Get Path() As String",
+          "attributes": [],
+          "description": "Returns the full path to the current Project twinproj file"
+        },
+        {
+          "name": "ProjectID",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Get ProjectID() As String",
+          "attributes": [],
+          "description": "Returns the current Project GUID as a string"
+        },
+        {
+          "name": "RootFolder",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Get RootFolder() As Folder",
+          "attributes": [],
+          "description": "Provides access to the projects root folder within the virtual filesystem inside twinBASIC"
+        },
+        {
+          "name": "Save",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub Save()",
+          "attributes": [],
+          "description": "Saves the project (like menu File > Save Project)"
+        },
+        {
+          "name": "SaveMetaData",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub SaveMetaData(ByVal Key As String, ByVal Value As String)",
+          "attributes": [],
+          "description": "Meta data can be used for storing persistant data int he twinproj file for use by your addin"
+        },
+        {
+          "name": "VbBuildType",
+          "kind": "Enum",
+          "access": null,
+          "signature": "Enum VbBuildType",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "VersionBuild",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Get VersionBuild() As Long",
+          "attributes": [],
+          "description": "Returns the current Project version number (Build)"
+        },
+        {
+          "name": "VersionMajor",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Get VersionMajor() As Long",
+          "attributes": [],
+          "description": "Returns the current Project version number (Major)"
+        },
+        {
+          "name": "VersionMinor",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Get VersionMinor() As Long",
+          "attributes": [],
+          "description": "Returns the current Project version number (Minor)"
+        },
+        {
+          "name": "VersionRevision",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Get VersionRevision() As Long",
+          "attributes": [],
+          "description": "Returns the current Project version number (Revision)"
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "ItbHostEventsV1",
+      "kind": "Interface",
+      "file": "Host.twin",
+      "access": "Public",
+      "attributes": [
+        "InterfaceId"
+      ],
+      "implements": [],
+      "inherits": "stdole.IUnknown",
+      "members": [
+        {
+          "name": "OnProjectLoaded",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub OnProjectLoaded()",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "ItbHostEventsV2",
+      "kind": "Interface",
+      "file": "Host.twin",
+      "access": "Public",
+      "attributes": [
+        "InterfaceId"
+      ],
+      "implements": [],
+      "inherits": "ItbHostEventsV1",
+      "members": [
+        {
+          "name": "OnChangedActiveEditor",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub OnChangedActiveEditor(ByVal EditorIdx As Long, ByVal Editor As Editor)",
+          "attributes": [
+            "AllowUnpopulatedVtableEntry"
+          ],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "ItbHostEventsV3",
+      "kind": "Interface",
+      "file": "Host.twin",
+      "access": "Public",
+      "attributes": [
+        "InterfaceId"
+      ],
+      "implements": [],
+      "inherits": "ItbHostEventsV2",
+      "members": [
+        {
+          "name": "OnChangedTheme",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub OnChangedTheme(ByVal ThemeName As String)",
+          "attributes": [
+            "AllowUnpopulatedVtableEntry"
+          ],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "IThemesV1",
+      "kind": "Interface",
+      "file": "Themes.twin",
+      "access": "Public",
+      "attributes": [
+        "InterfaceId"
+      ],
+      "implements": [],
+      "inherits": "stdole.IUnknown",
+      "members": [
+        {
+          "name": "ActiveThemeName",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Get ActiveThemeName() As String",
+          "attributes": [],
+          "description": "Returns the name of the current IDE theme, e.g. 'Classic', 'Dark' or 'Light'"
+        },
+        {
+          "name": "ActiveThemeNameGroup",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Get ActiveThemeNameGroup() As String",
+          "attributes": [],
+          "description": "Returns the name of the current IDE theme group, either 'dark' or 'light'"
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "IToolbarsV1",
+      "kind": "Interface",
+      "file": "Toolbars.twin",
+      "access": "Public",
+      "attributes": [
+        "InterfaceId"
+      ],
+      "implements": [],
+      "inherits": "stdole.IUnknown",
+      "members": [
+        {
+          "name": "Count",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Get Count() As Long",
+          "attributes": [],
+          "description": "Count of available toolbars"
+        },
+        {
+          "name": "Item",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Get Item(ByVal Index As Variant) As Toolbar",
+          "attributes": [
+            "DefaultMember"
+          ],
+          "description": "There is currently only ONE toolbar, accessible via the Toolbars(0) syntax"
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "IToolbarV1",
+      "kind": "Interface",
+      "file": "Toolbar.twin",
+      "access": "Public",
+      "attributes": [
+        "InterfaceId"
+      ],
+      "implements": [],
+      "inherits": "stdole.IUnknown",
+      "members": [
+        {
+          "name": "AddButton",
+          "kind": "Function",
+          "access": null,
+          "signature": "Function AddButton(ByVal Id As String, ByVal Caption As String, Optional ByVal IconData As Variant) As Button",
+          "attributes": [],
+          "description": "Adds a new button to the IDE toolbar.  IconData must be a byte array, or left empty"
+        },
+        {
+          "name": "AddSplitter",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub AddSplitter()",
+          "attributes": [],
+          "description": "Adds a splitter bar to the IDE toolbar"
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "IToolWindowEventsV1",
+      "kind": "Interface",
+      "file": "ToolWindow.twin",
+      "access": "Public",
+      "attributes": [
+        "InterfaceId"
+      ],
+      "implements": [],
+      "inherits": "stdole.IUnknown",
+      "members": [
+        {
+          "name": "OnClose",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub OnClose()",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "IToolWindowsV1",
+      "kind": "Interface",
+      "file": "ToolWindows.twin",
+      "access": "Public",
+      "attributes": [
+        "InterfaceId"
+      ],
+      "implements": [],
+      "inherits": "stdole.IUnknown",
+      "members": [
+        {
+          "name": "Add",
+          "kind": "Function",
+          "access": null,
+          "signature": "Function Add(ByVal Name As String, Optional ByVal UniqueIdForPositionPersistance As String) As ToolWindow",
+          "attributes": [],
+          "description": "Displays a popup toolwindow in the IDE.  Starts out with Visible = False"
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "IToolWindowV1",
+      "kind": "Interface",
+      "file": "ToolWindow.twin",
+      "access": "Public",
+      "attributes": [
+        "InterfaceId"
+      ],
+      "implements": [],
+      "inherits": "stdole.IUnknown",
+      "members": [
+        {
+          "name": "ApplyCss",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub ApplyCss(ByVal styles As String)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Close",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub Close()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Name",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Get Name() As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Resizable",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Get Resizable() As Boolean",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Resizable",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Let Resizable(ByVal Value As Boolean)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "RootDomElement",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Get RootDomElement() As HtmlElement",
+          "attributes": [
+            "DefaultMember"
+          ],
+          "description": null
+        },
+        {
+          "name": "Title",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Get Title() As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Title",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Let Title(ByVal Value As String)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Visible",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Get Visible() As Boolean",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Visible",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Let Visible(ByVal Value As Boolean)",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "KeyboardShortcuts",
+      "kind": "CoClass",
+      "file": "KeyboardShortcuts.twin",
+      "access": "Public",
+      "attributes": [
+        "CoClassId"
+      ],
+      "implements": [],
+      "inherits": null,
+      "members": [
+        {
+          "name": "IKeyboardShortcutsV1",
+          "kind": "CoClassInterface",
+          "access": null,
+          "signature": "[Default] Interface IKeyboardShortcutsV1",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "Project",
+      "kind": "CoClass",
+      "file": "Project.twin",
+      "access": "Public",
+      "attributes": [
+        "CoClassId"
+      ],
+      "implements": [],
+      "inherits": null,
+      "members": [
+        {
+          "name": "IProjectV1",
+          "kind": "CoClassInterface",
+          "access": null,
+          "signature": "[Default] Interface IProjectV1",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "Themes",
+      "kind": "CoClass",
+      "file": "Themes.twin",
+      "access": "Public",
+      "attributes": [
+        "CoClassId"
+      ],
+      "implements": [],
+      "inherits": null,
+      "members": [
+        {
+          "name": "IThemesV1",
+          "kind": "CoClassInterface",
+          "access": null,
+          "signature": "[Default] Interface IThemesV1",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "Toolbar",
+      "kind": "CoClass",
+      "file": "Toolbar.twin",
+      "access": "Public",
+      "attributes": [
+        "CoClassId"
+      ],
+      "implements": [],
+      "inherits": null,
+      "members": [
+        {
+          "name": "IToolbarV1",
+          "kind": "CoClassInterface",
+          "access": null,
+          "signature": "[Default] Interface IToolbarV1",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "Toolbars",
+      "kind": "CoClass",
+      "file": "Toolbars.twin",
+      "access": "Public",
+      "attributes": [
+        "CoClassId"
+      ],
+      "implements": [],
+      "inherits": null,
+      "members": [
+        {
+          "name": "IToolbarsV1",
+          "kind": "CoClassInterface",
+          "access": null,
+          "signature": "[Default] Interface IToolbarsV1",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "ToolWindow",
+      "kind": "CoClass",
+      "file": "ToolWindow.twin",
+      "access": "Public",
+      "attributes": [
+        "CoClassId"
+      ],
+      "implements": [],
+      "inherits": null,
+      "members": [
+        {
+          "name": "IToolWindowEventsV1",
+          "kind": "CoClassInterface",
+          "access": null,
+          "signature": "[Default,Source] Interface IToolWindowEventsV1",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "IToolWindowV1",
+          "kind": "CoClassInterface",
+          "access": null,
+          "signature": "[Default] Interface IToolWindowV1",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "ToolWindows",
+      "kind": "CoClass",
+      "file": "ToolWindows.twin",
+      "access": "Public",
+      "attributes": [
+        "CoClassId"
+      ],
+      "implements": [],
+      "inherits": null,
+      "members": [
+        {
+          "name": "IToolWindowsV1",
+          "kind": "CoClassInterface",
+          "access": null,
+          "signature": "[Default] Interface IToolWindowsV1",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    }
+  ],
+  "enums": [],
+  "types": []
+}

@@ -1,0 +1,1428 @@
+{
+  "package": "TBMANLIB_Aes",
+  "version": "1.0.0.2",
+  "modules": [
+    {
+      "name": "cAes",
+      "kind": "Class",
+      "file": "Core/cAes.twin",
+      "access": "Public",
+      "attributes": [
+        "COMCreatable(False)"
+      ],
+      "implements": [],
+      "inherits": null,
+      "members": [
+        {
+          "name": "CipherMode",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get CipherMode() As AesCipherMode",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CipherMode",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Let CipherMode(ByVal value As AesCipherMode)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Class_Terminate",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub Class_Terminate()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Cleanup",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub Cleanup()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "DecryptBytes",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function DecryptBytes(ByRef cipherBytes() As Byte) As Byte()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "DecryptString",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function DecryptString(ByVal cipherText As String) As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "DoDecrypt",
+          "kind": "Function",
+          "access": "Private",
+          "signature": "Private Function DoDecrypt(ByRef data() As Byte) As Byte()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "DoDecryptCNG",
+          "kind": "Function",
+          "access": "Private",
+          "signature": "Private Function DoDecryptCNG(ByRef data() As Byte) As Byte()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "DoDecryptCNG_GCM",
+          "kind": "Function",
+          "access": "Private",
+          "signature": "Private Function DoDecryptCNG_GCM(ByRef data() As Byte) As Byte()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "DoDecryptCryptoAPI",
+          "kind": "Function",
+          "access": "Private",
+          "signature": "Private Function DoDecryptCryptoAPI(ByRef data() As Byte) As Byte()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "DoEncrypt",
+          "kind": "Function",
+          "access": "Private",
+          "signature": "Private Function DoEncrypt(ByRef data() As Byte) As Byte()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "DoEncryptCNG",
+          "kind": "Function",
+          "access": "Private",
+          "signature": "Private Function DoEncryptCNG(ByRef data() As Byte) As Byte()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "DoEncryptCNG_GCM",
+          "kind": "Function",
+          "access": "Private",
+          "signature": "Private Function DoEncryptCNG_GCM(ByRef data() As Byte) As Byte()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "DoEncryptCryptoAPI",
+          "kind": "Function",
+          "access": "Private",
+          "signature": "Private Function DoEncryptCryptoAPI(ByRef data() As Byte) As Byte()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "EncryptBytes",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function EncryptBytes(ByRef plainBytes() As Byte) As Byte()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "EncryptString",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function EncryptString(ByVal plainText As String) As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GcmAAD",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get GcmAAD() As Byte()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GcmAAD",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Let GcmAAD(ByRef value() As Byte)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GcmTag",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get GcmTag() As Byte()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GcmTag",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Let GcmTag(ByRef value() As Byte)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GenerateRandomIV",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function GenerateRandomIV() As Byte()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GetKeyBytes",
+          "kind": "Function",
+          "access": "Private",
+          "signature": "Private Function GetKeyBytes(ByVal keyString As String, ByVal keySize As Long, ByVal encoding As Long) As Byte()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "InitializeCNGProvider",
+          "kind": "Function",
+          "access": "Private",
+          "signature": "Private Function InitializeCNGProvider() As Boolean",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "InitializeCryptoAPIProvider",
+          "kind": "Function",
+          "access": "Private",
+          "signature": "Private Function InitializeCryptoAPIProvider() As Boolean",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "IsInitialized",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get IsInitialized() As Boolean",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "IV",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get IV() As Byte()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "IV",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Let IV(ByRef value() As Byte)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Key",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get Key() As Byte()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Key",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Let Key(ByRef value() As Byte)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "KeySize",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get KeySize() As AesKeySize",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "KeySize",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Let KeySize(ByVal value As AesKeySize)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "LastError",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get LastError() As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "New",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub New()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "New",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub New(ByVal keySize As AesKeySize, ByVal cipherMode As AesCipherMode, ByVal paddingMode As AesPaddingMode)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "PaddingMode",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get PaddingMode() As AesPaddingMode",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "PaddingMode",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Let PaddingMode(ByVal value As AesPaddingMode)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SetGcmAADFromString",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub SetGcmAADFromString(ByVal aadString As String, Optional ByVal encoding As Long = vbFromUnicode)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SetKeyFromString",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub SetKeyFromString(ByVal keyString As String, Optional ByVal encoding As Long = vbFromUnicode)",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "cAesHelper",
+      "kind": "Class",
+      "file": "Core/cAesHelper.twin",
+      "access": "Public",
+      "attributes": [
+        "COMCreatable(False)"
+      ],
+      "implements": [],
+      "inherits": null,
+      "members": [
+        {
+          "name": "ApplyPKCS7Padding",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function ApplyPKCS7Padding(ByRef data() As Byte, ByVal blockSize As Long) As Byte()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ApplyZeroPadding",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function ApplyZeroPadding(ByRef data() As Byte, ByVal blockSize As Long) As Byte()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Base64Decode",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function Base64Decode(ByVal base64 As String) As Byte()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Base64Encode",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function Base64Encode(ByRef data() As Byte) As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "IsArrayEmpty",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function IsArrayEmpty(ByRef arr() As Byte) As Boolean",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "LastError",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get LastError() As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "New",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub New()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "RemovePKCS7Padding",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function RemovePKCS7Padding(ByRef data() As Byte) As Byte()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "RemoveZeroPadding",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function RemoveZeroPadding(ByRef data() As Byte) As Byte()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "StringToUtf8Bytes",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function StringToUtf8Bytes(ByVal text As String) As Byte()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Utf8BytesToString",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function Utf8BytesToString(ByRef bytes() As Byte) As String",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "mAesConstants",
+      "kind": "Module",
+      "file": "Core/mAesConstants.twin",
+      "access": "Public",
+      "attributes": [],
+      "implements": [],
+      "inherits": null,
+      "members": [
+        {
+          "name": "AesCipherMode",
+          "kind": "Enum",
+          "access": "Public",
+          "signature": "Public Enum AesCipherMode",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "AesKeySize",
+          "kind": "Enum",
+          "access": "Public",
+          "signature": "Public Enum AesKeySize",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "AesPaddingMode",
+          "kind": "Enum",
+          "access": "Public",
+          "signature": "Public Enum AesPaddingMode",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "AT_KEYEXCHANGE",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const AT_KEYEXCHANGE As Long = 1",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "AT_SIGNATURE",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const AT_SIGNATURE As Long = 2",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "BLOCK_SIZE_128",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const BLOCK_SIZE_128 As Long = 16",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CALG_AES_128",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const CALG_AES_128 As Long = 26126",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CALG_AES_192",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const CALG_AES_192 As Long = 26127",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CALG_AES_256",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const CALG_AES_256 As Long = 26128",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CALG_MD5",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const CALG_MD5 As Long = 32771",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CALG_SHA_256",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const CALG_SHA_256 As Long = 32780",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CRYPT_EXPORTABLE",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const CRYPT_EXPORTABLE As Long = &H1",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CRYPT_MODE_CBC",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const CRYPT_MODE_CBC As Long = 2",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CRYPT_MODE_CFB",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const CRYPT_MODE_CFB As Long = 3",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CRYPT_MODE_ECB",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const CRYPT_MODE_ECB As Long = 1",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CRYPT_MODE_OFB",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const CRYPT_MODE_OFB As Long = 4",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CRYPT_NEWKEYSET",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const CRYPT_NEWKEYSET As Long = &H8",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CRYPT_STRING_BASE64",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const CRYPT_STRING_BASE64 As Long = &H1",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CRYPT_STRING_NOCRLF",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const CRYPT_STRING_NOCRLF As Long = &H40000000",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "HP_HASHSIZE",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const HP_HASHSIZE As Long = 4",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "HP_HASHVAL",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const HP_HASHVAL As Long = 2",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "KEY_SIZE_128",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const KEY_SIZE_128 As Long = 16",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "KEY_SIZE_192",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const KEY_SIZE_192 As Long = 24",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "KEY_SIZE_256",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const KEY_SIZE_256 As Long = 32",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "KP_BLOCKLEN",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const KP_BLOCKLEN As Long = 8",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "KP_IV",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const KP_IV As Long = 1",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "KP_MODE",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const KP_MODE As Long = 4",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "KP_PADDING",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const KP_PADDING As Long = 3",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "PKCS5_PADDING",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const PKCS5_PADDING As Long = 1",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "PROV_RSA_AES",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const PROV_RSA_AES As Long = 24",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "PROV_RSA_FULL",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const PROV_RSA_FULL As Long = 1",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "VERSION",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const VERSION As String = \"\"",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ZERO_PADDING",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const ZERO_PADDING As Long = 2",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "mAesUsage",
+      "kind": "Module",
+      "file": "mAesUsage.twin",
+      "access": "Public",
+      "attributes": [],
+      "implements": [],
+      "inherits": null,
+      "members": [
+        {
+          "name": "BytesToHex",
+          "kind": "Function",
+          "access": "Private",
+          "signature": "Private Function BytesToHex(ByRef bytes() As Byte) As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Example_API_Info",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub Example_API_Info()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Example_BinaryData",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub Example_BinaryData()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Example_CBC_Basic",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub Example_CBC_Basic()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Example_CFB",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub Example_CFB()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Example_CTR",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub Example_CTR()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Example_ECB",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub Example_ECB()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Example_GCM",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub Example_GCM()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Example_KeySizes",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub Example_KeySizes()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Example_OFB",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub Example_OFB()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Example_PaddingModes",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub Example_PaddingModes()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "RunAllExamples",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub RunAllExamples()",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "mWin32CNG",
+      "kind": "Module",
+      "file": "Core/mWin32CNG.twin",
+      "access": "Public",
+      "attributes": [],
+      "implements": [],
+      "inherits": null,
+      "members": [
+        {
+          "name": "BCRYPT_AES_ALGORITHM",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const BCRYPT_AES_ALGORITHM As String = \"\"",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "BCRYPT_ALG_HANDLE_HMAC_FLAG",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const BCRYPT_ALG_HANDLE_HMAC_FLAG As Long = &H8",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "BCRYPT_AUTH_MODE_CHAIN_MODE_CCM",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const BCRYPT_AUTH_MODE_CHAIN_MODE_CCM As String = \"\"",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "BCRYPT_AUTH_MODE_CHAIN_MODE_GCM",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const BCRYPT_AUTH_MODE_CHAIN_MODE_GCM As String = \"\"",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "BCRYPT_AUTH_MODE_INFO",
+          "kind": "Type",
+          "access": "Public",
+          "signature": "Public Type BCRYPT_AUTH_MODE_INFO",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "BCRYPT_AUTH_MODE_INFO_VERSION",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const BCRYPT_AUTH_MODE_INFO_VERSION As Long = 1",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "BCRYPT_AUTH_TAG_LENGTH",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const BCRYPT_AUTH_TAG_LENGTH As String = \"\"",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "BCRYPT_BLOCK_LENGTH",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const BCRYPT_BLOCK_LENGTH As String = \"\"",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "BCRYPT_CHAIN_MODE_CBC",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const BCRYPT_CHAIN_MODE_CBC As String = \"\"",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "BCRYPT_CHAIN_MODE_CCM",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const BCRYPT_CHAIN_MODE_CCM As String = \"\"",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "BCRYPT_CHAIN_MODE_CFB",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const BCRYPT_CHAIN_MODE_CFB As String = \"\"",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "BCRYPT_CHAIN_MODE_ECB",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const BCRYPT_CHAIN_MODE_ECB As String = \"\"",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "BCRYPT_CHAIN_MODE_GCM",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const BCRYPT_CHAIN_MODE_GCM As String = \"\"",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "BCRYPT_CHAINING_MODE",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const BCRYPT_CHAINING_MODE As String = \"\"",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "BCRYPT_EFFECTIVE_KEY_LENGTH",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const BCRYPT_EFFECTIVE_KEY_LENGTH As String = \"\"",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "BCRYPT_KEY_DATA_BLOB",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const BCRYPT_KEY_DATA_BLOB As String = \"\"",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "BCRYPT_KEY_LENGTH",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const BCRYPT_KEY_LENGTH As String = \"\"",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "BCRYPT_OBJECT_LENGTH",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const BCRYPT_OBJECT_LENGTH As String = \"\"",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "BCRYPT_PROV_DISPATCH",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const BCRYPT_PROV_DISPATCH As Long = &H1",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "BCryptCloseAlgorithmProvider",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public Declare PtrSafe Function BCryptCloseAlgorithmProvider Lib \"\" ( ByVal hAlgorithm As LongPtr, ByVal dwFlags As Long ) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "BCryptDecrypt",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public Declare PtrSafe Function BCryptDecrypt Lib \"\" ( ByVal hKey As LongPtr, ByVal pbInput As LongPtr, ByVal cbInput As Long, ByVal pPaddingInfo As LongPtr, ByVal pbIV As LongPtr, ByVal cbIV As Long, ByVal pbOutput As LongPtr, ByVal cbOutput As Long, ByRef pcbResult As Long, ByVal dwFlags As Long ) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "BCryptDestroyKey",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public Declare PtrSafe Function BCryptDestroyKey Lib \"\" ( ByVal hKey As LongPtr ) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "BCryptEncrypt",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public Declare PtrSafe Function BCryptEncrypt Lib \"\" ( ByVal hKey As LongPtr, ByVal pbInput As LongPtr, ByVal cbInput As Long, ByVal pPaddingInfo As LongPtr, ByVal pbIV As LongPtr, ByVal cbIV As Long, ByVal pbOutput As LongPtr, ByVal cbOutput As Long, ByRef pcbResult As Long, ByVal dwFlags As Long ) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "BCryptGenerateSymmetricKey",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public Declare PtrSafe Function BCryptGenerateSymmetricKey Lib \"\" ( ByVal hAlgorithm As LongPtr, ByRef phKey As LongPtr, ByVal pbKeyObject As LongPtr, ByVal cbKeyObject As Long, ByVal pbSecret As LongPtr, ByVal cbSecret As Long, ByVal dwFlags As Long ) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "BCryptGetProperty",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public Declare PtrSafe Function BCryptGetProperty Lib \"\" ( ByVal hObject As LongPtr, ByVal pszProperty As LongPtr, ByVal pbOutput As LongPtr, ByVal cbOutput As Long, ByRef pcbResult As Long, ByVal dwFlags As Long ) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "BCryptImportKey",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public Declare PtrSafe Function BCryptImportKey Lib \"\" ( ByVal hAlgorithm As LongPtr, ByVal hImportKey As LongPtr, ByVal pszBlobType As LongPtr, ByRef phKey As LongPtr, ByVal pbKeyObject As LongPtr, ByVal cbKeyObject As Long, ByVal pbInput As LongPtr, ByVal cbInput As Long, ByVal dwFlags As Long ) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "BCryptOpenAlgorithmProvider",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public Declare PtrSafe Function BCryptOpenAlgorithmProvider Lib \"\" ( ByRef phAlgorithm As LongPtr, ByVal pszAlgId As LongPtr, ByVal pszImplementation As LongPtr, ByVal dwFlags As Long ) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "BCryptSetProperty",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public Declare PtrSafe Function BCryptSetProperty Lib \"\" ( ByVal hObject As LongPtr, ByVal pszProperty As LongPtr, ByVal pbInput As LongPtr, ByVal cbInput As Long, ByVal dwFlags As Long ) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CNGErrorMessage",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function CNGErrorMessage(ByVal status As Long) As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "InitGcmModeInfo",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub InitGcmModeInfo(ByRef info As BCRYPT_AUTH_MODE_INFO, ByRef nonce() As Byte, ByRef authData() As Byte, ByRef tag() As Byte, Optional ByVal tagLen As Long = 16)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "IsCNGAvailable",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function IsCNGAvailable() As Boolean",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "STATUS_BUFFER_TOO_SMALL",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const STATUS_BUFFER_TOO_SMALL As Long = &HC0000023",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "STATUS_INVALID_HANDLE",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const STATUS_INVALID_HANDLE As Long = &HC0000008",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "STATUS_INVALID_PARAMETER",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const STATUS_INVALID_PARAMETER As Long = &HC000000D",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "STATUS_NOT_SUPPORTED",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const STATUS_NOT_SUPPORTED As Long = &HC00000BB",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "STATUS_SUCCESS",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const STATUS_SUCCESS As Long = 0",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "mWin32CryptoAPI",
+      "kind": "Module",
+      "file": "Core/mWin32CryptoAPI.twin",
+      "access": "Public",
+      "attributes": [],
+      "implements": [],
+      "inherits": null,
+      "members": [
+        {
+          "name": "AES_CopyMemory",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub AES_CopyMemory(ByVal Destination As LongPtr, ByVal Source As LongPtr, ByVal Length As Long)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "AES_CryptAcquireContext",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function AES_CryptAcquireContext(ByRef phProv As LongPtr, ByVal pszContainer As LongPtr, ByVal pszProvider As LongPtr, ByVal dwProvType As Long, ByVal dwFlags As Long) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "AES_CryptBinaryToString",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function AES_CryptBinaryToString(ByVal pbBinary As LongPtr, ByVal cbBinary As Long, ByVal dwFlags As Long, ByVal pszString As LongPtr, ByRef pcchString As Long) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "AES_CryptCreateHash",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function AES_CryptCreateHash(ByVal hProv As LongPtr, ByVal Algid As Long, ByVal hKey As LongPtr, ByVal dwFlags As Long, ByRef phHash As LongPtr) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "AES_CryptDecrypt",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function AES_CryptDecrypt(ByVal hKey As LongPtr, ByVal hHash As LongPtr, ByVal Final As Long, ByVal dwFlags As Long, ByVal pbData As LongPtr, ByRef pdwDataLen As Long) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "AES_CryptDeriveKey",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function AES_CryptDeriveKey(ByVal hProv As LongPtr, ByVal Algid As Long, ByVal hBaseData As LongPtr, ByVal dwFlags As Long, ByRef phKey As LongPtr) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "AES_CryptDestroyHash",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function AES_CryptDestroyHash(ByVal hHash As LongPtr) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "AES_CryptDestroyKey",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function AES_CryptDestroyKey(ByVal hKey As LongPtr) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "AES_CryptEncrypt",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function AES_CryptEncrypt(ByVal hKey As LongPtr, ByVal hHash As LongPtr, ByVal Final As Long, ByVal dwFlags As Long, ByVal pbData As LongPtr, ByRef pdwDataLen As Long, ByVal dwBufLen As Long) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "AES_CryptGetHashParam",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function AES_CryptGetHashParam(ByVal hHash As LongPtr, ByVal dwParam As Long, ByVal pbData As LongPtr, ByRef pdwDataLen As Long, ByVal dwFlags As Long) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "AES_CryptGetKeyParam",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function AES_CryptGetKeyParam(ByVal hKey As LongPtr, ByVal dwParam As Long, ByVal pbData As LongPtr, ByRef pdwDataLen As Long, ByVal dwFlags As Long) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "AES_CryptHashData",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function AES_CryptHashData(ByVal hHash As LongPtr, ByVal pbData As LongPtr, ByVal dwDataLen As Long, ByVal dwFlags As Long) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "AES_CryptReleaseContext",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function AES_CryptReleaseContext(ByVal hProv As LongPtr, ByVal dwFlags As Long) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "AES_CryptSetKeyParam",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function AES_CryptSetKeyParam(ByVal hKey As LongPtr, ByVal dwParam As Long, ByVal pbData As LongPtr, ByVal dwFlags As Long) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "AES_CryptStringToBinary",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function AES_CryptStringToBinary(ByVal pszString As LongPtr, ByVal cchString As Long, ByVal dwFlags As Long, ByVal pbBinary As LongPtr, ByRef pcbBinary As Long, ByRef pdwSkip As Long, ByRef pdwFlags As Long) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "AES_ZeroMemory",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub AES_ZeroMemory(ByVal Destination As LongPtr, ByVal Length As Long)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CopyMemory",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare PtrSafe Sub CopyMemory Lib \"\" Alias \"\" ( ByVal Destination As LongPtr, ByVal Source As LongPtr, ByVal Length As Long )",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CP_UTF8",
+          "kind": "Const",
+          "access": "Public",
+          "signature": "Public Const CP_UTF8 As Long = 65001",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CryptAcquireContext",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare PtrSafe Function CryptAcquireContext Lib \"\" Alias \"\" ( ByRef phProv As LongPtr, ByVal pszContainer As LongPtr, ByVal pszProvider As LongPtr, ByVal dwProvType As Long, ByVal dwFlags As Long ) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CryptBinaryToString",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare PtrSafe Function CryptBinaryToString Lib \"\" Alias \"\" ( ByVal pbBinary As LongPtr, ByVal cbBinary As Long, ByVal dwFlags As Long, ByVal pszString As LongPtr, ByRef pcchString As Long ) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CryptCreateHash",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare PtrSafe Function CryptCreateHash Lib \"\" ( ByVal hProv As LongPtr, ByVal Algid As Long, ByVal hKey As LongPtr, ByVal dwFlags As Long, ByRef phHash As LongPtr ) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CryptDecrypt",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare PtrSafe Function CryptDecrypt Lib \"\" ( ByVal hKey As LongPtr, ByVal hHash As LongPtr, ByVal Final As Long, ByVal dwFlags As Long, ByVal pbData As LongPtr, ByRef pdwDataLen As Long ) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CryptDeriveKey",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare PtrSafe Function CryptDeriveKey Lib \"\" ( ByVal hProv As LongPtr, ByVal Algid As Long, ByVal hBaseData As LongPtr, ByVal dwFlags As Long, ByRef phKey As LongPtr ) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CryptDestroyHash",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare PtrSafe Function CryptDestroyHash Lib \"\" ( ByVal hHash As LongPtr ) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CryptDestroyKey",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare PtrSafe Function CryptDestroyKey Lib \"\" ( ByVal hKey As LongPtr ) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CryptEncrypt",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare PtrSafe Function CryptEncrypt Lib \"\" ( ByVal hKey As LongPtr, ByVal hHash As LongPtr, ByVal Final As Long, ByVal dwFlags As Long, ByVal pbData As LongPtr, ByRef pdwDataLen As Long, ByVal dwBufLen As Long ) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CryptGenKey",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare PtrSafe Function CryptGenKey Lib \"\" ( ByVal hProv As LongPtr, ByVal Algid As Long, ByVal dwFlags As Long, ByRef phKey As LongPtr ) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CryptGetHashParam",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare PtrSafe Function CryptGetHashParam Lib \"\" ( ByVal hHash As LongPtr, ByVal dwParam As Long, ByVal pbData As LongPtr, ByRef pdwDataLen As Long, ByVal dwFlags As Long ) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CryptGetKeyParam",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare PtrSafe Function CryptGetKeyParam Lib \"\" ( ByVal hKey As LongPtr, ByVal dwParam As Long, ByVal pbData As LongPtr, ByRef pdwDataLen As Long, ByVal dwFlags As Long ) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CryptHashData",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare PtrSafe Function CryptHashData Lib \"\" ( ByVal hHash As LongPtr, ByVal pbData As LongPtr, ByVal dwDataLen As Long, ByVal dwFlags As Long ) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CryptReleaseContext",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare PtrSafe Function CryptReleaseContext Lib \"\" ( ByVal hProv As LongPtr, ByVal dwFlags As Long ) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CryptSetKeyParam",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare PtrSafe Function CryptSetKeyParam Lib \"\" ( ByVal hKey As LongPtr, ByVal dwParam As Long, ByVal pbData As LongPtr, ByVal dwFlags As Long ) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CryptStringToBinary",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare PtrSafe Function CryptStringToBinary Lib \"\" Alias \"\" ( ByVal pszString As LongPtr, ByVal cchString As Long, ByVal dwFlags As Long, ByVal pbBinary As LongPtr, ByRef pcbBinary As Long, ByRef pdwSkip As Long, ByRef pdwFlags As Long ) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "MultiByteToWideChar",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare PtrSafe Function MultiByteToWideChar Lib \"\" ( ByVal CodePage As Long, ByVal dwFlags As Long, ByVal lpMultiByteStr As LongPtr, ByVal cbMultiByte As Long, ByVal lpWideCharStr As LongPtr, ByVal cchWideChar As Long ) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Utf8BytesToWideString",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function Utf8BytesToWideString(ByRef bytes() As Byte) As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "WideCharToMultiByte",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare PtrSafe Function WideCharToMultiByte Lib \"\" ( ByVal CodePage As Long, ByVal dwFlags As Long, ByVal lpWideCharStr As LongPtr, ByVal cchWideChar As Long, ByVal lpMultiByteStr As LongPtr, ByVal cbMultiByte As Long, ByVal lpDefaultChar As LongPtr, ByVal lpUsedDefaultChar As LongPtr ) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "WideStringToUtf8Bytes",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function WideStringToUtf8Bytes(ByVal str As String) As Byte()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ZeroMemory",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare PtrSafe Sub ZeroMemory Lib \"\" Alias \"\" ( ByVal Destination As LongPtr, ByVal Length As Long )",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    }
+  ],
+  "enums": [],
+  "types": []
+}

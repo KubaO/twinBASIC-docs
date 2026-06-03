@@ -1,0 +1,844 @@
+{
+  "package": "TBMANLIB_Dialog",
+  "version": "1.0.0.1",
+  "modules": [
+    {
+      "name": "cDialog",
+      "kind": "Class",
+      "file": "cDialog.twin",
+      "access": "Public",
+      "attributes": [],
+      "implements": [],
+      "inherits": null,
+      "members": [
+        {
+          "name": "AddFilter",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub AddFilter(ByVal strDescription As String, ByVal strExtension As String)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "BIF_BROWSEINCLUDEURLS",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const BIF_BROWSEINCLUDEURLS = &H80",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "BIF_DONTGOBELOWDOMAIN",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const BIF_DONTGOBELOWDOMAIN = &H2",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "BIF_EDITBOX",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const BIF_EDITBOX = &H10",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "BIF_NEWDIALOGSTYLE",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const BIF_NEWDIALOGSTYLE = &H40",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "BIF_NONEWFOLDERBUTTON",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const BIF_NONEWFOLDERBUTTON = &H200",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "BIF_NOTRANSLATETARGETS",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const BIF_NOTRANSLATETARGETS = &H400",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "BIF_RETURNFSANCESTORS",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const BIF_RETURNFSANCESTORS = &H8",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "BIF_RETURNONLYFSDIRS",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const BIF_RETURNONLYFSDIRS = &H1",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "BIF_SHAREABLE",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const BIF_SHAREABLE = &H8000",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "BIF_STATUSTEXT",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const BIF_STATUSTEXT = &H4",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "BIF_USENEWUI",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const BIF_USENEWUI = (BIF_NEWDIALOGSTYLE Or BIF_EDITBOX)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "BIF_VALIDATE",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const BIF_VALIDATE = &H20",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "BROWSEINFO",
+          "kind": "Type",
+          "access": "Private",
+          "signature": "Private Type BROWSEINFO",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "cDialogData",
+          "kind": "Type",
+          "access": "Private",
+          "signature": "Private Type cDialogData",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Class_Initialize",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub Class_Initialize()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Class_Terminate",
+          "kind": "Sub",
+          "access": "Private",
+          "signature": "Private Sub Class_Terminate()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ClearFilter",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub ClearFilter()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CoTaskMemFree",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare PtrSafe Function CoTaskMemFree Lib \"\" (ByVal hMem As Long) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CreatePrompt",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Let CreatePrompt(ByVal vValue As Boolean)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CreatePrompt",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get CreatePrompt() As Boolean",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "DefaultExt",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Let DefaultExt(ByVal vValue As String)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "DefaultExt",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get DefaultExt() As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "DialogTitle",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Let DialogTitle(ByVal vValue As String)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "DialogTitle",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get DialogTitle() As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "FileMustExist",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Let FileMustExist(ByVal vValue As Boolean)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "FileMustExist",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get FileMustExist() As Boolean",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "FileName",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Let FileName(ByVal vValue As String)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "FileName",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get FileName() As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Filter",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Let Filter(ByVal vValue As String)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Filter",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get Filter() As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GetFileExtension",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function GetFileExtension(ByVal strFullPath As String) As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GetFileName",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function GetFileName(ByVal strFullPath As String) As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GetFileNameWithoutExt",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function GetFileNameWithoutExt(ByVal strFullPath As String) As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GetFilePath",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function GetFilePath(ByVal strFullPath As String) As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GetOpenFileName",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare PtrSafe Function GetOpenFileName Lib \"\" Alias \"\" (pOpenfilename As OPENFILENAME) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GetSaveFileName",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare PtrSafe Function GetSaveFileName Lib \"\" Alias \"\" (pOpenfilename As OPENFILENAME) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GlobalAlloc",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare PtrSafe Function GlobalAlloc Lib \"\" (ByVal wFlags As Long, ByVal dwBytes As Long) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GlobalLock",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare PtrSafe Function GlobalLock Lib \"\" (ByVal hMem As Long) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GlobalUnlock",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare PtrSafe Function GlobalUnlock Lib \"\" (ByVal hMem As Long) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GMEM_FIXED",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const GMEM_FIXED = &H0",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GMEM_MOVEABLE",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const GMEM_MOVEABLE = &H2",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GMEM_ZEROINIT",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const GMEM_ZEROINIT = &H40",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GPTR",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const GPTR = (GMEM_FIXED Or GMEM_ZEROINIT)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "HideReadOnly",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Let HideReadOnly(ByVal vValue As Boolean)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "HideReadOnly",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get HideReadOnly() As Boolean",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "InitialDir",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Let InitialDir(ByVal vValue As String)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "InitialDir",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get InitialDir() As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "LocalFree",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare PtrSafe Function LocalFree Lib \"\" (ByVal hMem As Long) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "lstrcpy",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare PtrSafe Function lstrcpy Lib \"\" Alias \"\" (ByVal lpString1 As Long, ByVal lpString2 As Long) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "lstrlen",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare PtrSafe Function lstrlen Lib \"\" Alias \"\" (ByVal lpString As Long) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "MAX_PATH",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const MAX_PATH = 260",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "MultiSelect",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Let MultiSelect(ByVal vValue As Boolean)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "MultiSelect",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get MultiSelect() As Boolean",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "NewDialogStyle",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Let NewDialogStyle(ByVal vValue As Boolean)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "NewDialogStyle",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get NewDialogStyle() As Boolean",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "NoChangeDir",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Let NoChangeDir(ByVal vValue As Boolean)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "NoChangeDir",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get NoChangeDir() As Boolean",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "OFN_ALLOWMULTISELECT",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const OFN_ALLOWMULTISELECT = &H200",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "OFN_CREATEPROMPT",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const OFN_CREATEPROMPT = &H2000",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "OFN_ENABLEHOOK",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const OFN_ENABLEHOOK = &H20",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "OFN_ENABLEINCLUDENOTIFY",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const OFN_ENABLEINCLUDENOTIFY = &H400000",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "OFN_ENABLESIZING",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const OFN_ENABLESIZING = &H800000",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "OFN_ENABLETEMPLATE",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const OFN_ENABLETEMPLATE = &H40",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "OFN_ENABLETEMPLATEHANDLE",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const OFN_ENABLETEMPLATEHANDLE = &H80",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "OFN_EXPLORER",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const OFN_EXPLORER = &H80000",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "OFN_EXTENSIONDIFFERENT",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const OFN_EXTENSIONDIFFERENT = &H400",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "OFN_FILEMUSTEXIST",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const OFN_FILEMUSTEXIST = &H1000",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "OFN_HIDEREADONLY",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const OFN_HIDEREADONLY = &H4",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "OFN_LONGNAMES",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const OFN_LONGNAMES = &H200000",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "OFN_NOCHANGEDIR",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const OFN_NOCHANGEDIR = &H8",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "OFN_NODEREFERENCELINKS",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const OFN_NODEREFERENCELINKS = &H100000",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "OFN_NOLONGNAMES",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const OFN_NOLONGNAMES = &H40000",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "OFN_NONETWORKBUTTON",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const OFN_NONETWORKBUTTON = &H20000",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "OFN_NOREADONLYRETURN",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const OFN_NOREADONLYRETURN = &H8000",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "OFN_NOTESTFILECREATE",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const OFN_NOTESTFILECREATE = &H10000",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "OFN_NOVALIDATE",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const OFN_NOVALIDATE = &H100",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "OFN_OVERWRITEPROMPT",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const OFN_OVERWRITEPROMPT = &H2",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "OFN_PATHMUSTEXIST",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const OFN_PATHMUSTEXIST = &H800",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "OFN_READONLY",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const OFN_READONLY = &H1",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "OFN_SHAREAWARE",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const OFN_SHAREAWARE = &H4000",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "OFN_SHOWHELP",
+          "kind": "Const",
+          "access": "Private",
+          "signature": "Private Const OFN_SHOWHELP = &H10",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "OpenFile",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function OpenFile(ByVal strFilePath As String, Optional ByVal strOperation As String = \"\") As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "OPENFILENAME",
+          "kind": "Type",
+          "access": "Private",
+          "signature": "Private Type OPENFILENAME",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "OverwritePrompt",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Let OverwritePrompt(ByVal vValue As Boolean)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "OverwritePrompt",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get OverwritePrompt() As Boolean",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "PathMustExist",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Let PathMustExist(ByVal vValue As Boolean)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "PathMustExist",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get PathMustExist() As Boolean",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ReadOnly",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Let ReadOnly(ByVal vValue As Boolean)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ReadOnly",
+          "kind": "Property",
+          "access": "Public",
+          "signature": "Public Property Get ReadOnly() As Boolean",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Reset",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub Reset()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SelectAndOpenFile",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function SelectAndOpenFile() As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SetCodeFilters",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub SetCodeFilters()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SetCommonFilters",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub SetCommonFilters()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SetDocumentFilters",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub SetDocumentFilters()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SetImageFilters",
+          "kind": "Sub",
+          "access": "Public",
+          "signature": "Public Sub SetImageFilters()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SHBrowseForFolder",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare PtrSafe Function SHBrowseForFolder Lib \"\" (lpbi As BROWSEINFO) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ShellExecute",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare PtrSafe Function ShellExecute Lib \"\" Alias \"\" (ByVal hwnd As Long, ByVal lpOperation As String, ByVal lpFile As String, ByVal lpParameters As String, ByVal lpDirectory As String, ByVal nShowCmd As Long) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ShellExecute",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare Function ShellExecute Lib \"\" Alias \"\" (ByVal hwnd As Long, ByVal lpOperation As String, ByVal lpFile As String, ByVal lpParameters As String, ByVal lpDirectory As String, ByVal nShowCmd As Long) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SHGetPathFromIDList",
+          "kind": "Declare",
+          "access": "Private",
+          "signature": "Private Declare PtrSafe Function SHGetPathFromIDList Lib \"\" Alias \"\" (ByVal pidl As Long, ByVal pszPath As String) As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ShowBrowseForFolder",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function ShowBrowseForFolder() As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ShowOpen",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function ShowOpen() As Variant",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ShowSave",
+          "kind": "Function",
+          "access": "Public",
+          "signature": "Public Function ShowSave() As String",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    }
+  ],
+  "enums": [],
+  "types": []
+}

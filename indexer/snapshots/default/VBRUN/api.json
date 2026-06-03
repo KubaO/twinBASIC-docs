@@ -1,0 +1,1564 @@
+{
+  "package": "VBRUN",
+  "version": "beta-x-0983",
+  "modules": [
+    {
+      "name": "_PropertyBag",
+      "kind": "Interface",
+      "file": "PropertyBag.twin",
+      "access": "Public",
+      "attributes": [
+        "InterfaceId"
+      ],
+      "implements": [],
+      "inherits": "PropertyBag_VB5",
+      "members": [
+        {
+          "name": "Contents",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Get Contents() As Variant",
+          "attributes": [
+            "DispId(3)"
+          ],
+          "description": null
+        },
+        {
+          "name": "Contents",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Let Contents(ByVal value As Variant)",
+          "attributes": [
+            "DispId(3)"
+          ],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "_PropertyBag",
+      "kind": "Interface",
+      "file": "PropertyBag.twin",
+      "access": "Public",
+      "attributes": [
+        "Default"
+      ],
+      "implements": [],
+      "inherits": null,
+      "members": [],
+      "events": []
+    },
+    {
+      "name": "AmbientProperties",
+      "kind": "Interface",
+      "file": "AmbientProperties.twin",
+      "access": "Public",
+      "attributes": [
+        "InterfaceId",
+        "COMExtensible"
+      ],
+      "implements": [],
+      "inherits": "stdole.IDispatch",
+      "members": [],
+      "events": []
+    },
+    {
+      "name": "AsyncProperty",
+      "kind": "Interface",
+      "file": "AsyncProperty.twin",
+      "access": "Public",
+      "attributes": [
+        "InterfaceId"
+      ],
+      "implements": [],
+      "inherits": "stdole.IDispatch",
+      "members": [],
+      "events": []
+    },
+    {
+      "name": "Constants",
+      "kind": "Module",
+      "file": "Constants.twin",
+      "access": "Public",
+      "attributes": [],
+      "implements": [],
+      "inherits": null,
+      "members": [
+        {
+          "name": "AlignConstants",
+          "kind": "Enum",
+          "access": "Public",
+          "signature": "Public Enum AlignConstants",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "AlignmentConstants",
+          "kind": "Enum",
+          "access": "Public",
+          "signature": "Public Enum AlignmentConstants",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "AlignmentConstantsNoCenter",
+          "kind": "Enum",
+          "access": "Public",
+          "signature": "Public Enum AlignmentConstantsNoCenter",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "AppearanceConstants",
+          "kind": "Enum",
+          "access": "Public",
+          "signature": "Public Enum AppearanceConstants",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ApplicationStartConstants",
+          "kind": "Enum",
+          "access": "Public",
+          "signature": "Public Enum ApplicationStartConstants",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "AspectTypeConstants",
+          "kind": "Enum",
+          "access": null,
+          "signature": "Enum AspectTypeConstants",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "AsyncReadConstants",
+          "kind": "Enum",
+          "access": "Public",
+          "signature": "Public Enum AsyncReadConstants",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "AsyncStatusCodeConstants",
+          "kind": "Enum",
+          "access": "Public",
+          "signature": "Public Enum AsyncStatusCodeConstants",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "AsyncTypeConstants",
+          "kind": "Enum",
+          "access": "Public",
+          "signature": "Public Enum AsyncTypeConstants",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "BackFillStyleConstants",
+          "kind": "Enum",
+          "access": "Public",
+          "signature": "Public Enum BackFillStyleConstants",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "BorderStyleConstants",
+          "kind": "Enum",
+          "access": "Public",
+          "signature": "Public Enum BorderStyleConstants",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ButtonConstants",
+          "kind": "Enum",
+          "access": "Public",
+          "signature": "Public Enum ButtonConstants",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CheckBoxConstants",
+          "kind": "Enum",
+          "access": "Public",
+          "signature": "Public Enum CheckBoxConstants",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ClipboardConstants",
+          "kind": "Enum",
+          "access": "Public",
+          "signature": "Public Enum ClipboardConstants",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ColorConstants",
+          "kind": "Enum",
+          "access": "Public",
+          "signature": "Public Enum ColorConstants",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ComboBoxConstants",
+          "kind": "Enum",
+          "access": "Public",
+          "signature": "Public Enum ComboBoxConstants",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ControlBorderStyleConstants",
+          "kind": "Enum",
+          "access": "Public",
+          "signature": "Public Enum ControlBorderStyleConstants",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ControlBorderStyleConstantsCustom",
+          "kind": "Enum",
+          "access": "Public",
+          "signature": "Public Enum ControlBorderStyleConstantsCustom",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ControlTypeConstants",
+          "kind": "Enum",
+          "access": "Public",
+          "signature": "Public Enum ControlTypeConstants",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "CreatePropertyBagObject",
+          "kind": "Declare",
+          "access": "Public",
+          "signature": "Public DeclareWide PtrSafe Function CreatePropertyBagObject Lib \"\" Alias \"\" () As stdole.IUnknown",
+          "attributes": [
+            "PreserveSig(False)",
+            "DLLStackCheck(False)",
+            "Hidden",
+            "Restricted"
+          ],
+          "description": null
+        },
+        {
+          "name": "DatabaseTypeConstants",
+          "kind": "Enum",
+          "access": "Public",
+          "signature": "Public Enum DatabaseTypeConstants",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "DataBOFconstants",
+          "kind": "Enum",
+          "access": "Public",
+          "signature": "Public Enum DataBOFconstants",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "DataEOFConstants",
+          "kind": "Enum",
+          "access": "Public",
+          "signature": "Public Enum DataEOFConstants",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "DataErrorConstants",
+          "kind": "Enum",
+          "access": "Public",
+          "signature": "Public Enum DataErrorConstants",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "DataValidateConstants",
+          "kind": "Enum",
+          "access": "Public",
+          "signature": "Public Enum DataValidateConstants",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "DefaultCursorTypeConstants",
+          "kind": "Enum",
+          "access": "Public",
+          "signature": "Public Enum DefaultCursorTypeConstants",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "DockModeConstants",
+          "kind": "Enum",
+          "access": "Public",
+          "signature": "Public Enum DockModeConstants",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "DragConstants",
+          "kind": "Enum",
+          "access": "Public",
+          "signature": "Public Enum DragConstants",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "DragModeConstants",
+          "kind": "Enum",
+          "access": "Public",
+          "signature": "Public Enum DragModeConstants",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "DragOverConstants",
+          "kind": "Enum",
+          "access": "Public",
+          "signature": "Public Enum DragOverConstants",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "DrawModeConstants",
+          "kind": "Enum",
+          "access": "Public",
+          "signature": "Public Enum DrawModeConstants",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "DrawStyleConstants",
+          "kind": "Enum",
+          "access": "Public",
+          "signature": "Public Enum DrawStyleConstants",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "FillStyleConstants",
+          "kind": "Enum",
+          "access": "Public",
+          "signature": "Public Enum FillStyleConstants",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "FillStyleConstantsEx",
+          "kind": "Enum",
+          "access": "Public",
+          "signature": "Public Enum FillStyleConstantsEx",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "FormArrangeConstants",
+          "kind": "Enum",
+          "access": "Public",
+          "signature": "Public Enum FormArrangeConstants",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "FormBorderStyleConstants",
+          "kind": "Enum",
+          "access": "Public",
+          "signature": "Public Enum FormBorderStyleConstants",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "FormShowConstants",
+          "kind": "Enum",
+          "access": "Public",
+          "signature": "Public Enum FormShowConstants",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "FormWindowStateConstants",
+          "kind": "Enum",
+          "access": "Public",
+          "signature": "Public Enum FormWindowStateConstants",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "HitResultConstants",
+          "kind": "Enum",
+          "access": "Public",
+          "signature": "Public Enum HitResultConstants",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "KeyCodeConstants",
+          "kind": "Enum",
+          "access": "Public",
+          "signature": "Public Enum KeyCodeConstants",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "LinkModeConstants",
+          "kind": "Enum",
+          "access": "Public",
+          "signature": "Public Enum LinkModeConstants",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ListBoxConstants",
+          "kind": "Enum",
+          "access": "Public",
+          "signature": "Public Enum ListBoxConstants",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "LoadPictureColorConstants",
+          "kind": "Enum",
+          "access": "Public",
+          "signature": "Public Enum LoadPictureColorConstants",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "LoadPictureSizeConstants",
+          "kind": "Enum",
+          "access": "Public",
+          "signature": "Public Enum LoadPictureSizeConstants",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "LoadResConstants",
+          "kind": "Enum",
+          "access": "Public",
+          "signature": "Public Enum LoadResConstants",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "LogEventTypeConstants",
+          "kind": "Enum",
+          "access": null,
+          "signature": "Enum LogEventTypeConstants",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "LogModeConstants",
+          "kind": "Enum",
+          "access": null,
+          "signature": "Enum LogModeConstants",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "MenuAccelConstants",
+          "kind": "Enum",
+          "access": "Public",
+          "signature": "Public Enum MenuAccelConstants",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "MenuControlConstants",
+          "kind": "Enum",
+          "access": "Public",
+          "signature": "Public Enum MenuControlConstants",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "MouseButtonConstants",
+          "kind": "Enum",
+          "access": "Public",
+          "signature": "Public Enum MouseButtonConstants",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "MousePointerConstants",
+          "kind": "Enum",
+          "access": "Public",
+          "signature": "Public Enum MousePointerConstants",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "MultiSelectConstants",
+          "kind": "Enum",
+          "access": "Public",
+          "signature": "Public Enum MultiSelectConstants",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "NegotiatePositionConstants",
+          "kind": "Enum",
+          "access": "Public",
+          "signature": "Public Enum NegotiatePositionConstants",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "OldLinkModeConstants",
+          "kind": "Enum",
+          "access": "Public",
+          "signature": "Public Enum OldLinkModeConstants",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "OLEContainerActivateConstants",
+          "kind": "Enum",
+          "access": "Public",
+          "signature": "Public Enum OLEContainerActivateConstants",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "OLEContainerConstants",
+          "kind": "Enum",
+          "access": "Public",
+          "signature": "Public Enum OLEContainerConstants",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "OLEContainerDisplayTypeConstants",
+          "kind": "Enum",
+          "access": "Public",
+          "signature": "Public Enum OLEContainerDisplayTypeConstants",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "OLEContainerSizeModeConstants",
+          "kind": "Enum",
+          "access": "Public",
+          "signature": "Public Enum OLEContainerSizeModeConstants",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "OLEContainerTypesAllowedConstants",
+          "kind": "Enum",
+          "access": "Public",
+          "signature": "Public Enum OLEContainerTypesAllowedConstants",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "OLEContainerUpdateOptionsConstants",
+          "kind": "Enum",
+          "access": "Public",
+          "signature": "Public Enum OLEContainerUpdateOptionsConstants",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "OLEDragConstants",
+          "kind": "Enum",
+          "access": "Public",
+          "signature": "Public Enum OLEDragConstants",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "OLEDropConstants",
+          "kind": "Enum",
+          "access": "Public",
+          "signature": "Public Enum OLEDropConstants",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "OLEDropEffectConstants",
+          "kind": "Enum",
+          "access": "Public",
+          "signature": "Public Enum OLEDropEffectConstants",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "PaletteModeConstants",
+          "kind": "Enum",
+          "access": "Public",
+          "signature": "Public Enum PaletteModeConstants",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ParentControlsType",
+          "kind": "Enum",
+          "access": "Public",
+          "signature": "Public Enum ParentControlsType",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "PictureTypeConstants",
+          "kind": "Enum",
+          "access": "Public",
+          "signature": "Public Enum PictureTypeConstants",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "PrinterObjectConstants",
+          "kind": "Enum",
+          "access": "Public",
+          "signature": "Public Enum PrinterObjectConstants",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "PrinterObjectConstants_ColorMode",
+          "kind": "Enum",
+          "access": "Public",
+          "signature": "Public Enum PrinterObjectConstants_ColorMode",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "PrinterObjectConstants_Duplex",
+          "kind": "Enum",
+          "access": "Public",
+          "signature": "Public Enum PrinterObjectConstants_Duplex",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "PrinterObjectConstants_Orientation",
+          "kind": "Enum",
+          "access": "Public",
+          "signature": "Public Enum PrinterObjectConstants_Orientation",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "PrinterObjectConstants_PaperBin",
+          "kind": "Enum",
+          "access": "Public",
+          "signature": "Public Enum PrinterObjectConstants_PaperBin",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "PrinterObjectConstants_PaperSize",
+          "kind": "Enum",
+          "access": "Public",
+          "signature": "Public Enum PrinterObjectConstants_PaperSize",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "PrinterObjectConstants_PrintQuality",
+          "kind": "Enum",
+          "access": "Public",
+          "signature": "Public Enum PrinterObjectConstants_PrintQuality",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "QueryUnloadConstants",
+          "kind": "Enum",
+          "access": "Public",
+          "signature": "Public Enum QueryUnloadConstants",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "RasterOpConstants",
+          "kind": "Enum",
+          "access": "Public",
+          "signature": "Public Enum RasterOpConstants",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "RecordsetTypeConstants",
+          "kind": "Enum",
+          "access": "Public",
+          "signature": "Public Enum RecordsetTypeConstants",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ScaleModeConstants",
+          "kind": "Enum",
+          "access": "Public",
+          "signature": "Public Enum ScaleModeConstants",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ScrollBarConstants",
+          "kind": "Enum",
+          "access": "Public",
+          "signature": "Public Enum ScrollBarConstants",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ShapeConstants",
+          "kind": "Enum",
+          "access": "Public",
+          "signature": "Public Enum ShapeConstants",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ShiftConstants",
+          "kind": "Enum",
+          "access": "Public",
+          "signature": "Public Enum ShiftConstants",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ShortcutConstants",
+          "kind": "Enum",
+          "access": null,
+          "signature": "Enum ShortcutConstants",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "StartUpPositionConstants",
+          "kind": "Enum",
+          "access": "Public",
+          "signature": "Public Enum StartUpPositionConstants",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "StorageTypeContants",
+          "kind": "Enum",
+          "access": null,
+          "signature": "Enum StorageTypeContants",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SystemColorConstants",
+          "kind": "Enum",
+          "access": "Public",
+          "signature": "Public Enum SystemColorConstants",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "VariantTypeConstants",
+          "kind": "Enum",
+          "access": "Public",
+          "signature": "Public Enum VariantTypeConstants",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "VerticalAlignmentConstants",
+          "kind": "Enum",
+          "access": "Public",
+          "signature": "Public Enum VerticalAlignmentConstants",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ZOrderConstants",
+          "kind": "Enum",
+          "access": "Public",
+          "signature": "Public Enum ZOrderConstants",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "ContainedControls",
+      "kind": "Interface",
+      "file": "ContainedControls.twin",
+      "access": "Public",
+      "attributes": [
+        "InterfaceId"
+      ],
+      "implements": [],
+      "inherits": "stdole.IDispatch",
+      "members": [],
+      "events": []
+    },
+    {
+      "name": "DataMembers",
+      "kind": "Interface",
+      "file": "DataMembers.twin",
+      "access": "Public",
+      "attributes": [
+        "InterfaceId"
+      ],
+      "implements": [],
+      "inherits": "stdole.IDispatch",
+      "members": [],
+      "events": []
+    },
+    {
+      "name": "DataObject",
+      "kind": "Interface",
+      "file": "DataObject.twin",
+      "access": "Public",
+      "attributes": [
+        "InterfaceId"
+      ],
+      "implements": [],
+      "inherits": null,
+      "members": [
+        {
+          "name": "AvailableFormats",
+          "kind": "Function",
+          "access": null,
+          "signature": "Function AvailableFormats() As DataObjectFormats",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Clear",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub Clear()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Files",
+          "kind": "Function",
+          "access": null,
+          "signature": "Function Files() As DataObjectFiles",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GetData",
+          "kind": "Function",
+          "access": null,
+          "signature": "Function GetData([TypeHint(ClipboardConstants)] ByVal sFormat As Integer) As Variant",
+          "attributes": [
+            "TypeHint(ClipboardConstants)"
+          ],
+          "description": null
+        },
+        {
+          "name": "GetDataByName",
+          "kind": "Function",
+          "access": null,
+          "signature": "Function GetDataByName(ByVal Format As String) As Variant",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GetFormat",
+          "kind": "Function",
+          "access": null,
+          "signature": "Function GetFormat([TypeHint(ClipboardConstants)] ByVal sFormat As Integer) As Boolean",
+          "attributes": [
+            "TypeHint(ClipboardConstants)"
+          ],
+          "description": null
+        },
+        {
+          "name": "GetFormatByName",
+          "kind": "Function",
+          "access": null,
+          "signature": "Function GetFormatByName(ByVal Format As String) As Boolean",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GetIDataObject",
+          "kind": "Function",
+          "access": null,
+          "signature": "Function GetIDataObject() As tbInternal_IDataObject",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SetData",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub SetData(Optional ByVal Value As Variant, [TypeHint(ClipboardConstants)] Optional ByVal Format As Variant)",
+          "attributes": [
+            "Optional",
+            "TypeHint(ClipboardConstants)"
+          ],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "DataObjectFiles",
+      "kind": "Interface",
+      "file": "DataObject.twin",
+      "access": "Public",
+      "attributes": [
+        "InterfaceId"
+      ],
+      "implements": [],
+      "inherits": null,
+      "members": [
+        {
+          "name": "_NewEnum",
+          "kind": "Function",
+          "access": null,
+          "signature": "Function _NewEnum() As stdole.IUnknown",
+          "attributes": [
+            "Enumerator"
+          ],
+          "description": null
+        },
+        {
+          "name": "Add",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub Add(ByVal Filename As String, Optional index As Variant)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Clear",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub Clear()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Count",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Get Count() As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Item",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Get Item(ByVal Index As Long) As String",
+          "attributes": [
+            "DefaultMember"
+          ],
+          "description": null
+        },
+        {
+          "name": "Remove",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub Remove(ByVal index As Variant)",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "DataObjectFormat",
+      "kind": "Interface",
+      "file": "DataObject.twin",
+      "access": "Public",
+      "attributes": [
+        "InterfaceId"
+      ],
+      "implements": [],
+      "inherits": null,
+      "members": [
+        {
+          "name": "AspectIndex",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Get AspectIndex() As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "AspectIndex",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Let AspectIndex(ByVal Value As Long)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "AspectType",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Get AspectType() As AspectTypeConstants",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "AspectType",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Let AspectType(ByVal Value As AspectTypeConstants)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "FormatType",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Get FormatType() As ClipboardConstants",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "FormatType",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Let FormatType(ByVal Value As ClipboardConstants)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Name",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Get Name() As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "StorageType",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Get StorageType() As StorageTypeContants",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "StorageType",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Let StorageType(ByVal Value As StorageTypeContants)",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "DataObjectFormats",
+      "kind": "Interface",
+      "file": "DataObject.twin",
+      "access": "Public",
+      "attributes": [
+        "InterfaceId"
+      ],
+      "implements": [],
+      "inherits": null,
+      "members": [
+        {
+          "name": "_NewEnum",
+          "kind": "Function",
+          "access": null,
+          "signature": "Function _NewEnum() As Variant",
+          "attributes": [
+            "Enumerator"
+          ],
+          "description": null
+        },
+        {
+          "name": "Count",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Get Count() As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Item",
+          "kind": "Function",
+          "access": null,
+          "signature": "Function Item(ByVal Index As Long) As DataObjectFormat",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "ErrorCallstack",
+      "kind": "Interface",
+      "file": "ErrorCallstack.twin",
+      "access": "Public",
+      "attributes": [
+        "InterfaceId"
+      ],
+      "implements": [],
+      "inherits": "stdole.IUnknown",
+      "members": [
+        {
+          "name": "Count",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Get Count() As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Items",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Get Items(ByVal Index As Long) As ErrorStackFrame",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "ErrorContext",
+      "kind": "Interface",
+      "file": "ErrorContext.twin",
+      "access": "Public",
+      "attributes": [
+        "InterfaceId"
+      ],
+      "implements": [],
+      "inherits": "stdole.IUnknown",
+      "members": [
+        {
+          "name": "Callstack",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Get Callstack() As ErrorCallstack",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Description",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Get Description() As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "HelpContext",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Get HelpContext() As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "HelpFile",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Get HelpFile() As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "LastDLLError",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Get LastDLLError() As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Number",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Get Number() As Long",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "OnErrorStatus",
+          "kind": "Enum",
+          "access": null,
+          "signature": "Enum OnErrorStatus",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Source",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Get Source() As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "State",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Get State() As OnErrorStatus",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "State",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Let State(ByVal Value As OnErrorStatus)",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "ErrorStackFrame",
+      "kind": "Interface",
+      "file": "ErrorStackFrame.twin",
+      "access": "Public",
+      "attributes": [
+        "InterfaceId"
+      ],
+      "implements": [],
+      "inherits": "stdole.IUnknown",
+      "members": [
+        {
+          "name": "ModuleName",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Get ModuleName() As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ProcedureName",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Get ProcedureName() As String",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "ProjectName",
+          "kind": "Property",
+          "access": null,
+          "signature": "Property Get ProjectName() As String",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "Hyperlink",
+      "kind": "Interface",
+      "file": "Hyperlink.twin",
+      "access": "Public",
+      "attributes": [
+        "InterfaceId"
+      ],
+      "implements": [],
+      "inherits": "stdole.IDispatch",
+      "members": [],
+      "events": []
+    },
+    {
+      "name": "ParentControls",
+      "kind": "Interface",
+      "file": "ParentControls.twin",
+      "access": "Public",
+      "attributes": [
+        "InterfaceId"
+      ],
+      "implements": [],
+      "inherits": "stdole.IDispatch",
+      "members": [],
+      "events": []
+    },
+    {
+      "name": "PropertyBag_VB5",
+      "kind": "Interface",
+      "file": "PropertyBag.twin",
+      "access": "Public",
+      "attributes": [
+        "InterfaceId"
+      ],
+      "implements": [],
+      "inherits": "stdole.IDispatch",
+      "members": [
+        {
+          "name": "ReadProperty",
+          "kind": "Function",
+          "access": null,
+          "signature": "Function ReadProperty(ByVal Name As String, Optional ByVal DefaultValue As Variant) As Variant",
+          "attributes": [
+            "DispId(1)"
+          ],
+          "description": null
+        },
+        {
+          "name": "WriteProperty",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub WriteProperty(ByVal Name As String, ByVal Value As Variant, Optional ByVal DefaultValue As Variant)",
+          "attributes": [
+            "DispId(2)"
+          ],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "tbInternal_IAdviseSink",
+      "kind": "Interface",
+      "file": "DataObject.twin",
+      "access": "Public",
+      "attributes": [
+        "InterfaceId"
+      ],
+      "implements": [],
+      "inherits": "stdole.IUnknown",
+      "members": [
+        {
+          "name": "OnClose",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub OnClose()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "OnDataChange",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub OnDataChange(ByVal pFormatetc As LongPtr, ByVal pStgmed As LongPtr)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "OnRename",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub OnRename(ByVal pmk As tbInternal_IMoniker)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "OnSave",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub OnSave()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "OnViewChange",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub OnViewChange(ByVal dwAspect As Long, ByVal lindex As Long)",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "tbInternal_IDataObject",
+      "kind": "Interface",
+      "file": "DataObject.twin",
+      "access": "Public",
+      "attributes": [
+        "InterfaceId"
+      ],
+      "implements": [],
+      "inherits": "stdole.IUnknown",
+      "members": [
+        {
+          "name": "DAdvise",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub DAdvise(ByRef pformatetc As tbInternal_FORMATETC, ByVal advf As Long, ByVal pAdvSink As tbInternal_IAdviseSink, ByRef pdwConnection As Long)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "DUnadvise",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub DUnadvise(ByVal dwConnection As Long)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "EnumDAdvise",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub EnumDAdvise(ByRef ppenumAdvise As tbInternal_IEnumSTATDATA)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "EnumFormatEtc",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub EnumFormatEtc(ByVal dwDirection As Long, ByRef ppenumFormatEtc As tbInternal_IEnumFORMATETC)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GetCanonicalFormatEtc",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub GetCanonicalFormatEtc(ByRef pformatectIn As tbInternal_FORMATETC, ByRef pformatetcOut As tbInternal_FORMATETC)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GetData",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub GetData(ByRef pformatetcIn As tbInternal_FORMATETC, ByRef pmedium As tbInternal_STGMEDIUM)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "GetDataHere",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub GetDataHere(ByRef pformatetcIn As tbInternal_FORMATETC, ByRef pmedium As tbInternal_STGMEDIUM)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "QueryGetData",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub QueryGetData(ByRef pformatetc As tbInternal_FORMATETC)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "SetData",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub SetData(ByRef pformatetc As tbInternal_FORMATETC, ByRef pmedium As tbInternal_STGMEDIUM, ByVal fRelease As Long)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "tbInternal_FORMATETC",
+          "kind": "Type",
+          "access": null,
+          "signature": "Type tbInternal_FORMATETC",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "tbInternal_STGMEDIUM",
+          "kind": "Type",
+          "access": null,
+          "signature": "Type tbInternal_STGMEDIUM",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "tbInternal_TYMED",
+          "kind": "Enum",
+          "access": null,
+          "signature": "Enum tbInternal_TYMED",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "tbInternal_IEnumFORMATETC",
+      "kind": "Interface",
+      "file": "DataObject.twin",
+      "access": "Public",
+      "attributes": [
+        "InterfaceId"
+      ],
+      "implements": [],
+      "inherits": "stdole.IUnknown",
+      "members": [
+        {
+          "name": "Clone",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub Clone(ByRef ppenum As tbInternal_IEnumFORMATETC)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Next",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub Next(ByVal celt As Long, ByRef rgelt As tbInternal_FORMATETC, ByRef pceltFetched As Long)",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Reset",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub Reset()",
+          "attributes": [],
+          "description": null
+        },
+        {
+          "name": "Skip",
+          "kind": "Sub",
+          "access": null,
+          "signature": "Sub Skip(ByVal celt As Long)",
+          "attributes": [],
+          "description": null
+        }
+      ],
+      "events": []
+    },
+    {
+      "name": "tbInternal_IEnumSTATDATA",
+      "kind": "Interface",
+      "file": "DataObject.twin",
+      "access": "Public",
+      "attributes": [
+        "InterfaceId"
+      ],
+      "implements": [],
+      "inherits": "stdole.IUnknown",
+      "members": [],
+      "events": []
+    },
+    {
+      "name": "tbInternal_IMoniker",
+      "kind": "Interface",
+      "file": "DataObject.twin",
+      "access": "Public",
+      "attributes": [
+        "InterfaceId"
+      ],
+      "implements": [],
+      "inherits": "stdole.IUnknown",
+      "members": [],
+      "events": []
+    }
+  ],
+  "enums": [],
+  "types": []
+}

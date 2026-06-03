@@ -48,7 +48,7 @@ sync  →  analyze  →  draft  →  verify  →  human review
 | C — Analyze stage | ✓ Done | `auditCoverage` returns documented/undocumented; mismatched deferred |
 | D — Documentation reorganization | ✓ Done | Landing pages created; packages moved into Default/, Built-In/, Contributed/ |
 | E — Draft workflow | ✓ Done | `.claude/workflows/doc-draft.mjs`; Haiku triage → Sonnet draft/index |
-| F — Roll out | Not started | Depends on D + E |
+| F — Roll out | In progress | First sync+analyze done; `package_name` mapping + container audit fixes |
 
 The CLI stages (`sync`, `analyze`) accept `--package <name>` (or
 `--packages <a>,<b>`) to limit scope. The draft workflow accepts an
@@ -194,6 +194,39 @@ The group is used when:
 - Determining `indexed_from` format (beta tag vs version string)
 
 ## Version Tracking
+
+### `package_name` frontmatter
+
+When the documentation directory name differs from the internal package
+name (the `symbol` in the manifest), the package's `index.md` carries a
+`package_name` field so the analyze stage can locate existing docs:
+
+```yaml
+---
+title: Assert Package
+package_name: TwinBasicAssertions
+parent: Built-In Packages
+---
+```
+
+The field is a comma-separated list when multiple packages share one
+docs directory (e.g., the three CEF runtime versions):
+
+```yaml
+package_name: cefPackage49, cefPackage109, cefPackage145
+```
+
+When omitted, the analyzer falls back to matching the docs directory
+name against the package name directly. Only add this field when the
+names diverge.
+
+Current mappings:
+
+| Docs directory | `package_name` |
+|---|---|
+| `Built-In/Assert` | `TwinBasicAssertions` |
+| `Built-In/WebView2` | `WebView2Package` |
+| `Built-In/CEF` | `cefPackage49, cefPackage109, cefPackage145` |
 
 ### `indexed_from` frontmatter
 
@@ -844,10 +877,20 @@ identifies documented vs undocumented symbols.
     package name.
 20. Test with one small package (e.g., Assert) end-to-end.
 
-### Phase F: Roll out
+### Phase F: Roll out — In progress
 
-21. Adopt remaining built-in packages one at a time.
-22. Begin contributed package documentation.
+21. ✓ First full sync: 32 contributed + 16 built-in packages synced,
+    snapshots generated, store repo committed.
+22. ✓ Added `package_name` frontmatter field for packages whose docs
+    directory name differs from the internal package name. See
+    `package_name` section above. Mappings: Assert → TwinBasicAssertions,
+    WebView2 → WebView2Package, CEF → cefPackage49/109/145.
+23. ✓ Fixed `auditCoverage` to include container-level (module/class)
+    coverage checks — previously only checked members.
+24. ✓ Updated `findPackageDocsDir` to scan `package_name` frontmatter
+    as a fallback when the docs directory name doesn't match.
+25. Adopt remaining built-in packages one at a time.
+26. Begin contributed package documentation.
 
 ## Parser Improvements (incremental)
 
