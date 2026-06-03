@@ -86,7 +86,9 @@ async function writeToStore(group, symbol, rawFiles, apiJsonStr) {
   for (const f of rawFiles) {
     const ext = path.extname(f.relativePath).toLowerCase();
     if (!SOURCE_EXTS.has(ext)) continue;
-    const dest = path.join(sourcesDir, f.relativePath);
+    let rel = f.relativePath;
+    if (rel.startsWith('Sources/')) rel = rel.slice('Sources/'.length);
+    const dest = path.join(sourcesDir, rel);
     await fs.mkdir(path.dirname(dest), { recursive: true });
     await fs.writeFile(dest, f.content);
   }
@@ -239,7 +241,7 @@ async function runSync(filter) {
   for (const item of unchanged) {
     if (filter && !filter.includes(item.symbol)) continue;
     try {
-      await fs.access(path.join(STORE_PATH, 'contributed', item.symbol));
+      await fs.access(path.join(STORE_PATH, 'contributed', item.symbol, 'sources'));
     } catch {
       contribToDownload.push({ ...item, reason: 'missing-sources' });
       missingContrib.push(item.symbol);
@@ -303,7 +305,7 @@ async function runSync(filter) {
       if (filter && !filter.includes(sym)) continue;
       const group = packageGroup(sym, 'builtin');
       try {
-        await fs.access(path.join(STORE_PATH, group, sym));
+        await fs.access(path.join(STORE_PATH, group, sym, 'sources'));
       } catch {
         console.log(`  Missing sources: ${sym}`);
         release.needsUpdate = true;
