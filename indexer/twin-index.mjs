@@ -10,21 +10,21 @@ import { emitMarkdown } from './lib/emitter.mjs';
 
 const args = process.argv.slice(2);
 let outDir = './package-indexes/';
-let savePackages = false;
+let savePackages = true;
 
 for (let i = 0; i < args.length; i++) {
   if (args[i] === '--out' && args[i + 1]) {
     outDir = args[++i];
-  } else if (args[i] === '--save-packages') {
-    savePackages = true;
+  } else if (args[i] === '--dont-save-packages') {
+    savePackages = false;
   } else if (args[i] === '--help' || args[i] === '-h') {
     console.log('Usage: node indexer/twin-index.mjs [options]');
     console.log('');
     console.log('  Fetch packages from TWINSERV and generate markdown indexes.');
     console.log('');
     console.log('Options:');
-    console.log('  --out <dir>        Output directory (default: ./package-indexes/)');
-    console.log('  --save-packages    Also write package source files to <out>/packages/');
+    console.log('  --out <dir>              Output directory (default: ./package-indexes/)');
+    console.log('  --dont-save-packages     Skip writing package source files to <out>/packages/');
     process.exit(0);
   }
 }
@@ -71,10 +71,29 @@ function indexFiles(files) {
 async function main() {
   await fs.mkdir(outDir, { recursive: true });
   const manifestPath = path.join(outDir, 'manifest.json');
+  const packagesDir = path.join(outDir, 'packages');
 
   // Phase 1: Fetch package index
   console.log('Fetching package index...');
   const { toDownload, unchanged, removed, manifest } = await compareWithManifest(manifestPath);
+
+  // If saving packages, re-download any "unchanged" package whose folder is missing
+  if (savePackages) {
+    const missing = [];
+    const stillUnchanged = [];
+    for (const item of unchanged) {
+      try {
+        await fs.access(path.join(packagesDir, item.symbol));
+        stillUnchanged.push(item);
+      } catch {
+        toDownload.push({ ...item, reason: 'missing-sources' });
+        missing.push(item.symbol);
+      }
+    }
+    unchanged.length = 0;
+    unchanged.push(...stillUnchanged);
+    if (missing.length) console.log(`  Missing sources: ${missing.join(', ')}`);
+  }
 
   const added = toDownload.filter(p => p.reason === 'added');
   const updated = toDownload.filter(p => p.reason === 'updated');
@@ -113,7 +132,6 @@ async function main() {
   }
 
   // Phase 3: Index packages
-  const packagesDir = path.join(outDir, 'packages');
   if (toIndex.length) {
     console.log('\nIndexing packages...');
     for (const pkg of toIndex) {

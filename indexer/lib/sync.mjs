@@ -41,7 +41,7 @@ async function compareWithManifest(manifestPath) {
     } else if (cached.version !== ver) {
       toDownload.push({ id, pkg, version: latest, symbol: latest.symbol, reason: 'updated' });
     } else {
-      unchanged.push(cached.symbol);
+      unchanged.push({ id, pkg, version: latest, symbol: cached.symbol });
     }
   }
 
