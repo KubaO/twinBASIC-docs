@@ -1,6 +1,6 @@
----
+﻿---
 title: ConvertToJson
-parent: JsonConverter Module
+parent: JsonConverter
 permalink: /tB/Packages/Contributed/VBA_JSON/JsonConverter/ConvertToJson
 has_toc: false
 ---

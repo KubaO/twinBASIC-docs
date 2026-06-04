@@ -1,6 +1,6 @@
----
+﻿---
 title: ParseIso
-parent: JsonConverter Module
+parent: JsonConverter
 permalink: /tB/Packages/Contributed/VBA_JSON/JsonConverter/ParseIso
 has_toc: false
 ---

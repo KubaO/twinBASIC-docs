@@ -1,6 +1,6 @@
----
+﻿---
 title: ParseJson
-parent: JsonConverter Module
+parent: JsonConverter
 permalink: /tB/Packages/Contributed/VBA_JSON/JsonConverter/ParseJson
 has_toc: false
 ---
