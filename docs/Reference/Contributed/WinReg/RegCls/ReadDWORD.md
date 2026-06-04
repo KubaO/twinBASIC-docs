@@ -1,6 +1,6 @@
----
+﻿---
 title: ReadDWORD
-parent: RegCls Class
+parent: RegCls
 permalink: /tB/Packages/Contributed/WinReg/RegCls/ReadDWORD
 has_toc: false
 ---

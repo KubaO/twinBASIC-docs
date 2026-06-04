@@ -1,4 +1,4 @@
----
+﻿---
 title: CreateKey
 parent: RegCls
 permalink: /tB/Packages/Contributed/WinReg/RegCls/CreateKey

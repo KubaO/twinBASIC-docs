@@ -1,4 +1,4 @@
----
+﻿---
 title: GetRegistryValueType
 parent: RegCls
 permalink: /tB/Packages/Contributed/WinReg/RegCls/GetRegistryValueType

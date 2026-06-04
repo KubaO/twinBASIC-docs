@@ -1,4 +1,4 @@
----
+﻿---
 title: DeleteValue
 parent: RegCls
 permalink: /tB/Packages/Contributed/WinReg/RegCls/DeleteValue

@@ -1,4 +1,4 @@
----
+﻿---
 title: ConvertValueToString
 parent: RegCls
 permalink: /tB/Packages/Contributed/WinReg/RegCls/ConvertValueToString

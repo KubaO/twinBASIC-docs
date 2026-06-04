@@ -1,6 +1,6 @@
----
+﻿---
 title: WriteDWORD
-parent: RegCls Class
+parent: RegCls
 permalink: /tB/Packages/Contributed/WinReg/RegCls/WriteDWORD
 has_toc: false
 ---

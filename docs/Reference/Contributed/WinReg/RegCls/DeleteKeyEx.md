@@ -1,4 +1,4 @@
----
+﻿---
 title: DeleteKeyEx
 parent: RegCls
 permalink: /tB/Packages/Contributed/WinReg/RegCls/DeleteKeyEx

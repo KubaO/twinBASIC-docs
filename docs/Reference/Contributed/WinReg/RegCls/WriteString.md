@@ -1,4 +1,4 @@
----
+﻿---
 title: WriteString
 parent: RegCls
 permalink: /tB/Packages/Contributed/WinReg/RegCls/WriteString

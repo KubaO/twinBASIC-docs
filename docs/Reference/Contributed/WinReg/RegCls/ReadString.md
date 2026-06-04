@@ -1,6 +1,6 @@
----
+﻿---
 title: ReadString
-parent: RegCls Class
+parent: RegCls
 permalink: /tB/Packages/Contributed/WinReg/RegCls/ReadString
 has_toc: false
 ---

@@ -1,4 +1,4 @@
----
+﻿---
 title: KeyExists
 parent: RegCls
 permalink: /tB/Packages/Contributed/WinReg/RegCls/KeyExists

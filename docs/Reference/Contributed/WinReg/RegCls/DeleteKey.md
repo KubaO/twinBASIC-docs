@@ -1,6 +1,6 @@
----
+﻿---
 title: DeleteKey
-parent: RegCls Class
+parent: RegCls
 permalink: /tB/Packages/Contributed/WinReg/RegCls/DeleteKey
 has_toc: false
 ---

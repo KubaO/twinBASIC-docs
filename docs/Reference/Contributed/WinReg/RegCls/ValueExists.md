@@ -1,6 +1,6 @@
----
+﻿---
 title: ValueExists
-parent: RegCls Class
+parent: RegCls
 permalink: /tB/Packages/Contributed/WinReg/RegCls/ValueExists
 has_toc: false
 ---

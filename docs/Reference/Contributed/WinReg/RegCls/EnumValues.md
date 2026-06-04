@@ -1,4 +1,4 @@
----
+﻿---
 title: EnumValues
 parent: RegCls
 permalink: /tB/Packages/Contributed/WinReg/RegCls/EnumValues
