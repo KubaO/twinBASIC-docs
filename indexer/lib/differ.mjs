@@ -12,6 +12,10 @@ function flattenSymbols(apiJson) {
       key: `${mod.kind}:${mod.name}`,
     });
 
+    // Skip members/events of Private containers — they are not
+    // part of the package's public API surface.
+    if (mod.access === 'Private') continue;
+
     for (const mem of mod.members || []) {
       symbols.push({
         container: mod.name,
@@ -110,13 +114,13 @@ function auditCoverage(apiJson, docPageMap) {
   const undocumented = [];
 
   for (const mod of apiJson.modules || []) {
-    if (mod.access !== 'Private') {
-      const page = docPageMap.get(mod.name);
-      if (page) {
-        documented.push({ name: mod.name, kind: mod.kind, access: mod.access, container: null, file: mod.file, docPage: page });
-      } else {
-        undocumented.push({ name: mod.name, kind: mod.kind, access: mod.access, container: null, file: mod.file });
-      }
+    if (mod.access === 'Private') continue;
+
+    const page = docPageMap.get(mod.name);
+    if (page) {
+      documented.push({ name: mod.name, kind: mod.kind, access: mod.access, container: null, file: mod.file, docPage: page });
+    } else {
+      undocumented.push({ name: mod.name, kind: mod.kind, access: mod.access, container: null, file: mod.file });
     }
 
     for (const mem of mod.members || []) {
