@@ -263,6 +263,53 @@ indexed_from: 1.3.0
 Tracking is package-level only. Individual member pages do not carry
 `indexed_from`.
 
+### `exclude_from_docs` and `exclude_kinds` frontmatter
+
+Many packages expose Public symbols that are internal implementation
+details — WinAPI `Declare` wrappers, private helper modules declared
+Public for cross-module access, etc. Two optional frontmatter fields
+in a package's `index.md` control which symbols the analyze stage
+filters out before generating the change report:
+
+```yaml
+---
+title: WinEventLogLib Package
+exclude_from_docs:
+  - EventLogHelperPrivate
+  - EventLogAPIs
+exclude_kinds:
+  - Declare
+---
+```
+
+**`exclude_from_docs`** — a YAML list of container names (modules,
+classes, interfaces). Excluding a container also excludes all its
+members and events. Members cannot be excluded individually (a Public
+member on a documented container should be documented).
+
+**`exclude_kinds`** — a YAML list of declaration kinds (`Declare`,
+`Const`, `Field`, etc.). Any symbol whose kind matches is excluded
+regardless of which container it belongs to. Most useful for `Declare`
+(WinAPI wrappers) across an entire package.
+
+A symbol is excluded if **either** condition matches — its container
+name appears in `exclude_from_docs`, OR its kind appears in
+`exclude_kinds`.
+
+The filtering applies in both analyze modes:
+- **Audit mode**: excluded symbols are omitted from the undocumented
+  list, so the draft workflow never creates pages for them.
+- **Update mode**: excluded symbols are omitted from the added /
+  modified / removed lists.
+
+The report summary includes an `excluded` count so the developer can
+see how many symbols were filtered.
+
+Implementation: the `readExclusions()` helper in `twin-index.mjs`
+parses both fields from the index.md frontmatter. The exclusion
+predicate is passed to `auditCoverage()` and applied to `diffApi()`
+results in `analyzeUpdate()`.
+
 ### Committed snapshots (`indexer/snapshots/`)
 
 The `api.json` files under `indexer/snapshots/` are committed to the
@@ -924,12 +971,10 @@ false-positive "modified" reports.
 
 ## Known Limitations
 
-- **API internals in audit results**: `auditCoverage` includes all
-  Public symbols, but some (WinAPI `Declare` statements, internal helper
-  modules) are implementation details. The draft workflow creates pages
-  for them; the developer should skip or delete low-value pages during
-  review. A future enhancement could let packages opt out specific
-  modules or symbol kinds from audit.
+- **API internals in audit results**: resolved — the
+  `exclude_from_docs` and `exclude_kinds` frontmatter fields let
+  packages opt out internal containers and symbol kinds from the
+  analyze report. See the frontmatter section above.
 
 - **Inline-documented members**: packages that document all members on
   the container page (e.g., Assert puts 15 functions on `Exact.md`)

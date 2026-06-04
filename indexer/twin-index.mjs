@@ -141,6 +141,39 @@ async function readIndexedFrom(filePath) {
   }
 }
 
+function parseYamlList(content, field) {
+  const re = new RegExp(`^${field}:\\s*\\n((?:[ \\t]+- .+\\n?)*)`, 'm');
+  const m = content.match(re);
+  if (!m) return [];
+  return m[1]
+    .split('\n')
+    .map(line => line.replace(/^\s+-\s*/, '').trim())
+    .filter(Boolean);
+}
+
+async function readExclusions(filePath) {
+  try {
+    const content = await fs.readFile(filePath, 'utf-8');
+    return {
+      containers: new Set(parseYamlList(content, 'exclude_from_docs')),
+      kinds: new Set(parseYamlList(content, 'exclude_kinds')),
+    };
+  } catch {
+    return { containers: new Set(), kinds: new Set() };
+  }
+}
+
+function isExcluded(sym, exclusions) {
+  if (!exclusions) return false;
+  // Exclude if the symbol's kind matches
+  if (exclusions.kinds.has(sym.kind)) return true;
+  // Exclude if the symbol IS an excluded container
+  if (!sym.container && exclusions.containers.has(sym.name)) return true;
+  // Exclude if the symbol belongs to an excluded container
+  if (sym.container && exclusions.containers.has(sym.container)) return true;
+  return false;
+}
+
 async function scanDocPages(docsDir) {
   const pages = new Map();
   if (!docsDir) return pages;
@@ -416,12 +449,13 @@ async function runAnalyze(filter) {
     const docsDir = await findPackageDocsDir(name, group, packageNameMap);
     const indexMdPath = docsDir ? path.join(docsDir, 'index.md') : null;
     const indexedFrom = indexMdPath ? await readIndexedFrom(indexMdPath) : null;
+    const exclusions = indexMdPath ? await readExclusions(indexMdPath) : null;
 
     let report;
     if (indexedFrom) {
-      report = await analyzeUpdate(name, group, current, indexedFrom, docsDir);
+      report = await analyzeUpdate(name, group, current, indexedFrom, docsDir, exclusions);
     } else {
-      report = await analyzeAudit(name, group, current, docsDir);
+      report = await analyzeAudit(name, group, current, docsDir, exclusions);
     }
 
     allReports.push(report);
@@ -433,7 +467,7 @@ async function runAnalyze(filter) {
   console.log(`\nReport written to ${reportPath}`);
 }
 
-async function analyzeUpdate(name, group, current, indexedFrom, docsDir) {
+async function analyzeUpdate(name, group, current, indexedFrom, docsDir, exclusions) {
   const snapshotRel = `indexer/snapshots/${group}/${name}/api.json`;
   let baseline = null;
   try {
@@ -445,16 +479,26 @@ async function analyzeUpdate(name, group, current, indexedFrom, docsDir) {
     if (baseline && baseline.version !== indexedFrom) {
       console.log(`  Warning: indexed_from (${indexedFrom}) != snapshot version (${baseline.version})`);
     }
-    return analyzeAudit(name, group, current, docsDir);
+    return analyzeAudit(name, group, current, docsDir, exclusions);
   }
 
   const diff = diffApi(baseline, current);
   const docPages = await scanDocPages(docsDir);
 
-  const publicAdded = diff.added.filter(s => s.access !== 'Private');
-  const publicModified = diff.modified.filter(m => m.current.access !== 'Private');
-  const publicRemoved = diff.removed.filter(s => s.access !== 'Private');
-  const publicUnchanged = diff.unchanged.filter(s => s.access !== 'Private');
+  let excludedCount = 0;
+  const notExcluded = s => {
+    if (isExcluded(s, exclusions)) { excludedCount++; return false; }
+    return true;
+  };
+  const notExcludedMod = m => {
+    if (isExcluded(m.current, exclusions)) { excludedCount++; return false; }
+    return true;
+  };
+
+  const publicAdded = diff.added.filter(s => s.access !== 'Private').filter(notExcluded);
+  const publicModified = diff.modified.filter(m => m.current.access !== 'Private').filter(notExcludedMod);
+  const publicRemoved = diff.removed.filter(s => s.access !== 'Private').filter(notExcluded);
+  const publicUnchanged = diff.unchanged.filter(s => s.access !== 'Private').filter(notExcluded);
 
   const tasks = [];
 
@@ -510,16 +554,19 @@ async function analyzeUpdate(name, group, current, indexedFrom, docsDir) {
       to_update: publicModified.length,
       to_remove: 0,
       flagged: publicRemoved.length,
+      excluded: excludedCount,
     },
   };
 }
 
-async function analyzeAudit(name, group, current, docsDir) {
+async function analyzeAudit(name, group, current, docsDir, exclusions) {
   const docPages = await scanDocPages(docsDir);
   const coverage = auditCoverage(current, docPages);
 
+  let excludedCount = 0;
   const tasks = [];
   for (const sym of coverage.undocumented) {
+    if (isExcluded(sym, exclusions)) { excludedCount++; continue; }
     tasks.push({
       action: 'create',
       module: sym.container || sym.name,
@@ -530,6 +577,12 @@ async function analyzeAudit(name, group, current, docsDir) {
     });
   }
 
+  // Also count excluded symbols from the documented list for accurate totals
+  const documentedFiltered = coverage.documented.filter(s => {
+    if (isExcluded(s, exclusions)) { excludedCount++; return false; }
+    return true;
+  });
+
   return {
     package: name,
     group,
@@ -538,12 +591,13 @@ async function analyzeAudit(name, group, current, docsDir) {
     to: current.version,
     tasks,
     summary: {
-      total_public: coverage.documented.length + coverage.undocumented.length,
-      documented: coverage.documented.length,
-      to_create: coverage.undocumented.length,
+      total_public: documentedFiltered.length + tasks.length,
+      documented: documentedFiltered.length,
+      to_create: tasks.length,
       to_update: 0,
       to_remove: 0,
       flagged: 0,
+      excluded: excludedCount,
     },
   };
 }
@@ -557,4 +611,5 @@ function printReport(report) {
   if (s.to_create) console.log(`  To create: ${s.to_create}`);
   if (s.to_update) console.log(`  To update: ${s.to_update}`);
   if (s.flagged) console.log(`  Flagged for removal: ${s.flagged}`);
+  if (s.excluded) console.log(`  Excluded: ${s.excluded}`);
 }
