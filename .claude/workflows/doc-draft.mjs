@@ -150,6 +150,11 @@ For each task in each package report:
    - existingPagePath: for "update" tasks, use the task's doc_page field
    - reason, oldSignature, newSignature: carry over from update tasks
 
+Do NOT write intermediate output to files. Return the data via the
+structured output schema only — your response is consumed by the
+workflow directly. Files like enriched_tasks.json, final_output.json,
+etc. should never be created.
+
 Return the flat enriched task list and flagged items.`,
   { schema: TRIAGE_SCHEMA, label: 'triage', model: 'haiku' }
 )
