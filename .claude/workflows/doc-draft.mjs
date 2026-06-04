@@ -135,8 +135,11 @@ For each task in each package report:
    - version: the report's "to" field
    - sourcePath: indexer/.packages/{group}/{package}/sources/{task.file}
      (group is lowercase: "default", "built-in", "contributed")
-   - targetPath: check the filesystem to determine:
-     * For member symbols (Sub/Function/Property/Event/Field):
+   - targetPath: MUST be relative to docs/Reference/{groupDir}/{package}/ — do NOT include that prefix.
+     Examples: "RegCls/DeleteKey.md", "Enumerations/WindowState.md", "EventLog.md"
+     WRONG: "docs/Reference/Built-In/WinReg/RegCls/DeleteKey.md"
+     Check the filesystem to determine:
+     * For member symbols (Sub/Function/Property/Event/Field/Declare/Const):
        If docs/Reference/{groupDir}/{package}/{task.module}/ exists as a directory → {module}/{symbol}.md
        If {module}.md exists as a single file → target IS that file (member documented inline)
        Otherwise → create folder-style: {module}/{symbol}.md
@@ -144,7 +147,6 @@ For each task in each package report:
        Follow existing package conventions (folder-style or single-file)
      * For Enum: if Enumerations/ subdirectory exists → Enumerations/{symbol}.md. Otherwise → {symbol}.md
      * For Type: {symbol}.md
-     All paths relative to docs/Reference/{groupDir}/{package}/
    - existingPagePath: for "update" tasks, use the task's doc_page field
    - reason, oldSignature, newSignature: carry over from update tasks
 
@@ -258,7 +260,9 @@ function buildDraftPrompt(task) {
   lines.push('')
   lines.push('DOCUMENTATION CONVENTIONS:')
   lines.push('- Frontmatter: title, parent, permalink, has_toc: false.')
-  lines.push('  parent: the module/class title for member pages, or "' + task.package + ' Package" for top-level pages.')
+  lines.push('  parent: MUST match the exact title: field of the parent page.')
+  lines.push('  For member pages inside a container folder, read the container page to get its exact title (usually the bare name like "RegCls", NOT "RegCls Class").')
+  lines.push('  For top-level container pages, use "' + task.package + ' Package".')
   lines.push('  permalink: follow the URL scheme in WIP.md (cross-section linking table).')
   lines.push('- Bold (**...**) for keywords/literals; italic (*...*) for placeholders.')
   lines.push('- Parameters: definition-list format (term on own line, : definition indented).')
