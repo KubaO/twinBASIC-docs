@@ -109,24 +109,34 @@ export function renderSideband(additions) {
  *   sections: Section[] — each section parsed from a chunk delimited by `---`
  *
  * The parser is forgiving: anything it can't categorise gets preserved as
- * part of a section body so we never silently drop reviewer content.
+ * part of a section body so we never silently drop reviewer content. A chunk
+ * after a `---` that does not start with `## ` has no section to go in, so it
+ * throws, naming the chunk's first line, rather than being dropped.
  */
 export function parseStaging(content) {
   const text = content.replace(/\r\n/g, '\n')
   const lines = text.split('\n')
 
-  // Split on lines that are exactly "---".
+  // Split on lines that are exactly "---", keeping each chunk's first line
+  // number for the error below.
   const chunks = []
+  const starts = []
   let current = []
-  for (const line of lines) {
-    if (line === '---') {
+  let start = 1
+  for (let i = 0; i < lines.length; i++) {
+    if (lines[i] === '---') {
       chunks.push(current)
+      starts.push(start)
       current = []
+      start = i + 2
     } else {
-      current.push(line)
+      current.push(lines[i])
     }
   }
-  if (current.length || chunks.length === 0) chunks.push(current)
+  if (current.length || chunks.length === 0) {
+    chunks.push(current)
+    starts.push(start)
+  }
 
   // First chunk = preamble + first section.  Subsequent chunks = sections.
   // Trailing chunk after the last `---` is usually blank lines; preserve as
@@ -150,7 +160,18 @@ export function parseStaging(content) {
   for (let i = 1; i < chunks.length; i++) {
     if (!chunks[i].length) continue
     const s = parseSection(chunks[i])
-    if (s) sections.push(s)
+    if (s) {
+      sections.push(s)
+      continue
+    }
+    // parseSection returns null for a chunk of blank lines, which is dropped,
+    // and for one that does not start with "## ", which is refused.
+    const first = chunks[i].findIndex((l) => l !== '')
+    if (first >= 0) {
+      throw new Error(`staging.md line ${starts[i] + first} follows a "---" line but is not a ` +
+                      `"## " heading, so it belongs to no section (a "---" inside a code sample ` +
+                      `splits the file too): ${chunks[i][first]}`)
+    }
   }
 
   // Strip leading/trailing blank lines from preamble.

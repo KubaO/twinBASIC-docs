@@ -1109,6 +1109,22 @@ malformed one.
 the run fails naming the line. The real `staging.md` parses to the same 1,160 sections and
 serialises to the same bytes as before.
 
+**Landed.** `parseStaging` keeps each chunk's first line number. A chunk after a `---` whose
+first non-empty line is not a `## ` heading throws `staging.md line <n> follows a "---" line
+but is not a "## " heading, so it belongs to no section (a "---" inside a code sample splits
+the file too): <text>`. A chunk of empty lines is still dropped, as before. A scratch oracle
+compared HEAD's copy with the working tree. On a file with `---` inside a fenced sample, HEAD
+returned 2 sections and lost `Dim y`, the text after the sample and the section's `_Source
+threads:_` line; now the parse throws, naming line 10, `Dim y`. The real `staging.md` (15,553
+lines) parses to the same 1,160 sections on both sides, and the two parses are identical as
+JSON, so `serializeStaging`, which is unchanged, writes the same bytes. A file whose chunks
+after a `---` are all empty lines, and one that is all preamble, parse as before.
+`graftAdditions` parses before it writes anything, so the throw leaves `staging.md` and the
+state as they were, and the sideband path starts from `freshStaging` and never parses.
+Wisdom.md says so where the reviewer reads about `---` and in the merge steps.
+`compare_trees`: Wisdom.md online and offline, the search data and `book.html`, nothing else.
+Lint clean.
+
 ### C27 — `wisdom: write manifest.json and denied.json atomically`
 
 **A10-5 (R2).** `saveManifest` (`wisdom/discord/messages.mjs:10-12`) and `wisdom.mjs:146`

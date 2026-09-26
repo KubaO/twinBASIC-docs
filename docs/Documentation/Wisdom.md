@@ -79,7 +79,7 @@ The extract step automatically partitions large thread sets into batches of 200,
 
 ## Reviewing staging.md
 
-`staging.md` is the long-lived review file. Each `## ` section is one proposed documentation addition, with structured metadata at the bottom (source thread IDs, confidence level, date range, optional reviewer note). Sections are grouped by target page and delimited by `---` lines.
+`staging.md` is the long-lived review file. Each `## ` section is one proposed documentation addition, with structured metadata at the bottom (source thread IDs, confidence level, date range, optional reviewer note). Sections are grouped by target page and delimited by `---` lines. The first line after a `---`, blank lines aside, must be a section's `## ` heading: the next merge stops at anything else, naming its line, rather than drop it.
 
 **Removing sections.** Delete any section that is not useful --- the removal is stable. If the source thread is unchanged on the next run, the watermark filter skips it entirely and the section stays gone. If the thread later receives new messages, the thread re-enters the pipeline and the agent may produce a fresh finding that accounts for the new context; it reappears with a `[REFINED?]` marker so the reviewer knows it is a revision of something already triaged.
 
@@ -288,7 +288,7 @@ The pipeline runs both stages without a barrier --- Stage 2 for group A starts a
 1. **Collect results**: read all `extract-results-*.json` files and concatenate their additions arrays.
 
 2. **Graft into staging.md** (`extract/merger.mjs` --- `graftAdditions`):
-   - Parse existing `staging.md` into `{ preamble, sections[] }`. The parser splits on `---` delimiter lines, then parses each chunk into heading (target_page + section + optional marker), body lines, and trailing meta lines (source threads, confidence, date range, reviewer note).
+   - Parse existing `staging.md` into `{ preamble, sections[] }`. The parser splits on `---` delimiter lines, then parses each chunk into heading (target_page + section + optional marker), body lines, and trailing meta lines (source threads, confidence, date range, reviewer note). A chunk that does not start with a `## ` heading stops the merge, naming its first line, before anything is written.
    - For each addition, compute a match key: `(target_page, section, sorted finding_ids)`.
      - **Key exists in staging.md** (and section is not `[LOCKED]`): replace the section body and meta in place.
      - **Key not in staging, but in the emission log** (from `extract-state.json`): this was previously emitted, reviewed, and removed. Insert with a `[REFINED?]` marker.
