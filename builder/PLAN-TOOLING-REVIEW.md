@@ -1219,6 +1219,44 @@ file is written, and its members step no longer says that only a user token gets
 this bot gets one too, because the endpoint answers it with 403. `compare_trees`: Wisdom.md
 online and offline, the search data and `book.html`, nothing else. Lint clean.
 
+### C27b — `wisdom: export --since keeps the history already stored`
+
+**Found while verifying C27a; the owner chose this fix on 2026-09-26** (see Found while
+implementing). `runExport` loaded an empty manifest under `--since` (`wisdom.mjs:108`), as it
+did before C27a, so every target was fetched from the date, its file was replaced with only
+the messages after it, and the manifest was saved holding only the targets that had some. A
+later plain export took each shortened file as up to date.
+
+**Change.** Under `--since` the manifest is loaded and a stored target is brought up to date
+from its watermark, as in a plain run; `--since` sets the start only of a target with no
+file. A target with no file gets no watermark.
+
+**Verify.** C27a's oracle, with `--since` over stored files and with a date past a file's
+end; the plain and `--force` cases match HEAD.
+
+**Landed.** In `runExport` the manifest is loaded unless `--force` is given, and a stored
+target is fetched after its watermark with or without `--since`. The watermark rule has no
+`--since` branch any more: it moves to the newest snowflake on disk, as in a plain run, and
+only for a target that was stored or got messages, so a target with no file gets no entry.
+That also stops the kind of entry C27a's online pass left for a target whose fetch returned
+nothing. The export's USAGE line says the same. C27a's oracle gains five cases, 21 in all,
+and 18 leave the same exit, files, manifest and requests as HEAD. `since` (101 stored with d1
+and d2, then d10 added, `--since` d5): HEAD requested all three targets after d5, replaced
+101's file with d10 alone and saved `{101: d10}`, dropping 102's entry; now it requests
+`101 after d2` and `103 after d5` alone, 101 holds d1, d2 and d10, and the manifest keeps
+`102: d3`. `since-gap` (`--since` d8, with d6 and d10 added): HEAD lost d1, d2 and d6; now
+101 holds all four.
+`empty-new` (a new target whose only message was deleted): HEAD gave it the entry d4 with no
+file; now it gets none. `since-first`, `since-then-plain` and `force-since` match HEAD: a
+target first exported under `--since` keeps the date as its start, and `--force --since`
+fetches every target from the date and writes each file whole. No online run: a stored target
+under `--since` now takes the path C27a's online pass checked, and one with no file is fetched
+from the date as before. Wisdom.md's Export options row, a paragraph after the date-scoped
+run and step 4 of the control flow say which targets `--since` limits; step 4 lists the fetch
+modes in the order the code chooses them, and Full no longer claims `--force --since`.
+`compare_trees`: Wisdom.md online and offline, the search data and `book.html`, nothing else.
+Lint clean.
+
 ### C28 — `scripts: exit 2 on a crash in three tools that exit 1`
 
 **A5-2 (R2), and the `check_tb_registry.mjs` half of L1-11.** The convention
@@ -2479,6 +2517,15 @@ Defects the review did not have, found by building something this plan asks for.
   file. The stored export was four months old, and the first online pass after the fix
   appended 4,105 messages to 28 files and added 96. Fixed in `wisdom: an incremental export
   fetches new messages in stored targets`.
+
+- **`wisdom.mjs export --since` replaced the history already stored**, found while verifying
+  C27a. Under `--since` the export loaded an empty manifest, so it fetched every target from
+  the date, wrote each file whole with only the messages after it, and saved a manifest
+  holding only the targets that had some. A later plain export took each shortened file as up
+  to date and never fetched the lost messages again: those before the date, and any between
+  the file's end and the date. C27a's oracle measured it: a stored channel holding d1 and d2
+  held d10 alone after an export with `--since` d5. Fixed in `wisdom: export --since keeps the
+  history already stored`.
 
 ## Open questions
 

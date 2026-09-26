@@ -75,6 +75,8 @@ node wisdom/wisdom.mjs extract --since 2025-06-01
 
 The `--since` mode writes to a sideband file (`staging-since-<date>.md`) and does not touch the canonical `staging.md` or the watermark.
 
+For `export`, `--since` limits only the channels and threads not exported yet, which are fetched from the date on, and a later export without `--force` does not go back for their older messages. One already exported is brought up to date as in a run without `--since`, so no stored history is lost. A channel or thread with no message since the date gets no file, so a later export without `--since` fetches its whole history.
+
 The extract step automatically partitions large thread sets into batches of 200, so filtering is optional --- but `--since` and `--channel` reduce the number of threads analysed (and therefore agent invocations and API costs).
 
 ## Reviewing staging.md
@@ -107,7 +109,7 @@ Outputs raw JSON under `wisdom/data/raw/`. Supports incremental runs --- a manif
 
 | Flag | Effect |
 |------|--------|
-| `--since <date>` | Only fetch messages after this ISO 8601 date |
+| `--since <date>` | Fetch a channel or thread not exported yet only from this ISO 8601 date on; one already exported is brought up to date as without it |
 | `--channel <id>` | Restrict to one channel (repeatable) |
 | `--dry-run` | Discover channels/threads; do not fetch messages |
 | `--force` | Ignore manifest; re-fetch all history |
@@ -223,12 +225,12 @@ Also defines `runConcurrent(items, concurrency, fn)` --- a simple worker-pool: s
 4. **Fetch messages** (`discord/messages.mjs`): run targets through `runConcurrent`. For each target:
    - Check manifest: if the target's output file exists, its snowflake is recorded, and the `last_message_id` discovery reported for it is no newer, skip it (up-to-date) without a request.
    - Call `fetchMessages(client, channelId, afterSnowflake)`:
-     - **Since** (`--since`): page forward with `?after=` from the date's snowflake.
-     - **Incremental** (the output file exists and its snowflake is recorded): page forward with `?after=` from that snowflake, collecting new messages.
-     - **Full** (otherwise, which includes every target under `--force`): page backward with `?before=`, collecting all history.
+     - **Incremental** (the output file exists and its snowflake is recorded, with or without `--since`): page forward with `?after=` from that snowflake, collecting new messages.
+     - **Since** (otherwise, under `--since`): page forward with `?after=` from the date's snowflake.
+     - **Full** (otherwise, which includes every target under `--force` without `--since`): page backward with `?before=`, collecting all history.
      - Sort chronologically (ascending snowflake).
-   - Write `{ channel | thread, messages }` to `raw/channels/{id}.json` or `raw/threads/{id}.json`. An incremental fetch appends its messages to those already in the file and stores the channel or thread object discovery returned; a full or `--since` fetch replaces the file.
-   - Update the manifest to the newest snowflake now on disk for the target, and flush it after each target. That is the newest message, or discovery's `last_message_id` when that is newer because its message was deleted, so the next run does not fetch the target again for nothing. Under `--since` it is the newest message fetched.
+   - Write `{ channel | thread, messages }` to `raw/channels/{id}.json` or `raw/threads/{id}.json`. An incremental fetch appends its messages to those already in the file and stores the channel or thread object discovery returned; a since or full fetch writes the file whole.
+   - Update the manifest to the newest snowflake now on disk for the target, and flush it after each target. That is the newest message, or discovery's `last_message_id` when that is newer because its message was deleted, so the next run does not fetch the target again for nothing. A target with no file gets no entry.
 
 The export manifest (`raw/manifest.json`) is a flat `{ channelOrThreadId: highestSnowflake }` object. It governs incremental fetches --- on the next run, only messages newer than the stored snowflake are requested.
 

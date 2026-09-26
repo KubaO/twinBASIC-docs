@@ -105,7 +105,7 @@ async function runExport(flags) {
   writeJson(join(outDir, 'members.json'), members)
 
   // Manifest governs incremental fetches
-  const manifest = (flags.force || flags.since) ? {} : loadManifest(outDir)
+  const manifest = flags.force ? {} : loadManifest(outDir)
   const sinceSnowflake = flags.since
     ? timestampToSnowflake(Date.parse(flags.since))
     : null
@@ -134,7 +134,8 @@ async function runExport(flags) {
     const filePath = join(outDir, subdir, `${target.id}.json`)
 
     // A target already on disk is fetched again only when discovery reports a
-    // message newer than its watermark, and then only for what came after it.
+    // message newer than its watermark, and then only for what came after it,
+    // --since or not.  --since limits how far back any other target goes.
     const watermark = manifest[target.id]
     const stored = Boolean(watermark) && existsSync(filePath)
     const lastId = target.obj.last_message_id
@@ -143,7 +144,7 @@ async function runExport(flags) {
       return
     }
 
-    const after = sinceSnowflake || (stored ? watermark : null)
+    const after = stored ? watermark : sinceSnowflake
     let messages
     try {
       messages = await fetchMessages(client, target.id, after)
@@ -168,16 +169,17 @@ async function runExport(flags) {
         messages: appendMessages(held, messages),
       })
     }
-    // Unless --since left older messages unfetched, every message up to the
-    // newest one discovery reported is now on disk.  The watermark moves past
-    // that one even when it has since been deleted, so that the next run does
-    // not fetch the target again for nothing.
-    const newest = highestSnowflake(sinceSnowflake
-      ? messages
-      : [...messages, { id: lastId }, { id: watermark }].filter(m => m.id))
-    if (newest && newest !== watermark) {
-      manifest[target.id] = newest
-      saveManifest(outDir, manifest)
+    // Every message from where the target's file starts (its first message, or
+    // the --since date) up to the newest one discovery reported is now on disk.
+    // The watermark moves past that one even when it has since been deleted,
+    // so that the next run does not fetch the target again for nothing.  A
+    // target with no file gets no watermark.
+    if (messages.length || stored) {
+      const newest = highestSnowflake([...messages, { id: lastId }, { id: watermark }].filter(m => m.id))
+      if (newest !== watermark) {
+        manifest[target.id] = newest
+        saveManifest(outDir, manifest)
+      }
     }
 
     totalMessages += messages.length
@@ -211,7 +213,7 @@ Commands:
 Export options:
   --guild <id>          Guild (server) ID
   --channel <id>        Restrict to this channel (repeatable)
-  --since <date>        Only content after this ISO 8601 date
+  --since <date>        Fetch targets not exported yet only from this ISO 8601 date
   --force               Ignore manifest; re-fetch all history
   --out <dir>           Output directory  [default: wisdom/data/raw]
   --concurrency <n>     Parallel fetches  [default: 3]
