@@ -731,6 +731,40 @@ const CONSOLE_MARK_JS = `(() => {
  */
 export const consoleMark = (c) => c.evaluate(CONSOLE_MARK_JS);
 
+// What each clear erased. The page's global clearDebugConsole() empties the
+// console, and BETA 983's main.js calls it by name from the compiler's
+// event_clearDebugConsole, which a program's Debug.Cls raises, from the pane's
+// Clear command, and on closing the project. So a wrapper assigned to that
+// global sees each of those clears, and reads the console as readConsole does,
+// without timestamps, before letting it go. A page is wrapped once: a second
+// call finds the record already there and leaves it alone.
+const KEEP_CLEARS_JS = `(() => {
+  if (typeof clearDebugConsole !== "function") return false;
+  if (!Array.isArray(window.__tbKeptClears)) {
+    const clear = clearDebugConsole;
+    window.__tbKeptClears = [];
+    clearDebugConsole = function () {
+      window.__tbKeptClears.push(${consoleJs(false, 0, null)} ?? "");
+      return clear.apply(this, arguments);
+    };
+  }
+  return true;
+})()`;
+
+/**
+ * Keep what each later clear of the DEBUG CONSOLE erases, for keptClears.
+ * False when this IDE has no global `clearDebugConsole()` to wrap.
+ */
+export const keepClears = (c) => c.evaluate(KEEP_CLEARS_JS);
+
+/**
+ * What each clear since keepClears erased, oldest first: one string per clear,
+ * one line per entry, as readConsole returns them. Null when this page keeps
+ * no such record.
+ */
+export const keptClears = (c) =>
+  c.evaluate(`Array.isArray(window.__tbKeptClears) ? window.__tbKeptClears : null`);
+
 // The build log, in the compiler's own words (its strings, BETA 983). A build
 // writes "[BUILD] Starting..." to the DEBUG CONSOLE, and a binary ends with
 // "[LINKER] SUCCESS created output file '<path>'" or with one of some twenty

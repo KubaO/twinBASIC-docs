@@ -947,6 +947,24 @@ before `exit 0` with `before` as its output, after `exit 2` naming the codegen l
 its output; and a clean probe that calls `Debug.Cls` twice `exit 0`, since a saved segment
 with no failure line in it is not a failure.
 
+**Landed.** Reproduced first: probe C on HEAD, exit 0 after 20.8 s with `before` as its whole
+output. The wrapper is `keepClears` in `tb-ide.mjs`, beside `readConsole`, because it reads
+through that module's private `consoleJs`. It always reads without timestamps, so the check
+holds under `--raw` as well. `keptClears` returns the record, one string per clear, and a page
+without it is refused too. A diagnostic print of the record showed one clear for probe C, the
+probe's `Debug.Cls`. It erased `[BUILD] Starting...` through `[BUILD] Executing
+'DocSamples.Probe.Run'...` and then `[LINKER] compilation (codegen) error detected in
+'Probe.Shifty' at line #14`, so the IDE does not clear the console when a build starts. A
+probe with two `Debug.Cls` gave two records, the second `"\nfirst"`: `event_clearDebugConsole`
+writes an empty line after its clear. Harness runs, one at a time, each between two
+`reg-snap.mjs` snapshots that came out identical: probe C exit 2 after 19.0 s, naming the
+codegen line and printing `before`; probe A exit 2 after 19.8 s through the existing check; a
+clean probe exit 0 after 20.1 s with `one` and `two`; the two-clear probe exit 0 after 20.2 s
+with `second`. No IDE lacks `clearDebugConsole`, so the refusal was checked in a `vm` context:
+`keepClears` returns false there. On a stand-in page with the function, a call by name goes
+through the wrapper, and a second `keepClears` does not wrap it twice. `compare_trees`: Tools.md
+online and offline, the search data and `book.html`, nothing else. Lint clean.
+
 ### C25b — `scripts: tbbuild refuses a named IDE that is not there`
 
 **Found while implementing C25; the owner asked on 2026-09-26 for it to be fixed before
@@ -2180,7 +2198,8 @@ Defects the review did not have, found by building something this plan asks for.
   table and plugin chain` (`57cdaa1d`).
 
 - **`tbrun` exits 0 with partial output when a procedure the probe calls fails code
-  generation**, found while verifying C16. Scheduled as C25a; see its entry for the fix.
+  generation**, found while verifying C16. Scheduled as C25a, and fixed in `scripts: tbrun
+  reports a codegen failure that Debug.Cls erased`.
 
 - **Builder.md's "Task DAG by section" disagrees with the chart and with the task graph**,
   found while re-reading its Gantt paragraph for C21. The section lists put `discover` in

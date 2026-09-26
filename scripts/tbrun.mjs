@@ -19,8 +19,9 @@
 //
 // Exit: 0 captured output, 1 the project has compile errors, 2 the harness
 // failed -- a build that fails after a clean compile included, and a
-// [RunAfterBuild] Sub that fails code generation, since the probe never runs
-// -- 3 the build produced no console output before the timeout.
+// [RunAfterBuild] Sub that fails code generation, since the probe never runs,
+// and a procedure the probe calls that fails it, since the probe stops at the
+// call -- 3 the build produced no console output before the timeout.
 //
 // ---------------------------------------------------------------- why
 //
@@ -71,7 +72,11 @@
 //  4. START THE PROBE WITH Debug.Cls. The DEBUG CONSOLE is also where the IDE
 //     writes its own build log, and the linker writes there after the build --
 //     so without a clear, a probe's output comes back interleaved with
-//     [LINKER] lines. The script warns when a probe omits it.
+//     [LINKER] lines. The script warns when a probe omits it. The clear can
+//     erase a failure as well: a procedure the probe calls that fails code
+//     generation is reported before the probe's first statement runs. So the
+//     script wraps the page's clearDebugConsole() before the build, keeps
+//     what each clear erases, and looks there too (tb-ide's keepClears).
 //  5. QUIET-PERIOD, NOT A MARKER. Waiting for a sentinel string means every
 //     probe has to print one and the script has to know it. Waiting for the
 //     console to stop changing works for any probe.
@@ -96,9 +101,9 @@ import { existsSync, readFileSync, mkdirSync, statSync, readdirSync, rmSync } fr
 import { tmpdir } from "node:os";
 import path from "node:path";
 import { compilerExe, findIde } from "./lib/tb-install.mjs";
-import { BUILD_FAILED, TARGETS, attachIde, clickCenter, compileOutcome, killTree, launchIde,
-         readConsole, setBuildTarget, shutdownIde, summaryLine, waitForCompile,
-         wantShow } from "./lib/tb-ide.mjs";
+import { BUILD_FAILED, TARGETS, attachIde, clickCenter, compileOutcome, keepClears, keptClears,
+         killTree, launchIde, readConsole, setBuildTarget, shutdownIde, summaryLine,
+         waitForCompile, wantShow } from "./lib/tb-ide.mjs";
 import { laneProjectId, stageProject } from "./lib/tb-project.mjs";
 import { finishTidy, startTidy } from "./lib/tb-registry.mjs";
 
@@ -291,8 +296,13 @@ if (outcome.counts[0] > 0) {
 
 // --------------------------------------------- build the exe, read the console
 
-let captured = null, failure = null;
+let captured = null, erased = null, failure = null;
 try {
+  // (4) Keep what each clear erases, for the check after the run.
+  if (!await keepClears(cdp)) {
+    throw new Error("no clearDebugConsole() in this IDE -- a probe's Debug.Cls could erase a " +
+                    "failure unseen. Refusing rather than returning what it left as complete.");
+  }
   // (2) a real press/release pair; element.click() is ignored.
   if (!await clickCenter(cdp, "buildIcon")) {
     throw new Error("no #buildIcon in the IDE page -- did the project load?");
@@ -313,6 +323,12 @@ try {
     else if (seen && Date.now() - lastChange > quietMs) break;
   }
   captured = strip(last);
+  const kept = await keptClears(cdp);
+  if (!kept) {
+    throw new Error("the IDE page no longer holds what the DEBUG CONSOLE's clears erased, so " +
+                    "a failure they erased cannot be ruled out");
+  }
+  erased = kept.flatMap((text) => text.split("\n"));
   cdp.close();
 } catch (e) {
   failure = e.message;
@@ -333,6 +349,22 @@ if (captured.some((l) => BUILD_FAILED.test(l))) {
   die(2, "tbrun: the build or the probe's code generation failed, so the probe never ran. " +
          "The console holds the IDE's build log, not the probe's output:\n" +
          captured.map((l) => `  ${l}`).join("\n"));
+}
+// A procedure the probe calls that fails code generation is reported straight
+// after the "[BUILD] Executing '<project>.<module>.<Sub>'..." line, before the
+// probe's first statement runs. So Debug.Cls erases the report, the probe stops
+// where it calls that procedure, and the console holds only what it printed
+// before then -- which tbrun returned as the whole output, exit 0 (measured,
+// BETA 983). A failure line among what the clears erased counts only after the
+// last Executing line: before it is the build's own log, which ended in success
+// or the probe would not have run.
+const started = erased.findLastIndex((l) => /^\[BUILD\] Executing '/.test(l));
+const lost = started < 0 ? undefined : erased.slice(started + 1).find((l) => BUILD_FAILED.test(l));
+if (lost) {
+  die(2, "tbrun: the probe's Debug.Cls erased a failure the IDE reported as the probe started:\n" +
+         `  ${lost}\n` +
+         "What the probe printed, which stops where it called the procedure that failed:\n" +
+         (captured.length ? captured.map((l) => `  ${l}`).join("\n") : "  (nothing)"));
 }
 if (!captured.length) {
   die(3, "tbrun: the build produced no console output before the timeout.\n" +
