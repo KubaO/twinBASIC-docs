@@ -1072,6 +1072,26 @@ written and erased within the first 400 ms poll, so the loop never sees any outp
 quietly after. `compare_trees`, run with C26's Wisdom.md edit also in the tree: every
 difference was that page's. Lint clean.
 
+### C25f — `scripts: tbrun says when a probe ran and printed nothing`
+
+**Found while verifying C25e; the owner chose this fix on 2026-09-26** (see Found while
+implementing). A probe that runs and prints nothing after its last `Debug.Cls` leaves the
+console empty, and `tbrun` exited 3 with the hint "The [RunAfterBuild] Sub may not have run
+-- check the IDE for a modal", though the record C25a keeps shows that the Sub started.
+
+**Change.** When the record holds a `[BUILD] Executing` line, exit 3 quotes it and says the
+probe printed nothing after its last `Debug.Cls`. The wait is unchanged: the quiet period
+starts only once a poll has found output, which is what lets a probe that clears and then
+computes for longer than `--quiet` before it prints be captured, so a silent probe still
+waits the whole timeout. The header's and Tools.md's descriptions of exit 3 name the case.
+
+**Landed.** One harness run, between two `reg-snap.mjs` snapshots that came out identical:
+the probe whose only statement is `Debug.Cls` exits 3 after 136.5 s with `tbrun: the probe ran
+([BUILD] Executing 'DocSamples.Probe.Run'...) but printed nothing after its last Debug.Cls.`
+Before, at C25a and at C25e, it exited 3 after 137.1 s and 138.4 s with the modal hint. The
+message for a Sub that never started is unchanged, and so is every other path. `compare_trees`:
+Tools.md online and offline, the search data and `book.html`, nothing else. Lint clean.
+
 ### C26 — `wisdom: parseStaging refuses a chunk it cannot place`
 
 **L3-3 (R1)**, the half that needs no shared module. `parseStaging` (`merger.mjs:114-129`)
@@ -2346,6 +2366,12 @@ Defects the review did not have, found by building something this plan asks for.
   probe's output. A line holding only a timestamp is not blank either, so a probe that printed
   nothing exited 0 after 18.9 s with one such line, where without `--raw` it exits 3. Fixed in
   `scripts: tbrun's --raw changes only what it prints`.
+
+- **`tbrun` says a probe that ran and printed nothing "may not have run"**, found while
+  verifying C25e. The build log is written and erased within the first 400 ms poll, so such a
+  probe waits the whole 120 s timeout and exits 3 with the hint to look for a modal, though
+  the record of clears C25a keeps shows that the Sub started. Fixed in `scripts: tbrun says
+  when a probe ran and printed nothing`.
 
 ## Open questions
 

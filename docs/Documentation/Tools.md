@@ -731,8 +731,9 @@ comes back as `A&`.
 | `--show` / `--hide` | As for [`tbbuild.mjs`](#tbbuild): your own desktop or a private one, with `TBBUILD_SHOW` setting the default. |
 
 Exit codes: **0** captured output, **1** the project has compile errors (the diagnostics are
-printed), **2** the harness failed or the build did after a clean compile, **3** nothing reached
-the console before the timeout.
+printed), **2** the harness failed or the build did after a clean compile, **3** no output:
+nothing reached the console before the timeout, or the probe ran and printed nothing after its
+last `Debug.Cls`.
 
 **A probe that activates a COM server can leak one per run.** `CreateObject("Excel.Application")`
 is activated by DCOM, so the `EXCEL.EXE` that appears is a child of `svchost.exe` rather than

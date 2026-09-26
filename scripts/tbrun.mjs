@@ -21,7 +21,8 @@
 // failed -- a build that fails after a clean compile included, and a
 // [RunAfterBuild] Sub that fails code generation, since the probe never runs,
 // and a procedure the probe calls that fails it, since the probe stops at the
-// call -- 3 the build produced no console output before the timeout.
+// call -- 3 no output: the build produced none in the console before the
+// timeout, or the probe ran and printed none after its last Debug.Cls.
 //
 // ---------------------------------------------------------------- why
 //
@@ -370,6 +371,12 @@ if (lost) {
          `  ${lost}\n` +
          "What the probe printed, which stops where it called the procedure that failed:\n" +
          (shown.length ? shown.map((l) => `  ${l}`).join("\n") : "  (nothing)"));
+}
+// A probe that ran leaves its Executing line among what its Debug.Cls erased,
+// so an empty console then means it printed nothing after its last clear, not
+// that it never ran.
+if (!captured.length && started >= 0) {
+  die(3, `tbrun: the probe ran (${erased[started]}) but printed nothing after its last Debug.Cls.`);
 }
 if (!captured.length) {
   die(3, "tbrun: the build produced no console output before the timeout.\n" +
