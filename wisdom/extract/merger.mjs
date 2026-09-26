@@ -14,8 +14,9 @@
 // Atomic writes: temp file + rename, previous staging.md retained as
 // staging.md.bak for one generation.
 
-import { existsSync, mkdirSync, readFileSync, renameSync, writeFileSync, copyFileSync } from 'node:fs'
+import { existsSync, mkdirSync, readFileSync, copyFileSync } from 'node:fs'
 import { join } from 'node:path'
+import { writeFileAtomic } from '../files.mjs'
 import { buildEmissionKeySet, emissionKey } from './state.mjs'
 
 const STAGING_FILE = 'staging.md'
@@ -80,9 +81,7 @@ export function graftAdditions(outDir, additions, state) {
   if (existsSync(stagingPath)) {
     copyFileSync(stagingPath, backupPath)
   }
-  const tmpPath = stagingPath + '.tmp'
-  writeFileSync(tmpPath, serialized)
-  renameSync(tmpPath, stagingPath)
+  writeFileAtomic(stagingPath, serialized)
 
   return stats
 }

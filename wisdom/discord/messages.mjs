@@ -1,14 +1,13 @@
-import { readFileSync, writeFileSync, existsSync } from 'node:fs'
 import { join } from 'node:path'
+import { readJsonFile, writeFileAtomic } from '../files.mjs'
 
 export function loadManifest(dir) {
-  const p = join(dir, 'manifest.json')
-  if (!existsSync(p)) return {}
-  return JSON.parse(readFileSync(p, 'utf-8'))
+  return readJsonFile(join(dir, 'manifest.json'), {},
+    'Delete it, and the next export fetches the whole history of every channel and thread again.')
 }
 
 export function saveManifest(dir, manifest) {
-  writeFileSync(join(dir, 'manifest.json'), JSON.stringify(manifest, null, 2))
+  writeFileAtomic(join(dir, 'manifest.json'), JSON.stringify(manifest, null, 2))
 }
 
 export async function fetchMessages(client, channelId, afterSnowflake) {

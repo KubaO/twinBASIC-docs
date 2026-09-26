@@ -177,6 +177,7 @@ wisdom/
   wisdom.mjs              Entry point --- CLI parser, runExport(), dispatch
   config.mjs              Load config.jsonc, apply CLI overrides
   config.jsonc             Server/channel/rate-limit configuration
+  files.mjs               Atomic writes (temp file + rename); JSON reads that report a bad file by path
 
   discord/                 Phase 1 --- Discord API layer
     api.mjs                HTTP client, auth, rate-limiter, snowflake utilities
@@ -229,6 +230,8 @@ Also defines `runConcurrent(items, concurrency, fn)` --- a simple worker-pool: s
    - Update manifest with `highestSnowflake(messages)` and flush to disk after each target.
 
 The export manifest (`raw/manifest.json`) is a flat `{ channelOrThreadId: highestSnowflake }` object. It governs incremental fetches --- on the next run, only messages newer than the stored snowflake are requested.
+
+The manifest and `denied.json` are each written to a `.tmp` file that is then renamed over the old one, so a run that stops during a write leaves the previous file whole. A file that does not parse stops the next export with an error that names it, unless `--force` is given, which ignores both files.
 
 ### Phase 2 control flow
 
@@ -337,6 +340,7 @@ data/
     guild.json
     members.json
     manifest.json
+    denied.json
     channels/*.json
     threads/*.json
   threads/                          Phase 2 output

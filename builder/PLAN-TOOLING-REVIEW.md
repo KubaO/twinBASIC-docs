@@ -1137,6 +1137,33 @@ write with a plain `writeFileSync`, and `loadManifest` parses without a guard, b
 **Verify.** With the rename made to throw (a scratch edit), the previous file survives
 intact; a truncated manifest gives an error that names it.
 
+**Landed.** A new `wisdom/files.mjs` holds `writeFileAtomic(path, text)`, the write
+`saveState` had (to `<path>.tmp`, then a rename over the old file), and `readJsonFile(path,
+fallback, remedy)`, which returns the fallback for a missing file and throws `<path> is not
+valid JSON (<parse error>). <remedy>` for one that does not parse. `loadManifest`,
+`saveManifest` and `runExport`'s read and write of `denied.json` use them. `saveState` and
+`graftAdditions`'s write of `staging.md` use the shared write in place of their own copies,
+and `saveState`'s comment no longer says the caller must create the folder, which it creates
+itself. `loadState` keeps its own read, which already names its file. The oracle is a scratch
+preload that answers wisdom's Discord requests from a scenario, with no network, and can make
+one write fail: a `writeFileSync` to the file writes half its text and throws, or the rename
+onto it throws. Each case ran `wisdom.mjs export` in a fresh folder, one target at a time,
+two channels fetched and a third answering 403, on HEAD's copy and on the working tree. On
+HEAD, a write cut off part way left `manifest.json` as 16 bytes of broken JSON in place of
+the previous file, and `denied.json` likewise. The next export then failed with `SyntaxError:
+Unexpected end of JSON input` for the manifest, and `SyntaxError: Unterminated string in JSON
+at position 12 (line 2 column 11)` for `denied.json`, neither naming a file. Now a cut-off
+write and a failed rename each leave the previous file intact, for both files, with the
+`.tmp` beside it, which the next write replaces. A truncated file stops the export with an
+error that gives its path and says what deleting it costs. A clean run, and one over seeded
+files, write the same manifest, `denied.json` (timestamps masked) and data files as HEAD.
+`graftAdditions` with no additions over a copy of the real `staging.md`, then `saveState`,
+left `staging.md`, `staging.md.bak` and `extract-state.json` identical to HEAD's (`lastRun`
+masked). Wisdom.md lists `files.mjs`, says how the two export files are written and what a
+bad one does, and lists `denied.json` under `raw/`, where it was missing. `compare_trees`:
+Wisdom.md online and offline, the search data and `book.html`, nothing else. Lint clean, 139
+files.
+
 ### C28 — `scripts: exit 2 on a crash in three tools that exit 1`
 
 **A5-2 (R2), and the `check_tb_registry.mjs` half of L1-11.** The convention

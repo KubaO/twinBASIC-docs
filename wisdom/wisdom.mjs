@@ -1,9 +1,10 @@
 #!/usr/bin/env node
 
-import { mkdirSync, writeFileSync, readFileSync, existsSync } from 'node:fs'
+import { mkdirSync, writeFileSync, existsSync } from 'node:fs'
 import { join, dirname } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { loadConfig } from './config.mjs'
+import { readJsonFile, writeFileAtomic } from './files.mjs'
 import { createClient, CapReachedError, timestampToSnowflake, EXIT_CAP_REACHED } from './discord/api.mjs'
 import { discoverChannels, fetchMembers } from './discord/discover.mjs'
 import { fetchMessages, loadManifest, saveManifest, highestSnowflake } from './discord/messages.mjs'
@@ -113,7 +114,8 @@ async function runExport(flags) {
   const deniedPath = join(outDir, 'denied.json')
   const denied = flags.force
     ? {}
-    : existsSync(deniedPath) ? JSON.parse(readFileSync(deniedPath, 'utf-8')) : {}
+    : readJsonFile(deniedPath, {},
+      'Delete it: it only lists the targets that refused access, so that they are tried last.')
 
   // Fetch targets: text channels + forum threads
   // Previously denied targets sort to the end
@@ -143,7 +145,7 @@ async function runExport(flags) {
     } catch (err) {
       if (/403/.test(err.message)) {
         denied[target.id] = new Date().toISOString()
-        writeFileSync(deniedPath, JSON.stringify(denied, null, 2))
+        writeFileAtomic(deniedPath, JSON.stringify(denied, null, 2))
         completed++
         process.stderr.write(`[wisdom] [${completed}/${targets.length}] ${target.name}: no access; skipping\n`)
         return

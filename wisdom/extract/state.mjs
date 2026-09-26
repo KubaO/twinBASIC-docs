@@ -26,8 +26,9 @@
 // State is updated only on successful merge.  A workflow failure mid-pipeline
 // leaves state untouched, so the next run retries the same threads.
 
-import { existsSync, mkdirSync, readFileSync, renameSync, writeFileSync } from 'node:fs'
+import { existsSync, mkdirSync, readFileSync } from 'node:fs'
 import { join } from 'node:path'
+import { writeFileAtomic } from '../files.mjs'
 
 const STATE_FILE = 'extract-state.json'
 const STATE_VERSION = 1
@@ -60,19 +61,16 @@ export function loadState(outDir) {
 
 /**
  * Write state atomically (temp file + rename).  Sets lastRun to current ISO
- * timestamp.  Caller must ensure outDir exists.
+ * timestamp.
  */
 export function saveState(outDir, state) {
   mkdirSync(outDir, { recursive: true })
-  const path = join(outDir, STATE_FILE)
-  const tmpPath = path + '.tmp'
   const serialized = {
     version: STATE_VERSION,
     lastRun: new Date().toISOString().replace(/\.\d{3}Z$/, 'Z'),
     processedThreads: state.processedThreads || {},
   }
-  writeFileSync(tmpPath, JSON.stringify(serialized, null, 2))
-  renameSync(tmpPath, path)
+  writeFileAtomic(join(outDir, STATE_FILE), JSON.stringify(serialized, null, 2))
 }
 
 /**
