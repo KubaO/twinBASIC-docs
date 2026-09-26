@@ -165,7 +165,10 @@ on, a commit's **Landed** note is written in full in the commit that lands it, w
 history keeps it; at the end of each phase, that phase's landed entries are cut to what later
 work still needs. The landed entries of C01–C18 and C13a were cut this way on 2026-09-26;
 their full text is in this file as it stood before the commit `builder: cut the tooling
-plan's landed entries to what later work needs`. Line numbers are the
+plan's landed entries to what later work needs`. Those of the rest of Phase 1 (C19–C30, with
+C22a–C22j, C25a–C25f, C27a and C27b) were cut the same day, and their full text is in this
+file as it stood before `builder: cut Phase 1's landed entries in the tooling plan`. A
+pointer below to a cut entry's Landed note means that text. Line numbers are the
 review's, at `fe9ce12b`, and move as the commits land.
 
 ### The organising idea
@@ -379,975 +382,135 @@ value exits 2."
 
 ### C19 — `scripts: close the browser on every exit path, through lib/browser.mjs`
 
-**L3-1 (R1).** `check_a11y.mjs` launches Chromium (`:167`) and closes it only on success
-(`:218`), and `main().catch` exits 2 without closing it (`:244-247`). The comment at `:229`
-names the path that throws: a `PAGE_STATES` applier's failed assertion, which throws by
-design. On Linux, where CI runs this gate, Chromium stays up for the rest of the job. The
-three sibling tools guard their launch.
-
-**Change.** `scripts/lib/browser.mjs` takes `axe-scan.mjs`'s `launchBrowser` and
-`LAUNCH_ARGS` (`:258-264`), with their reasons, and adds `withBrowser(fn, options)`, which
-closes the browser in a `finally`. `axe-scan.mjs` re-exports `launchBrowser`, so its
-importers need not change. `check_a11y.mjs`, `check_a11y_fingerprint.mjs`, `sweep_a11y.mjs`
-and `check_axe_patch_equiv.mjs` use `withBrowser`. C44 moves the two diagram tools onto the
-same module.
-
-**Verify.** With an applier made to fail, a Chromium started by the run is left over before
-the change and none after. Count by the Puppeteer cache path in each process's command
-line, never by image name, since the owner's own Chrome has the same one. `check_a11y.mjs`'s
-findings unchanged; `check_axe_patch_equiv.mjs` passes.
-
-**Landed.** The premise was wrong; the change stands, restated (see [Where the plan was
-wrong](#where-the-plan-was-wrong)). At HEAD, with `"details.section-links"` changed to
-`"details.section-links-x"` in the first `PAGE_STATES` applier, `check_a11y.mjs` exits 2 after
-8 s with the applier's error and leaves no Chromium running. `@puppeteer/browsers` subscribes
-to Node's `exit` event for every launch (`lib/launch.js:178`) and kills the browser there
-synchronously (`:232`): `taskkill /pid <pid> /T /F` on Windows (`:268`), a `SIGKILL` of the
-browser's detached process group elsewhere (`:151`, `:283`). Linux was read, not measured.
-What the failed run left was the browser's temporary profile, one
-`%TEMP%\puppeteer_dev_chrome_profile-*` folder of 4.3 MB. Puppeteer deletes it only when the
-browser process's own `exit` event arrives (`puppeteer-core`'s `BrowserLauncher.js:64`, `:82`),
-and `process.exit` ends Node before that. A clean run left none. On 2026-09-26 the owner kept
-C19 as planned and had the 211 such folders then in `%TEMP%` (389 MB, dated February to
-September 2026) deleted.
-
-`scripts/lib/browser.mjs` holds `launchBrowser`, `LAUNCH_ARGS` and `withBrowser(fn,
-options)`. `LAUNCH_ARGS` is no longer exported, since nothing imported it. `axe-scan.mjs`
-re-exports `launchBrowser` for the four `perf/` rigs that import it, and drops its `puppeteer`
-import; `builder/link-check.mjs`'s comment, which said `axe-scan.mjs` owns puppeteer, now says
-it loads puppeteer through `browser.mjs`. In `check_a11y.mjs`, `buildMatrix` now runs before
-the launch instead of after it.
-`sweep_a11y.mjs`'s header said `--recycle-every` restarts the browser; the code opens a fresh
-tab, as its own comment says, and the header now says so too.
-
-After the change the same failing run exits 2 with the same error and leaves no folder, and
-no Chromium. `check.bat`'s a11y line is unchanged: `13 pages x 2 theme(s) x 2 viewport(s) + 8
-state audit(s) checked: 0 violation(s), 42 incomplete check(s)`. `check_a11y_fingerprint.mjs`'s
-self-test reports `60/60 audits identical -- gate PASSES` before and after. `sweep_a11y.mjs
---limit 4 --recycle-every 2 --theme light --viewport desktop` writes four records that match
-HEAD's apart from `runMs`. `check_axe_patch_equiv.mjs` reports `20/20 colour values
-identical`.
+**Carried forward.** `scripts/lib/browser.mjs` holds `launchBrowser` and `withBrowser(fn,
+options)`, which closes the browser in a `finally`; `LAUNCH_ARGS` is no longer exported.
+`axe-scan.mjs` re-exports `launchBrowser` for the `perf/` rigs that import it. C44 moves
+`check_dot_fit.mjs` and `build_dot_metrics.mjs` onto the same module, adding a file-access
+launch option to it.
 
 ### C20 — `a11y: validate --theme and --viewport wherever a matrix is built`
 
-**L1-1 (R1).** `check_a11y.mjs:82-95`'s `pick()` was written after `--theme drak` labelled a
-light run "drak"; `sweep_a11y.mjs:120-121` and `check_a11y_fingerprint.mjs:134-135`, the gate
-for an axe upgrade, never received it. `buildMatrix` labels the report from the unvalidated
-string and `gotoPage` applies it; the dark CSS matches only `[data-theme=dark]`, so an
-unknown value renders light under a report that says otherwise.
-
-**Change.** `pick()` moves into `axe-scan.mjs`, beside `THEMES` and `VIEWPORTS`, and all three
-tools use it. `buildMatrix` also refuses an unknown value, as the backstop for a future
-caller.
-
-**Verify.** `--theme drak` and `--viewport tiny` fail with a usage error in all three tools;
-`check_a11y.mjs`'s findings unchanged.
-
-**Landed.** Reproduced first, after C19. `sweep_a11y.mjs --theme drak --viewport desktop
---limit 1` exited 0 and recorded `/404.html [drak, desktop]`. `--theme light --viewport tiny`
-also exited 0, recording `[light, tiny]`: `setViewport(undefined)` does not throw, so the audit
-ran at a size nobody chose. `check_a11y_fingerprint.mjs --pages /404.html` reported `1/1
-audits identical -- gate PASSES` with either value.
-
-`pick()` moved from `check_a11y.mjs` into `axe-scan.mjs`, exported, beside `THEMES`, and its
-comment gained the viewport case. All three tools call it at module level, so the usage error
-comes before any browser starts. `buildMatrix` throws for a theme not in `THEMES` or a
-viewport that is not an own key of `VIEWPORTS` (`Object.hasOwn`, so `toString` is refused
-too). `sweep_a11y.mjs` builds its own matrix, so the backstop covers the other two.
-
-The six cases now exit 2 with one line each, `unknown --theme "drak"; expected one of light,
-dark or both` or `unknown --viewport "tiny"; expected one of desktop, mobile or both`. A
-scratch probe of `buildMatrix` got 60 entries by default and 30 for one theme or one
-viewport, and a throw for `drak`, `tiny` and `toString`. Valid single values still run:
-`sweep_a11y.mjs --theme dark --viewport mobile --limit 1` recorded `/404.html [dark, mobile]`,
-and the fingerprint self-test with the same values passed. `check.bat`'s a11y line is
-unchanged.
+Landed.
 
 ### C21 — `builder: the Gantt chart draws Check, vendorAssets and Other`
 
-**A1-1 (R1).** `gantt.mjs:39-49` draws only `Seeds`, `Spine` (which also takes `Render`)
-and `Write`, so
-`checkBook` and `checkReport` (section `Check`) and `vendorAssets` (no `GANTT_SECTION` entry;
-`tbdocs.mjs:539-562`) are drawn on no build, while their durations still stretch the time
-axis. `COLORS.Other` (`:12`) is never used, and `Builder.md:410` says a task with no section
-falls into an "Other" bucket.
-
-**Change.** `mainSections` gains `Check` and `Other`, and `vendorAssets` gets a
-`GANTT_SECTION` entry.
-
-**Verify.** The built `gantt.svg` names `checkBook`, `checkReport` and `vendorAssets` after
-the change and not before. The tree comparison identical apart from its normalised Gantt
-regions. `Builder.md:410` re-read against the result.
-
-**Landed.** Before, both built `gantt.svg` files (at 0ba42460) named none of the three tasks
-and had no Check band. After, each names all three once and has a Check band, and so do both
-copies inlined into `BuildInfo.html`. `vendorAssets` charts in Spine: it runs on the main
-thread after `discover`, and `markdownInit` waits for it. Check's colour is a pink (`#e59ac6`
-light, `#b35c8c` dark); its label contrast is in the range of the other bars', and both themes
-were looked at through puppeteer.
-
-**At the owner's request, a task the chart cannot draw fails the build**, so `Other` was not
-added: nothing can reach it, and `COLORS.Other` and its `.gb-other` rules are gone.
-`groupGanttTimings` throws for a task with no section, and `renderGantt` for a main-thread
-task whose section has no band or a worker task whose section has no colour. With each defect put back
-by a scratch edit, the check fixture's build exited 1 with `gantt: task vendorAssets has no
-section; add it to GANTT_SECTION`, and with `gantt: the chart has no place for task checkBook
-in section "Check"`. Without `--check` the Check tasks are not charted, so the second fails
-only a checked build, which `build.bat` and both CI workflows are. WIP.md's gate table gains
-the check beside nav integrity; Tools.md lists no build-internal checks, so nothing is
-registered there.
-
-Docs: Builder.md's `Other` sentence rewritten and `vendorAssets` moved from Seeds to Spine in
-its section list; Extending.md's row on Gantt sections rewritten, its counts corrected (32
-static tasks, 30 in the map, none setting `ganttSection` on its definition, where it said 31,
-28 and `dispatch`); Pipeline-Stages.md's `ganttSection` values gain `Check` and `renderGantt`'s
-row says it throws; BuildInfo.md's alt text says five bands. `Builder.md:410`, re-read (now
-`:409-413`): the `Other` sentence was the one the entry named; the paragraph's claim that
-boot timings form a row group of their own, and more in the section lists above it, is wrong
-and is recorded under Found while implementing.
-
-`compare_trees` replaces the chart whole, so it cannot see this change; the built chart is the
-oracle. It exits 1 on the four edited pages, online and offline, the search data and
-`book.html`, and BuildInfo.html's difference is its alt text. `check.bat`'s a11y line is
-unchanged (0 violations, 42 incomplete), though BuildInfo.html is in the sample and the chart
-gained four labels. `test.bat` and lint pass.
+Landed.
 
 ### C22 — `scripts: crawl_check follows every link attribute the build checks`
 
-**A4-3 (R1).** `crawl_check.mjs:91-108`, the only checker that runs against the deployed
-site, handles five tag and attribute pairs, where `link-check.mjs:38-60`'s `LINK_ATTR_TABLE`
-has 21 tags and 26 pairs. It never follows `srcset`, `poster`, `cite`, `formaction`,
-`action`, `data` or `longdesc`.
-
-**Change.** Export `LINK_ATTR_TABLE` and `splitSrcset` from `link-check.mjs`, and let the
-table decide `crawl_check.mjs`'s tag handling; its HTTP concerns (concurrency, redirects,
-HEAD then GET) stay its own. This is separate from decision 5, which covers the two
-filesystem checkers only.
-
-**Verify.** Run it before and after against `serve.bat`'s local server if it takes a base
-URL, and otherwise ask before crawling the live site. The after run requests the `srcset` and
-`poster` targets, and reports nothing the before run did not, apart from any link in those
-attributes that is actually broken.
-
-**Landed**, with one change of shape. Exporting the table and `splitSrcset` would have left a
-second copy of the loop over them in `crawl_check.mjs`, including which attribute is a
-srcset. So `link-check.mjs` exports one function instead, `forEachLink(name, attribs, fn)`,
-which walks the table and splits a srcset; `extractFromHtml` and `crawl_check`'s tag handler
-both call it, and the table and `splitSrcset` stay private. `crawl_check`'s id capture is
-unchanged. Tools.md's paragraph says it follows every link the build's check follows.
-
-`extractFromHtml` gives the same results: a scratch script ran HEAD's copy and the edited one
-over every `.html` file in the three built trees, the check fixture's trees and the fixture
-below (2,414 files, 1,777,900 links), with every option on and with every option off, and no
-field of any result differed. `check_links_diff.mjs --a script --b fused` found no
-differences across 6 cases.
-
-The tool takes a start URL, so both runs used a scratch static server on `127.0.0.1` that
-resolves a path as `serve.mjs` does and, as GitHub Pages does, redirects a folder URL without
-its trailing slash to the slash form. Without the redirect, 626 links came back broken, all
-from folder pages fetched without the slash; an agent confirmed the redirect on both live
-sites (a 301 with an absolute `Location`), and found no GitHub documentation of it. Node's
-server also closes an idle keep-alive socket after 5 s, which failed 30 fetches until the
-scratch server kept its sockets longer.
-
-Against the built site, with `--skip-external`, before and after: 1,247 pages crawled, 3,228
-unique links, 0 broken, 0 missing anchors, the two reports identical apart from the elapsed
-time. The site uses none of the newly followed attributes: nothing in `_site` has a `srcset`,
-`poster`, `cite`, `action`, `data` or `longdesc`. So the fixture carried the test: one page
-with a missing target for each of the table's 26 pairs, 28 URLs in all, since both srcsets
-list two. Before, 5 broken (`a`, `link`, `img src`, `script`, `iframe`); after, all 28, the
-srcset and poster targets included. `compare_trees`: Tools.html online and offline, the search
-data and `book.html`, nothing else. Two defects found on the way are recorded under Found
-while implementing.
+Landed.
 
 ### C22a — `scripts: crawl_check sets its exit code instead of calling process.exit`
 
-**Found while verifying C22; the owner asked on 2026-09-26 for it to be fixed before C23**
-(see Found while implementing). `crawl_check.mjs` ended `main()` with `process.exit()` straight
-after printing its report, and its crash handler called `process.exit(2)`. On Windows (Node
-24.13.0) that can abort on a libuv assertion, `!(handle->flags & UV_HANDLE_CLOSING)` in
-`src\win\async.c:76`: the report is complete, and the exit code is 0xC0000409 (Git Bash shows
-127) instead of 1.
-
-**Change.** `main()` sets `process.exitCode` and returns, and the crash handler sets it to 2.
-The two usage exits stay, since they run before any fetch. The header and Tools.md's
-paragraph give all three exit codes: a missing anchor exits 1 as well.
-
-**Landed**, with one addition. With `process.exit` gone, a crawl of the site printed its
-report at 66 s and never exited: idle, its CPU time flat, 90 connections to the server still
-established, until it was stopped 269 s later. `crawlOne` GETs every same-site URL but read
-the body only of an HTML page answered 2xx, and an unread body keeps its connection busy;
-`process.exit` had been cutting that short. `discardBody` now cancels every body that is not
-read, in `crawlOne` and after `checkUrl`'s HEAD and GET.
-
-The assertion does not need unread bodies. On scratch probes against the fixture server, 28
-concurrent fetches followed by `process.exit(1)` aborted 10 times of 10 with or without
-cancelling the bodies, and one fetch, read or unread, exited 1 all 10 times. What else it
-needs is not established: HEAD's crawl of the site reaches `process.exit` with those 90
-connections open, and did not abort in C22's four runs.
-
-Against the C22 fixture, through the kit's static server with `--skip-external`: before, 5
-runs of 5 aborted after reporting 28 broken; after, 10 of 10 exit 1 with 28 broken and no
-assertion, the process ending 25–30 ms after its report. Against the site, three runs after:
-exit 0, 1,247 pages crawled, 3,228 unique links, 1,247 status checks, 0 broken, 0 missing
-anchors, as in C22's runs, in 66 to 79 s, ending 26–43 ms after the report. A crash
-mid-crawl, injected by a preload that makes `Response#url` throw from its 200th read so that
-`crawlOne` throws outside its `try` blocks with other fetches in flight: HEAD's copy aborted
-5 of 5 with 0xC0000409, and after, 5 of 5 exit 2, about 40 ms after the error. An unknown flag
-and a missing URL exit 2, as before. `compare_trees`: Tools.html online and offline, the search
-data and `book.html`, nothing else.
+Landed.
 
 ### C22b — `builder: serve.bat redirects a folder URL to its trailing slash`
 
-**Found while verifying C22; the owner asked on 2026-09-26 for it to be fixed before C23**
-(see Found while implementing). `serve.mjs`'s static handler answered a folder URL without its
-trailing slash with the folder's `index.html`, where GitHub Pages answers 301 to the slash
-form. A browser then resolves the page's relative links against the parent folder, one level
-too high. The built site links 74 folder pages without the slash, e.g.
-`../../tB/Modules/Collection` from Permanent-Links, so a `serve.bat` preview reached through
-one of those links shows a page whose links are broken.
-
-**Change.** When the only file that matches is the folder's `index.html` and the URL path
-lacks its slash, answer 301 to the path plus `/`, keeping any query string.
-
-**Landed.** `resolveFile` returns `{ file }` or `{ redirect }`. The `Location` is built from
-the folder under the destination rather than from the request, percent-encoded segment by
-segment, so a request for `//tB/Packages` redirects to `/tB/Packages/` and not to a host named
-`tB`. The redirect carries the page's `no-store` cache header, so a browser does not keep it
-after a folder page becomes a single-file one. A URL that names a page is served as before:
-`/tB/Core/Dim` from `Dim.html`. No page under `docs/Documentation/` describes how the serve
-resolves a URL.
-
-Verified on a test serve (port 4393, `--dest docs/_serve-c22b`, through a temporary
-`.claude/launch.json` entry; both removed afterwards). Before, `/tB/Packages`,
-`/tB/Modules/Interaction` and `/tB/Packages/CEF` answered 200. After, each answers 301 to its
-slash form and the slash forms 200; `/tB/Packages?x=1&y=2` redirects to
-`/tB/Packages/?x=1&y=2`, and a temporary folder named `Ä b` to `/%C3%84%20b/`.
-`crawl_check --skip-external` against HEAD's serve: 1,850 pages crawled, 3,831 unique links,
-623 broken, of which 603 were HTTP errors, such as a 404 for `/Core/Attributes`, and 20 were
-`fetch failed`, and 2 missing anchors. After: 1,247 pages crawled, 3,228 unique links and 0
-missing anchors, as in C22's crawl of `_site`, and 20 broken, every one a `fetch failed`
-caused by `read ECONNRESET`, and none an HTTP error. The resets are a separate defect,
-recorded under Found while implementing: with the serve's keep-alive timeout raised as a
-scratch experiment, two crawls of two had none. `compare_trees`: identical.
+Landed.
 
 ### C22c — `docs: Builder.md's task sections match the chart and the task graph`
 
-**Found while re-reading Builder.md's Gantt paragraph for C21; the owner asked on 2026-09-26
-for it to be fixed before C23** (see Found while implementing). "Task DAG by section" says the
-chart's five sections organise its discussion, and disagreed with the chart and with `TASKS`:
-the lists put `discover` in Seeds and `warmInit` and `renderEnvInit` in Seeds and Render; the
-Seeds discussion said a seed has no predecessors and listed `scss`, `prepDest` and
-`prepPageDirs`, which have; the Spine sketch drew `loadData → highlighterInit` off `discover`;
-and the Gantt paragraph put the start-up bars in a row group of their own, and a lane's bars
-in completion order.
-
-**Change.** The five lists follow `GANTT_SECTION`, and a sentence says `warmInit` and
-`renderEnvInit` are in none of them. Each task's bullet and its row in What runs where move
-under its chart section; the two per-lane start-up tasks are described under Render. The
-Seeds introduction says which seeds wait for another task, the Spine sketch is redrawn from
-`expected`, and the Gantt paragraph says where the bands and the start-up bars are drawn.
-
-**Landed**, with three additions. The Render sketch drew the `flush:i` column feeding
-`renderJoin`; it is redrawn with each `render:i` feeding `renderJoin` and each `flush:i`
-feeding `flushJoin`, as `dispatch` wires them. `vendorAssets`, in the Spine list, had neither
-a bullet nor a row in What runs where, and gains both, from Pipeline-Stages.md's section. And
-the table, which says it lists every task, had no row for the three Check tasks. Every edge
-in the two sketches was checked against `expected` and `dispatch`'s dynamic edges (the Spine
-sketch leaves out `deriveRedirects → dispatch`, which `markdownInit` implies), every section
-against `GANTT_SECTION`, and the Gantt paragraph against `gantt.mjs` (the four bands, a lane's
-bars sorted by `workerStart`, the `cold` / `warm` / `env` labels) and `tbdocs.mjs` (no
-cold-start bars on a rebuild; the `Join` tasks skipped). A scratch script confirmed the
-sketches' vertical connectors line up. `scheduler-dag.dot` already draws `config →
-highlighterInit → loadData`. Extending.md's account of the four surfaces still holds.
-Pipeline-Stages.md files the same tasks by stage rather than by chart section, which is
-recorded under Found while implementing. `compare_trees`: Builder.html online and offline, the
-search data and `book.html`, nothing else.
+Landed.
 
 ### C22d — `scripts: crawl_check retries a request that fails before any response`
 
-**Found while verifying C22b; the owner asked on 2026-09-26 for it to be fixed before C23,
-with two retries** (see Found while implementing). A crawl of `serve.bat` reported about 20
-links broken with `fetch failed`, each caused by `read ECONNRESET`: the serve closes an idle
-keep-alive connection after Node's default 5 s, `fetch` reuses one just as it closes, and
-`crawl_check` reported the first failure as the link's.
-
-**Change.** `fetchWithTimeout`, which every request goes through (`crawlOne`'s GET,
-`checkUrl`'s HEAD and its GET after a 405 or 501), becomes `fetchWithRetry`: when `fetch`
-rejects, whether reset or timed out, it tries twice more, each attempt with the full
-`--timeout`, and throws the last error. An HTTP error status is a response and is not
-retried, and neither is a failure while reading a body. The header and Tools.md's paragraph
-say so.
-
-**Landed.** A test serve (port 4393, `--dest docs/_serve-c22d`, through a temporary
-`.claude/launch.json` entry; both removed afterwards), crawled with `--skip-external` through
-the kit's `crawl-tally.mjs`: before, exit 1 with 10 broken, every one a `fetch failed` from
-`read ECONNRESET` (the twelfth session's crawls had 20, 21 and 20); after, two crawls, each
-exit 0, 1,247 pages crawled, 3,228 unique links, 0 broken and 0 missing anchors, while the
-preload logged 20 failed attempts in each, all `read ECONNRESET`. A scratch server, the kit's
-`c22d-retry.mjs`, resets the first two requests to `/r2` and `/h2` and the first three to
-`/r3` and `/h3`, and never answers `/slow`; the crawl runs with `--timeout 1000`, and the `r`
-paths are same-origin GETs, the others cross-origin HEADs. HEAD's copy requested each path
-once and reported all five. After, each path was requested three times: `/r2` and `/h2`
-succeeded on the third, and `/r3`, `/h3` and `/slow` were reported, the last as `timeout`. The
-C22 fixture through the kit's static server: three runs of three exit 1 with 28 broken, as
-before. A host that never answers now costs three timeouts, 45 s at the default, before its
-link is reported. `compare_trees`: Tools.html online and offline, the search data and
-`book.html`, nothing else.
+Landed.
 
 ### C22e — `docs: Pipeline-Stages.md's task sections match the chart and the task graph`
 
-**Found while fixing Builder.md's copy of the same lists in C22c; the owner asked on
-2026-09-26 for it to be fixed before C23** (see Found while implementing). Extending.md says
-each task's `###` heading on the page sits under the numbered section matching its Gantt
-section, and eight did not: Section 1 (Seed tasks) held `scss`, `dot`, `prepDest` and
-`prepPageDirs`, Section 2 (Spine) `loadData` and `dispatch`, and Section 3 (Render fan-out)
-`flush:i` and `flushJoin`. Section 1 also held `warmInit`, which the chart draws as a start-up
-bar in each worker's row, and its introduction said its tasks have no predecessors.
-
-**Change.** Each `###` section moves under its chart section, in Builder.md's order, and
-`warmInit` joins `renderEnvInit` under Render, as in Builder.md; the four introductions say
-what each section now holds. No heading's text changes, so every anchor keeps its id.
-Extending.md's rule gains the case the chart gives no section: a per-lane start-up task goes
-under Render.
-
-**Landed**, with three additions. `markdownInit`'s `expected` line lacked `deriveRedirects`,
-which it waits for only to count the redirect stubs for the `{{tbdocs:...}}` counts
-(`tbdocs.mjs:598-599`), and its prose did not mention the counts; both are corrected, and so
-is `deriveRedirects`'s list of consumers. `renderJoin` unblocks `symbolIndex` as well as
-`searchData` and `writePdf`, and `flushJoin` unblocks `linkJoin` as well as `writeAux` and
-`writePdf`. And `highlighterInit` gains the `expected` block that every other task with a
-predecessor has. A scratch script moved the sections and would not write unless the region's
-non-blank lines came out the same multiset; `git diff --color-moved` shows no other line
-changed. The kit's `c22e-verify.mjs` checks the page against `tbdocs.mjs`: each block's
-section against `GANTT_SECTION`, with `render:i` in Render and `flush:i` in Write as
-`dispatch.submit` gives them and the two start-up tasks in Render; each `expected` line
-against `TASKS`; and a block for every static task. On HEAD's page it reports 10 problems,
-nine misplaced blocks and `markdownInit`'s line; after, none. `build.bat`'s link check passes,
-so no link into the page lost its anchor. `compare_trees`: Extending.html and
-Pipeline-Stages.html online and offline, the search data and `book.html`, nothing else. Two
-defects found on the way are recorded under Found while implementing.
+Landed.
 
 ### C22f — `docs: export tables for counts.mjs and page-baseline.mjs`
 
-**Found while fixing Pipeline-Stages.md's task sections in C22e; the owner asked on
-2026-09-26 for it to be fixed before C23** (see Found while implementing). The page says its
-second half covers every module, with the full export table for each, and had none for
-`builder/counts.mjs` or `builder/page-baseline.mjs`.
-
-**Change.** A `counts.mjs` section after `render.mjs`'s, since `countPlugin` is the last
-plugin `createMarkdownIt` applies, and a `page-baseline.mjs` section after
-`symbol-baseline.mjs`'s, the other drift guard: every export, in the order the module declares
-them, in the neighbouring tables' form.
-
-**Landed.** A Sonnet agent drafted both tables from the modules, and every row was checked
-against the source; five were corrected. `validateCountNames` returns a message per unknown
-reference, not per name, and offers the nearest known name only within an edit distance of
-three (`counts.mjs:251-258`). `countPlugin` runs after `replacements` because its core rule is
-pushed last, not because it is the last plugin. `checkPageBaseline`'s row is rewritten so that
-each case reads on its own (`page-baseline.mjs:120-175`). `GUARDED_SRC` is passed in the two
-scripts' probes rather than building fixtures. And `deriveCounts`'s folder-style indexes are
-reference pages, not only classes. Nothing imports `COUNT_NAMES`, which is recorded under
-Found while implementing. `compare_trees`: Pipeline-Stages.html online and offline, the search
-data and `book.html`, nothing else.
+Landed.
 
 ### C22g — `builder: tbdocs.mjs's task-graph comment points to TASKS and the docs`
 
-**Found while checking C22e's edges; the owner asked on 2026-09-26 for it to be fixed before
-C23, with a pointer rather than a correction** (see Found while implementing). The comment
-above `TASKS` described the graph in prose, and contradicted `TASKS` in three places.
-
-**Change.** The prose goes. The comment says that `TASKS`, with the `render:i` and `flush:i`
-tasks `dispatch.submit` adds, is the graph, and names Pipeline-Stages.md and
-`scheduler-dag.dot` as its descriptions; the sentence on `runBuild()` stays. No page cites the
-comment.
-
-**Landed.** A comment-only change: `compare_trees` identical, lint clean.
+Landed.
 
 ### C22h — `builder: delete counts.mjs's unused COUNT_NAMES`
 
-**Found while checking C22f's table; the owner asked on 2026-09-26 for it to be deleted
-before C23** (see Found while implementing). `COUNT_NAMES` called `deriveCounts` with an empty
-state at module load, and nothing read it: `validateCountNames` checks a page against the
-keys of the counts it is given, and `countPlugin` substitutes from the same object.
-
-**Change.** The export goes, with its row in Pipeline-Stages.md's table and the clause of the
-`deriveCounts` row that named it. It was the only call that omitted `extra`, so `extra`'s
-default and the `?? 0` behind `redirectStubs` go too, and the JSDoc and the table's signature
-make `extra` required; `tbdocs.mjs:606`, the one caller left, always passes it. Extending.md
-says instead that the returned object's keys are the names a page may use.
-
-**Landed.** `compare_trees`: Extending.html and Pipeline-Stages.html online and offline, the
-search data and `book.html`, nothing else. Lint clean.
+Landed.
 
 ### C22i — `scripts: crawl_check reports a page whose body cannot be read`
 
-**Found while implementing C22d; the owner asked on 2026-09-26 for it to be fixed before C23,
-with no retry** (see Found while implementing). `crawlOne` recorded a same-site page as
-reachable before reading its body, and returned in silence when the read failed: the page's
-links were never extracted, its ids never indexed, and the report said nothing.
-
-**Change.** When the read fails, `crawlOne` records the page broken, with its status and the
-error prefixed `body:`, and returns. It does not retry: the server has answered, and C22d's
-retries already cover the common reset, which comes before any response. The part of the body
-that arrived is not parsed. The header and Tools.md's paragraph say so.
-
-**Landed.** The kit's `c22i-body.mjs` serves `/`, linking `/cut` and `/ok`; `/cut` answers
-200 `text/html` with a `Content-Length` of 5000, sends a link to `/missing` and closes the
-socket 50 ms later. HEAD's copy: exit 0, 3 pages crawled, 2 unique links, 3 status checks, 0
-broken and 0 missing anchors. After: exit 1, the same counts with 1 broken, `[ERR  body:
-terminated] http://localhost:4395/cut`, where `terminated` is undici's message. Both requested
-each of `/`, `/cut` and `/ok` once and `/missing` never. The kit's `c22d-retry.mjs` gives
-C22d's result unchanged: each failing path requested three times, `/r2` and `/h2` recovering,
-and `/r3`, `/h3` and `/slow` reported. The C22 fixture through the kit's static server: three
-runs of three exit 1 with 28 broken. `compare_trees`: Tools.html online and offline, the
-search data and `book.html`, nothing else. Lint clean.
+Landed.
 
 ### C22j — `scripts: crawl_check's --timeout covers a page's body`
 
-**Found while implementing C22i; the owner asked on 2026-09-26 for it to be fixed before
-C23** (see Found while implementing). `fetchWithRetry` cleared its timer once `fetch`
-resolved, which is when the headers arrive, so `--timeout` did not bound the read of a page's
-body, and a body that stalled after its headers held the crawl until undici gave up.
-
-**Change.** Each attempt passes `AbortSignal.timeout(timeoutMs)` as its signal, so the timeout
-runs on through the body. Such a signal fails with a `TimeoutError`, not an `AbortError`, so
-the three places that record an error take its text from one function, `errorText`:
-`timeout` for a timeout, the error's message otherwise. A body still arriving when the time
-runs out is reported `body: timeout`, without a retry, as C22i decided for a body that breaks
-off. The header, the retry comment and Tools.md's paragraph say so.
-
-**Landed.** The kit's `c22i-stall.mjs` serves `/`, linking `/stall` and `/ok`; `/stall`
-answers 200 `text/html` with a `Content-Length` of 5000, sends a link to `/missing`, then
-sends nothing and keeps the socket open. With `--timeout 1000`, C22i's commit exited 1 after
-305.6 s, reporting `[ERR  body: terminated]` for `/stall`; after, it exits 1 after 1.2 s,
-reporting `[ERR  body: timeout]`. Both requested each of `/`, `/stall` and `/ok` once and
-`/missing` never. `c22i-body.mjs` still reports `body: terminated` for `/cut`;
-`c22d-retry.mjs` gives C22d's result unchanged, `/slow` reported as `timeout`; and the C22
-fixture gives three runs of three exit 1 with 28 broken. A crawl of the built site through
-the kit's static server: exit 0, 1,247 pages crawled, 3,228 unique links, 0 broken and 0
-missing anchors in 88.8 s, so the default 15 s, which now covers each body, stopped no page.
-`compare_trees`: Tools.html online and offline, the search data and `book.html`, nothing
-else. Lint clean.
+Landed.
 
 ### C23 — `scripts: check_examples restores the registry after a spawn failure`
 
-**L3-2 (R2)**, with V4's note that `check_examples.mjs` has no process-level handler at all.
-`buildStaged`'s spawn (`:601-612`) has no `'error'` listener and waits for `'exit'`. A spawn
-failure is then an uncaught exception at the emitter, outside both `main()`'s catch and
-`main().catch`, so the step that restores the tbIDE registry never runs.
-
-**Change.** Listen for `'error'` and wait for `'close'`, as `addin_test.mjs:180,185` and
-`check_regex_safety.mjs:347-348` do. An `uncaughtException` and `unhandledRejection` handler
-restores the registry and exits 2.
-
-**Verify.** With the spawn pointed at a missing executable (a scratch edit), the run exits 2
-and the registry is as it was found. The `examples.bat` summary unchanged (a harness run).
-
-**Landed.** Waiting for `'close'` also means `out` holds all of tbbuild's output when its JSON
-is parsed, which `'exit'` did not promise. The handler is `die`, installed at the bottom
-beside `main().catch`, whose body it takes over; the probes' `fakeLane` already has a
-parameter named `crash`. A scratch edit pointed the spawn at `C:\no-such-folder\node.exe`,
-run with `--jobs 1 --only "^Reference/Core/"` (186 samples from 87 pages in 12 projects).
-HEAD: exit 1 after 3.6 s, on Node's own report of the uncaught `spawn
-C:\no-such-folder\node.exe ENOENT`, which `examples.bat` reads as a sample that does not
-compile, and nothing tidied. After: exit 2 after 3.4 s, `check_examples: spawn
-C:\no-such-folder\node.exe ENOENT`, from `main()`'s catch around the lanes, which finishes
-the tidy. A scratch throw from `process.nextTick` and a scratch rejection that nothing
-awaits, each in `buildStaged` before the spawn, exit 2 through `die` with the error printed.
-A read-only snapshot of the keys the tidy covers (`reg export` of the IDE's settings key and
-the two association keys) came out identical around every run; in the failing runs no IDE
-starts, so HEAD leaves the registry as found as well, and the full run is what shows the tidy
-still puts it back. `examples.bat`: exit 0 after 122.2 s, `1129 sample(s), 1129 compile, 0
-finding(s), 120.2s -- clean`, from 597 pages in 43 projects on 4 lanes, the snapshot
-identical before and after. A lane that fails while another builds was checked as well,
-because the catch then tidies while the other lane's IDE still runs, which `finishTidy`'s
-comment forbids: with lane 1 failing 6 s in on two lanes, the run exited 2 after 9.8 s, no
-tbbuild or IDE process was left, and the snapshot was identical, because Node ends the
-children it spawned when it exits, and they end theirs (`tb-ide.mjs:145-150`).
-`compare_trees` identical. Lint clean.
+Landed.
 
 ### C24 — `scripts: tb-operate stops on an afterReveal timeout`
 
-**A7-2 (R2).** `afterReveal` (`tb-operate.mjs:421-429`) returns `false` on a timeout, and
-`openFile` (`:453`), `setCursor` (`:461`) and `select` (`:475`) discard the result. That
-reopens the cursor-reset race the function exists to prevent: `:401-409` records the measured
-`"xyz"` to `"zy"` corruption.
-
-**Change.** Each call site checks the result, retries once, then throws naming the file and
-position.
-
-**Verify.** `addin-test.bat` green, all ten lanes (a harness run).
-
-**Landed**, without the retry: waiting again only makes the wait longer, which is what
-`afterReveal`'s `timeout` is for, and opening the file again would start a new reveal (see
-Where the plan was wrong). The three call sites share one unexported helper, `settledAt`,
-which throws naming the file and the place; `setCursor` and `select` are not given the file
-and read it from `editorState`. `afterReveal` still returns `false` on a timeout, for a
-caller that waits after an add-in's `Editors.Open`; nothing in the tree calls it but the
-three. The kit's `c24-reveal.mjs` drives the three against a fake connection whose reveal
-window never closes. HEAD's copy returned from each after 10.1 s, and `setCursor` and
-`select` then placed the cursor anyway; after, each throws after 10.1 s, as in `the IDE was
-still revealing lines 10 s later, so the cursor could still move:
-/AddinHost/Sources/Haystack.twin at 4:9`, and places nothing. With the window closed, each
-returns at once and places the cursor as before. WIP.Harness.md's paragraph on the 700 ms
-says so. `addin-test.bat`: exit 0 after 131.4 s, `10 of 10 lane(s) ran: 10 passed`, with
-`registry: put back (20 project-state, 21 recent-list and 3 association writes)`.
-`compare_trees` identical. Lint clean.
+Landed.
 
 ### C25 — `scripts: tbbuild always tidies; correct tb-registry's -Command note`
 
-**A7-9, A7-6 (R3).** `tbbuild`'s shutdown skips its tidy step when the IDE handle was never
-set, which is safe only by an invariant inside `tb-launch.ps1`; `tbrun` always tidies. And
-`tb-registry.mjs:49-50` says `tbrun`'s snapshot uses `-EncodedCommand`, where `tbrun.mjs:376`
-uses `-Command` with a fixed literal.
-
-**Change.** `tbbuild` tidies on every shutdown path, as `tbrun` does. The comment is
-corrected; the code is safe as it stands.
-
-**Verify.** `tbbuild` on a probe, and `tbbuild` given a missing `--ide`, both leave the
-registry as found (harness runs).
-
-**Landed.** `shutdown` runs without an IDE only after a `launchIde` that throws, as it does
-when the DevTools port stays taken or a hidden launch prints no pid. It now returns early only
-under `--keep`: `shutdownIde` does nothing without an IDE, as `tbrun` already relies on, and
-`finishTidy` writes only where a value differs. The kit's `c25-reglog.mjs`, preloaded, logs
-each registry request a run makes and what each write request changed, and `c25-run.mjs`
-brackets a run with `reg-snap.mjs`'s read-only snapshots. With `--ide C:\nope\twinBASIC.exe`,
-HEAD exited 2 after 1.4 s having made `startTidy`'s three reads and no other request; after,
-it exited 2 after 2.3 s with `finishTidy` run as well: `restoreProjects` wrote 0 values,
-`restoreKeys` changed 0, and the build targets were read and left alone. No IDE started, so
-the snapshot was identical around both. `tbbuild` on a probe (the `console` template,
-packed): exit 0 after 10.7 s, `--- 0 error(s), 0 warning(s), 0 hint(s), 0 info`, with 1
-project-state and 1 recent-list value put back, the snapshot identical before and after, and
-no IDE or compiler process left. `tb-registry.mjs`'s comment names only `tb-launch.ps1` as
-passed the same way. `compare_trees` identical. Lint clean.
+Landed.
 
 ### C25a — `scripts: tbrun reports a codegen failure that Debug.Cls erased`
 
-**Found while verifying C16; the owner chose this fix on 2026-09-25** (see Found while
-implementing). When a procedure the probe calls fails code generation, the compiler logs
-`[LINKER] compilation (codegen) error` straight after `[BUILD] Executing
-'<project>.<module>.<Sub>'...`. The probe's first statement, `Debug.Cls`, erases that line,
-and the probe prints up to the call and stops. `tbrun` exits 0 with the partial output.
-
-**Change.** Before it presses Build, `tbrun` wraps the IDE page's global
-`clearDebugConsole()`, so each call first saves the lines it is about to erase, read the
-way `readConsole` reads them. In BETA 983's `ide/main.js` the compiler's clear event
-(`event_clearDebugConsole`) and the Clear command both call that function by name, so the
-wrapper sees every clear. After the run, a `BUILD_FAILED` line in a saved segment after the
-last `[BUILD] Executing` line makes `tbrun` exit 2, naming that line and printing the
-partial output. An IDE page without `clearDebugConsole` is refused, as one without
-`dataNodes` is today. Probes keep `Debug.Cls`: nothing asked of a probe changes. `tbrun`'s
-header, Tools.md's paragraph and WIP.Harness.md's bullet on failed builds name the case.
-
-**Verify.** Harness runs, one at a time: probe C (the shift in a procedure the probe calls),
-before `exit 0` with `before` as its output, after `exit 2` naming the codegen line; probe A
-(the shift in the `[RunAfterBuild]` Sub) still `exit 2`; a clean probe still `exit 0` with
-its output; and a clean probe that calls `Debug.Cls` twice `exit 0`, since a saved segment
-with no failure line in it is not a failure.
-
-**Landed.** Reproduced first: probe C on HEAD, exit 0 after 20.8 s with `before` as its whole
-output. The wrapper is `keepClears` in `tb-ide.mjs`, beside `readConsole`, because it reads
-through that module's private `consoleJs`. It always reads without timestamps, so the check
-holds under `--raw` as well. `keptClears` returns the record, one string per clear, and a page
-without it is refused too. A diagnostic print of the record showed one clear for probe C, the
-probe's `Debug.Cls`. It erased `[BUILD] Starting...` through `[BUILD] Executing
-'DocSamples.Probe.Run'...` and then `[LINKER] compilation (codegen) error detected in
-'Probe.Shifty' at line #14`, so the IDE does not clear the console when a build starts. A
-probe with two `Debug.Cls` gave two records, the second `"\nfirst"`: `event_clearDebugConsole`
-writes an empty line after its clear. Harness runs, one at a time, each between two
-`reg-snap.mjs` snapshots that came out identical: probe C exit 2 after 19.0 s, naming the
-codegen line and printing `before`; probe A exit 2 after 19.8 s through the existing check; a
-clean probe exit 0 after 20.1 s with `one` and `two`; the two-clear probe exit 0 after 20.2 s
-with `second`. No IDE lacks `clearDebugConsole`, so the refusal was checked in a `vm` context:
-`keepClears` returns false there. On a stand-in page with the function, a call by name goes
-through the wrapper, and a second `keepClears` does not wrap it twice. `compare_trees`: Tools.md
-online and offline, the search data and `book.html`, nothing else. Lint clean.
+Landed.
 
 ### C25b — `scripts: tbbuild refuses a named IDE that is not there`
 
-**Found while implementing C25; the owner asked on 2026-09-26 for it to be fixed before
-C25a**, as were C25c and C25d (see Found while implementing). Of the six tools that call
-`findIde`, `tbbuild` alone launched a named IDE without checking that it exists. `tbrun`,
-`addin_test` and `build_package_api` refuse one with exit 2, `census_attributes` looks for
-its `packages` folder, and `check_examples` for the compiler beside it. A wrong `--ide` or
-`TB_IDE` was found out only by the launch, which reported it in CLIXML (C25c) or, under
-`--show`, crashed (C25d).
-
-**Change.** The check that refuses a missing IDE also refuses a named one that is not there,
-before `startTidy`, naming the path: `no twinBASIC IDE at <path>: pass --ide ...`, exit 2.
-
-**Landed.** With `--ide C:\nope\twinBASIC.exe`, and with `TB_IDE` naming the same path and no
-`--ide`, `tbbuild` exits 2 after 0.1 s with that line and makes no registry request (the kit's
-`c25-run.mjs`); at C25's commit it exited 2 after 2.3 s, with the launch's CLIXML, after a
-full tidy. `tbbuild` on the probe, with the IDE found on the Desktop: exit 0 after 13.8 s,
-`--- 0 error(s), 0 warning(s), 0 hint(s), 0 info`, the snapshot identical before and after.
-`compare_trees` identical. Lint clean.
+Landed.
 
 ### C25c — `scripts: tb-launch.ps1 reports why a launch failed, in plain text`
 
-**Found while implementing C25** (see Found while implementing). When a hidden launch failed,
-`launchIde` relayed `tb-launch.ps1`'s stderr, which PowerShell writes in CLIXML when its
-streams are redirected: the message read `#< CLIXML` and a line of XML, with the cause inside
-an `<S S="Error">` record. The cause was wrong as well. `Fail` read the Win32 error after
-PowerShell had made calls of its own, which replace it: for `C:\nope\twinBASIC.exe` it
-reported 203, "The system could not find the environment option that was entered", where a
-C# read straight after the same `CreateProcess` gave 3. `tbbuild`, `tbrun` and the add-in
-test lanes all launch through it.
-
-**Change.** Every Win32 call moves into a C# helper that throws, with the error read straight
-after the call: `Desktop`, `KillOnCloseJob`, `Start`, `Assign`, which still ends the
-suspended process when it cannot go into the job, and `Resume`. Progress is silenced, and a
-`trap` writes a failure's innermost message as one line of UTF-8 on stderr and exits 1.
-Setting the job's limit in C# drops the PowerShell workaround of copying the nested struct
-out and back. WIP.Harness.md's paragraph on the launcher says why.
-
-**Landed.** The kit's `c25c-launch.mjs` runs a copy of the script as `tb-ide.mjs` does,
-without an IDE. HEAD's wrote CLIXML to stderr in every case, a successful launch included,
-for its progress record. After: `C:\nope\twinBASIC.exe` gives `CreateProcess failed: The
-directory name is invalid`, because the working folder, the missing `C:\nope`, is checked
-first; the install folder gives `Access is denied`, and `C:\Windows\twinBASIC.exe` `The system
-cannot find the file specified`. Each is the only line on stderr, with exit 1. A short-lived
-`node` child, with the job and without, prints its pid and nothing on stderr. A scratch
-variant that passes `Assign` a null job gives `AssignProcessToJobObject failed: The handle is
-invalid` and leaves no suspended child; another shows the UTF-8 line is needed, since without
-it `éü` arrives as `��`. `tbbuild --ide` naming the install folder: exit 2 after 2.4 s with
-that line, the registry as found. `tbbuild` on the probe: exit 0 after 10.7 s, clean. The
-encoded script is 24,296 characters, against 20,872 before; a command line stops at 32,767.
-`examples.bat`: exit 0, `1129 sample(s), 1129 compile, 0 finding(s), 124.1s -- clean`.
-`addin-test.bat`: exit 0 after 130 s, `10 of 10 lane(s) ran: 10 passed`, `registry: put back
-(20 project-state, 21 recent-list and 3 association writes)`. `compare_trees` identical. Lint
-clean.
+Landed.
 
 ### C25d — `scripts: launchIde under --show reports a spawn that fails`
 
-**Found while implementing C25** (see Found while implementing). `launchIde`'s `--show` branch
-spawned the IDE with no `'error'` listener and returned at once. A spawn that fails is
-reported by an `'error'` event, not a throw, so `launchIde` returned a handle with no pid, and
-the event then ended the process on Node's report of an unhandled `'error'`, with exit 1,
-which `tbbuild` and `tbrun` define as compile errors. Nothing after it ran, the tidy
-included.
-
-**Change.** The branch waits for the child's `'spawn'` or `'error'` event before it returns,
-and a failed spawn throws `could not start the IDE: <Node's message>`, which the callers'
-catch reports with exit 2. The doc comment says a launch that fails throws, hidden or not.
-
-**Landed.** The kit's `c25d-show.mjs` calls `launchIde` with `show: true` and no IDE. HEAD's
-copy returned `pid undefined` for `C:\nope\twinBASIC.exe` and for the install folder, and the
-process then died on the unhandled `'error'` with exit 1; for a one-second `node` child it
-returned a live pid. After: the first two throw `could not start the IDE: spawn <path>
-ENOENT`, since libuv reports a folder as not found too, and the child's live pid is returned
-as before. `tbbuild --show` with the install folder as `--ide`: exit 2 after 2.3 s with that
-line, after a tidy that wrote nothing, the registry as found; at C25's commit it exited 1 on
-Node's report. No IDE was started on the desktop: the success path is the `node` child's.
-`compare_trees` identical. Lint clean.
+Landed.
 
 ### C25e — `scripts: tbrun's --raw changes only what it prints`
 
-**Found while verifying C25a; the owner chose this fix on 2026-09-26** (see Found while
-implementing). `--raw` keeps each console line's timestamp column, and `tbrun` read the
-console with it for its checks as well as its output. `BUILD_FAILED` is anchored at a line's
-start, so under `--raw` a failed build was returned as output with exit 0. A line holding
-only a timestamp is never blank, so a probe that printed nothing exited 0 with that line
-rather than 3. C25a's check was unaffected, since its record is always read without
-timestamps.
-
-**Change.** The quiet-period loop reads the console without timestamps, and every check uses
-those lines. Under `--raw`, one more read with timestamps after the quiet period gives the
-lines printed, trimmed to the same entries by `strip`'s new `raw` argument: the output, and
-the two failure messages that print the console.
-
-**Landed.** Harness runs, one at a time, each between two `reg-snap.mjs` snapshots that came
-out identical. Under `--raw`: probe A exit 2 after 19.2 s, printing the build log with its
-timestamps (before: exit 0 after 19.5 s, the log as output); a probe whose only statement is
-`Debug.Cls`, exit 3 after 138.4 s (before: exit 0 after 18.9 s, printing one line that held
-only a timestamp); the clean probe, exit 0 after 19.2 s with its two lines timestamped
-(before: exit 0 after 19.0 s with three, the first a timestamp alone, from the empty line
-`event_clearDebugConsole` writes); probe C, exit 2 after 20.9 s, naming the codegen line and
-printing `before` with its timestamp. Without `--raw`, the clean probe exit 0 after 23.9 s
-with `one` and `two`, as before. The probe that prints nothing exits 3 only after the whole
-120 s timeout, with or without `--raw`, and did before this commit too: the build log is
-written and erased within the first 400 ms poll, so the loop never sees any output to wait
-quietly after. `compare_trees`, run with C26's Wisdom.md edit also in the tree: every
-difference was that page's. Lint clean.
+Landed.
 
 ### C25f — `scripts: tbrun says when a probe ran and printed nothing`
 
-**Found while verifying C25e; the owner chose this fix on 2026-09-26** (see Found while
-implementing). A probe that runs and prints nothing after its last `Debug.Cls` leaves the
-console empty, and `tbrun` exited 3 with the hint "The [RunAfterBuild] Sub may not have run
--- check the IDE for a modal", though the record C25a keeps shows that the Sub started.
-
-**Change.** When the record holds a `[BUILD] Executing` line, exit 3 quotes it and says the
-probe printed nothing after its last `Debug.Cls`. The wait is unchanged: the quiet period
-starts only once a poll has found output, which is what lets a probe that clears and then
-computes for longer than `--quiet` before it prints be captured, so a silent probe still
-waits the whole timeout. The header's and Tools.md's descriptions of exit 3 name the case.
-
-**Landed.** One harness run, between two `reg-snap.mjs` snapshots that came out identical:
-the probe whose only statement is `Debug.Cls` exits 3 after 136.5 s with `tbrun: the probe ran
-([BUILD] Executing 'DocSamples.Probe.Run'...) but printed nothing after its last Debug.Cls.`
-Before, at C25a and at C25e, it exited 3 after 137.1 s and 138.4 s with the modal hint. The
-message for a Sub that never started is unchanged, and so is every other path. `compare_trees`:
-Tools.md online and offline, the search data and `book.html`, nothing else. Lint clean.
+Landed.
 
 ### C26 — `wisdom: parseStaging refuses a chunk it cannot place`
 
-**L3-3 (R1)**, the half that needs no shared module. `parseStaging` (`merger.mjs:114-129`)
-splits on any line equal to `---`, and `parseSection` returns `null` for a chunk that does
-not start with `## ` (`:162-168`), which the caller drops (`:147-148,152-153`). A bare `---`
-inside a fenced sample therefore drops the rest of its section and the section's
-`finding_ids` line without a word, against the header's promise never to drop reviewer
-content (`:111-112`). Today's file produces no such chunk.
-
-**Change.** A chunk that does not start with `## ` is an error naming its line. C36 then
-stops a fenced `---` from making such a chunk; this check stays as the guard for any other
-malformed one.
-
-**Verify.** A synthetic file with a `---` inside a fence: before, the tail disappears; after,
-the run fails naming the line. The real `staging.md` parses to the same 1,160 sections and
-serialises to the same bytes as before.
-
-**Landed.** `parseStaging` keeps each chunk's first line number. A chunk after a `---` whose
-first non-empty line is not a `## ` heading throws `staging.md line <n> follows a "---" line
-but is not a "## " heading, so it belongs to no section (a "---" inside a code sample splits
-the file too): <text>`. A chunk of empty lines is still dropped, as before. A scratch oracle
-compared HEAD's copy with the working tree. On a file with `---` inside a fenced sample, HEAD
-returned 2 sections and lost `Dim y`, the text after the sample and the section's `_Source
-threads:_` line; now the parse throws, naming line 10, `Dim y`. The real `staging.md` (15,553
-lines) parses to the same 1,160 sections on both sides, and the two parses are identical as
-JSON, so `serializeStaging`, which is unchanged, writes the same bytes. A file whose chunks
-after a `---` are all empty lines, and one that is all preamble, parse as before.
-`graftAdditions` parses before it writes anything, so the throw leaves `staging.md` and the
-state as they were, and the sideband path starts from `freshStaging` and never parses.
-Wisdom.md says so where the reviewer reads about `---` and in the merge steps.
-`compare_trees`: Wisdom.md online and offline, the search data and `book.html`, nothing else.
-Lint clean.
+**Carried forward.** `parseStaging` throws, naming the line, when the chunk after a `---` line
+does not start with `## `, so a `---` inside a fenced sample stops the run. C26's oracle, a
+scratch script not in the repository, ran it on the real `staging.md` and on synthetic files,
+one of them a section whose fenced sample holds a `---`. C36's Verify expects that file to
+keep its section's tail and its `_Source threads:_` line.
 
 ### C27 — `wisdom: write manifest.json and denied.json atomically`
 
-**A10-5 (R2).** `saveManifest` (`wisdom/discord/messages.mjs:10-12`) and `wisdom.mjs:146`
-write with a plain `writeFileSync`, and `loadManifest` parses without a guard, beside
-`wisdom/extract/state.mjs:62-75`, which writes to a temp file and renames it.
-
-**Change.** Both writes use the temp-and-rename write `state.mjs` already has, shared within
-`wisdom/`; a file that does not parse is reported by name.
-
-**Verify.** With the rename made to throw (a scratch edit), the previous file survives
-intact; a truncated manifest gives an error that names it.
-
-**Landed.** A new `wisdom/files.mjs` holds `writeFileAtomic(path, text)`, the write
-`saveState` had (to `<path>.tmp`, then a rename over the old file), and `readJsonFile(path,
-fallback, remedy)`, which returns the fallback for a missing file and throws `<path> is not
-valid JSON (<parse error>). <remedy>` for one that does not parse. `loadManifest`,
-`saveManifest` and `runExport`'s read and write of `denied.json` use them. `saveState` and
-`graftAdditions`'s write of `staging.md` use the shared write in place of their own copies,
-and `saveState`'s comment no longer says the caller must create the folder, which it creates
-itself. `loadState` keeps its own read, which already names its file. The oracle is a scratch
-preload that answers wisdom's Discord requests from a scenario, with no network, and can make
-one write fail: a `writeFileSync` to the file writes half its text and throws, or the rename
-onto it throws. Each case ran `wisdom.mjs export` in a fresh folder, one target at a time,
-two channels fetched and a third answering 403, on HEAD's copy and on the working tree. On
-HEAD, a write cut off part way left `manifest.json` as 16 bytes of broken JSON in place of
-the previous file, and `denied.json` likewise. The next export then failed with `SyntaxError:
-Unexpected end of JSON input` for the manifest, and `SyntaxError: Unterminated string in JSON
-at position 12 (line 2 column 11)` for `denied.json`, neither naming a file. Now a cut-off
-write and a failed rename each leave the previous file intact, for both files, with the
-`.tmp` beside it, which the next write replaces. A truncated file stops the export with an
-error that gives its path and says what deleting it costs. A clean run, and one over seeded
-files, write the same manifest, `denied.json` (timestamps masked) and data files as HEAD.
-`graftAdditions` with no additions over a copy of the real `staging.md`, then `saveState`,
-left `staging.md`, `staging.md.bak` and `extract-state.json` identical to HEAD's (`lastRun`
-masked). Wisdom.md lists `files.mjs`, says how the two export files are written and what a
-bad one does, and lists `denied.json` under `raw/`, where it was missing. `compare_trees`:
-Wisdom.md online and offline, the search data and `book.html`, nothing else. Lint clean, 139
-files.
+Landed.
 
 ### C27a — `wisdom: an incremental export fetches new messages in stored targets`
 
-**Found while verifying C27; the owner chose this fix on 2026-09-26** (see Found while
-implementing). `runExport` skipped every target with a manifest entry and a file
-(`wisdom.mjs:134-137` before C27), so a plain export never fetched a new message in a channel
-or thread it had already stored, though Wisdom.md said a re-run fetches the new messages. The
-`?after=` branch ran only when the file was missing, and then wrote the new messages as the
-whole file.
-
-**Change.** A stored target is skipped, with no request, only when the `last_message_id`
-discovery reports for it is no newer than its watermark. Otherwise the messages after the
-watermark are fetched and appended to the file, with the fresh channel or thread object, and a
-target whose file is missing is fetched in full. Except under `--since`, the watermark moves
-to the newest snowflake on disk, which is discovery's `last_message_id` when that message was
-deleted, so such a target is not fetched again on every run. Every file the export writes goes
-through C27's `writeFileAtomic`, and a stored file with new messages to append that does not
-parse is reported by path. `--since` and `--force` are unchanged.
-
-**Verify.** C27's oracle, with a second export over the first one's files: a new message is
-appended, an unchanged target costs no request, and `--since` and `--force` match HEAD. Then
-one online pass over the real export, checked against a copy taken first.
-
-**Landed.** `messages.mjs` gains `appendMessages(stored, fetched)`, which drops a fetched id
-already stored and keeps chronological order through the comparator `fetchMessages` already
-sorted with, and the export loop is as the Change says; `writeJson` writes through
-`writeFileAtomic`. C27's oracle now gives each channel a `last_message_id`, logs each request,
-and runs second exports. The C27 cases are unchanged. `incremental`: on HEAD the second run
-requested nothing for channel 101 and its file kept d1 and d2; now it requests `101 after d2`
-alone, appends d10 and moves the watermark to d10, and 102 costs no request. `unchanged`: no
-message request but the 403 target's, as on HEAD. `deleted-last` (102's newest message, d4,
-deleted): the first run records d4, where HEAD recorded d3, so the second run skips 102;
-with d3, the new skip test would fetch 102 again on every run.
-`file-missing`: HEAD fetched 101 after d2 and wrote d10 alone, losing d1 and d2; now a full
-fetch writes all three. `corrupt-stored`: HEAD skipped the broken file and exited 0; now the
-export exits 1 naming `channels\101.json`. A cut-off append leaves the file intact, with its
-`.tmp` beside it. `--since` and `--force` leave the same files, manifest and requests as HEAD.
-**Online**, as the owner allowed: `wisdom/data/raw`, last exported on 2026-06-04 (17 channels,
-1,843 threads, 105 MB), was copied into `.claude/` first. The first run (a bot token)
-discovered 22 text channels, 10 forums, and 53 active and 2,336 archived threads, 447 of them
-below the one-message threshold: 1,964 targets. It skipped 1,341 without a request, fetched 134
-(4,935 messages, from 113 of them), met 2 that answered 403, and stopped at the 200-request cap
-with exit 2. The second run finished, exit 0 after 28.7 s: 1,934 up to date, 23 fetched (47
-messages, from 11), 7 answering 403, 55 requests. A scratch check against the copy: no stored
-message lost; every file's messages ascending, with no duplicate; every rewritten or new file's
-watermark equal to the newer of its newest message and its object's `last_message_id`; no
-watermark moved back and no `.tmp` left. 28 files gained 4,105 messages, 96 new files hold
-877, and 1,832 are unchanged. 59 watermarks advanced: 28 with their files, and 31 whose fetch
-returned nothing while discovery reported a newer `last_message_id`. The manifest has 97 new
-entries: 96 with the new files, and one for a new target whose fetch returned nothing though
-discovery reported a message from 2024-03-25; its file is missing, so each run fetches it in
-full, as HEAD did. Wisdom.md says what the export skips, appends and replaces, and how every
-file is written, and its members step no longer says that only a user token gets an empty map:
-this bot gets one too, because the endpoint answers it with 403. `compare_trees`: Wisdom.md
-online and offline, the search data and `book.html`, nothing else. Lint clean.
+Landed.
 
 ### C27b — `wisdom: export --since keeps the history already stored`
 
-**Found while verifying C27a; the owner chose this fix on 2026-09-26** (see Found while
-implementing). `runExport` loaded an empty manifest under `--since` (`wisdom.mjs:108`), as it
-did before C27a, so every target was fetched from the date, its file was replaced with only
-the messages after it, and the manifest was saved holding only the targets that had some. A
-later plain export took each shortened file as up to date.
-
-**Change.** Under `--since` the manifest is loaded and a stored target is brought up to date
-from its watermark, as in a plain run; `--since` sets the start only of a target with no
-file. A target with no file gets no watermark.
-
-**Verify.** C27a's oracle, with `--since` over stored files and with a date past a file's
-end; the plain and `--force` cases match HEAD.
-
-**Landed.** In `runExport` the manifest is loaded unless `--force` is given, and a stored
-target is fetched after its watermark with or without `--since`. The watermark rule has no
-`--since` branch any more: it moves to the newest snowflake on disk, as in a plain run, and
-only for a target that was stored or got messages, so a target with no file gets no entry.
-That also stops the kind of entry C27a's online pass left for a target whose fetch returned
-nothing. The export's USAGE line says the same. C27a's oracle gains five cases, 21 in all,
-and 18 leave the same exit, files, manifest and requests as HEAD. `since` (101 stored with d1
-and d2, then d10 added, `--since` d5): HEAD requested all three targets after d5, replaced
-101's file with d10 alone and saved `{101: d10}`, dropping 102's entry; now it requests
-`101 after d2` and `103 after d5` alone, 101 holds d1, d2 and d10, and the manifest keeps
-`102: d3`. `since-gap` (`--since` d8, with d6 and d10 added): HEAD lost d1, d2 and d6; now
-101 holds all four.
-`empty-new` (a new target whose only message was deleted): HEAD gave it the entry d4 with no
-file; now it gets none. `since-first`, `since-then-plain` and `force-since` match HEAD: a
-target first exported under `--since` keeps the date as its start, and `--force --since`
-fetches every target from the date and writes each file whole. No online run: a stored target
-under `--since` now takes the path C27a's online pass checked, and one with no file is fetched
-from the date as before. Wisdom.md's Export options row, a paragraph after the date-scoped
-run and step 4 of the control flow say which targets `--since` limits; step 4 lists the fetch
-modes in the order the code chooses them, and Full no longer claims `--force --since`.
-`compare_trees`: Wisdom.md online and offline, the search data and `book.html`, nothing else.
-Lint clean.
+Landed.
 
 ### C28 — `scripts: exit 2 on a crash in three tools that exit 1`
 
-**A5-2 (R2), and the `check_tb_registry.mjs` half of L1-11.** The convention
-(`Extending.md:640-648`) keeps 1 for a finding and 2 for a crash. `pick_a11y_sample.mjs`'s
-`discover()` (`:159-169`) throws uncaught on a missing tree and exits 1, the same as a
-coverage gap (`:310`), and it runs in `check.bat`. `build_dot_metrics.mjs` has no catch
-around its browser work, so a crash exits 1, which is also its STALE result.
-`check_tb_registry.mjs` exits 1 for a crash and for a failure alike.
-
-**Change.** The convention's crash handler, as `check_dot_fit.mjs:31-34` has it, in all
-three, exiting 2. C43 folds the handlers into one helper.
-
-**Verify.** In each, a forced crash exits 2 and a real finding still exits 1.
-`check_tb_registry.mjs`'s fixtures pass (a harness run).
-
-**Landed.** `pick_a11y_sample.mjs` and `build_dot_metrics.mjs` gain `check_dot_fit.mjs`'s
-handler after their imports, with a comment saying what their exit 1 is. So does
-`check_tb_registry.mjs`, whose catch now passes on everything but an `AssertionError`, so a
-crash inside the test exits 2 as well as one in the two `wipe()` calls outside it. Every
-`node:assert/strict` failure the test can raise is an `AssertionError`: `equal`,
-`deepEqual`, `ok`, and `throws` given a regex or a validator. Its header and Tools.md state
-the 2. Measured on Node 24.13.0: the handler catches a rejected top-level await, a throw that
-passes through a `finally` and a module-level throw, each with the origin
-`unhandledRejection`. The oracle ran HEAD's and the working tree's copies of the three tools.
-`pick_a11y_sample` with `--root-dir` a missing folder: HEAD exit 1 with Node's stack, now 2
-with `ENOENT` naming the folder; over the sample pages less one, 1 on both; over the real
-`_site-offline`, 0 on both. `build_dot_metrics --check` with `PUPPETEER_EXECUTABLE_PATH`
-naming no file: HEAD 1, now 2; with the table altered, `STALE` and 1 on both; unaltered, 0 on
-both. `check_tb_registry`, with a preload that makes the nth PowerShell call throw: at the
-first, before the `try`, HEAD 1, now 2; at the seventh, inside `snapshotProjects` once the
-scratch keys exist, HEAD 1 with its one-line message, now 2 with the stack, and the key
-deleted on both; with every call from the seventh on failing, so that the `finally`'s
-`wipe()` fails too, 1 against 2, and the key left on both; with one assertion made false, 1
-on both; unchanged, `check_tb_registry: every assertion holds` and 0 on both, in 33 to 39 s.
-`compare_trees`: Tools.md online and offline, the search data and `book.html`, nothing else.
-Lint clean.
+**Carried forward.** `pick_a11y_sample.mjs`, `build_dot_metrics.mjs` and
+`check_tb_registry.mjs` each gained `check_dot_fit.mjs`'s crash handler, installed after
+their imports, exiting 2 on a crash; `check_tb_registry.mjs`'s catch passes on everything but
+an `AssertionError`. C43 folds these three handlers, and C07's, into `lib/gate-probes.mjs`'s
+shared handler.
 
 ### C29 — `test.bat: cite check_gate_lists for the gate's history`
 
-**A6-2 (R1).** `test.bat:34-43` tells the gate's history in a way that neither
-`check_gate_lists.mjs`'s header (about `:30-44`) nor `Tools.md:435-437` supports, and those
-two agree with each other.
-
-**Change.** Trim the comment to a citation of the header, matching the file's other seven
-comments.
-
-**Verify.** Re-read against both accounts; `check_gate_lists.mjs` and
-`check_ci_workflows.mjs` pass.
-
-**Landed.** The comment keeps what the gate compares and what it costs, and its history is
-now one sentence both accounts support, that the counts rotted three times without breaking
-a link or failing a gate, with a pointer to the header. What went is what neither account
-says: that the fix for round 3 put the wrong numbers into Building.md and README.md, and how
-many there were. The header and Tools.md say both pages were wrong in the commit that shipped
-the gate green, and that round 4 found three readers tripping over one of them. The file has
-nine other gate comments now, not seven: C03 and C06 added two. `check_gate_lists`
-(`check.bat (4) + test.bat (10) match docs/Documentation/Tools.md; 6 stated count(s) across
-16 pages agree -- clean`) and `check_ci_workflows` pass.
+Landed.
 
 ### C30 — `scripts: tidy check_links_diff's and check_publish_policy's failures`
 
-**L2-6, L3-6 (R3).** `check_publish_policy.mjs:152-189` and `check_links_diff.mjs:651-750`
-remove their scratch folders only on success, where four other tools do it in a `finally`.
-And `check_links_diff.mjs`'s `fusedBuild` (`:426,432`) and `ensureBasePathTree`
-(`:518,525`) call `spawnSync` unguarded, so a failure reaches the terminal as a stack trace
-at exit 1 rather than as the tool's `error:` line at 2.
-
-**Change.** A `finally` for both scratch folders; both spawns report through the tool's error
-path.
-
-**Verify.** A forced failure in each leaves no scratch folder and prints the tool's `error:`
-line with exit 2. `check_links_diff.mjs --self-test` and CI's fixture cases unchanged.
-
-**Landed.** `check_publish_policy.mjs`'s three `.md` probes run inside a `try` whose
-`finally` removes the `publish-policy-*` folder; the crash handler it already had still
-gives exit 2. In `check_links_diff.mjs`, the comparison moved out of `main()` into
-`compare(opts)`, unchanged but for the fixture folder, and `main()` calls it inside a `try`
-whose `finally` removes `opts.fixtureDir`, which only the harness sets. `fusedBuild` and
-`ensureBasePathTree` throw a `HarnessError`, naming the spawn's own error when there is one,
-which the catch prints as the `error:` line; any other throw prints its stack; both exit 2,
-as the header's "2 on a harness error" already said. `--self-test` still runs outside the
-`try`, as before. The oracle ran HEAD's copies beside the working tree's, with a preload
-that fails one step, and counted the `%TEMP%` folders each run left. A failed probe write in
-`check_publish_policy`: exit 2 on both, and HEAD left its folder. A failed fixture build
-under `--b fused`, and a failed `--build-base-path` build: HEAD exit 1 with Node's stack, now
-2 with `error: the build wrote no findings file (exit 1)` and `error: base-path build failed
-(exit 1)`. A failed write into the `fixture` case's folder: HEAD exit 1 and the folder left,
-now exit 2 with the stack and no folder. Unchanged, with times and pids masked:
-`check_publish_policy`, `check_links_diff --self-test`, and CI's `--case fixture --a script --b index` and `--case
-fixture-built --case fixture-built-offline --a script --b fused` print the same output with
-the same exit on both, and leave nothing. Lint clean.
+Landed.
 
 ## Phase 2: shared code, in place, with no change in behaviour
 
