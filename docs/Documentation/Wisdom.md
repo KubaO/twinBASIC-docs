@@ -103,7 +103,7 @@ Fetches messages from Discord channels and forum threads.
 node wisdom/wisdom.mjs export
 ```
 
-Outputs raw JSON under `wisdom/data/raw/`. Supports incremental runs --- a manifest tracks the highest message ID per channel, so re-running fetches only new messages. Use `--force` to re-fetch everything.
+Outputs raw JSON under `wisdom/data/raw/`. Supports incremental runs --- a manifest tracks the highest message ID per channel and thread, so re-running fetches only the new messages, and only from the channels and threads that have some. Use `--force` to re-fetch everything.
 
 | Flag | Effect |
 |------|--------|
@@ -218,20 +218,21 @@ Also defines `runConcurrent(items, concurrency, fn)` --- a simple worker-pool: s
 ### Phase 1 control flow
 
 1. **Discover** (`discord/discover.mjs`): fetch the full channel list from `/guilds/{id}/channels`, filter by type (text/forum) and exclude patterns. For forums, paginate `/channels/{id}/threads/archived/public` and (bot-only) `/guilds/{id}/threads/active`, deduplicate, and filter by `min_message_count`.
-2. **Fetch members** (`discord/discover.mjs`): paginate `/guilds/{id}/members` (bot-only; user tokens get an empty map). Write `guild.json` and `members.json`.
+2. **Fetch members** (`discord/discover.mjs`): paginate `/guilds/{id}/members`. A user token, or a bot the endpoint refuses, gets an empty map, and messages then show authors by their global name rather than their server nickname. Write `guild.json` and `members.json`.
 3. **Build target list**: merge text channels and forum threads into a single list. Targets that previously returned 403 (tracked in `denied.json`) sort to the end.
 4. **Fetch messages** (`discord/messages.mjs`): run targets through `runConcurrent`. For each target:
-   - Check manifest: if the target's highest-seen snowflake is recorded and the output file exists, skip (up-to-date).
+   - Check manifest: if the target's output file exists, its snowflake is recorded, and the `last_message_id` discovery reported for it is no newer, skip it (up-to-date) without a request.
    - Call `fetchMessages(client, channelId, afterSnowflake)`:
-     - **Incremental** (afterSnowflake set): page forward with `?after=`, collecting new messages.
-     - **Full** (afterSnowflake null): page backward with `?before=`, collecting all history.
+     - **Since** (`--since`): page forward with `?after=` from the date's snowflake.
+     - **Incremental** (the output file exists and its snowflake is recorded): page forward with `?after=` from that snowflake, collecting new messages.
+     - **Full** (otherwise, which includes every target under `--force`): page backward with `?before=`, collecting all history.
      - Sort chronologically (ascending snowflake).
-   - Write `{ channel | thread, messages }` to `raw/channels/{id}.json` or `raw/threads/{id}.json`.
-   - Update manifest with `highestSnowflake(messages)` and flush to disk after each target.
+   - Write `{ channel | thread, messages }` to `raw/channels/{id}.json` or `raw/threads/{id}.json`. An incremental fetch appends its messages to those already in the file and stores the channel or thread object discovery returned; a full or `--since` fetch replaces the file.
+   - Update the manifest to the newest snowflake now on disk for the target, and flush it after each target. That is the newest message, or discovery's `last_message_id` when that is newer because its message was deleted, so the next run does not fetch the target again for nothing. Under `--since` it is the newest message fetched.
 
 The export manifest (`raw/manifest.json`) is a flat `{ channelOrThreadId: highestSnowflake }` object. It governs incremental fetches --- on the next run, only messages newer than the stored snowflake are requested.
 
-The manifest and `denied.json` are each written to a `.tmp` file that is then renamed over the old one, so a run that stops during a write leaves the previous file whole. A file that does not parse stops the next export with an error that names it, unless `--force` is given, which ignores both files.
+Every file the export writes goes to a `.tmp` file first, which is then renamed over the old one, so a run that stops during a write leaves the previous file whole. A manifest or `denied.json` that does not parse stops the next export with an error that names it, unless `--force` is given, which ignores both files. So does a stored channel or thread file that has new messages to append.
 
 ### Phase 2 control flow
 

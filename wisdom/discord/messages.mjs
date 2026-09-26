@@ -45,13 +45,23 @@ export async function fetchMessages(client, channelId, afterSnowflake) {
     }
   }
 
-  // Sort chronologically (ascending snowflake)
-  messages.sort((a, b) => {
-    const d = BigInt(a.id) - BigInt(b.id)
-    return d < 0n ? -1 : d > 0n ? 1 : 0
-  })
-
+  messages.sort(bySnowflake)
   return messages
+}
+
+// Chronological order (ascending snowflake), the order a target's file keeps.
+function bySnowflake(a, b) {
+  const d = BigInt(a.id) - BigInt(b.id)
+  return d < 0n ? -1 : d > 0n ? 1 : 0
+}
+
+/**
+ * The messages a target's file already holds, followed by those fetched since,
+ * in chronological order.  A fetched message whose id is already held is dropped.
+ */
+export function appendMessages(stored, fetched) {
+  const ids = new Set(stored.map(m => m.id))
+  return [...stored, ...fetched.filter(m => !ids.has(m.id))].sort(bySnowflake)
 }
 
 export function highestSnowflake(messages) {

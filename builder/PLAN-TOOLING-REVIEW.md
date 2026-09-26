@@ -1164,6 +1164,61 @@ bad one does, and lists `denied.json` under `raw/`, where it was missing. `compa
 Wisdom.md online and offline, the search data and `book.html`, nothing else. Lint clean, 139
 files.
 
+### C27a — `wisdom: an incremental export fetches new messages in stored targets`
+
+**Found while verifying C27; the owner chose this fix on 2026-09-26** (see Found while
+implementing). `runExport` skipped every target with a manifest entry and a file
+(`wisdom.mjs:134-137` before C27), so a plain export never fetched a new message in a channel
+or thread it had already stored, though Wisdom.md said a re-run fetches the new messages. The
+`?after=` branch ran only when the file was missing, and then wrote the new messages as the
+whole file.
+
+**Change.** A stored target is skipped, with no request, only when the `last_message_id`
+discovery reports for it is no newer than its watermark. Otherwise the messages after the
+watermark are fetched and appended to the file, with the fresh channel or thread object, and a
+target whose file is missing is fetched in full. Except under `--since`, the watermark moves
+to the newest snowflake on disk, which is discovery's `last_message_id` when that message was
+deleted, so such a target is not fetched again on every run. Every file the export writes goes
+through C27's `writeFileAtomic`, and a stored file with new messages to append that does not
+parse is reported by path. `--since` and `--force` are unchanged.
+
+**Verify.** C27's oracle, with a second export over the first one's files: a new message is
+appended, an unchanged target costs no request, and `--since` and `--force` match HEAD. Then
+one online pass over the real export, checked against a copy taken first.
+
+**Landed.** `messages.mjs` gains `appendMessages(stored, fetched)`, which drops a fetched id
+already stored and keeps chronological order through the comparator `fetchMessages` already
+sorted with, and the export loop is as the Change says; `writeJson` writes through
+`writeFileAtomic`. C27's oracle now gives each channel a `last_message_id`, logs each request,
+and runs second exports. The C27 cases are unchanged. `incremental`: on HEAD the second run
+requested nothing for channel 101 and its file kept d1 and d2; now it requests `101 after d2`
+alone, appends d10 and moves the watermark to d10, and 102 costs no request. `unchanged`: no
+message request but the 403 target's, as on HEAD. `deleted-last` (102's newest message, d4,
+deleted): the first run records d4, where HEAD recorded d3, so the second run skips 102;
+with d3, the new skip test would fetch 102 again on every run.
+`file-missing`: HEAD fetched 101 after d2 and wrote d10 alone, losing d1 and d2; now a full
+fetch writes all three. `corrupt-stored`: HEAD skipped the broken file and exited 0; now the
+export exits 1 naming `channels\101.json`. A cut-off append leaves the file intact, with its
+`.tmp` beside it. `--since` and `--force` leave the same files, manifest and requests as HEAD.
+**Online**, as the owner allowed: `wisdom/data/raw`, last exported on 2026-06-04 (17 channels,
+1,843 threads, 105 MB), was copied into `.claude/` first. The first run (a bot token)
+discovered 22 text channels, 10 forums, and 53 active and 2,336 archived threads, 447 of them
+below the one-message threshold: 1,964 targets. It skipped 1,341 without a request, fetched 134
+(4,935 messages, from 113 of them), met 2 that answered 403, and stopped at the 200-request cap
+with exit 2. The second run finished, exit 0 after 28.7 s: 1,934 up to date, 23 fetched (47
+messages, from 11), 7 answering 403, 55 requests. A scratch check against the copy: no stored
+message lost; every file's messages ascending, with no duplicate; every rewritten or new file's
+watermark equal to the newer of its newest message and its object's `last_message_id`; no
+watermark moved back and no `.tmp` left. 28 files gained 4,105 messages, 96 new files hold
+877, and 1,832 are unchanged. 59 watermarks advanced: 28 with their files, and 31 whose fetch
+returned nothing while discovery reported a newer `last_message_id`. The manifest has 97 new
+entries: 96 with the new files, and one for a new target whose fetch returned nothing though
+discovery reported a message from 2024-03-25; its file is missing, so each run fetches it in
+full, as HEAD did. Wisdom.md says what the export skips, appends and replaces, and how every
+file is written, and its members step no longer says that only a user token gets an empty map:
+this bot gets one too, because the endpoint answers it with 403. `compare_trees`: Wisdom.md
+online and offline, the search data and `book.html`, nothing else. Lint clean.
+
 ### C28 — `scripts: exit 2 on a crash in three tools that exit 1`
 
 **A5-2 (R2), and the `check_tb_registry.mjs` half of L1-11.** The convention
@@ -2415,6 +2470,15 @@ Defects the review did not have, found by building something this plan asks for.
   probe waits the whole 120 s timeout and exits 3 with the hint to look for a modal, though
   the record of clears C25a keeps shows that the Sub started. Fixed in `scripts: tbrun says
   when a probe ran and printed nothing`.
+
+- **An incremental `wisdom.mjs export` never fetched a new message in a target it had
+  stored**, found while verifying C27. `runExport` skipped every channel and thread with a
+  manifest entry and a file, and the `?after=` branch ran only when the file was missing,
+  writing the new messages as the whole file. Wisdom.md said a re-run fetches the new
+  messages. C27's oracle measured it: a message added between two exports never reached the
+  file. The stored export was four months old, and the first online pass after the fix
+  appended 4,105 messages to 28 files and added 96. Fixed in `wisdom: an incremental export
+  fetches new messages in stored targets`.
 
 ## Open questions
 
