@@ -19,8 +19,10 @@
 //
 // Exit: 0 captured output, 1 the project has compile errors, 2 the harness
 // failed -- a build that fails after a clean compile included, and a
-// [RunAfterBuild] Sub that fails code generation, since the probe never runs
-// -- 3 the build produced no console output before the timeout.
+// [RunAfterBuild] Sub that fails code generation, since the probe never runs,
+// and a procedure the probe calls that fails it, since the probe stops at the
+// call -- 3 no output: the build produced none in the console before the
+// timeout, or the probe ran and printed none after its last Debug.Cls.
 //
 // ---------------------------------------------------------------- why
 //
@@ -71,7 +73,11 @@
 //  4. START THE PROBE WITH Debug.Cls. The DEBUG CONSOLE is also where the IDE
 //     writes its own build log, and the linker writes there after the build --
 //     so without a clear, a probe's output comes back interleaved with
-//     [LINKER] lines. The script warns when a probe omits it.
+//     [LINKER] lines. The script warns when a probe omits it. The clear can
+//     erase a failure as well: a procedure the probe calls that fails code
+//     generation is reported before the probe's first statement runs. So the
+//     script wraps the page's clearDebugConsole() before the build, keeps
+//     what each clear erases, and looks there too (tb-ide's keepClears).
 //  5. QUIET-PERIOD, NOT A MARKER. Waiting for a sentinel string means every
 //     probe has to print one and the script has to know it. Waiting for the
 //     console to stop changing works for any probe.
@@ -96,9 +102,9 @@ import { existsSync, readFileSync, mkdirSync, statSync, readdirSync, rmSync } fr
 import { tmpdir } from "node:os";
 import path from "node:path";
 import { compilerExe, findIde } from "./lib/tb-install.mjs";
-import { BUILD_FAILED, TARGETS, attachIde, clickCenter, compileOutcome, killTree, launchIde,
-         readConsole, setBuildTarget, shutdownIde, summaryLine, waitForCompile,
-         wantShow } from "./lib/tb-ide.mjs";
+import { BUILD_FAILED, TARGETS, attachIde, clickCenter, compileOutcome, keepClears, keptClears,
+         killTree, launchIde, readConsole, setBuildTarget, shutdownIde, summaryLine,
+         waitForCompile, wantShow } from "./lib/tb-ide.mjs";
 import { laneProjectId, stageProject } from "./lib/tb-project.mjs";
 import { finishTidy, startTidy } from "./lib/tb-registry.mjs";
 
@@ -291,8 +297,13 @@ if (outcome.counts[0] > 0) {
 
 // --------------------------------------------- build the exe, read the console
 
-let captured = null, failure = null;
+let captured = null, shown = null, erased = null, failure = null;
 try {
+  // (4) Keep what each clear erases, for the check after the run.
+  if (!await keepClears(cdp)) {
+    throw new Error("no clearDebugConsole() in this IDE -- a probe's Debug.Cls could erase a " +
+                    "failure unseen. Refusing rather than returning what it left as complete.");
+  }
   // (2) a real press/release pair; element.click() is ignored.
   if (!await clickCenter(cdp, "buildIcon")) {
     throw new Error("no #buildIcon in the IDE page -- did the project load?");
@@ -303,7 +314,7 @@ try {
   let last = "", lastChange = Date.now(), seen = false;
   while (Date.now() - started < timeoutMs) {
     await new Promise((r) => setTimeout(r, 400));
-    const now = await readConsole(cdp, { timestamps: flag("raw") });
+    const now = await readConsole(cdp);
     if (now === null) {
       throw new Error("no debugConsoleContent.dataNodes in this IDE -- the DEBUG CONSOLE " +
                       "was never created, or this build moved it. Refusing rather than " +
@@ -313,6 +324,17 @@ try {
     else if (seen && Date.now() - lastChange > quietMs) break;
   }
   captured = strip(last);
+  // --raw changes what is printed, never what is checked. BUILD_FAILED needs a
+  // line that starts where the console's text does, and a line holding only a
+  // timestamp is never blank, so every check reads without the column; under
+  // --raw the lines printed are the same entries, read again with it.
+  shown = flag("raw") ? strip(last, await readConsole(cdp, { timestamps: true })) : captured;
+  const kept = await keptClears(cdp);
+  if (!kept) {
+    throw new Error("the IDE page no longer holds what the DEBUG CONSOLE's clears erased, so " +
+                    "a failure they erased cannot be ruled out");
+  }
+  erased = kept.flatMap((text) => text.split("\n"));
   cdp.close();
 } catch (e) {
   failure = e.message;
@@ -332,7 +354,29 @@ if (failure) die(2, `tbrun: ${failure}`);
 if (captured.some((l) => BUILD_FAILED.test(l))) {
   die(2, "tbrun: the build or the probe's code generation failed, so the probe never ran. " +
          "The console holds the IDE's build log, not the probe's output:\n" +
-         captured.map((l) => `  ${l}`).join("\n"));
+         shown.map((l) => `  ${l}`).join("\n"));
+}
+// A procedure the probe calls that fails code generation is reported straight
+// after the "[BUILD] Executing '<project>.<module>.<Sub>'..." line, before the
+// probe's first statement runs. So Debug.Cls erases the report, the probe stops
+// where it calls that procedure, and the console holds only what it printed
+// before then -- which tbrun returned as the whole output, exit 0 (measured,
+// BETA 983). A failure line among what the clears erased counts only after the
+// last Executing line: before it is the build's own log, which ended in success
+// or the probe would not have run.
+const started = erased.findLastIndex((l) => /^\[BUILD\] Executing '/.test(l));
+const lost = started < 0 ? undefined : erased.slice(started + 1).find((l) => BUILD_FAILED.test(l));
+if (lost) {
+  die(2, "tbrun: the probe's Debug.Cls erased a failure the IDE reported as the probe started:\n" +
+         `  ${lost}\n` +
+         "What the probe printed, which stops where it called the procedure that failed:\n" +
+         (shown.length ? shown.map((l) => `  ${l}`).join("\n") : "  (nothing)"));
+}
+// A probe that ran leaves its Executing line among what its Debug.Cls erased,
+// so an empty console then means it printed nothing after its last clear, not
+// that it never ran.
+if (!captured.length && started >= 0) {
+  die(3, `tbrun: the probe ran (${erased[started]}) but printed nothing after its last Debug.Cls.`);
 }
 if (!captured.length) {
   die(3, "tbrun: the build produced no console output before the timeout.\n" +
@@ -342,10 +386,10 @@ if (!captured.length) {
 }
 
 if (flag("json")) {
-  console.log(JSON.stringify({ exe: builtFile(), arch, lines: captured, idePid: ideRun?.pid ?? null,
+  console.log(JSON.stringify({ exe: builtFile(), arch, lines: shown, idePid: ideRun?.pid ?? null,
                                reaped }, null, 2));
 } else {
-  for (const l of captured) console.log(l);
+  for (const l of shown) console.log(l);
 }
 
 // ------------------------------------------------------------------ helpers
@@ -353,13 +397,17 @@ if (flag("json")) {
 // Trim blank lines off both ends. That is all this has to do now: reading
 // dataNodes rather than the pane means the header, the ">" input prompt and
 // the timestamp column never arrive in the first place, so the three filters
-// that used to live here are gone along with the guesswork in them.
-function strip(text) {
+// that used to live here are gone along with the guesswork in them. Given `raw`,
+// the same console read with its timestamps, it returns the same entries from
+// that instead, since a line holding a timestamp is never blank.
+function strip(text, raw = null) {
   if (!text) return [];
-  const out = text.split("\n").map((l) => l.replace(/\r$/, ""));
-  while (out.length && !out[0].trim()) out.shift();
-  while (out.length && !out[out.length - 1].trim()) out.pop();
-  return out;
+  const lines = (s) => s.split("\n").map((l) => l.replace(/\r$/, ""));
+  const out = lines(text);
+  let from = 0, to = out.length;
+  while (from < to && !out[from].trim()) from++;
+  while (to > from && !out[to - 1].trim()) to--;
+  return (raw === null ? out : lines(raw)).slice(from, to);
 }
 
 // (6) End OUR IDE by pid, never by image name. The tree kill takes the probe exe

@@ -2,7 +2,8 @@
 //
 //     node scripts/check_tb_registry.mjs
 //
-// Exit: 0 every assertion held, 1 one did not.
+// Exit: 0 every assertion held, 1 one did not, 2 something else threw, such as
+// PowerShell failing, so the test could not run to its end.
 //
 // NOT A GATE, and it must not join test.bat: it needs Windows and a real
 // registry, and the CI runners are Ubuntu while the rule for test.bat is that
@@ -49,6 +50,11 @@ import { tmpdir } from "node:os";
 import path from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import * as R from "./lib/tb-registry.mjs";
+
+// A crash is the harness failing, not a finding: exit 2, as Extending.md's gate
+// conventions require. This file runs at top level, so there is no main().catch
+// to do it; the catch below passes it everything but a failed assertion.
+process.on("uncaughtException", (err) => { console.error(err); process.exit(2); });
 
 const BASE = "Software\\tbharness-selftest";
 const ROOT = BASE + "\\twinBASIC_IDE";
@@ -264,6 +270,8 @@ try {
 
   console.log("check_tb_registry: every assertion holds");
 } catch (e) {
+  // A failed assertion is the finding; anything else is a crash.
+  if (!(e instanceof assert.AssertionError)) throw e;
   console.error(`check_tb_registry: ${e.message}`);
   process.exitCode = 1;
 } finally {

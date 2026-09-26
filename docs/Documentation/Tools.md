@@ -694,9 +694,9 @@ probe's output, with exit 0. Run it again: both failures seen so far passed on a
 A `[RunAfterBuild]` Sub that fails code generation exits 2 the same way: the build succeeds,
 the console adds `[LINKER] compilation (codegen) error detected in '<module>.<procedure>'`,
 and nothing in the Sub runs, `Debug.Cls` included. A procedure the probe *calls* that fails
-code generation is not caught. Its error line is written before the probe's first statement,
-which erases it, and the probe stops at the call, so `tbrun` exits 0 with the output printed
-up to that point.
+code generation exits 2 as well. Its error line is written before the probe's first
+statement, so the probe's `Debug.Cls` erases it, and the probe stops at the call. `tbrun`
+keeps what each clear erases, so it names that line and prints the output up to the call.
 
 **The capture is complete however much a probe prints**, so there is no reason to keep one
 short. `tbrun` reads the console's backing array rather than the pane, which is a virtualised
@@ -731,8 +731,9 @@ comes back as `A&`.
 | `--show` / `--hide` | As for [`tbbuild.mjs`](#tbbuild): your own desktop or a private one, with `TBBUILD_SHOW` setting the default. |
 
 Exit codes: **0** captured output, **1** the project has compile errors (the diagnostics are
-printed), **2** the harness failed or the build did after a clean compile, **3** nothing reached
-the console before the timeout.
+printed), **2** the harness failed or the build did after a clean compile, **3** no output:
+nothing reached the console before the timeout, or the probe ran and printed nothing after its
+last `Debug.Cls`.
 
 **A probe that activates a COM server can leak one per run.** `CreateObject("Excel.Application")`
 is activated by DCOM, so the `EXCEL.EXE` that appears is a child of `svchost.exe` rather than
@@ -853,7 +854,8 @@ registry. It deletes the scratch key when it ends.
 
 It is not a gate and is not in `test.bat`, because it needs Windows and a real registry and
 the CI runners have neither. Run it by hand after changing `tb-registry.mjs`. Exit code
-**0** when every check holds, **1** when one does not.
+**0** when every check holds, **1** when one does not, **2** when something else stops it,
+such as PowerShell failing.
 
 ### check_examples.mjs
 {: #check-examples }

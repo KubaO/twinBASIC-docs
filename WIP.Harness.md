@@ -429,11 +429,21 @@ Four smaller things it knows, each of which cost a run:
   was measured: a `[RunAfterBuild]` Sub that shifts a `Single` (BUGS-TO-REPORT.md) builds with
   `[LINKER] SUCCESS`, the console adds `[BUILD] Executing 'DocSamples.Probe.Run'...` and the
   codegen line, and nothing in the Sub runs, so `tbrun` had returned that log with exit 0.
-- **A callee's code-generation failure is invisible.** When the failing shift is in a
-  procedure the probe calls, the codegen line naming that procedure comes straight after the
-  `[BUILD] Executing` line, before the probe's first statement runs. The probe's `Debug.Cls`
-  erases it, the probe prints what comes before the call and stops there, and `tbrun` exits 0
-  with that partial output. Measured with and without `Debug.Cls` on BETA 983; not fixed.
+- **A callee's code-generation failure is erased by the probe's own `Debug.Cls`.** When the
+  failing shift is in a procedure the probe calls, the codegen line naming that procedure
+  comes straight after the `[BUILD] Executing` line, before the probe's first statement runs.
+  The probe's `Debug.Cls` erases it, the probe prints what comes before the call and stops
+  there, and `tbrun` used to exit 0 with that partial output (measured with and without
+  `Debug.Cls` on BETA 983). Since the tooling review's C25a, `tbrun` wraps the page's global
+  `clearDebugConsole()` before it presses Build, and keeps what each clear erases
+  (`keepClears` in `tb-ide.mjs`). A `BUILD_FAILED` line in that record after the last
+  `[BUILD] Executing` line exits 2, naming the line and printing the partial output. `main.js`
+  calls that function by name from the compiler's `event_clearDebugConsole`, which
+  `Debug.Cls` raises, from the pane's Clear command, and on closing the project; no other
+  path that empties the console was found. The IDE does not clear the console when a build
+  starts, so the probe's first `Debug.Cls` erases the build log from `[BUILD] Starting...` on.
+  `event_clearDebugConsole` writes an empty line after its clear, so the record of a second
+  `Debug.Cls` begins with one.
 
 A reader of the console that is not `tbrun` should **compare the whole console before and
 after, not read on from an index**: new text can be appended to an entry that is still open.

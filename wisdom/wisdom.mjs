@@ -1,12 +1,13 @@
 #!/usr/bin/env node
 
-import { mkdirSync, writeFileSync, readFileSync, existsSync } from 'node:fs'
+import { mkdirSync, existsSync } from 'node:fs'
 import { join, dirname } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { loadConfig } from './config.mjs'
+import { readJsonFile, writeFileAtomic } from './files.mjs'
 import { createClient, CapReachedError, timestampToSnowflake, EXIT_CAP_REACHED } from './discord/api.mjs'
 import { discoverChannels, fetchMembers } from './discord/discover.mjs'
-import { fetchMessages, loadManifest, saveManifest, highestSnowflake } from './discord/messages.mjs'
+import { fetchMessages, appendMessages, loadManifest, saveManifest, highestSnowflake } from './discord/messages.mjs'
 import { runProcess } from './process/thread.mjs'
 import { runExtract, runMerge } from './extract/prep.mjs'
 
@@ -43,7 +44,7 @@ function parseArgs(argv) {
 
 function writeJson(path, data) {
   mkdirSync(dirname(path), { recursive: true })
-  writeFileSync(path, JSON.stringify(data, null, 2))
+  writeFileAtomic(path, JSON.stringify(data, null, 2))
 }
 
 async function runConcurrent(items, concurrency, fn) {
@@ -104,7 +105,7 @@ async function runExport(flags) {
   writeJson(join(outDir, 'members.json'), members)
 
   // Manifest governs incremental fetches
-  const manifest = (flags.force || flags.since) ? {} : loadManifest(outDir)
+  const manifest = flags.force ? {} : loadManifest(outDir)
   const sinceSnowflake = flags.since
     ? timestampToSnowflake(Date.parse(flags.since))
     : null
@@ -113,7 +114,8 @@ async function runExport(flags) {
   const deniedPath = join(outDir, 'denied.json')
   const denied = flags.force
     ? {}
-    : existsSync(deniedPath) ? JSON.parse(readFileSync(deniedPath, 'utf-8')) : {}
+    : readJsonFile(deniedPath, {},
+      'Delete it: it only lists the targets that refused access, so that they are tried last.')
 
   // Fetch targets: text channels + forum threads
   // Previously denied targets sort to the end
@@ -131,19 +133,25 @@ async function runExport(flags) {
     const subdir = target.kind === 'thread' ? 'threads' : 'channels'
     const filePath = join(outDir, subdir, `${target.id}.json`)
 
-    if (!flags.force && !sinceSnowflake && manifest[target.id] && existsSync(filePath)) {
+    // A target already on disk is fetched again only when discovery reports a
+    // message newer than its watermark, and then only for what came after it,
+    // --since or not.  --since limits how far back any other target goes.
+    const watermark = manifest[target.id]
+    const stored = Boolean(watermark) && existsSync(filePath)
+    const lastId = target.obj.last_message_id
+    if (stored && lastId && BigInt(lastId) <= BigInt(watermark)) {
       upToDate++
       return
     }
 
-    const after = sinceSnowflake || manifest[target.id] || null
+    const after = stored ? watermark : sinceSnowflake
     let messages
     try {
       messages = await fetchMessages(client, target.id, after)
     } catch (err) {
       if (/403/.test(err.message)) {
         denied[target.id] = new Date().toISOString()
-        writeFileSync(deniedPath, JSON.stringify(denied, null, 2))
+        writeFileAtomic(deniedPath, JSON.stringify(denied, null, 2))
         completed++
         process.stderr.write(`[wisdom] [${completed}/${targets.length}] ${target.name}: no access; skipping\n`)
         return
@@ -152,13 +160,26 @@ async function runExport(flags) {
     }
 
     if (messages.length) {
+      const held = stored
+        ? readJsonFile(filePath, null,
+          'Delete it, and the next export fetches the whole history of this target again.').messages
+        : []
       writeJson(filePath, {
         [target.kind]: target.obj,
-        messages,
+        messages: appendMessages(held, messages),
       })
-      const highest = highestSnowflake(messages)
-      if (highest) manifest[target.id] = highest
-      saveManifest(outDir, manifest)
+    }
+    // Every message from where the target's file starts (its first message, or
+    // the --since date) up to the newest one discovery reported is now on disk.
+    // The watermark moves past that one even when it has since been deleted,
+    // so that the next run does not fetch the target again for nothing.  A
+    // target with no file gets no watermark.
+    if (messages.length || stored) {
+      const newest = highestSnowflake([...messages, { id: lastId }, { id: watermark }].filter(m => m.id))
+      if (newest !== watermark) {
+        manifest[target.id] = newest
+        saveManifest(outDir, manifest)
+      }
     }
 
     totalMessages += messages.length
@@ -192,7 +213,7 @@ Commands:
 Export options:
   --guild <id>          Guild (server) ID
   --channel <id>        Restrict to this channel (repeatable)
-  --since <date>        Only content after this ISO 8601 date
+  --since <date>        Fetch targets not exported yet only from this ISO 8601 date
   --force               Ignore manifest; re-fetch all history
   --out <dir>           Output directory  [default: wisdom/data/raw]
   --concurrency <n>     Parallel fetches  [default: 3]

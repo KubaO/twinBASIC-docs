@@ -403,6 +403,12 @@ const SIDES = {
   },
 };
 
+// A build this harness needed and could not get: main() reports it as an
+// error: line, exit 2, having already printed the build's own output.
+class HarnessError extends Error {}
+
+const exitOf = (r) => `exit ${r.status}${r.error ? `, ${r.error.message}` : ""}`;
+
 // Build once per distinct --baseurl / --dest and cache the findings the
 // build wrote. The trees the script side reads are the ones this build
 // produced, so both sides are looking at the same bytes.
@@ -429,7 +435,7 @@ function fusedBuild({ baseurl = "", dest = null, src = "docs", offline = false }
   if (!fs.existsSync(out)) {
     console.error(r.stdout ?? "");
     console.error(r.stderr ?? "");
-    throw new Error(`the build wrote no findings file (exit ${r.status})`);
+    throw new HarnessError(`the build wrote no findings file (${exitOf(r)})`);
   }
   const findings = JSON.parse(fs.readFileSync(out, "utf8"));
   fs.rmSync(out, { force: true });
@@ -522,7 +528,7 @@ function ensureBasePathTree(dir, allowBuild) {
   if (r.status !== 0) {
     console.error(r.stdout ?? "");
     console.error(r.stderr ?? "");
-    throw new Error(`base-path build failed (exit ${r.status})`);
+    throw new HarnessError(`base-path build failed (${exitOf(r)})`);
   }
   return true;
 }
@@ -643,12 +649,24 @@ function main() {
     return 2;
   }
 
+  // A build that failed, or a throw, means nothing was compared: exit 2, not
+  // the 1 that says the sides differ. The fixture folder goes either way.
+  try {
+    return compare(opts);
+  } catch (e) {
+    console.error(e instanceof HarnessError ? `error: ${e.message}` : e);
+    return 2;
+  } finally {
+    if (opts.fixtureDir) fs.rmSync(opts.fixtureDir, { recursive: true, force: true });
+  }
+}
+
+function compare(opts) {
   console.log(`check_links_diff: ${opts.a} vs ${opts.b}`);
 
   // findings[side][case]
   const findings = { [opts.a]: {}, [opts.b]: {} };
   let differences = 0;
-  let fixtureDir = null;
   const skipped = [];
 
   const usesFused = opts.a === "fused" || opts.b === "fused";
@@ -680,7 +698,6 @@ function main() {
     }
     if (c.needsFixture && !opts.fixtureDir) {
       opts.fixtureDir = fs.mkdtempSync(path.join(os.tmpdir(), "link-check-fixture-"));
-      fixtureDir = opts.fixtureDir;
       writeFixture(opts.fixtureDir);
     }
     const root = c.root(opts);
@@ -746,8 +763,6 @@ function main() {
       }
     }
   }
-
-  if (fixtureDir) fs.rmSync(fixtureDir, { recursive: true, force: true });
 
   if (skipped.length) {
     console.log(`\nskipped: ${skipped.join(", ")}`);

@@ -1,14 +1,13 @@
-import { readFileSync, writeFileSync, existsSync } from 'node:fs'
 import { join } from 'node:path'
+import { readJsonFile, writeFileAtomic } from '../files.mjs'
 
 export function loadManifest(dir) {
-  const p = join(dir, 'manifest.json')
-  if (!existsSync(p)) return {}
-  return JSON.parse(readFileSync(p, 'utf-8'))
+  return readJsonFile(join(dir, 'manifest.json'), {},
+    'Delete it, and the next export fetches the whole history of every channel and thread again.')
 }
 
 export function saveManifest(dir, manifest) {
-  writeFileSync(join(dir, 'manifest.json'), JSON.stringify(manifest, null, 2))
+  writeFileAtomic(join(dir, 'manifest.json'), JSON.stringify(manifest, null, 2))
 }
 
 export async function fetchMessages(client, channelId, afterSnowflake) {
@@ -46,13 +45,23 @@ export async function fetchMessages(client, channelId, afterSnowflake) {
     }
   }
 
-  // Sort chronologically (ascending snowflake)
-  messages.sort((a, b) => {
-    const d = BigInt(a.id) - BigInt(b.id)
-    return d < 0n ? -1 : d > 0n ? 1 : 0
-  })
-
+  messages.sort(bySnowflake)
   return messages
+}
+
+// Chronological order (ascending snowflake), the order a target's file keeps.
+function bySnowflake(a, b) {
+  const d = BigInt(a.id) - BigInt(b.id)
+  return d < 0n ? -1 : d > 0n ? 1 : 0
+}
+
+/**
+ * The messages a target's file already holds, followed by those fetched since,
+ * in chronological order.  A fetched message whose id is already held is dropped.
+ */
+export function appendMessages(stored, fetched) {
+  const ids = new Set(stored.map(m => m.id))
+  return [...stored, ...fetched.filter(m => !ids.has(m.id))].sort(bySnowflake)
 }
 
 export function highestSnowflake(messages) {
