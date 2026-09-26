@@ -1272,6 +1272,28 @@ three, exiting 2. C43 folds the handlers into one helper.
 **Verify.** In each, a forced crash exits 2 and a real finding still exits 1.
 `check_tb_registry.mjs`'s fixtures pass (a harness run).
 
+**Landed.** `pick_a11y_sample.mjs` and `build_dot_metrics.mjs` gain `check_dot_fit.mjs`'s
+handler after their imports, with a comment saying what their exit 1 is. So does
+`check_tb_registry.mjs`, whose catch now passes on everything but an `AssertionError`, so a
+crash inside the test exits 2 as well as one in the two `wipe()` calls outside it. Every
+`node:assert/strict` failure the test can raise is an `AssertionError`: `equal`,
+`deepEqual`, `ok`, and `throws` given a regex or a validator. Its header and Tools.md state
+the 2. Measured on Node 24.13.0: the handler catches a rejected top-level await, a throw that
+passes through a `finally` and a module-level throw, each with the origin
+`unhandledRejection`. The oracle ran HEAD's and the working tree's copies of the three tools.
+`pick_a11y_sample` with `--root-dir` a missing folder: HEAD exit 1 with Node's stack, now 2
+with `ENOENT` naming the folder; over the sample pages less one, 1 on both; over the real
+`_site-offline`, 0 on both. `build_dot_metrics --check` with `PUPPETEER_EXECUTABLE_PATH`
+naming no file: HEAD 1, now 2; with the table altered, `STALE` and 1 on both; unaltered, 0 on
+both. `check_tb_registry`, with a preload that makes the nth PowerShell call throw: at the
+first, before the `try`, HEAD 1, now 2; at the seventh, inside `snapshotProjects` once the
+scratch keys exist, HEAD 1 with its one-line message, now 2 with the stack, and the key
+deleted on both; with every call from the seventh on failing, so that the `finally`'s
+`wipe()` fails too, 1 against 2, and the key left on both; with one assertion made false, 1
+on both; unchanged, `check_tb_registry: every assertion holds` and 0 on both, in 33 to 39 s.
+`compare_trees`: Tools.md online and offline, the search data and `book.html`, nothing else.
+Lint clean.
+
 ### C29 — `test.bat: cite check_gate_lists for the gate's history`
 
 **A6-2 (R1).** `test.bat:34-43` tells the gate's history in a way that neither

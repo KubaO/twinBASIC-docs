@@ -854,7 +854,8 @@ registry. It deletes the scratch key when it ends.
 
 It is not a gate and is not in `test.bat`, because it needs Windows and a real registry and
 the CI runners have neither. Run it by hand after changing `tb-registry.mjs`. Exit code
-**0** when every check holds, **1** when one does not.
+**0** when every check holds, **1** when one does not, **2** when something else stops it,
+such as PowerShell failing.
 
 ### check_examples.mjs
 {: #check-examples }
