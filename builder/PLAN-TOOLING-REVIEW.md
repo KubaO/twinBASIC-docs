@@ -1306,6 +1306,16 @@ comments.
 **Verify.** Re-read against both accounts; `check_gate_lists.mjs` and
 `check_ci_workflows.mjs` pass.
 
+**Landed.** The comment keeps what the gate compares and what it costs, and its history is
+now one sentence both accounts support, that the counts rotted three times without breaking
+a link or failing a gate, with a pointer to the header. What went is what neither account
+says: that the fix for round 3 put the wrong numbers into Building.md and README.md, and how
+many there were. The header and Tools.md say both pages were wrong in the commit that shipped
+the gate green, and that round 4 found three readers tripping over one of them. The file has
+nine other gate comments now, not seven: C03 and C06 added two. `check_gate_lists`
+(`check.bat (4) + test.bat (10) match docs/Documentation/Tools.md; 6 stated count(s) across
+16 pages agree -- clean`) and `check_ci_workflows` pass.
+
 ### C30 — `scripts: tidy check_links_diff's and check_publish_policy's failures`
 
 **L2-6, L3-6 (R3).** `check_publish_policy.mjs:152-189` and `check_links_diff.mjs:651-750`
