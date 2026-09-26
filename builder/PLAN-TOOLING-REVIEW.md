@@ -1330,6 +1330,25 @@ path.
 **Verify.** A forced failure in each leaves no scratch folder and prints the tool's `error:`
 line with exit 2. `check_links_diff.mjs --self-test` and CI's fixture cases unchanged.
 
+**Landed.** `check_publish_policy.mjs`'s three `.md` probes run inside a `try` whose
+`finally` removes the `publish-policy-*` folder; the crash handler it already had still
+gives exit 2. In `check_links_diff.mjs`, the comparison moved out of `main()` into
+`compare(opts)`, unchanged but for the fixture folder, and `main()` calls it inside a `try`
+whose `finally` removes `opts.fixtureDir`, which only the harness sets. `fusedBuild` and
+`ensureBasePathTree` throw a `HarnessError`, naming the spawn's own error when there is one,
+which the catch prints as the `error:` line; any other throw prints its stack; both exit 2,
+as the header's "2 on a harness error" already said. `--self-test` still runs outside the
+`try`, as before. The oracle ran HEAD's copies beside the working tree's, with a preload
+that fails one step, and counted the `%TEMP%` folders each run left. A failed probe write in
+`check_publish_policy`: exit 2 on both, and HEAD left its folder. A failed fixture build
+under `--b fused`, and a failed `--build-base-path` build: HEAD exit 1 with Node's stack, now
+2 with `error: the build wrote no findings file (exit 1)` and `error: base-path build failed
+(exit 1)`. A failed write into the `fixture` case's folder: HEAD exit 1 and the folder left,
+now exit 2 with the stack and no folder. Unchanged, with times and pids masked:
+`check_publish_policy`, `check_links_diff --self-test`, and CI's `--case fixture --a script --b index` and `--case
+fixture-built --case fixture-built-offline --a script --b fused` print the same output with
+the same exit on both, and leave nothing. Lint clean.
+
 ## Phase 2: shared code, in place, with no change in behaviour
 
 Each commit's oracle must show no difference: the tree comparison for `builder/`, a gate's own

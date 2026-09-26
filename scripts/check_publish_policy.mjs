@@ -150,43 +150,45 @@ if (!failures) console.log(`  ok    build-only types (${[...BUILD_EXTENSIONS].jo
 // If either stops holding, the message is wrong and this says so.
 {
   const tmp = await fs.mkdtemp(path.join(os.tmpdir(), "publish-policy-"));
-  const probe = async (name, body) => {
-    const dir = path.join(tmp, name);
-    await fs.mkdir(dir, { recursive: true });
-    await fs.writeFile(path.join(dir, "probe.md"), body);
-    try {
-      const { pages } = await discover(dir, []);
-      return pages.length ? "page" : "static";
-    } catch (err) {
-      return "throws: " + err.message.split("\n")[0];
+  try {
+    const probe = async (name, body) => {
+      const dir = path.join(tmp, name);
+      await fs.mkdir(dir, { recursive: true });
+      await fs.writeFile(path.join(dir, "probe.md"), body);
+      try {
+        const { pages } = await discover(dir, []);
+        return pages.length ? "page" : "static";
+      } catch (err) {
+        return "throws: " + err.message.split("\n")[0];
+      }
+    };
+    const FM = "---\ntitle: X\npermalink: /x\n---\nbody\n";
+
+    // Written as an escape, not as the character: a literal BOM inside a
+    // string literal is invisible, and an editor stripping it would turn
+    // this assertion into a no-op that still passes.
+    const bom = await probe("bom", "\u{FEFF}" + FM);
+    if (bom !== "page") {
+      fail(`a UTF-8 BOM now yields "${bom}", not a page -- discover.mjs's ` +
+           `stripBom() is gone, and publish-policy.mjs's .md message should ` +
+           `name the BOM again`);
     }
-  };
-  const FM = "---\ntitle: X\npermalink: /x\n---\nbody\n";
 
-  // Written as an escape, not as the character: a literal BOM inside a
-  // string literal is invisible, and an editor stripping it would turn
-  // this assertion into a no-op that still passes.
-  const bom = await probe("bom", "\u{FEFF}" + FM);
-  if (bom !== "page") {
-    fail(`a UTF-8 BOM now yields "${bom}", not a page -- discover.mjs's ` +
-         `stripBom() is gone, and publish-policy.mjs's .md message should ` +
-         `name the BOM again`);
+    const bad = await probe("badyaml", "---\ntitle: [unclosed\n---\nbody\n");
+    if (!bad.startsWith("throws:")) {
+      fail(`malformed frontmatter YAML now yields "${bad}" instead of its own ` +
+           `error -- it would reach the publish policy, whose .md message does ` +
+           `not mention it`);
+    }
+
+    const lead = await probe("leadingblank", "\n" + FM);
+    if (lead !== "static") {
+      fail(`a blank line before the opening delimiter now yields "${lead}" -- ` +
+           `the .md message's advice no longer describes a real fault`);
+    }
+  } finally {
+    await fs.rm(tmp, { recursive: true, force: true });
   }
-
-  const bad = await probe("badyaml", "---\ntitle: [unclosed\n---\nbody\n");
-  if (!bad.startsWith("throws:")) {
-    fail(`malformed frontmatter YAML now yields "${bad}" instead of its own ` +
-         `error -- it would reach the publish policy, whose .md message does ` +
-         `not mention it`);
-  }
-
-  const lead = await probe("leadingblank", "\n" + FM);
-  if (lead !== "static") {
-    fail(`a blank line before the opening delimiter now yields "${lead}" -- ` +
-         `the .md message's advice no longer describes a real fault`);
-  }
-
-  await fs.rm(tmp, { recursive: true, force: true });
   if (!failures) console.log("  ok    the .md refusal names a fault that can actually occur");
 }
 
