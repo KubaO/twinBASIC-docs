@@ -1043,6 +1043,35 @@ line, after a tidy that wrote nothing, the registry as found; at C25's commit it
 Node's report. No IDE was started on the desktop: the success path is the `node` child's.
 `compare_trees` identical. Lint clean.
 
+### C25e — `scripts: tbrun's --raw changes only what it prints`
+
+**Found while verifying C25a; the owner chose this fix on 2026-09-26** (see Found while
+implementing). `--raw` keeps each console line's timestamp column, and `tbrun` read the
+console with it for its checks as well as its output. `BUILD_FAILED` is anchored at a line's
+start, so under `--raw` a failed build was returned as output with exit 0. A line holding
+only a timestamp is never blank, so a probe that printed nothing exited 0 with that line
+rather than 3. C25a's check was unaffected, since its record is always read without
+timestamps.
+
+**Change.** The quiet-period loop reads the console without timestamps, and every check uses
+those lines. Under `--raw`, one more read with timestamps after the quiet period gives the
+lines printed, trimmed to the same entries by `strip`'s new `raw` argument: the output, and
+the two failure messages that print the console.
+
+**Landed.** Harness runs, one at a time, each between two `reg-snap.mjs` snapshots that came
+out identical. Under `--raw`: probe A exit 2 after 19.2 s, printing the build log with its
+timestamps (before: exit 0 after 19.5 s, the log as output); a probe whose only statement is
+`Debug.Cls`, exit 3 after 138.4 s (before: exit 0 after 18.9 s, printing one line that held
+only a timestamp); the clean probe, exit 0 after 19.2 s with its two lines timestamped
+(before: exit 0 after 19.0 s with three, the first a timestamp alone, from the empty line
+`event_clearDebugConsole` writes); probe C, exit 2 after 20.9 s, naming the codegen line and
+printing `before` with its timestamp. Without `--raw`, the clean probe exit 0 after 23.9 s
+with `one` and `two`, as before. The probe that prints nothing exits 3 only after the whole
+120 s timeout, with or without `--raw`, and did before this commit too: the build log is
+written and erased within the first 400 ms poll, so the loop never sees any output to wait
+quietly after. `compare_trees`, run with C26's Wisdom.md edit also in the tree: every
+difference was that page's. Lint clean.
+
 ### C26 — `wisdom: parseStaging refuses a chunk it cannot place`
 
 **L3-3 (R1)**, the half that needs no shared module. `parseStaging` (`merger.mjs:114-129`)
@@ -2309,6 +2338,14 @@ Defects the review did not have, found by building something this plan asks for.
   failed ended the run on Node's report of an unhandled `'error'`, with exit 1, the code
   `tbbuild` and `tbrun` give compile errors. Measured with a missing executable and with the
   install folder. Fixed in `scripts: launchIde under --show reports a spawn that fails`.
+
+- **`tbrun --raw` never sees a failed build**, found while verifying C25a. `--raw` keeps each
+  console line's timestamp column, and `tbrun` read the console once, with it, for its checks
+  as well as its output. `BUILD_FAILED` is anchored at a line's start, so under `--raw` no
+  failure matched: probe A exited 0 after 19.5 s and printed the timestamped build log as the
+  probe's output. A line holding only a timestamp is not blank either, so a probe that printed
+  nothing exited 0 after 18.9 s with one such line, where without `--raw` it exits 3. Fixed in
+  `scripts: tbrun's --raw changes only what it prints`.
 
 ## Open questions
 

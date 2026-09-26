@@ -296,7 +296,7 @@ if (outcome.counts[0] > 0) {
 
 // --------------------------------------------- build the exe, read the console
 
-let captured = null, erased = null, failure = null;
+let captured = null, shown = null, erased = null, failure = null;
 try {
   // (4) Keep what each clear erases, for the check after the run.
   if (!await keepClears(cdp)) {
@@ -313,7 +313,7 @@ try {
   let last = "", lastChange = Date.now(), seen = false;
   while (Date.now() - started < timeoutMs) {
     await new Promise((r) => setTimeout(r, 400));
-    const now = await readConsole(cdp, { timestamps: flag("raw") });
+    const now = await readConsole(cdp);
     if (now === null) {
       throw new Error("no debugConsoleContent.dataNodes in this IDE -- the DEBUG CONSOLE " +
                       "was never created, or this build moved it. Refusing rather than " +
@@ -323,6 +323,11 @@ try {
     else if (seen && Date.now() - lastChange > quietMs) break;
   }
   captured = strip(last);
+  // --raw changes what is printed, never what is checked. BUILD_FAILED needs a
+  // line that starts where the console's text does, and a line holding only a
+  // timestamp is never blank, so every check reads without the column; under
+  // --raw the lines printed are the same entries, read again with it.
+  shown = flag("raw") ? strip(last, await readConsole(cdp, { timestamps: true })) : captured;
   const kept = await keptClears(cdp);
   if (!kept) {
     throw new Error("the IDE page no longer holds what the DEBUG CONSOLE's clears erased, so " +
@@ -348,7 +353,7 @@ if (failure) die(2, `tbrun: ${failure}`);
 if (captured.some((l) => BUILD_FAILED.test(l))) {
   die(2, "tbrun: the build or the probe's code generation failed, so the probe never ran. " +
          "The console holds the IDE's build log, not the probe's output:\n" +
-         captured.map((l) => `  ${l}`).join("\n"));
+         shown.map((l) => `  ${l}`).join("\n"));
 }
 // A procedure the probe calls that fails code generation is reported straight
 // after the "[BUILD] Executing '<project>.<module>.<Sub>'..." line, before the
@@ -364,7 +369,7 @@ if (lost) {
   die(2, "tbrun: the probe's Debug.Cls erased a failure the IDE reported as the probe started:\n" +
          `  ${lost}\n` +
          "What the probe printed, which stops where it called the procedure that failed:\n" +
-         (captured.length ? captured.map((l) => `  ${l}`).join("\n") : "  (nothing)"));
+         (shown.length ? shown.map((l) => `  ${l}`).join("\n") : "  (nothing)"));
 }
 if (!captured.length) {
   die(3, "tbrun: the build produced no console output before the timeout.\n" +
@@ -374,10 +379,10 @@ if (!captured.length) {
 }
 
 if (flag("json")) {
-  console.log(JSON.stringify({ exe: builtFile(), arch, lines: captured, idePid: ideRun?.pid ?? null,
+  console.log(JSON.stringify({ exe: builtFile(), arch, lines: shown, idePid: ideRun?.pid ?? null,
                                reaped }, null, 2));
 } else {
-  for (const l of captured) console.log(l);
+  for (const l of shown) console.log(l);
 }
 
 // ------------------------------------------------------------------ helpers
@@ -385,13 +390,17 @@ if (flag("json")) {
 // Trim blank lines off both ends. That is all this has to do now: reading
 // dataNodes rather than the pane means the header, the ">" input prompt and
 // the timestamp column never arrive in the first place, so the three filters
-// that used to live here are gone along with the guesswork in them.
-function strip(text) {
+// that used to live here are gone along with the guesswork in them. Given `raw`,
+// the same console read with its timestamps, it returns the same entries from
+// that instead, since a line holding a timestamp is never blank.
+function strip(text, raw = null) {
   if (!text) return [];
-  const out = text.split("\n").map((l) => l.replace(/\r$/, ""));
-  while (out.length && !out[0].trim()) out.shift();
-  while (out.length && !out[out.length - 1].trim()) out.pop();
-  return out;
+  const lines = (s) => s.split("\n").map((l) => l.replace(/\r$/, ""));
+  const out = lines(text);
+  let from = 0, to = out.length;
+  while (from < to && !out[from].trim()) from++;
+  while (to > from && !out[to - 1].trim()) to--;
+  return (raw === null ? out : lines(raw)).slice(from, to);
 }
 
 // (6) End OUR IDE by pid, never by image name. The tree kill takes the probe exe
