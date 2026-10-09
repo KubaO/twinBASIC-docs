@@ -52,16 +52,16 @@ Exit codes: `tbdocs`'s own, as the other wrappers return theirs: **0** the serve
 The gates that read the built site. Link and integrity checking is not among them any more --- that moved into `build.bat` (see [tbdocs](#tbdocs)). Tests of the toolchain itself are not among them either --- those are [`test.bat`](#testbat). Four steps, each stopping the run if it fails:
 
 1. [`scripts/check_tree_fresh.mjs`](#check-tree-fresh) --- refuses a tree older than the sources that produced it. Scanning a stale tree reports a pass for the previous build.
-2. [`scripts/check_dot_fit.mjs`](#check-dot-fit) --- re-renders every committed diagram with the real webfont and fails if a label sits outside its box.
-3. [`scripts/pick_a11y_sample.mjs --check`](#pick-a11y-sample) --- verifies the sample still covers every markup construct the site uses.
-4. [`scripts/check_a11y.mjs`](#check-a11y) --- the puppeteer + axe-core accessibility scan.
+2. [`scripts/check_a11y.mjs`](#check-a11y) --- the puppeteer + axe-core accessibility scan. First here and first in the composite action CI uses, so the deploy workflow's backgrounded book PDF render overlaps with it only at the start.
+3. [`scripts/check_dot_fit.mjs`](#check-dot-fit) --- re-renders every committed diagram with the real webfont and fails if a label sits outside its box.
+4. [`scripts/pick_a11y_sample.mjs --check`](#pick-a11y-sample) --- verifies the sample still covers every markup construct the site uses.
 
 Requires `build.bat` to have run first. POSIX --- four commands, not one, chained so the run stops where `check.bat` would:
 
     node scripts/check_tree_fresh.mjs \
+      && node scripts/check_a11y.mjs \
       && node scripts/check_dot_fit.mjs \
-      && node scripts/pick_a11y_sample.mjs --check \
-      && node scripts/check_a11y.mjs
+      && node scripts/pick_a11y_sample.mjs --check
 
 Exit codes: **0** every step passed; otherwise the code of the step that stopped the run, as that step's entry gives it.
 
@@ -375,7 +375,7 @@ Exit codes: **0** every link is reachable and every anchor exists, **1** a link 
     node scripts/check_a11y.mjs [--root-dir <path>] [--theme light|dark|both] [--viewport desktop|mobile|both]
                                 [--stock-axe] [--minified]
 
-Automated accessibility scan of the built site, and the last of `check.bat`'s four steps. Loads `axe-core` into headless Chromium (via `puppeteer`) and runs it against thirteen sample pages in both themes at two viewports, plus two state audits that open a disclosure first --- 60 audits in all. The page list is derived rather than hand-maintained, and [`scripts/pick_a11y_sample.mjs`](#pick-a11y-sample) is what keeps it representative.
+Automated accessibility scan of the built site, and the second of `check.bat`'s four steps (right after [`check_tree_fresh.mjs`](#check-tree-fresh)). Loads `axe-core` into headless Chromium (via `puppeteer`) and runs it against thirteen sample pages in both themes at two viewports, plus two state audits that open a disclosure first --- 60 audits in all. The page list is derived rather than hand-maintained, and [`scripts/pick_a11y_sample.mjs`](#pick-a11y-sample) is what keeps it representative.
 
 **This script is the reporting front end, not the scan.** What the scan *is* --- the page list, the themes and viewports, the blocked requests, the axe run options, the vendored source patches and the state audits --- lives in [`scripts/lib/axe-scan.mjs`](#axe-scan), which `check_a11y.mjs`, `sweep_a11y.mjs` and `check_a11y_fingerprint.mjs` all share. Change the scan there, not here. The scan uses the `wcag2a`, `wcag2aa`, `wcag21a`, `wcag21aa`, and `wcag22aa` rule tags, plus the `heading-order` best-practice rule. All five WCAG tags must be listed because axe matches tags literally, with no version rollup --- a rule tagged only `wcag21aa` does not match `wcag22aa`, even though WCAG 2.2 AA is a superset of 2.1 AA. Incomplete (needs-review) results are reported but do not fail the run.
 

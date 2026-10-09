@@ -59,12 +59,12 @@ Each `.bat` opens with `@pushd "%~dp0"`, which is what lets it be invoked from a
 
 `--check-audit-index` is the part most easily dropped in transcription, and dropping it is silent --- see [Building](#building) below for what it costs. Anyone who types `build.bat` gets the link check without thinking about it; anyone who types the underlying command has to include it themselves.
 
-`check.bat` is a sequence of separate scripts rather than one command, each stopping the run if it fails. The order is cheapest-first, so a failure stops the run before the expensive gates have cost anything --- the accessibility scan at the end is by a wide margin the slowest:
+`check.bat` is a sequence of separate scripts rather than one command, each stopping the run if it fails. [`check_tree_fresh`](Tools#check-tree-fresh) runs first so a stale tree fails cheaply, before anything else looks at it; [`check_a11y`](Tools#check-a11y) runs second even though it is the slowest, so the composite action can run it first in CI and overlap its Chromium work with the backgrounded book PDF render:
 
     node scripts/check_tree_fresh.mjs \
+      && node scripts/check_a11y.mjs \
       && node scripts/check_dot_fit.mjs \
-      && node scripts/pick_a11y_sample.mjs --check \
-      && node scripts/check_a11y.mjs
+      && node scripts/pick_a11y_sample.mjs --check
 
 `test.bat` is the same shape, in the same cheapest-first order:
 
