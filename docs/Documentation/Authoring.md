@@ -862,6 +862,25 @@ There are three reasons, in increasing order of severity:
 
 [`build.bat`](Building#checking-link-integrity) enforces this. A remote `<img>` --- `http://`, `https://`, or protocol-relative `//host/...` --- is reported as `remote-asset:` and fails the run.
 
+### A picture in both themes
+
+A screenshot of the IDE shows one of its themes, and the site has two. To give a picture a version for the site's light theme, save it beside the first one under the same name with `.light` before the extension:
+
+```text
+docs/IDE/Images/Watches.png         <-- the dark picture: the page names this one
+docs/IDE/Images/Watches.light.png   <-- the light picture: the page never names it
+```
+
+Keep the page as it is, naming `Watches.png` with its `{:width height}`. The build finds the light picture by its name and puts both into the page: a reader sees the light one in the light theme and the dark one in the dark theme, whether the theme was chosen with the toggle or follows the operating system, and the browser downloads only the one it shows. The PDF book has the light picture only.
+
+Three things to get right:
+
+- **Never name the `.light.png` in a page**, in an image, a link or raw HTML. The build stops and says which page did it, because that picture would then show in both themes.
+- **Take the two pictures at the same scale.** The width and height in the page are for the dark picture, and the build shows the light one at the same scale: a light picture 8 pixels narrower is shown 4 pixels narrower when the page halves the dark one. The IDE's light theme lays some things out a few pixels smaller, so the two need not be exactly the same size.
+- **A `.light.png` needs its dark picture beside it.** One without stops the build, because it would never be shown.
+
+The IDE's own screenshots come from `scripts/shoot_docs.mjs`, which takes each one in both themes and writes both files; it keeps no light picture that looks exactly like the dark one. Describe a picture in words that are true in both themes: its alt text and the prose around it are the same for both. "The Run button" is true of both, while "the white Run button" is not.
+
 ### Videos
 
 Link the video and mark it `.video`:

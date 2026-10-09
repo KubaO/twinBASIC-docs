@@ -71,7 +71,13 @@
 //     off by a style sheet put into the document and into every shadow root
 //     (a tool window is one), in every picture. Otherwise a blink or a fade is
 //     in some captures.
-//   * The theme is dark, as the documentation shows it.
+//   * Every picture is taken twice, in the IDE's dark theme as X.png and in its Light
+//     theme as X.light.png, by one IDE: it takes its pictures, is switched to Light by
+//     the IDE's own command, and takes them again. The site shows the light picture in
+//     its light theme (builder/theme-pictures.mjs). A light picture with the dark one's
+//     pixels is not kept. Light lays the window out a few pixels differently, so a light
+//     picture can be a few pixels off the dark one's size; the page shows each at its own
+//     (SIZE_SLACK). A label's pill follows the theme (lib/shot-annotate.mjs).
 //   * What the user's machine would put into a picture is kept out of the IDE's
 //     page, in the page only (the no-project and project setups): the IDE's
 //     options are set to their defaults, the saved panel layouts and keyboard
@@ -110,6 +116,7 @@ import { hoverText, mouseAway, pointOf, restMouse } from "../test/addin/hover.mj
 import { frameEval, frameOf, serveLoopback } from "../test/addin/pages.mjs";
 import { annotate as annotateOver, LAYER_ID, resolveAnchors, unannotate } from "./lib/shot-annotate.mjs";
 import { composite, uncomposite } from "./lib/shot-composite.mjs";
+import { decodePng } from "./lib/png.mjs";
 import { diffPicture } from "./lib/shot-diff.mjs";
 import { attach } from "./lib/tb-cdp.mjs";
 import { consoleMark, linesSince } from "./lib/tb-ide-console.mjs";
@@ -163,7 +170,9 @@ const BROWSER_ARGS = "--force-device-scale-factor=1";
 const USAGE = `usage: node scripts/shoot_docs.mjs [--only <regex>] [--out <dir>] [--diffs <dir>] [--jobs N] [--port N] [--ide <twinBASIC.exe>] [-h, --help]
 
 Takes the pictures of the IDE that the documentation shows, from IDEs on a
-private desktop, at 2x in the dark theme: the help add-in's eight (setup help),
+private desktop, at 2x, each in the IDE's dark theme (X.png) and then in its Light
+theme (X.light.png, not kept when it has the dark picture's pixels, and removed
+when there is one already): the help add-in's eight (setup help),
 the menus, dialogs, bars and panels that need no project (setups no-project and project),
 the panels, editor, Project Settings and icons of a sample project (setups sample,
 settings and glyphs), those of the IDE's Samples 15 and 6 (setups
@@ -174,9 +183,13 @@ custom control's code and PROPERTIES (setup customcontrols), and the editor alon
 the build select's greying, inline hints, a hover, a form's JSON (setups code,
 customcontrols and sample9), and the whole window with its features named (setup
 featuremap).
+A light picture can be a few pixels off the dark one's size, since Light lays
+the window out a little differently; the site shows each at its own size.
 Each setup is one IDE, started when a picture in it is selected. A picture is
-written only when its bytes differ from the file already there; each is
-reported as new, updated or unchanged. The IDE's registry entries and the
+written only when it differs from the file already there by more than a
+capture's noise (a few grey levels at a few edge pixels); each is reported as
+new, updated or unchanged, and the run ends with how many of each
+theme came out each way. The IDE's registry entries and the
 saved settings of the add-ins it loads are put back afterwards. The help add-in's pane
 shows pages from docs/_site, so run build.bat first for those.
 
@@ -184,15 +197,20 @@ A picture is refused, and the run fails, when the visible text of the page it
 was taken from holds the Windows user name.
 
   --only <regex>   only the pictures whose path under the output folder
-                   (IDE/Menu/Images/Menu_File.png) matches
+                   (IDE/Menu/Images/Menu_File.png, or its .light.png) matches;
+                   each is taken in both themes
   --out <dir>      the folder the pictures' paths are under (default docs)
   --diffs <dir>    write a difference picture into <dir> (not under docs) for
-                   each picture that is updated: the file on disk, the new
+                   each picture that is updated, named for its path and theme
+                   (IDE__Menu__Images__Menu_File.dark.png): the file on disk, the new
                    picture and their difference side by side, the difference
                    amplified (yellow for one grey level, shading to red), with
                    the differing region magnified under them. Also one for each
-                   two captures of one state that disagree, named .capture-<n>.
-                   Files of the same name are overwritten
+                   two captures of one state that disagree, named .capture-<n>,
+                   one for each picture left as it is because it differs only by
+                   a capture's noise, named .noise, and one of the two themes of
+                   a light picture refused for its size, named .size. Files of
+                   the same name are overwritten
   --jobs <n>       how many IDEs run at once (default 6). The setups are queued,
                    the longest first, and the long ones (no-project, sample and
                    customcontrols) are split into parts that each get an IDE of their own; every
@@ -210,7 +228,9 @@ was taken from holds the Windows user name.
 Exit codes:
   0  every picture was written or was unchanged
   1  a picture failed: an element was not found, the page showed the user name,
-     the add-in did not build, or the demo project does not compile
+     a light picture's size is more than 32 pixels off the dark one's (the IDE
+     was not in the state the dark picture shows), the add-in did not build, or
+     the demo project does not compile
   2  the tool could not run: a refused command line, no IDE, no built site, a
      registry it could not record, or a crash
   3  the registry or the work folder was not put back; see the lines above`;
@@ -394,25 +414,51 @@ async function cutoutOff(conn) {
 // connection shares it): `name` the setup's, for its lines; `reference` the bytes of the
 // file the running shot writes, when there is one, which `capture` prefers the version of a
 // picture that equals; `editedOriginal` the module of the sample that a shot has replaced in
-// the page, to put back.
-const newShotState = (name) => ({ name, out: null, reference: null, editedOriginal: null });
+// the page, to put back; for a light picture, `prefer` the dark picture when no light file is
+// there yet.
+const newShotState = (name) => ({ name, out: null, reference: null, prefer: null, editedOriginal: null });
 
 // A line of output, prefixed with the setup it is from (they run at once).
 const say = (name, text) => console.log(`[${name}] ${text}`);
 const complain = (name, text) => console.error(`[${name}] ${text}`);
 
 // With --diffs, the difference picture of `before` and `after` (PNG files) for the picture
-// `out`, as <out with its folders joined by __><suffix>.png. A failure to write it is said,
-// and fails nothing.
+// `out`, as <out with its folders joined by __ and no extension>.<theme><suffix>.png, the
+// theme dark or light. A failure to write it is said, and fails nothing.
 function writeDiff(name, out, before, after, { suffix = "", labels } = {}) {
   if (!diffsRoot) return;
-  const file = path.join(diffsRoot, `${out.replace(/[\\/]/g, "__").replace(/\.png$/i, "")}${suffix}.png`);
+  const theme = /\.light\.png$/i.test(out) ? "light" : "dark";
+  const base = out.replace(/[\\/]/g, "__").replace(/(\.light)?\.png$/i, "");
+  const file = path.join(diffsRoot, `${base}.${theme}${suffix}.png`);
   try {
     mkdirSync(diffsRoot, { recursive: true });
     writeFileSync(file, diffPicture(before, after, labels));
   } catch (e) {
     complain(name, `the difference picture ${file} was not written: ${e.message}`);
   }
+}
+
+// Whether two captures (PNG files) are the same picture but for a capture's noise: one size, no
+// channel of any pixel more than NOISE_LEVELS grey levels apart, and no more than NOISE_SHARE of
+// the pixels apart at all. The noise seen: 1 to 14 levels, along a shadow's or an arrow's edge,
+// at a rounded corner, in a scaled bitmap (34 pixels; 81 on About's Close button; the most, 563
+// along a dialog's top edge, 0.13% of it). A change the IDE draws moves text or colour by far
+// more than 16 levels.
+const NOISE_LEVELS = 16;
+const NOISE_SHARE = 0.005;
+function nearly(a, b) {
+  const A = decodePng(a);
+  const B = decodePng(b);
+  if (A.width !== B.width || A.height !== B.height) return false;
+  const most = Math.max(1, Math.floor(A.width * A.height * NOISE_SHARE));
+  let apart = 0;
+  for (let i = 0; i < A.rgba.length; i += 4) {
+    let d = 0;
+    for (let k = 0; k < 4; k++) d = Math.max(d, Math.abs(A.rgba[i + k] - B.rgba[i + k]));
+    if (!d) continue;
+    if (d > NOISE_LEVELS || ++apart > most) return false;
+  }
+  return true;
 }
 
 // The pauses between the captures `capture` takes of one state, in milliseconds: the
@@ -459,13 +505,19 @@ async function capture(conn, name, clip, { frame, away = null, keep = null, soli
     // capture does, else the last capture that equals the one before it; with no file
     // there, the first that does. A picture is rewritten only when the IDE draws something
     // else.
+    // A new light picture has no file to equal, and prefers the dark picture (`prefer`) as
+    // long as its first capture is within the noise of it: then one the theme does not change
+    // comes out with the dark one's pixels. Else it is taken as a new picture.
     const want = conn.shot.reference;
+    let prefer = want ? null : conn.shot.prefer;
     let last = null;
     let agreed = null;
     for (let i = 0; ; i++) {
       const { data } = await conn.send("Page.captureScreenshot", params);
       const png = Buffer.from(data, "base64");
       if (want?.equals(png)) return png;
+      if (prefer && i === 0 && !nearly(prefer, png)) prefer = null;
+      if (prefer?.equals(png)) return png;
       if (last && !last.equals(png) && conn.shot.out) {
         writeDiff(conn.shot.name, conn.shot.out, last, png, {
           suffix: `.capture-${i}`,
@@ -473,7 +525,7 @@ async function capture(conn, name, clip, { frame, away = null, keep = null, soli
         });
       }
       if (last?.equals(png)) agreed = png;
-      if (agreed && !want) return agreed;
+      if (agreed && !want && !prefer) return agreed;
       if (i === CAPTURE_GAPS.length) break;
       last = png;
       await sleep(CAPTURE_GAPS[i]);
@@ -633,10 +685,19 @@ async function resetUi(c) {
 
 // ---------------------------------------------------------------- the IDE's page
 
-// The dark theme, as the documentation shows it.
-async function ensureDark(c) {
-  const isDark = () =>
-    c.evaluate(`(() => {
+// Every picture is taken in the IDE's dark theme and again in its Light one (not Classic):
+// X.png is the dark picture and X.light.png beside it the light one, and the site shows the
+// one for its own theme (builder/theme-pictures.mjs). A setup takes its pictures in dark,
+// is switched to Light and takes them again.
+const THEMES = ["dark", "light"];
+const THEME_COMMAND = { dark: "tbTheme_SwitchToDarkMode", light: "tbTheme_SwitchToLightMode" };
+const THEME_NAME = { dark: "dark", light: "Light" };
+// The path of a picture in a theme: the dark one is the path the shot table gives.
+const themedOut = (out, theme) => (theme === "dark" ? out : out.replace(/\.png$/, ".light.png"));
+
+// Whether the IDE's page is in a dark theme: its panels' colour is dark.
+const pageIsDark = (c) =>
+  c.evaluate(`(() => {
   const p = document.createElement("div");
   p.style.background = "var(--themeGeneralPanelBackColor)";
   document.body.appendChild(p);
@@ -644,10 +705,23 @@ async function ensureDark(c) {
   p.remove();
   return 0.299 * r + 0.587 * g + 0.114 * b < 128;
 })()`);
-  if (!(await isDark())) {
-    await c.evaluate('executeIdeCommand("tbTheme_SwitchToDarkMode")');
-    if (!(await waitFor(c, isDark, { timeout: 10000 }))) throw new Error("the IDE did not switch to the dark theme");
+
+// The IDE in `theme` (dark or light), switched by its own command as the Window menu's
+// Theme submenu switches it, once the page shows it: the panels' colour, the page's images
+// and its fonts loaded, and two frames on. The page's call that would save the theme is
+// one PAGE_DEFAULTS has made do nothing.
+async function ensureTheme(c, theme) {
+  const want = theme === "dark";
+  if ((await pageIsDark(c)) === want) return;
+  await c.evaluate(`executeIdeCommand(${JSON.stringify(THEME_COMMAND[theme])})`);
+  if (!(await waitFor(c, async () => (await pageIsDark(c)) === want, { timeout: 10000 }))) {
+    throw new Error(`the IDE did not switch to the ${THEME_NAME[theme]} theme`);
   }
+  const loaded = `document.fonts.status === "loaded" && [...document.images].every((i) => i.complete)`;
+  if (!(await waitFor(c, () => c.evaluate(loaded), { timeout: 10000, interval: 100 }))) {
+    throw new Error(`the page's images did not load in the ${THEME_NAME[theme]} theme`);
+  }
+  await frames(c);
 }
 
 // The page at its fixed size and density, IDE_SIZE at SCALE. The page names its scale in a
@@ -768,7 +842,7 @@ async function prepareHelp(run) {
   }
   await openFile(c, DEMO_FILE, { line: 1, column: 1 });
   run.defaults = JSON.parse(await c.evaluate(PAGE_DEFAULTS));
-  await ensureDark(c);
+  await ensureTheme(c, "dark");
   await fixPageSize(c);
   const ctx = {
     c,
@@ -794,7 +868,7 @@ async function prepareProject(run) {
   run.step = "shoot";
   await openFile(c, DEMO_FILE, { line: 1, column: 1 });
   run.defaults = JSON.parse(await c.evaluate(PAGE_DEFAULTS));
-  await ensureDark(c);
+  await ensureTheme(c, "dark");
   await fixPageSize(c);
   return { c };
 }
@@ -818,7 +892,7 @@ async function prepareNoProject(run) {
   await sleep(1000);
   run.defaults = JSON.parse(await c.evaluate(PAGE_DEFAULTS));
   await closeModal(c, "Cancel");
-  await ensureDark(c);
+  await ensureTheme(c, "dark");
   await parkMouse(c);
   await frames(c);
   return { c };
@@ -879,7 +953,7 @@ async function prepareSample(run) {
   run.defaults = JSON.parse(await c.evaluate(PAGE_DEFAULTS));
   // the Project Explorer starts in the file view whatever the IDE saved (in the page only)
   await c.evaluate("switchToProjectExplorerFileMode()");
-  await ensureDark(c);
+  await ensureTheme(c, "dark");
   await fixPageSize(c);
   await parkMouse(c);
   return { c };
@@ -1719,7 +1793,6 @@ const debugConsoleShot = annotatedPanelShot(
         text: "Auto Scroll",
         on: { of: DC_BUTTON("Auto Scroll"), at: "top", dx: -70, dy: -34 },
         side: "above",
-        tone: "dark",
       },
       {
         type: "arrow",
@@ -1731,7 +1804,6 @@ const debugConsoleShot = annotatedPanelShot(
         text: "Clear Debug Console",
         on: { of: DC_BUTTON("Clear Debug Console"), at: "top", dx: 60, dy: -60 },
         side: "above",
-        tone: "dark",
       },
       {
         type: "arrow",
@@ -1740,9 +1812,9 @@ const debugConsoleShot = annotatedPanelShot(
       },
       // the menu is the Options button's: named from the right, since the arrows from the left
       // already converge on the buttons
-      { type: "label", text: "Options", on: { css: "#contextMenu" }, side: "right", gap: 70, tone: "dark" },
+      { type: "label", text: "Options", on: { css: "#contextMenu" }, side: "right", gap: 70 },
       { type: "arrow", from: { of: { css: "#contextMenu" }, at: "right", dx: 66 }, to: { css: "#contextMenu" } },
-      { type: "label", text: "Input", on: LEFT_OF(DC_PANEL, 203, -90), side: "left", tone: "dark" },
+      { type: "label", text: "Input", on: LEFT_OF(DC_PANEL, 203, -90), side: "left" },
       { type: "arrow", from: LEFT_OF(DC_PANEL, 203, -86), to: DC_INPUT, tipGap: 11 },
     ],
   },
@@ -1765,7 +1837,7 @@ const diagnosticsShot = annotatedPanelShot(
       ["Hints", "statusHints", 175],
       ["Information", "statusInfos", 215],
     ].flatMap(([text, id, dy]) => [
-      { type: "label", text, on: LEFT_OF(DIAG_PANEL, dy), side: "left", tone: "dark" },
+      { type: "label", text, on: LEFT_OF(DIAG_PANEL, dy), side: "left" },
       { type: "arrow", from: LEFT_OF(DIAG_PANEL, dy, -26), to: DIAG_BADGE(id), elbow: true },
     ]),
   },
@@ -2514,7 +2586,6 @@ const sampleShots = [
           on: { of: CS_THREAD, at: "bottom", dy: 52 },
           side: "below",
           gap: 0,
-          tone: "dark",
         },
         { type: "arrow", from: { of: CS_THREAD, at: "bottom", dy: 49 }, to: { of: CS_THREAD, at: "bottom", dy: 4 } },
         {
@@ -2590,7 +2661,6 @@ const sampleShots = [
           on: { of: DIAG_PANEL, at: "bottom-left", dx: 20, dy: 58 },
           side: "right",
           gap: 0,
-          tone: "dark",
         },
         ...["statusErrors", "statusWarnings", "statusHints", "statusInfos"].map((id) => ({
           type: "arrow",
@@ -2622,7 +2692,6 @@ const sampleShots = [
           on: { of: DIAG_PANEL, at: "bottom-left", dx: 20, dy: 58 },
           side: "right",
           gap: 0,
-          tone: "dark",
         },
         ...["errorCount", "warningCount", "hintCount", "infoCount"].map((id) => ({
           type: "arrow",
@@ -2756,9 +2825,8 @@ async function takeEditorOptions({ c }) {
             on: { of: POPUP, at: "top-right", dx: -54, dy: -32 },
             side: "left",
             gap: 0,
-            tone: "dark",
           },
-          { type: "label", text: "Tabs List", on: { css: TABS_BUTTON }, side: "left", gap: 64, tone: "dark" },
+          { type: "label", text: "Tabs List", on: { css: TABS_BUTTON }, side: "left", gap: 64 },
           {
             type: "arrow",
             from: { of: { css: TABS_BUTTON }, at: "left", dx: -60 },
@@ -3523,6 +3591,24 @@ async function addReport(ctx) {
   if (ctx.report) return;
   const { c } = ctx;
   await resetUi(c);
+  // the other theme's pictures were taken after it was added: it is opened
+  const REPORT = SAMPLE_FILE("Sources/MyReport.tbreport");
+  if (await c.evaluate(`!!fs.tree.resolvePath(${JSON.stringify(`twinbasic:${REPORT}`)})`)) {
+    await openFile(c, REPORT);
+  } else {
+    await newReport(c);
+  }
+  const opened = await waitFor(c, async () => (await editorTabs(c)).some((t) => t.name === "MyReport.tbreport"), {
+    timeout: 10000,
+    interval: 100,
+  });
+  if (!opened) throw new Error("the new report did not open in the designer");
+  await designerShown(c);
+  ctx.report = true;
+}
+
+// Sources > Add > Add Windows Report in the Project Explorer, and its name taken as offered.
+async function newReport(c) {
   // the Project Explorer floats for it, since an earlier picture may have taken it out of the
   // layout, and goes again once the name is taken
   try {
@@ -3554,13 +3640,6 @@ async function addReport(ctx) {
   } finally {
     await unfloatPanel(c, "PROJECT EXPLORER");
   }
-  const opened = await waitFor(c, async () => (await editorTabs(c)).some((t) => t.name === "MyReport.tbreport"), {
-    timeout: 10000,
-    interval: 100,
-  });
-  if (!opened) throw new Error("the new report did not open in the designer");
-  await designerShown(c);
-  ctx.report = true;
 }
 
 // EDITOR 1's box, its header included.
@@ -4300,13 +4379,13 @@ function ccShot(name, parts, { before = null, after = null } = {}) {
       try {
         if (before) await before(c);
         // the parts are not the picture: capture keeps the first two captures that agree
-        const reference = c.shot.reference;
-        c.shot.reference = null;
+        const { reference, prefer } = c.shot;
+        Object.assign(c.shot, { reference: null, prefer: null });
         let made;
         try {
           made = await parts(c);
         } finally {
-          c.shot.reference = reference;
+          Object.assign(c.shot, { reference, prefer });
         }
         try {
           const { box } = await composite(
@@ -4894,7 +4973,6 @@ async function takeFeatureMap({ c }) {
         on: POINT(x, y),
         side,
         gap: 0,
-        tone: "dark",
       });
       const arrow = (from, to, extra = {}) => ({ type: "arrow", from, to, ...extra });
       const box = (r) => ({ rect: r });
@@ -5365,7 +5443,8 @@ function helpTakes(ctx) {
     return snap(c, "Toolbar", clip);
   });
 
-  // The detached window with a page. Last: the pane is gone afterwards.
+  // The detached window with a page; attached again afterwards, as the other theme's pass
+  // starts with the pane.
   shoot("Window", async () => {
     await showPage(AT.msgBox, HELP_PAGE);
     const mark = await consoleMark(c);
@@ -5404,12 +5483,21 @@ function helpTakes(ctx) {
         timeout: 30000,
       });
       if (!frame) throw new Error(`no frame of ${origin} on the window's DevTools port ${windowPort}`);
+      let png;
       try {
         await pageDrawn(win, frame);
-        return await snap(win, "Window", null, { frame });
+        png = await snap(win, "Window", null, { frame });
       } finally {
         frame.close();
       }
+      // The help back in the pane, with the window's Attach button, for the pictures of the
+      // next theme.
+      const back = await consoleMark(c);
+      await win.evaluate(`document.getElementById("helpAttach").click()`);
+      if (!(await waitFor(c, async () => (await addinLines(back)).includes("attached"), { timeout: 30000 }))) {
+        throw new Error(`the window's Attach did not attach: ${JSON.stringify(await addinLines(back))}`);
+      }
+      return png;
     } finally {
       win?.close();
     }
@@ -5519,34 +5607,35 @@ const PARTS = {
 // started after no-project, Diagnostics came out with 34 pixels of one arrow's edge a grey
 // level or two off, twice. Rerun twice after changing them.
 const JOB_SECONDS = {
-  help: 45,
-  project: 11,
-  sample: 34,
-  "sample-2": 55,
-  "sample-3": 62,
-  settings: 22,
-  "settings-symbols": 8,
-  "settings-webview2": 20,
-  "settings-fusion": 12,
-  glyphs: 24,
-  "global-search": 58,
-  sample6: 26,
-  designer: 62,
-  forms: 30,
-  customcontrols: 50,
-  "customcontrols-2": 45,
-  "customcontrols-3": 40,
-  code: 35,
-  sample9: 18,
-  featuremap: 30,
-  "no-project": 33,
-  "no-project-2": 38,
-  "no-project-3": 41,
+  help: 79,
+  project: 22,
+  sample: 57,
+  "sample-2": 130,
+  "sample-3": 106,
+  settings: 45,
+  "settings-symbols": 10,
+  "settings-webview2": 24,
+  "settings-fusion": 14,
+  glyphs: 45,
+  "global-search": 45,
+  sample6: 21,
+  designer: 61,
+  forms: 40,
+  customcontrols: 54,
+  "customcontrols-2": 53,
+  "customcontrols-3": 35,
+  code: 33,
+  sample9: 11,
+  featuremap: 39,
+  "no-project": 68,
+  "no-project-2": 59,
+  "no-project-3": 70,
 };
 
 // ---------------------------------------------------------------- run
 
-const selected = SHOTS.filter((s) => !only || only.test(s.out));
+// --only selects a shot by its dark picture's path or its light one's, and a shot is taken in both.
+const selected = SHOTS.filter((s) => !only || THEMES.some((theme) => only.test(themedOut(s.out, theme))));
 const wanted = Object.keys(SETUPS).filter((name) => selected.some((s) => s.setup === name));
 if (!selected.length) die(2, `no picture's path matches ${values.only}`);
 if (wanted.includes("help") && !existsSync(path.join(SITE, "tB", "symbols.json"))) {
@@ -5631,22 +5720,81 @@ exitOnCrash(() => {
   restoreSettings();
 });
 
-// Writes a picture when its bytes differ from the file's; says which.
-function keep(name, out, png) {
-  const file = path.join(outRoot, out);
+// How many pictures of each theme came out in each state, for the run's last lines.
+const tally = { dark: {}, light: {} };
+const count = (theme, state) => {
+  tally[theme][state] = (tally[theme][state] ?? 0) + 1;
+};
+const pngSize = (png) => ({ w: png.readUInt32BE(16), h: png.readUInt32BE(20) });
+
+// How far, in device pixels, a light picture's width or height may be from the dark one's.
+// The Light theme lays the window out a little differently (its toolbar is 4 CSS pixels
+// shorter, a panel's title bar 3, some buttons narrower), so a clip worked out from the page's
+// elements comes out up to a few pixels off, and the page shows each picture at its own size
+// (builder/theme-pictures.mjs). A larger difference is not the theme's: most likely the IDE
+// was not in the state the dark picture shows.
+const SIZE_SLACK = 32;
+
+// Writes a picture when its bytes differ from the file's; says which. `out` is the dark
+// picture's path. A light picture is compared with the dark one (`dark`, this run's, or the
+// file's): one with the same pixels, but for a capture's noise (`nearly`), is not kept, and a
+// light file there already is removed, since the page shows X.png in both themes then; one
+// more than SIZE_SLACK off its size fails. A picture within a capture's noise of its file is
+// not written either.
+function keep(name, out, png, theme, dark) {
+  const file = path.join(outRoot, themedOut(out, theme));
+  const { w, h } = pngSize(png);
+  let other = "";
+  if (theme === "light" && dark) {
+    const d = pngSize(dark);
+    if (Math.abs(d.w - w) > SIZE_SLACK || Math.abs(d.h - h) > SIZE_SLACK) {
+      writeDiff(name, themedOut(out, theme), dark, png, {
+        suffix: ".size",
+        labels: { before: "DARK", after: "LIGHT" },
+      });
+      throw new Error(
+        `the light picture is ${w}x${h} px and the dark one ${d.w}x${d.h} px: more than the theme's layout moves`,
+      );
+    }
+    if (d.w !== w || d.h !== h) {
+      count(theme, "of another size than the dark picture");
+      other = `; the dark picture is ${d.w}x${d.h} px`;
+    }
+    if (nearly(dark, png)) {
+      const had = existsSync(file);
+      if (had) rmSync(file);
+      count(theme, "the same as the dark picture");
+      say(
+        name,
+        `${themedOut(out, theme)}: the dark picture's pixels, but for a capture's noise: ${had ? "removed" : "not written"}`,
+      );
+      return;
+    }
+  }
   mkdirSync(path.dirname(file), { recursive: true });
   let state = "new";
+  let write = true;
   if (existsSync(file)) {
     const was = readFileSync(file);
-    state = was.equals(png) ? "unchanged" : "updated";
-    if (state === "updated") writeDiff(name, out, was, png);
+    if (was.equals(png)) {
+      state = "unchanged";
+      write = false;
+    } else if (nearly(was, png)) {
+      // a run now and then settles on the other version of a capture's noise for every
+      // capture of a state (WIP.Screenshots.md, Capture): the file stays as it is
+      state = "unchanged but for a capture's noise";
+      write = false;
+      writeDiff(name, themedOut(out, theme), was, png, { suffix: ".noise" });
+    } else {
+      state = "updated";
+      writeDiff(name, themedOut(out, theme), was, png);
+    }
   }
-  if (state !== "unchanged") writeFileSync(file, png);
-  const w = png.readUInt32BE(16);
-  const h = png.readUInt32BE(20);
+  if (write) writeFileSync(file, png);
+  count(theme, state);
   say(
     name,
-    `${out}: ${state} (${w}x${h} px, ${png.length} bytes; shown at {:width="${w / SCALE}" height="${h / SCALE}"})`,
+    `${themedOut(out, theme)}: ${state} (${w}x${h} px, ${png.length} bytes; shown at {:width="${w / SCALE}" height="${h / SCALE}"}${other})`,
   );
 }
 
@@ -5659,6 +5807,29 @@ async function endRun(run) {
     complain(run.name, e.message);
   }
   run.server?.close();
+}
+
+// What a setup's page holds once it is prepared and that its shots change: the editor's
+// tabs, the Tabs List's Recently Closed, and the context's own keys (a take that does
+// something once records it there, as closedResources does).
+async function setupState(c, ctx) {
+  return {
+    tabs: (await editorTabs(c)).map((t) => t.name),
+    recent: await c.evaluate("typeof g_RecentlyClosedTabs === 'undefined' ? null : [...g_RecentlyClosedTabs]"),
+    keys: Object.keys(ctx),
+  };
+}
+
+// Between the two themes' passes: the setup back to the state it was prepared in, as near
+// as the page allows, so that the second pass's shots start where the first's did. Nothing
+// open; the tabs opened since closed with their changes discarded (the page's own: nothing
+// is saved), Recently Closed as it was, and what the takes recorded in the context dropped.
+async function backToPrepared(c, ctx, was) {
+  await resetUi(c);
+  await closeTabs(c, was.tabs, { discard: true });
+  if (was.recent) await c.evaluate(`g_RecentlyClosedTabs = ${JSON.stringify(was.recent)}`);
+  for (const k of Object.keys(ctx)) if (!was.keys.includes(k)) delete ctx[k];
+  await parkMouse(c);
 }
 
 // The exit code for an error from one step: 1 when it is the add-in's or the
@@ -5700,18 +5871,41 @@ async function runJob(job) {
         `page settings put to their defaults (in the page only, saved nowhere): ${run.defaults.join("; ") || "none differed"}`,
       );
     }
-    for (const shot of job.shots) {
-      const file = path.join(outRoot, shot.out);
-      state.reference = existsSync(file) ? readFileSync(file) : null;
-      state.out = shot.out;
-      try {
-        keep(job.name, shot.out, await shot.take(ctx));
-      } catch (e) {
-        complain(job.name, `${shot.out}: FAILED: ${e.message}`);
-        failed = 1;
-      } finally {
-        state.reference = null;
-        state.out = null;
+    // Each picture in dark, then the IDE in Light and each again, in the same IDE: a shot sets
+    // the state it shows, and backToPrepared puts back what the shots leave behind that a
+    // later one sees (tabs, Recently Closed, a take's done-once marks). A light picture
+    // with no file yet prefers a capture equal to the dark picture, so that one the theme
+    // does not change comes out identical to it rather than a capture's noise away.
+    const darks = new Map();
+    const prepared = await setupState(run.c, ctx);
+    for (const theme of THEMES) {
+      if (theme !== "dark") {
+        await backToPrepared(run.c, ctx, prepared);
+        await ensureTheme(run.c, theme);
+        say(job.name, `the IDE in its ${THEME_NAME[theme]} theme`);
+      }
+      for (const shot of job.shots) {
+        const out = themedOut(shot.out, theme);
+        const file = path.join(outRoot, out);
+        const darkFile = path.join(outRoot, shot.out);
+        const dark =
+          theme === "dark" ? null : (darks.get(shot.out) ?? (existsSync(darkFile) ? readFileSync(darkFile) : null));
+        state.reference = existsSync(file) ? readFileSync(file) : null;
+        state.prefer = dark;
+        state.out = out;
+        try {
+          const png = await shot.take(ctx);
+          if (theme === "dark") darks.set(shot.out, png);
+          keep(job.name, shot.out, png, theme, dark);
+        } catch (e) {
+          complain(job.name, `${out}: FAILED: ${e.message}`);
+          count(theme, "failed");
+          failed = 1;
+        } finally {
+          state.reference = null;
+          state.prefer = null;
+          state.out = null;
+        }
       }
     }
   } catch (e) {
@@ -5737,6 +5931,10 @@ async function runJob(job) {
   await Promise.all(Array.from({ length: Math.min(jobCount, jobs.length) }, worker));
 }
 console.log(`${((Date.now() - t0) / 1000).toFixed(1)} s`);
+for (const theme of THEMES) {
+  const states = Object.entries(tally[theme]).map(([state, n]) => `${n} ${state}`);
+  console.log(`${THEME_NAME[theme]}: ${states.join(", ") || "none taken"}`);
+}
 
 const problems = [];
 if (!finishTidy(tidy)) problems.push("the IDE's registry entries could not be put back (see the warning above)");

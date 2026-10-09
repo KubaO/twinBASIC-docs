@@ -47,7 +47,7 @@ DEBUGGER: Disconnected / OPERATIONAL
 
 ## Links
 
-![Four white icons in the status bar, after its badges: a Ko-fi coffee cup holding a heart, the Discord face, the Twitter bird and the GitHub cat.](Images/Links.png){:width="127" height="27"}
+![Four icons in the status bar, after its badges: a Ko-fi coffee cup holding a heart, the Discord face, the Twitter bird and the GitHub cat.](Images/Links.png){:width="127" height="27"}
 
 - https://ko-fi.com/twinbasic
 - https://discord.com/invite/UaW9GgKKuE

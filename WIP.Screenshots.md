@@ -48,9 +48,17 @@ Measured by the s103 probe (8 IDE runs, BETA 997):
   `Lane.openNoProject()` (`launchOnDesktop` with no argument, then `attachIde`). The lane's copy
   of the install leaves out `projects\` (29 MB): New Project then shows 2 templates and no
   samples, so a setup that shows them copies `projects\` into the lane's copy.
-- **Theme.** The pictures are of the dark theme (`tbTheme_SwitchToDarkMode`, as now). The menu
-  bar and dialog title bars follow the theme; drop-downs and dialog bodies are light in every
-  theme.
+- **Theme** (owner, 2026-10-09). Every picture is taken in the dark theme
+  (`tbTheme_SwitchToDarkMode`) as `X.png`, byte for byte the picture it always was, and in the
+  **Light** theme (`tbTheme_SwitchToLightMode`, not Classic) as `X.light.png` beside it. The
+  site shows the light one in its light theme and the dark one in its dark theme, following the
+  toggle and, with no choice stored, the OS; pages are not edited, the build pairs the files by
+  name ([WIP.Build.md, Pictures in two themes](WIP.Build.md#pictures-in-two-themes)); the PDF
+  has the light ones only. The menu bar and dialog title bars follow the theme; drop-downs and
+  dialog bodies are light in every theme. Light lays the window out a few pixels differently
+  (the toolbar 4 CSS px shorter, a panel's title bar 3, the Global Search button narrower), so
+  a light picture can be a few pixels off the dark one's size; the build shows each at its own
+  size, at one scale.
 - **Opening things.** Menus open on a real mouse press on `#rootMenu<Title>`; submenus on a real
   mouse move onto the item (~500 ms; wait for `#contextMenuSUB > .contextMenuItem`). Dialogs by
   `executeIdeCommand` (`tbHelp_ShowAboutWindow`, `tbIde_ShowIDEOptions`,
@@ -94,8 +102,14 @@ Measured by the s103 probe (8 IDE runs, BETA 997):
   help: Diagnostics (34 pixels along an arrow's edge), 6ad7a172 (4 title-bar corner pixels),
   Menu_Window_PanelLayouts (one submenu corner pixel), 1-3 grey levels each; each is unchanged
   when its setup runs alone, and which one varies from run to run (`JOB_SECONDS` moves it, but is
-  not the whole cause). Put such a picture back rather than commit it; diffs in
-  `.claude/tooling-review-scratch/s103-shots/perf/diffs-final/`.
+  not the whole cause); diffs in `.claude/tooling-review-scratch/s103-shots/perf/diffs-final/`.
+  With twice the pictures it came up in every run (also RightClick-Add-CustomControlsForm-Popup,
+  563 pixels along the dialog's top edge; About's Close button, 81; ManageKeyboardShortcuts_1;
+  Editor_TabsList_RecentlyClosed_Example), so since 2026-10-09 **a picture within a capture's
+  noise of its file is left as it is** (`nearly`: one size, no channel more than 16 levels
+  apart, at most 0.5% of the pixels apart), reported `unchanged but for a capture's noise`, with
+  a `.noise` picture under `--diffs`. The same test decides that a light picture is the dark
+  one.
 - **Settle by condition, not by sleep.** Fixed sleeps were most of a run (a closed menu leaves a
   2x8 px empty `#contextMenu`, so a wait for it to vanish always ran out its 2 s; ~3,000 calls).
   A menu is closed when it holds no items; a dialog is still when a MutationObserver has seen no
@@ -126,7 +140,11 @@ beside an anchor: `left`/`right`/`above`/`below`), `badge` (a number).
 1 px white halo so a stroke reads on light and dark UI; one solid triangular head, 5x the stroke
 long; boxes and rings 3 px with 4 px padding; labels in the page's font (Segoe UI) 600 at 15 px on a pill (dark red
 with white text over dark UI, white with red text over light); badges a filled red circle of
-22 px with a white bold numeral. No hollow block arrows, no hand-drawn strokes.
+22 px with a white bold numeral. No hollow block arrows, no hand-drawn strokes. **A label's
+tone follows the theme** unless the shot names one: dark in the dark theme, light in Light,
+read from the page's panel colour. Every label today sits on what follows the theme (a panel's
+ground, the window), so none names a tone; one over a drop-down or a dialog's body, light in
+every theme, would say `tone: "light"`.
 
 **Composites** (the five CustomControls code-to-property pictures, `Editor.png`, `DebugConsole.png`):
 each part is captured as its own clip; the tool then lays the parts out in a full-window layer
@@ -153,15 +171,30 @@ back).
   (`tbDocsHelp`, `GlobalSearchAddIn`).
 - **Jobs**: `--jobs N` (default 6) runs setups at once, each IDE on its own claimed ports and
   private desktop, and splits the big setups into parts, longest first; a full run is about
-  110 s (it was ~765 s sequential; the jobs add up to over 600 s, so six IDEs cannot do much
-  better). `--jobs 1` runs one IDE per setup in table order. Per-run
+  200 s in both themes (it was ~110 s in dark alone, and ~765 s sequential; the jobs add up to
+  about 1,250 s, so six IDEs cannot do much better). `--jobs 1` runs one IDE per setup in table order. Per-run
   state lives on the connection (`c.shot`), never in module variables.
 - **Diffs**: `--diffs <dir>` (never under `docs/`) writes, for each picture that differs from the
   file on disk, the committed picture, the new one and an amplified difference map side by side
   (`scripts/lib/shot-diff.mjs`, `composeComparison` with `amplify` in `scripts/lib/png.mjs`).
 - **Shots**: a table of `{out, setup, take, annotate?}`, `out` the picture's path under
-  `docs/`; `--only` matches it. `take(ctx)` brings the IDE to the state and returns the clip
-  (or the parts of a composite); `annotate` is a list of primitives.
+  `docs/`; `--only` matches it or its `.light.png`, and selects the shot in both themes.
+  `take(ctx)` brings the IDE to the state and returns the clip (or the parts of a composite);
+  `annotate` is a list of primitives.
+- **Two themes** (2026-10-09): each job takes its shots in dark, then `backToPrepared` (no menu
+  or dialog, the tabs opened since closed with their changes discarded, the Tabs List's
+  Recently Closed as it was, and the keys the takes added to `ctx` dropped), the IDE switched to
+  Light by `tbTheme_SwitchToLightMode` (`ensureTheme`, settled by the panels' colour, the
+  page's images and fonts), and the same shots again: no second IDE start. A shot that leaves
+  something only it can undo puts it back itself: `Help_Window` attaches the help again with
+  the window's Attach, `addReport` opens the report the dark pass added rather than adding
+  another. A light picture with no file yet prefers a capture equal to the dark picture while
+  its first is within a capture's noise of it; one with the dark picture's pixels is not kept (a light
+  file there is removed); one more than 32 device pixels off the dark one's size fails, since
+  that is a wrong state, not the theme. `--diffs` names a file `<path>.dark…` or
+  `<path>.light…`; the run ends with a count per theme of each state. The full run went from
+  ~120 s to ~200 s: the jobs add up to about twice as much, and six IDEs cannot share it out
+  better.
 - Shared helpers move from the probe kit (`.claude/tooling-review-scratch/s103-shots/ui.mjs`):
   `openMenu`, `hoverItem`, `closeMenus`, `waitModal`, `closeModal`, the cut-out, the snap.
 
@@ -231,6 +264,28 @@ disposition, group by group:
   they can be reproduced. **`Tutorials/WebView2/Images/tbWebView2InAForm.gif` is skipped**, and
   **`favicon.png` is never changed** by this work.
 
+**Owner's answers after the increment 6 survey (2026-10-09):**
+
+- **The six GitHub walkthrough pictures** of `Documentation/Building.md` (compare-changes,
+  create-pull-request, merge-pull-request, confirm-merge, choose-workflow, run-workflow) are the
+  owner's to retake by hand, with a signed-in account; no agent touches them or their prose. They
+  show base `main` and the old workflow name, and confirm-merge an e-mail address, until then.
+- **Publishing:** `packPublishPackage1`'s confirmation box is reached signed out and cancelled if
+  the IDE allows it; otherwise it and `packPublishComplete1` keep their old files.
+- **The "Editing screenshots" section** of `Building.md` is rewritten to point at `shoot_docs.mjs`,
+  and the two Affinity crops are deleted.
+- **The three byte-identical pairs** (`d9f1e4d9`/`e749e10f`, `4e4b8e4d`/`f2fd8374`,
+  `e2a65dfe`/`e9a3fd21`) become one file each, each page keeping its own alt text.
+- **A running program's window is taken once**, as the program draws it. The Anchoring pictures
+  lose their grey size pill and hatched background; `85f25aa2` shows the form on a plain
+  background; the Webpage picture shows a stable page instead of Google.
+- **Licence and LIMITED states** are reached only by a route that never touches the user's real
+  licence, or the old pictures stay. Native tooltips and the splash need a window capture by the
+  harness, probed first. The Fusion build failure is probed first, and queued in
+  BUGS-TO-REPORT.md if it is an IDE defect.
+- **Order:** special IDE states, running programs, package server, not of the IDE, one at a time.
+  `5951dab6` is an IDE dialog and is taken with the package server group.
+
 ## Machine state in the pictures (owner, 2026-10-08)
 
 - **The IDE's settings** (View's ticks, IDE Options' values, the debugger options, user panel
@@ -266,7 +321,8 @@ Survey: `.claude/tooling-review-scratch/s103-shots/INC4-SURVEY.md`, four batches
 Format menu; Properties and Toolbox; replicas and composites; code views).
 
 - **Composites** lay their parts out on the IDE's dark background (not white), with a gap, code
-  on the left and the panel on the right, one red arrow across.
+  on the left and the panel on the right, one red arrow across. (Since the two themes: on the
+  IDE's background in the picture's theme.)
 - **Replica select lists** take one style: a white list, 1 px grey border, the IDE's font, the
   current option on mid-grey `#6E6E6E` with white text.
 - **The CustomControls tutorial's pictures** come from a project-made fixture,

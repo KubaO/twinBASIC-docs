@@ -28,6 +28,7 @@ import { compressHtml } from "./compress.mjs";
 import { normalizeBaseurl } from "./url.mjs";
 import { escapeRegExp } from "./escape.mjs";
 import { CODE_OR_PRE, replaceOutsideCode } from "./code-guard.mjs";
+import { lightOnly } from "./theme-pictures.mjs";
 
 // ---------------------------------------------------------------------------
 // §A  Phase 2: chapter resolver + sort_by_nav_order
@@ -297,7 +298,7 @@ const SUMMARY_OPEN_RE = /<summary[^>]*>/gi;
 const HEADING_SHIFT_RE = /<(\/?)h([1-6])\b/g;
 
 // PLAN-8 §6.3 / book-chapter-transform.rb#book_chapter_transform. Five
-// logical passes:
+// logical passes, after step 0 reduces a picture in two themes to its light one:
 //   1. strip `src="<baseurl>/` prefix (no-op when baseurl is empty)
 //   2. unwrap <details>/<summary> tags (FAQ-style collapsibles flatten
 //      for print); summary id= attributes are preserved as inline spans
@@ -307,7 +308,9 @@ const HEADING_SHIFT_RE = /<(\/?)h([1-6])\b/g;
 //   5. anchor-id prefix on all id= attributes and non-empty href="#..."
 export function bookChapterTransform(body, baseurl, headingShiftN, chapterAnchor) {
   if (!body) return body;
-  let result = body;
+  // Step 0: a picture in two themes is its light picture alone on paper, a plain image
+  // (theme-pictures.mjs).
+  let result = lightOnly(body);
 
   // Step 1: strip the baseurl-prefixed src. With baseurl="" the strip
   // is `src="/` -> `src="`, which removes the leading slash from

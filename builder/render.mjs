@@ -21,6 +21,7 @@ import { countPlugin, findSurvivingPlaceholder } from "./counts.mjs";
 import { replaceOutsideCode } from "./code-guard.mjs";
 import { splitFragment } from "./url.mjs";
 import { escapeMarkup, escapeMarkupAndQuotes, escapeRegExp } from "./escape.mjs";
+import { isLightPicture, lightDimension, lightSiblingOf, PIC_DARK, PIC_LIGHT } from "./theme-pictures.mjs";
 
 export async function renderPhase(pages, site, staticFiles = []) {
   // Allow the orchestrator to pre-build the markdown-it instance (so
@@ -445,6 +446,7 @@ export function createMarkdownIt(ctx) {
   md.use(headingLevelNormalizePlugin);
   md.use(tocPlugin);
   md.use(relativeLinksPlugin, ctx);
+  md.use(themePairPlugin, ctx);
   md.use(blockHtmlRecursionPlugin);
   md.use(kramdownDashesPlugin);
   md.use(kramdownEllipsisPlugin);
@@ -1597,6 +1599,107 @@ function walkTokens(tokens, fn) {
     fn(t);
     if (t.children) walkTokens(t.children, fn);
   }
+}
+
+// ---------- pictures in two themes (theme-pictures.mjs) ---------------------
+//
+// An image whose file has a light sibling among the static files (`X.png` and `X.light.png`)
+// becomes two images, the light one first, with the same alt text and attributes, each with
+// its theme's class and `loading="lazy"`; the light one's width and height are the page's
+// scaled by the two files' pixel sizes (`ctx.pictureSizes`, pairSizes in theme-pictures.mjs),
+// since the Light theme lays the IDE out a few pixels differently. The stylesheet hides the one for the other theme,
+// and a lazy image that is not displayed is never fetched. A link to such a picture (the
+// feature map's "Full size") becomes two links the same way, so that it opens the picture
+// the reader sees. The sibling is looked up in the static-file list the build already has,
+// never on disk. Runs after relativeLinksPlugin, so a static file's src is root-absolute.
+//
+// A page never names a light picture itself: one that does, in markdown or raw HTML, fails
+// the build, since a light picture shown in both themes is the mistake this exists to stop.
+// The book keeps the light picture alone (book.mjs, lightOnly).
+const RAW_LIGHT_REF_RE = /\b(?:src|href)\s*=\s*["']?[^"'\s>]*\.light\.png(?:[?#][^"'\s>]*)?(?:["'\s>]|$)/i;
+
+function themePairPlugin(md, ctx) {
+  const urlPath = (value) => {
+    const p = value.split(/[?#]/, 1)[0];
+    try {
+      return decodeURIComponent(p);
+    } catch {
+      return p;
+    }
+  };
+  const prefix = `${ctx.baseurl || ""}/`;
+  md.core.ruler.push("theme-pairs", (state) => {
+    const where = state.env?.page?.srcRel ?? "a page";
+    const refuse = (what) => {
+      throw new Error(
+        `${where}: ${what} names a light picture directly. Name the dark one, X.png: ` +
+          "the build shows X.light.png beside it in the light theme",
+      );
+    };
+    const checkRaw = (html) => {
+      const m = RAW_LIGHT_REF_RE.exec(html);
+      if (m) refuse(`raw HTML ${m[0].trim()}`);
+    };
+    const clone = (t) => {
+      const c = new state.Token(t.type, t.tag, t.nesting);
+      Object.assign(c, t);
+      c.attrs = t.attrs ? t.attrs.map((a) => [...a]) : null;
+      c.meta = t.meta ? { ...t.meta } : null;
+      return c;
+    };
+    const mark = (t, name) => {
+      setClass(t, name);
+      if (t.type === "image") t.attrSet("loading", "lazy");
+      t.meta = { ...(t.meta || {}), themePaired: true };
+    };
+    for (const block of state.tokens) {
+      if (block.type === "html_block") checkRaw(block.content);
+      if (block.type !== "inline" || !block.children) continue;
+      const kids = block.children;
+      for (let i = 0; i < kids.length; i++) {
+        const t = kids[i];
+        if (t.type === "html_inline") checkRaw(t.content);
+        const attr = t.type === "image" ? "src" : t.type === "link_open" ? "href" : null;
+        if (!attr || t.meta?.themePaired) continue;
+        const value = t.attrGet(attr);
+        if (!value) continue;
+        const target = urlPath(value);
+        if (isLightPicture(target)) refuse(`the ${t.type === "image" ? "image" : "link"} ${value}`);
+        if (!ctx.staticFiles || !target.startsWith(prefix)) continue;
+        const light = lightSiblingOf(target.slice(prefix.length));
+        if (!light || !ctx.staticFiles.has(light)) continue;
+        const lightValue = value.replace(/\.png(?=[?#]|$)/, ".light.png");
+        if (t.type === "image") {
+          const copy = clone(t);
+          copy.attrSet("src", lightValue);
+          const size = ctx.pictureSizes?.[light];
+          if (size) {
+            for (const [attr, i] of [
+              ["width", 0],
+              ["height", 1],
+            ]) {
+              const v = copy.attrGet(attr);
+              if (v !== null) copy.attrSet(attr, lightDimension(v, size[i], size[i + 2]));
+            }
+          }
+          mark(copy, PIC_LIGHT);
+          mark(t, PIC_DARK);
+          kids.splice(i, 0, copy);
+          i++;
+          continue;
+        }
+        const close = findLinkClose(kids, i);
+        if (close < 0) continue;
+        // The light link's contents are walked next (an image in it is paired in turn);
+        // both link_open tokens are marked, so neither is taken for a link to pair again.
+        const copies = kids.slice(i, close + 1).map(clone);
+        copies[0].attrSet("href", lightValue);
+        mark(copies[0], PIC_LIGHT);
+        mark(t, PIC_DARK);
+        kids.splice(i, 0, ...copies);
+      }
+    }
+  });
 }
 
 // ---------- §5.2 GFM admonitions (pre-render text rewrite) ------------------

@@ -429,6 +429,25 @@ div.highlight:focus-visible,
   }
 }
 
+// Pictures in two themes (builder/theme-pictures.mjs): an `X.png` with an
+// `X.light.png` beside it is written as two images (or two links), `.pic-light`
+// then `.pic-dark`, both `loading="lazy"`. Each theme hides the other's, and a
+// lazy image that is not displayed is never fetched. The two mixins are exact
+// complements and follow the toggle and, with no choice stored, the OS; no rule
+// gives the shown image a display value, so it keeps whatever it had. The dark
+// half is in the dark-theme mixin's two selectors, so it holds in both dark modes.
+@include light-theme {
+  .pic-dark {
+    display: none;
+  }
+}
+
+@include dark-theme {
+  .pic-light {
+    display: none;
+  }
+}
+
 // Video thumbnails (Videos section). The YouTube <iframe> embeds these
 // replaced loaded Google's player on page view, which set third-party
 // cookies before the reader had done anything. A locally vendored

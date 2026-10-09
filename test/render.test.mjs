@@ -1,7 +1,9 @@
 // Unit tests for builder/render.mjs's markdown-it plugins, one plugin's
 // behaviour at a time, through the site's own createMarkdownIt; and for the
 // offline tree's URL rewrite when a link names a file only the website holds
-// (builder/offline-rewrite.mjs).
+// (builder/offline-rewrite.mjs); and for a picture in two themes, X.png with
+// X.light.png beside it (themePairPlugin, and the book's lightOnly from
+// builder/theme-pictures.mjs).
 //
 // The build compares whole pages, so a plugin that goes wrong only on input
 // the corpus does not hold passes it: kramdownEllipsisPlugin shortened every
@@ -11,9 +13,14 @@
 // Runs with a bare `node --test test/render.test.mjs`: no tree, no build.
 
 import assert from "node:assert/strict";
+import { mkdtempSync, rmSync, writeFileSync } from "node:fs";
+import { tmpdir } from "node:os";
+import path from "node:path";
 import { describe, test } from "node:test";
 import { isWebsiteOnlyLink, rewriteHtml, websiteOf } from "../builder/offline-rewrite.mjs";
 import { createMarkdownIt } from "../builder/render.mjs";
+import { lightOnly, pairSizes, unpairedLightPictures } from "../builder/theme-pictures.mjs";
+import { encodePng } from "../scripts/lib/png.mjs";
 
 const md = createMarkdownIt({
   highlighter: null,
@@ -121,5 +128,139 @@ describe("rewriteHtml with a website behind the offline tree", () => {
     assert.equal(isWebsiteOnlyLink("https://site.example/a/Page", state), false, "the offline tree holds the page");
     assert.equal(isWebsiteOnlyLink("https://site.example/a/none/File.zip", state), false, "neither tree holds it");
     assert.equal(isWebsiteOnlyLink("https://other.example/a/downloads/File.zip", state), false);
+  });
+});
+
+// A picture in two themes: the page names X.png, and the build writes the light picture and
+// the dark one when X.light.png is among the static files, the book the light one alone.
+describe("themePairPlugin and lightOnly", () => {
+  const paired = createMarkdownIt({
+    highlighter: null,
+    linkTables: { byPath: new Map(), byUrl: new Map(), byRedirect: new Map() },
+    baseurl: "",
+    staticFiles: new Set([
+      "IDE/Images/A.png",
+      "IDE/Images/A.light.png",
+      "IDE/Images/B.png",
+      "IDE/Images/S p.png",
+      "IDE/Images/S p.light.png",
+    ]),
+  });
+  const render = (src) => paired.render(src, { page: { srcRel: "IDE/Page.md" } }).trim();
+  const pair = (src, alt, attrs) =>
+    `<img src="/IDE/Images/${src}.light.png" alt="${alt}"${attrs} class="pic-light" loading="lazy" />` +
+    `<img src="/IDE/Images/${src}.png" alt="${alt}"${attrs} class="pic-dark" loading="lazy" />`;
+
+  test("a picture with a light sibling is two lazy images, light first, with one alt and size", () => {
+    assert.equal(
+      render('![The *File* menu](Images/A.png){:width="10" height="5"}'),
+      `<p>${pair("A", "The File menu", ' width="10" height="5"')}</p>`,
+    );
+  });
+
+  test("a picture with no light sibling is one image, as written", () => {
+    assert.equal(
+      render('![x](Images/B.png){:width="10" height="5"}'),
+      '<p><img src="/IDE/Images/B.png" alt="x" width="10" height="5" /></p>',
+    );
+  });
+
+  test("a picture in a heading, and one whose name is URL-encoded, are paired the same way", () => {
+    assert.equal(render("## Folder ![i](Images/A.png)"), `<h2 id="folder-">Folder ${pair("A", "i", "")}</h2>`);
+    assert.equal(
+      render("![s](Images/S%20p.png)"),
+      `<p><img src="/IDE/Images/S%20p.light.png" alt="s" class="pic-light" loading="lazy" />` +
+        '<img src="/IDE/Images/S%20p.png" alt="s" class="pic-dark" loading="lazy" /></p>',
+    );
+  });
+
+  test("the attributes the page gives are copied to both, a class of its own kept beside the theme's", () => {
+    assert.equal(
+      render('![x](Images/A.png){: .wide width="10" title="t"}'),
+      '<p><img src="/IDE/Images/A.light.png" alt="x" class="wide pic-light" width="10" title="t" loading="lazy" />' +
+        '<img src="/IDE/Images/A.png" alt="x" class="wide pic-dark" width="10" title="t" loading="lazy" /></p>',
+    );
+  });
+
+  test("a light picture of another size is shown at the page's scale of its own size", () => {
+    const sized = createMarkdownIt({
+      highlighter: null,
+      linkTables: { byPath: new Map(), byUrl: new Map(), byRedirect: new Map() },
+      baseurl: "",
+      staticFiles: new Set(["IDE/Images/A.png", "IDE/Images/A.light.png"]),
+      pictureSizes: { "IDE/Images/A.light.png": [2432, 62, 2456, 70] },
+    });
+    assert.equal(
+      sized.render('![t](Images/A.png){:width="1228" height="35"}', { page: { srcRel: "IDE/Page.md" } }).trim(),
+      '<p><img src="/IDE/Images/A.light.png" alt="t" width="1216" height="31" class="pic-light" loading="lazy" />' +
+        '<img src="/IDE/Images/A.png" alt="t" width="1228" height="35" class="pic-dark" loading="lazy" /></p>',
+    );
+  });
+
+  test("a link to a paired picture is two links, each opening its theme's picture", () => {
+    assert.equal(
+      render("[Full size](Images/A.png)"),
+      '<p><a href="/IDE/Images/A.light.png" class="pic-light">Full size</a>' +
+        '<a href="/IDE/Images/A.png" class="pic-dark">Full size</a></p>',
+    );
+  });
+
+  test("the book keeps the light picture alone, as a plain image, and the light link", () => {
+    assert.equal(
+      lightOnly(render('![x](Images/A.png){:width="10" height="5"} and [Full size](Images/A.png)')),
+      '<p><img src="/IDE/Images/A.light.png" alt="x" width="10" height="5" /> and ' +
+        '<a href="/IDE/Images/A.light.png">Full size</a></p>',
+    );
+    assert.equal(
+      lightOnly(render("![x](Images/A.png){: .wide}")),
+      '<p><img src="/IDE/Images/A.light.png" alt="x" class="wide" /></p>',
+    );
+    const unpaired = render("![x](Images/B.png)");
+    assert.equal(lightOnly(unpaired), unpaired);
+  });
+
+  test("the book leaves code that shows the markup as written", () => {
+    const html = '<p><code>&lt;img class="pic-dark" src="A.png" /&gt;</code></p><pre><a class="pic-dark">x</a></pre>';
+    assert.equal(lightOnly(html), html);
+  });
+
+  test("a page that names a light picture itself is refused, in markdown or raw HTML", () => {
+    for (const src of [
+      "![x](Images/A.light.png)",
+      "[x](Images/A.light.png)",
+      "[x](/IDE/Images/A.light.png#top)",
+      '<img src="Images/A.light.png">',
+      'Text <a href="Images/A.light.png">x</a>.',
+    ]) {
+      assert.throws(() => render(src), /IDE\/Page\.md: .* names a light picture directly/, src);
+    }
+  });
+
+  test("a light picture named in code is not a link, and is not refused", () => {
+    assert.match(render("`![x](Images/A.light.png)`"), /<code[^>]*>!\[x\]\(Images\/A\.light\.png\)<\/code>/);
+  });
+
+  test("the two pictures' sizes are read from their headers", async () => {
+    const dir = mkdtempSync(path.join(tmpdir(), "theme-pictures-"));
+    try {
+      const png = (w, h) => encodePng({ width: w, height: h, rgba: new Uint8Array(w * h * 4) });
+      writeFileSync(path.join(dir, "A.png"), png(6, 4));
+      writeFileSync(path.join(dir, "A.light.png"), png(5, 3));
+      writeFileSync(path.join(dir, "B.light.png"), png(1, 1));
+      const files = ["A.png", "A.light.png", "B.light.png"].map((f) => ({
+        srcRel: `x/${f}`,
+        srcPath: path.join(dir, f),
+      }));
+      assert.deepEqual({ ...(await pairSizes(files)) }, { "x/A.light.png": [5, 3, 6, 4] });
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
+  });
+
+  test("a light picture with no dark picture beside it is found", () => {
+    assert.deepEqual(unpairedLightPictures(["a/X.png", "a/X.light.png", "b/Y.light.png", "a/Z.light.png"]), [
+      "a/Z.light.png",
+      "b/Y.light.png",
+    ]);
   });
 });

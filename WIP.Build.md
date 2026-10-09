@@ -1000,3 +1000,44 @@ are what say it does not.
 **CI never downloads.** `process.env.CI` selects offline mode (`--fetch-assets` / `--no-fetch-assets` override it), and in offline mode a referenced-but-uncommitted asset throws rather than fetching. If CI could fetch, an author who wrote the markdown but forgot to commit the image would get a green build while the published site went on hotlinking a third party -- the exact failure the whole mechanism exists to prevent. A fetch *failure* in dev mode is softer: warn, keep building, and flip the exit code, so one dead video doesn't block a local preview.
 
 The render-side halves are `videoLinkPlugin` (marked link -> poster frame + outbound link) and `remoteImagePlugin` (user-attachment `<img src>` -> the vendored copy), both in [builder/render.mjs](builder/render.mjs). Both emit **root-absolute** paths, because the PDF book flattens every page into one document and a page-relative src resolves against the book root there.
+
+### Pictures in two themes
+
+**The rule:** `X.png` is the dark picture, `X.light.png` beside it the light one, and a page
+names only `X.png`. `themePairPlugin` ([builder/render.mjs](builder/render.mjs)) writes an
+image whose file has a light sibling as two `<img>`, light then dark, with the same alt and
+attributes (the light one's width and height scaled, below), classes `pic-light` / `pic-dark` and both `loading="lazy"`; a link to such a picture
+becomes two links the same way (the feature map's "Full size" opens the picture the reader
+sees). The online and offline trees, and so the help archive, carry both; the book carries the
+light one alone, a plain `<img>` (`lightOnly` in
+[builder/theme-pictures.mjs](builder/theme-pictures.mjs), step 0 of `bookChapterTransform`).
+`scripts/shoot_docs.mjs` writes the pairs ([WIP.Screenshots.md](WIP.Screenshots.md)). Why:
+
+- **Not `<picture>` with a media query.** It follows the OS only, never the toggle.
+- **Lazy, because a hidden lazy image is never fetched.** Checked with puppeteer
+  (`.claude/tooling-review-scratch/themed-shots/lazy-probe.mjs`) in all four modes (light and
+  dark stored, system with each OS scheme): only the shown theme's images are requested, and
+  toggling requests the other theme's images in view, and nothing else. The book's must not be
+  lazy: paged.js raises on an image that has not loaded. **Anything that waits for a page's
+  images must skip the hidden one**, whose `decode()` never settles: `gotoPage` in
+  `scripts/lib/axe-scan.mjs` waits only for images that are laid out, made eager (it hung
+  `check.bat` on the Window menu page until the protocol timeout).
+- **CSS, no script.** The head script sets `data-theme` before first paint, so there is no
+  flash. `custom.scss` hides `.pic-light` under `dark-theme` (both of its selectors, so both
+  dark modes) and `.pic-dark` under `light-theme`, its exact complement in
+  `docs/_sass/custom/_theme.scss`. No rule gives the shown image a `display` of its own.
+- **The sibling comes from the static-file list**, the set `relativeLinksPlugin` already
+  resolves against, never from the disk: a worker has the list and no business reading the tree.
+- **A page that names a `.light.png` fails the build** (markdown image or link, or raw HTML
+  `src`/`href`): it would show the light picture in both themes. **A `.light.png` with no
+  `X.png` beside it fails `discover`**: it would never be shown. Nothing else needs to know: a
+  `.light.png` is an ordinary static file to the publish allowlist, the link check and the index
+  audit, and each one adds one to the page baseline's static-file count.
+- **Each is shown at its own size, at one scale.** The page's `{:width height}` is the dark
+  picture's; the light `<img>` gets it scaled by the two files' pixel sizes, which `discover`
+  reads from their PNG headers on the main thread (`pairSizes`) and the workers receive with the
+  shared render data. The Light theme lays the IDE out a few pixels differently (the toolbar
+  4 CSS px shorter, a panel's title bar 3, some buttons narrower), so a light screenshot is up to
+  a few pixels off the dark one's size. Forcing the dark size on it instead either pulls
+  neighbouring UI into the frame (a line of the blue title bar over every light toolbar) or
+  crops the subject.

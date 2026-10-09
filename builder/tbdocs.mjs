@@ -71,6 +71,7 @@ import { computeSiteSeo } from "./seo.mjs";
 import { resolveBookChapters } from "./book.mjs";
 import { loadData } from "./data.mjs";
 import { createMarkdownIt, buildLinkTables, serializeLinkTables } from "./render.mjs";
+import { pairSizes, unpairedLightPictures } from "./theme-pictures.mjs";
 import { loadHighlightTheme } from "./highlight-theme.mjs";
 import { NAV_SCRIPT_REL, buildInitConfig, renderSidebar } from "./template.mjs";
 import {
@@ -447,12 +448,23 @@ const TASKS = {
       if (strays.length) {
         throw new Error(formatPublishRefusal(strays, { surface: "source", label: ctx.srcRoot }));
       }
-      return { pages, staticFiles, config };
+      // A light picture is shown only in place of its dark one (theme-pictures.mjs), so one
+      // with no dark picture beside it would never be shown.
+      const unpaired = unpairedLightPictures(staticFiles.map((s) => s.srcRel));
+      if (unpaired.length) {
+        throw new Error(
+          `${unpaired.length} light picture(s) with no dark picture beside them; ` +
+            `X.light.png needs X.png in the same folder:\n${unpaired.map((r) => `  ${r}`).join("\n")}`,
+        );
+      }
+      const pictureSizes = await pairSizes(staticFiles);
+      return { pages, staticFiles, config, pictureSizes };
     },
     submit(out, state) {
       state.pages = out.pages;
       state.staticFiles = out.staticFiles;
       state.site.config = out.config;
+      state.site.pictureSizes = out.pictureSizes;
       for (const p of out.pages) state.pageByDest.set(p.destPath, p);
     },
   },
@@ -537,6 +549,7 @@ const TASKS = {
         linkTables,
         baseurl,
         staticFiles: staticFileSet,
+        pictureSizes: state.site.pictureSizes,
         vendoredVideos: state.site.vendoredVideos,
         vendoredImages: state.site.vendoredImages,
         counts: state.site.counts,
@@ -745,6 +758,7 @@ const TASKS = {
         // Plain objects, not Maps -- packShared serialises to JSON.
         vendoredVideosObj: Object.fromEntries(state.site.vendoredVideos ?? []),
         vendoredImagesObj: Object.fromEntries(state.site.vendoredImages ?? []),
+        pictureSizes: state.site.pictureSizes ?? {},
         counts: state.site.counts,
       };
       const sharedSAB = packShared(shared);

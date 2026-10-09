@@ -75,6 +75,7 @@ const handlers = {
       checkTrees,
       vendoredVideosObj,
       vendoredImagesObj,
+      pictureSizes,
       counts,
     } = unpackShared(_sharedSAB);
 
@@ -90,6 +91,7 @@ const handlers = {
       linkTables,
       baseurl,
       staticFiles,
+      pictureSizes,
       svgContents,
       vendoredVideos,
       vendoredImages,

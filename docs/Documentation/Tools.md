@@ -1414,8 +1414,8 @@ Every IDE is set up as a lane of [`addin_test.mjs`](#addin-test) is, with a priv
 and `TB_ADDIN_TEST` set to `1`, and it never appears on your desktop.
 
 The pictures are repeatable. The IDE lays its page out at 100% whatever the display's scaling,
-the page is given a fixed size of 1280 by 880 CSS pixels at 2x, animations and the text caret
-are switched off, and the theme is dark. The IDE's settings --- its options, panel layouts and
+the page is given a fixed size of 1280 by 880 CSS pixels at 2x, and animations and the text caret
+are switched off. The IDE's settings --- its options, panel layouts and
 keyboard shortcut groups --- are set to their defaults in the page only, and the recent-project
 lists are replaced there, so no picture shows your own choices or projects; nothing is saved.
 No picture shows the Debug Console, whose lines carry the time they were written. Menus are
@@ -1423,8 +1423,9 @@ cut out, transparent around the menu; dialogs are taken whole. A picture that ne
 or numbered badges has them drawn by the tool in one style, anchored to the element they point at
 (`scripts/lib/shot-annotate.mjs`), so that a retake after a new BETA puts them where the element
 now is. A picture is written only when
-its bytes differ from the file already there, and each is reported as `new`, `updated` or
-`unchanged`; a second run with nothing changed reports every picture `unchanged`. The Windows
+it differs from the file already there by more than the small noise two captures of an
+unchanged screen show, and each is reported as `new`, `updated` or `unchanged`; a second run
+with nothing changed reports every picture `unchanged`. The Windows
 user name must never be in a published picture, so before each one is kept the visible text of
 the page it was taken from is searched for the name, and a picture whose page holds it is
 refused.
@@ -1433,15 +1434,28 @@ Every picture is twice the size it is shown at. A page that shows one gives it a
 height}` of half its pixel size, so that it is sharp on a high-resolution display and in the
 book.
 
+Every picture is taken in two themes by the same IDE: first in the IDE's dark theme, as
+`X.png`, then, with the IDE switched to its Light theme, again as `X.light.png` beside it.
+The site shows the light picture in its light theme and the dark one in its dark theme, and
+the book shows the light one (see [A picture in both themes](Authoring#a-picture-in-both-themes)).
+A light picture that looks exactly like the dark one is not kept. The Light theme lays some of
+the IDE out a few pixels smaller, so a light picture can be a few pixels off the dark one's
+size, and the site shows each at the same scale; a light picture more than 32 pixels off fails,
+since the IDE was then not in the state the dark picture shows. Labels drawn on a picture
+follow its theme. The run ends with a count, for each theme, of the pictures that were new,
+updated, unchanged or the same as the dark picture.
+
 `--only` takes the pictures whose path under the output folder matches a regular expression,
-such as `Menu_File` or `IDE/Menu/`. `--out` is the folder those paths are under, `docs` by
+such as `Menu_File` or `IDE/Menu/`, each in both themes. `--out` is the folder those paths are under, `docs` by
 default. `--diffs` names a folder, outside `docs`, for a difference picture of each picture
 that is updated: the file on disk, the new picture and their difference side by side, with
 the region that differs magnified underneath. In the difference, a pixel that matches is a
 dark grey copy, and one that differs is yellow for a difference of one grey level, shading
-to red for large ones, so that a change too small to see stands out. The tool also writes
-one, named `.capture-<n>`, for each two captures of one state that disagree, which shows
-where the IDE's drawing varies from one frame to the next.
+to red for large ones, so that a change too small to see stands out. Each file's name says
+the picture's theme, `.dark` or `.light`. The tool also writes one, named `.capture-<n>`, for
+each two captures of one state that disagree, which shows where the IDE's drawing varies from
+one frame to the next, and one named `.noise` for a picture left as it is because it differs
+from the file only by that variation.
 
 `--jobs` is how many IDEs run at once, 6 by default and at most 16. Each runs on a
 private desktop with a port, a work folder and a copy of the install of its own, and the
@@ -1456,7 +1470,7 @@ that builds the add-in, whose browser process can hold its port for a while afte
 ends. The add-in's saved settings (`tbDocsHelp`) are emptied for the run and, with the IDE's
 registry entries, put back at the end.
 
-Exit codes: **0** every picture was written or was unchanged; **1** a picture failed (an element was not found, or the page showed the user name), the add-in did not build, or the demo project does not compile; **2** the tool could not run: a refused command line, no IDE, no built site, a registry it could not record, or a crash; **3** the registry or the work folder was not put back (see the lines above).
+Exit codes: **0** every picture was written or was unchanged; **1** a picture failed (an element was not found, the page showed the user name, or a light picture was more than 32 pixels off the dark one's size), the add-in did not build, or the demo project does not compile; **2** the tool could not run: a refused command line, no IDE, no built site, a registry it could not record, or a crash; **3** the registry or the work folder was not put back (see the lines above).
 
 ### check_tb_registry.mjs
 {: #check-tb-registry }
