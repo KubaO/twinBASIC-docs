@@ -4,6 +4,8 @@
 // is the font's ascent below the fragment's top. The ascent is read here, in
 // headless Chromium, from an inline box set in the same font: on the machine
 // that took the bundle that is the same font file Chromium measured in the IDE.
+// An underline is drawn whole here: the gaps Chromium cuts in it round a
+// descender are measured on a canvas by capture.mjs, which this does not run.
 
 import fs from "node:fs/promises";
 import path from "node:path";

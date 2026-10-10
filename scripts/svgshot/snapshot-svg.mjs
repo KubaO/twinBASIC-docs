@@ -17,7 +17,17 @@
 // - group opacity and filters split when paint order interleaves two subtrees;
 // - a dotted border of a width other than 1 px lays out its dots a pixel or
 //   two differently from Chromium, which no pattern found in the corpus
-//   explains; a dashed one, and a dotted one 1 px wide, are exact.
+//   explains; a dashed one, and a dotted one 1 px wide, are exact;
+// - an underline is placed and sized as Chromium does (decoratingBoxes,
+//   underlineBand), and cut where a descender crosses it by what a canvas shows
+//   of the ink (inkBand), which agrees with Chromium on 994 of 1,000 columns
+//   of a line (the rest mostly a device pixel off). Each fragment draws its
+//   own line, so raised or lowered text (sub, sup) draws one at its own
+//   baseline where Chromium draws one for the box that sets the decoration;
+//   the spaces that white-space: pre keeps at the start and the end of a line
+//   are underlined, where Chromium leaves them out; and a thickness of
+//   from-font is drawn as auto (and counted as not drawn, as it is the font's
+//   own).
 //
 // What the snapshot lacks, drawn as replicas of what Chromium paints: the
 // closed <select> (paintSelect), a checkbox and a radio button
@@ -26,7 +36,9 @@
 // page resolves). Not drawn: the platform's own scrollbars, a resize grip, a
 // number input's spin buttons, an indeterminate checkbox (the snapshot does
 // not say), conic gradients, the 2011 -webkit-radial-gradient and the filter
-// hue-rotate. Drawn wrongly: a collapsed table border, doubled.
+// hue-rotate; an overline, a line-through, a dotted, dashed, wavy or double
+// text decoration, and an underline placed by text-underline-position
+// (decorationsOf). Drawn wrongly: a collapsed table border, doubled.
 //
 // An inline <svg> in the page is not converted from its layout objects, which
 // hold no path data; the caller passes the markup of the ones the picture
@@ -259,11 +271,14 @@ function shownControlText(l) {
 
 /**
  * What the picture's text needs measured in a browser: every font (as
- * fontKey strings) and every run of text with its font, [fontKey, text].
+ * fontKey strings), every run of text with its font, [fontKey, text], and every
+ * run an underline has to skip the ink of, [fontKey, text, top, height]: the band
+ * below the baseline (CSS px) in which Chromium looks for it (inkBand).
  */
 export function textNeeds(decoded, clip) {
   const keys = new Set();
   const runs = new Map();
+  const skips = new Map();
   const add = (st, s) => {
     const key = fontKey(st);
     keys.add(key);
@@ -279,9 +294,126 @@ export function textNeeds(decoded, clip) {
     if (l.text === undefined) continue;
     const st = textStyle(l);
     if (!st) continue;
-    for (const b of l.boxes) if (overlaps(b, clip)) add(st, l.text.substr(b.start, b.length));
+    const { lines } = st.visibility === "visible" ? decorationsOf(l) : { lines: [] };
+    for (const b of l.boxes) {
+      if (!overlaps(b, clip)) continue;
+      const s = l.text.substr(b.start, b.length);
+      add(st, s);
+      if (s.trim())
+        for (const u of lines)
+          if (u.skipInk) {
+            const [top, height] = inkBand(u);
+            skips.set(`${fontKey(st)}\u0000${s}\u0000${top}\u0000${height}`, [fontKey(st), s, top, height]);
+          }
+    }
   }
-  return { keys: [...keys], runs: [...runs.values()] };
+  return { keys: [...keys], runs: [...runs.values()], skips: [...skips.values()] };
+}
+
+// --- text decorations --------------------------------------------------------
+
+// A box that passes no text decoration down to its text, and takes none from
+// above: an atomic inline-level box, a float or a positioned box.
+const ATOMIC_INLINE = /^(?:-webkit-)?inline-(?:block|box|flex|grid|table)$/;
+
+/**
+ * The computed styles of the boxes whose text-decoration applies to the text of
+ * `node`'s element, nearest first. text-decoration is not inherited, but
+ * Chromium draws a decoration on the text of the in-flow descendants of the box
+ * that sets it -- blocks and flex items included -- and stops at an atomic
+ * inline-level box, a float or a positioned box, whose own decoration still
+ * counts for its text. Each box draws its own line, so an outer one runs on
+ * under an inner one that sets none.
+ */
+export function decoratingBoxes(node) {
+  const out = [];
+  for (let a = node; a; a = a.parent) {
+    const st = a.style;
+    if (!st) continue;
+    const line = st["text-decoration-line"];
+    if (line && line !== "none") out.push(st);
+    if (ATOMIC_INLINE.test(st.display) || (st.float ?? "none") !== "none") break;
+    if (st.position === "absolute" || st.position === "fixed") break;
+  }
+  return out;
+}
+
+/**
+ * Where Chromium draws the solid underline of the box `st` that sets it, below
+ * the baseline and in whole CSS px, as {offset, thickness}: the top of the line
+ * and its height. Fitted against Edge at font sizes from 8 to 64 px, fractional
+ * ones included, at fractional positions, and in six fonts, which it does not
+ * depend on; bench/decoration.html holds the sizes where the figures step. The
+ * page is laid out at 1x and Chromium snaps the line there, so the rule holds at
+ * any scale it is rasterised at.
+ *   - auto thickness is a tenth of the box's font size, cut down to whole px and
+ *     at least 1; a thickness given is rounded to whole px, at least 1;
+ *   - auto offset is half the thickness as it was before rounding, rounded up
+ *     to whole px and at least 1; an offset given is rounded to whole px;
+ *   - sizes come from the box that sets the decoration, not from the text under it.
+ * `reach` is the thickness before rounding, which is how far Chromium widens the
+ * gap it cuts round a glyph.
+ */
+export function underlineBand(st) {
+  const size = px(st["font-size"]);
+  const asked = st["text-decoration-thickness"] ?? "auto";
+  const given = asked.endsWith("%") ? (px(asked) / 100) * size : asked.endsWith("px") ? px(asked) : null;
+  const reach = given ?? size / 10;
+  const shift = st["text-underline-offset"] ?? "auto";
+  return {
+    offset:
+      shift === "auto"
+        ? Math.max(1, Math.ceil(reach / 2))
+        : Math.round(shift.endsWith("%") ? (px(shift) / 100) * size : px(shift)),
+    thickness: Math.max(1, given === null ? Math.floor(reach) : Math.round(reach)),
+    reach,
+  };
+}
+
+/**
+ * The band below the baseline in which Chromium looks for the ink an underline
+ * skips, as [top, height] in CSS px: the line, drawn in 0.5 px from its top and
+ * 0.3 px from its bottom, so that a glyph that only grazes it is not skipped.
+ * Fitted against Edge on two pangrams at 13, 20, 30 and 40 px, as the share of
+ * the line's columns on the wrong side of a gap: 61 in 9,721 for this band, 100
+ * for the line less 0.5 px at both ends and 180 for the line itself.
+ */
+export function inkBand({ offset, thickness }) {
+  return [offset + 0.5, thickness - 0.8];
+}
+
+/**
+ * The decorations of a text layout object that are drawn and those that are
+ * not: {lines, undrawn}. `lines` are its solid underlines, outermost box first,
+ * each as {offset, thickness, reach, color, skipInk} (underlineBand's, the
+ * colour, and whether the line gives way to ink); `undrawn` names what the
+ * decorations ask for that is not drawn, for note(): every line but a solid
+ * underline, and an underline where Chromium does not put it by default.
+ *
+ * The line is the colour of the box that sets it, not of the text under it, and
+ * by default that is the fill colour of its text, which a transparent fill takes
+ * with it.
+ */
+export function decorationsOf(l) {
+  const lines = [];
+  const undrawn = [];
+  for (const d of decoratingBoxes(l.node.type === 3 ? l.node.parent : l.node)) {
+    const style = d["text-decoration-style"] ?? "solid";
+    for (const line of d["text-decoration-line"].split(/\s+/)) {
+      if (line !== "underline") undrawn.push(`text-decoration-line ${line}`);
+      else if (style !== "solid") undrawn.push(`text-decoration-style ${style}`);
+      else if ((d["text-underline-position"] ?? "auto") !== "auto") undrawn.push("text-underline-position");
+      else {
+        if (d["text-decoration-thickness"] === "from-font") undrawn.push("text-decoration-thickness from-font");
+        const fill = d["-webkit-text-fill-color"];
+        const color = d["text-decoration-color"] === d.color && fill ? fill : d["text-decoration-color"];
+        if (!transparent(color))
+          lines.push({ ...underlineBand(d), color, skipInk: (d["text-decoration-skip-ink"] ?? "auto") !== "none" });
+      }
+    }
+  }
+  // The outermost box paints first, so that an inner line is over an outer one.
+  return { lines: lines.reverse(), undrawn };
 }
 
 // --- computed-value parsers ------------------------------------------------
@@ -610,6 +742,9 @@ function filterPrimitives(v) {
  * @param metrics   (fontKey) => {ascent, height, line}: a text fragment's baseline below its top, its
  *                  height, and the height of a line of that font with line-height: normal
  * @param textWidth (fontKey, text) => the width the run is laid out in, or null (text aligned in its box)
+ * @param inkGaps   (fontKey, text, top, height) => [[from, to]] the stretches of the run, in CSS px from
+ *                  its start, where its ink is in the band (inkBand) an underline skips; null draws
+ *                  every underline whole
  * @param placeholderColor  what an empty <input> shows its placeholder in
  * @param canvases  [{x, y, w, h, href}] pictures of the page's <canvas> elements
  * @param fonts     a PictureFonts (fonts.mjs): text is set in subsets of its fonts, embedded
@@ -625,6 +760,7 @@ export function renderSvg(
     clip,
     metrics,
     textWidth = null,
+    inkGaps = null,
     placeholderColor = "rgb(117, 117, 117)",
     canvases = [],
     fonts = null,
@@ -1346,16 +1482,49 @@ export function renderSvg(
     return [`<g clip-path="url(#${id})">${runs.join("")}</g>`];
   }
 
+  // Chromium rounds the baseline to whole CSS px before it puts a line under it,
+  // and draws a line from the left edge of a fragment to the right one, in the
+  // exact (fractional) positions of the fragment, whitespace included. The line
+  // goes under the glyphs, and leaves a gap round each stretch of the fragment's
+  // ink that is in its band (inkBand), as wide as the line is thick on each side.
   function paintText(l) {
     const st = textStyle(l);
     if (!st || st.visibility !== "visible") return [];
-    const base = metrics(fontKey(st)).ascent;
+    const key = fontKey(st);
+    const base = metrics(key).ascent;
+    const { lines, undrawn } = decorationsOf(l);
+    for (const what of undrawn) note(what);
     const out = [];
     for (const t of l.boxes) {
       const s = l.text.substr(t.start, t.length);
+      for (const u of lines) {
+        const gaps = u.skipInk && s.trim() ? (inkGaps?.(key, s, ...inkBand(u)) ?? []) : [];
+        const line = underline(t, Math.round(t.y + base) + u.offset, u, gaps);
+        if (line) out.push(line);
+      }
       if (s.trim()) out.push(textRun(st, s, t.x, t.y + base, t.w));
     }
     return out;
+  }
+
+  // The line under a text fragment `t`, at `y`, as one rect, or as one path where
+  // the gaps cut it into pieces.
+  function underline(t, y, u, gaps) {
+    let pieces = t.w > 0 ? [[t.x, t.x + t.w]] : [];
+    for (const [from, to] of gaps) {
+      const lo = t.x + from - u.reach;
+      const hi = t.x + to + u.reach;
+      pieces = pieces.flatMap(([a, b]) => [
+        [a, Math.min(b, lo)],
+        [Math.max(a, hi), b],
+      ]);
+      pieces = pieces.filter(([a, b]) => b > a);
+    }
+    if (!pieces.length) return "";
+    if (pieces.length === 1)
+      return `<rect ${rectAttrs({ x: pieces[0][0], y, w: pieces[0][1] - pieces[0][0], h: u.thickness })} fill="${u.color}"/>`;
+    const d = pieces.map(([a, b]) => `M${num(a)} ${num(y)}h${num(b - a)}v${u.thickness}h${num(a - b)}z`).join("");
+    return `<path d="${d}" fill="${u.color}"/>`;
   }
 
   // One run of text, in the picture's own subset faces when the run's fonts can

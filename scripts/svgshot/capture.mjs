@@ -7,7 +7,8 @@
 //   2. in a measuring layer added only after the snapshot, so it is in no
 //      picture: each font's ascent and the fonts Chromium draws each run of
 //      text with (CSS.getPlatformFontsForNode), and the same for the
-//      annotation layer's text;
+//      annotation layer's text; and, on a canvas, where an underlined run's ink
+//      is in the band its underline skips;
 //   3. the pixels of each <canvas> in the clip, and the bytes of each web
 //      font a run was drawn with;
 //   4. the annotation layer (svg#tbShotAnnotation) as XML, its text moved onto
@@ -49,6 +50,14 @@ export const SNAPSHOT_STYLES = [
   "text-align",
   "text-align-last",
   "tab-size",
+  "text-decoration-line",
+  "text-decoration-style",
+  "text-decoration-color",
+  "text-decoration-thickness",
+  "text-decoration-skip-ink",
+  "text-underline-offset",
+  "text-underline-position",
+  "float",
   "appearance",
   "overflow-x",
   "overflow-y",
@@ -73,7 +82,7 @@ const MEASURE_ID = "tbSvgMeasure";
 const OVERLAYS = ["svg#tbShotAnnotation", "#tbShotPointer svg"];
 
 // Runs in the page: the measuring layer, the canvases and the overlays.
-function measure({ keys, runs, view, measureId, overlays }) {
+function measure({ keys, runs, skips, view, measureId, overlays }) {
   const layer = document.createElement("div");
   layer.id = measureId;
   layer.style.cssText = "position:fixed;left:0;top:0;opacity:0;pointer-events:none;z-index:-2147483647";
@@ -142,6 +151,47 @@ function measure({ keys, runs, view, measureId, overlays }) {
     }
     // How wide each run of text is laid out, for the text that is aligned in its box.
     const widths = [...layer.querySelectorAll("span[data-k]")].map((s) => s.getBoundingClientRect().width);
+    // Where each run's ink is in a band of `height` CSS px that starts `top` px below
+    // the baseline, as stretches [from, to] in CSS px from the run's start: the run
+    // drawn 16 times as large on a canvas, whose columns with ink in the band (at
+    // least a quarter covered) are read back. Chromium reads the same from the
+    // outlines, and rounds what it cuts to device pixels. A canvas is at most 32767
+    // px wide, so a long run is drawn smaller; a run that cannot be drawn has no gaps.
+    const gaps = skips.map(([key, text, top, height]) => {
+      const [style, weight, size, family] = JSON.parse(key);
+      const font = (scale) => `${style} ${weight} ${Number.parseFloat(size) * scale}px ${family}`;
+      try {
+        const canvas = document.createElement("canvas");
+        const ctx = canvas.getContext("2d", { willReadFrequently: true });
+        ctx.font = font(1);
+        const advance = ctx.measureText(text).width;
+        const scale = Math.max(1, Math.min(16, Math.floor(30000 / (advance + 8))));
+        const edge = 4 * scale;
+        // Resizing a canvas resets its font.
+        canvas.width = Math.ceil(advance * scale) + 2 * edge;
+        canvas.height = Math.max(1, Math.round(height * scale));
+        ctx.font = font(scale);
+        ctx.fillText(text, edge, -top * scale);
+        const { data } = ctx.getImageData(0, 0, canvas.width, canvas.height);
+        const inked = (x) => {
+          for (let y = 0; y < canvas.height; y++) if (data[(y * canvas.width + x) * 4 + 3] >= 64) return true;
+          return false;
+        };
+        const out = [];
+        let from = -1;
+        for (let x = 0; x <= canvas.width; x++) {
+          const ink = x < canvas.width && inked(x);
+          if (ink && from < 0) from = x;
+          else if (!ink && from >= 0) {
+            out.push([(from - edge) / scale, (x - edge) / scale]);
+            from = -1;
+          }
+        }
+        return out;
+      } catch {
+        return [];
+      }
+    });
     const roots = [document];
     for (let i = 0; i < roots.length; i++)
       for (const e of roots[i].querySelectorAll("*")) if (e.shadowRoot) roots.push(e.shadowRoot);
@@ -164,7 +214,7 @@ function measure({ keys, runs, view, measureId, overlays }) {
           // A tainted canvas cannot be read; the converter says it has no picture.
         }
       }
-    return { metrics, widths, placeholderColor, canvases, overlays: outOverlays, marked, allRuns };
+    return { metrics, widths, gaps, placeholderColor, canvases, overlays: outOverlays, marked, allRuns };
   });
 }
 
@@ -423,13 +473,13 @@ export async function svgOfPage(conn, clip, { background = true } = {}) {
     const { w, h } = await conn.evaluate("({ w: innerWidth, h: innerHeight })");
     view = { x: 0, y: 0, w, h };
   }
-  const { keys, runs } = textNeeds(decoded, view);
+  const { keys, runs, skips } = textNeeds(decoded, view);
 
   let page;
   const platform = new Map();
   const scrollbars = new Map();
   try {
-    const args = JSON.stringify({ keys, runs, view, measureId: MEASURE_ID, overlays: OVERLAYS });
+    const args = JSON.stringify({ keys, runs, skips, view, measureId: MEASURE_ID, overlays: OVERLAYS });
     page = await conn.evaluate(`(${measure})(${args})`, { awaitPromise: true });
     await conn.send("DOM.enable");
     await conn.send("CSS.enable");
@@ -492,10 +542,12 @@ export async function svgOfPage(conn, clip, { background = true } = {}) {
     }),
   );
   const widths = new Map(page.allRuns.map(([key, text], k) => [`${key}\u0000${text}`, page.widths[k]]));
+  const gaps = new Map(skips.map((skip, k) => [skip.join("\u0000"), page.gaps[k]]));
   const drawn = renderSvg(decoded, {
     clip: view,
     metrics: (key) => page.metrics[key] ?? { ascent: 0, height: 0, line: 0 },
     textWidth: (key, text) => widths.get(`${key}\u0000${text}`) ?? null,
+    inkGaps: (...skip) => gaps.get(skip.join("\u0000")) ?? null,
     placeholderColor: page.placeholderColor,
     canvases: page.canvases,
     fonts,

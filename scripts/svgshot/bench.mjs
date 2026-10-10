@@ -1,8 +1,9 @@
 // The converter's test pages. Each page under scripts/svgshot/bench/ is opened
 // in a browser, taken as a PNG at device scale 2 as shoot_docs takes the IDE,
 // and drawn as an SVG by capture.mjs's svgOfPage; diff.mjs compares the two.
-// So a change that draws a replicated part wrongly -- a scrollbar, a drop-down
-// list -- shows here without an IDE, in seconds.
+// So a change that draws a replicated part or a text decoration wrongly -- a
+// scrollbar, a drop-down list, an underline -- shows here without an IDE, in
+// seconds.
 //
 // No page comes out exact: text is shaped by two renderers, and a replica is
 // close rather than equal. A fixed limit cannot tell that residue from a new

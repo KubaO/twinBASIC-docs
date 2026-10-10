@@ -105,7 +105,13 @@ const STYLES = [
   "letter-spacing",
   "white-space",
   "text-decoration-line",
+  "text-decoration-style",
   "text-decoration-color",
+  "text-decoration-thickness",
+  "text-decoration-skip-ink",
+  "text-underline-offset",
+  "text-underline-position",
+  "float",
   "text-overflow",
   "overflow-x",
   "overflow-y",
@@ -672,7 +678,13 @@ const CENSUS_JS = String.raw`(() => {
       if (cs.mixBlendMode !== "normal") bump("mixBlendMode", vis);
       if (cs.position === "fixed") bump("positionFixed", vis);
       else if (cs.position === "sticky") bump("positionSticky", vis);
-      if (cs.textDecorationLine !== "none") bump("textDecoration", vis);
+      if (cs.textDecorationLine !== "none") {
+        bump("textDecoration", vis);
+        // The converter draws a solid underline in the default place; every other decoration is counted
+        // as not drawn (snapshot-svg.mjs, decorationsOf).
+        if (cs.textDecorationLine !== "underline" || cs.textDecorationStyle !== "solid" || cs.textUnderlinePosition !== "auto")
+          bump("textDecorationNotDrawn", vis);
+      }
       if (cs.letterSpacing !== "normal" && px(cs.letterSpacing) !== 0) bump("letterSpacing", vis);
       if (cs.writingMode !== "horizontal-tb") bump("verticalWriting", vis);
       if (cs.direction !== "ltr") bump("rtl", vis);
