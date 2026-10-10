@@ -223,27 +223,53 @@
   // at twice that, so a zoomed screenshot is the PNG's pixels exactly. A
   // raster is never stretched past its own pixels. Only the width is fitted:
   // a figure taller than the window scrolls, as it would in an image viewer,
-  // rather than shrinking to fit and losing the detail zoom is for.
-  function zoomWidth(el, shown, container) {
+  // rather than shrinking to fit and losing the detail zoom is for -- unless
+  // it is at most a tenth taller than the window, when it is fitted to the
+  // height instead, rather than scrolling a few pixels.
+  var NEAR_FIT = 1.1;
+
+  function zoomWidth(el, shown, ratio, container) {
     var target = 2 * shown;
     if (el.tagName === "IMG" && !SVG_URL.test(el.src) && el.naturalWidth) {
       target = Math.min(target, el.naturalWidth);
     }
     var cs = getComputedStyle(container);
-    var room = container.clientWidth - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight);
-    return Math.max(shown, Math.min(target, room));
+    var roomW = container.clientWidth - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight);
+    var roomH = container.clientHeight - parseFloat(cs.paddingTop) - parseFloat(cs.paddingBottom);
+    var width = Math.min(target, roomW);
+    var height = width * ratio;
+    if (height > roomH && height <= roomH * NEAR_FIT) width = roomH / ratio;
+    return Math.max(shown, width);
+  }
+
+  // While a figure is zoomed the page under it does not scroll: the overlay
+  // covers it, and a scrollbar of its own beside the overlay's would be a
+  // second one for nothing. The page's scroll position is kept, and put back
+  // once the zoom ends, in case the page reflowed without its scrollbar.
+  var pageScroll = null;
+
+  function lockPage() {
+    pageScroll = { x: window.scrollX, y: window.scrollY };
+    document.documentElement.style.overflow = "hidden";
+  }
+
+  function unlockPage() {
+    document.documentElement.style.overflow = "";
+    if (pageScroll) window.scrollTo({ left: pageScroll.x, top: pageScroll.y, behavior: "instant" });
+    pageScroll = null;
   }
 
   function zoomIn(container) {
     var el = zoomed(container);
-    var width = el ? el.getBoundingClientRect().width : 0;
+    var rect = el ? el.getBoundingClientRect() : null;
+    lockPage();
     container.style.backgroundColor = getComputedStyle(document.body).backgroundColor;
     container.dataset.zoomed = "1";
     container.scrollTop = 0;
-    if (el && width) {
+    if (el && rect && rect.width) {
       // Measured on the page first, sized once the overlay is up and its
-      // width is known.
-      el.style.width = zoomWidth(el, width, container) + "px";
+      // size is known.
+      el.style.width = zoomWidth(el, rect.width, rect.height / rect.width, container) + "px";
       el.style.height = "auto";
       el.style.maxWidth = "none";
     }
@@ -275,6 +301,7 @@
       el.style.height = "";
       el.style.maxWidth = "";
     }
+    unlockPage();
 
     if (zoomTrigger) {
       zoomTrigger.focus();
