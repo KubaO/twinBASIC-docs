@@ -557,6 +557,11 @@ bad(
   ["no-such-dir", "--compiler-options="],
   thenUsage("--compiler-options needs a non-empty value", "scripts/tbrun.mjs"),
 );
+bad(
+  "scripts/tbrun.mjs",
+  ["no-such-dir", "--exe", "--tests"],
+  thenUsage("--exe and --tests cannot be given together", "scripts/tbrun.mjs"),
+);
 
 // sweep_attributes reads its values before it looks for an IDE, and follows the
 // message with its usage.
@@ -598,7 +603,7 @@ bad("scripts/tbrun.mjs", ["no-such-dir", "--quiet", "1.5"], thenUsage(NOT_WHOLE(
   bad(
     tool,
     ["new", "no-such-bug", "title", "--template", "no-such-template"],
-    thenUsage("--template expects console or webview2-form, got: no-such-template", tool),
+    thenUsage("--template expects console, tests or webview2-form, got: no-such-template", tool),
   );
   bad(tool, ["pack", "no-such-bug", "--template", "console"], thenUsage("--template does not apply to pack", tool));
   bad(tool, ["pack", "-x"], thenUsage("unknown option: -x", tool));
