@@ -386,8 +386,9 @@ reason rather than by oversight: `scripts/impexp.py` is a published download
 offered to readers rather than tooling, `scripts/build_fonts.py` stays Python
 because the JavaScript HarfBuzz build produces wrong CFF2 metrics
 ([WIP.Fonts.md](WIP.Fonts.md)), and `scripts/lib/tb-launch.ps1` is Win32 calls
-Node cannot make without a native FFI addon --- a private desktop, and the job
-object the IDE runs in --- and is never run as a file, so the execution policy
+Node cannot make without a native FFI addon --- a private desktop, the job
+object the IDE runs in, and the windows on that desktop listed and captured
+(`desktopWindows`, `captureWindow` in `tb-ide.mjs`) --- and is never run as a file, so the execution policy
 never comes into it. The full accounting, and what the two ports gained, is in
 [WIP.Build.md](WIP.Build.md).
 

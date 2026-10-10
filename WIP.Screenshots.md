@@ -166,7 +166,9 @@ back).
   opened), `sample6` (Sample 6 exported and opened) and `designer` (the sample fixture with
   `test/shots/designer/` staged onto it, plus the Global Search add-in for Toolbar_3; it sets the
   page's `currentDPI` to the 2x ratio, or the IDE's 5 s DPI check covers every designer with
-  RESYNC), and `forms` (the same without the add-in). A setup is `{name, start, prepare}`.
+  RESYNC), and `forms` (the same without the add-in), `community` (the demo, its compiler
+  restarted on an empty licence key in the page) and `splash` (the demo, for the splash
+  alone). A setup is `{name, start, prepare}`.
   Every add-in a setup loads has its `SaveSetting` key snapshotted, emptied and restored
   (`tbDocsHelp`, `GlobalSearchAddIn`).
 - **Jobs**: `--jobs N` (default 6) runs setups at once, each IDE on its own claimed ports and
@@ -285,6 +287,62 @@ disposition, group by group:
   BUGS-TO-REPORT.md if it is an IDE defect.
 - **Order:** special IDE states, running programs, package server, not of the IDE, one at a time.
   `5951dab6` is an IDE dialog and is taken with the package server group.
+
+### Group A, special IDE states (2026-10-10)
+
+Four of the six retaken, in both themes; the two tooltips keep their old files. **49 images
+under `docs/` are now outside the tool.**
+
+- **`Services_Unavailable`**: the badge in the `no-project` setup. With no project the badge's
+  title reads each service `Not initialized`; all four read `Disconnected` only for the 0.1 s
+  between a compiler ending and the IDE starting the next.
+- **`Splash_Screen`** is not a window of its own: it is the IDE's modal dialog
+  (`showSplashWindow`, HTML in the page), shown only when the IDE starts with no project and
+  closed after 2.5 s by a timer, which then shows New / Open Project. The shot calls
+  `showSplashWindow` itself and holds the one 2.5 s timer the call starts until the capture,
+  then runs it. It has a setup of its own (`splash`): the sponsors' logos are scaled one of two
+  ways by what drew them earlier in the same IDE (8,795 pixels apart; in `no-project` by whether
+  the start-up splash came before or after the 2x override, and in `project` About's light
+  picture changed with the splash taken before it), and the New / Open Project dialog its close
+  shows leaves the status bar's badges a pixel shorter for the shots after it.
+- **`Licence_CommunityEdition`** (setup `community`): the IDE reads the key from IDESettings
+  into the page's `licenceKey` and passes it to each compiler it starts; the compiler answers
+  with the edition and hands the key back, and the IDE saves it only when it differs. The tool
+  sets `licenceKey = ""` in the page and restarts the compiler with the toolbar's button: the
+  registry value is never read, changed or removed by the tool, and the save call is one
+  `PAGE_DEFAULTS` has made do nothing. `doCommunityNagScreens` runs; its only screen is dated
+  1-7 January 2026.
+- **`Services_Limited`** (setup `community`): LIMITED is never a lasting state. The page draws it
+  for about 0.6 s while a compiler starts (its own connection up, the page then connecting FS,
+  LSP and the debugger one after another, once the compiler has loaded the project). Closing one
+  connection from the page is no route: the browser takes 60 s to close it (the compiler never
+  answers the closing handshake), the IDE then draws LIMITED for 0.1 s, the compiler ends, and
+  the IDE starts another. `Network.setBlockedURLs` does not stop a WebSocket, and throttling the
+  page's CPU (`Emulation.setCPUThrottlingRate` 40) holds LIMITED but makes every evaluation time
+  out. The shot holds the page's `fs.connect` call of a restart (the toolbar's button) until the
+  capture and then makes it as the IDE did. The restart's DEBUG CONSOLE line names the project's
+  folder, under the user's, and Clear does nothing until the compiler is connected, so
+  `nameUserAsUserIn(c, ".debugConsoleOuter")` replaces the name there in the page; the console
+  is cleared with its button once the compiler is back.
+- **The tooltips** (`Services_Unavailable_Tooltip`, `Services_Operational_Tooltip`) keep their
+  old files. A native `title` tooltip never appears on a private desktop: neither a CDP mouse move
+  over the badge nor a `WM_MOUSEMOVE` posted or sent to any of the page's three windows
+  (`Chrome_WidgetWin_0`, `Chrome_WidgetWin_1`, `Chrome_RenderWidgetHostHWND`) made a new
+  top-level window appear in 3 s, and the page saw no hover from the messages. Real input
+  reaches only the desktop on screen. No replica is drawn (owner's decision).
+- **Window capture, for groups B and D**: `desktopWindows(desktop, {children})` and
+  `captureWindow(desktop, hwnd, file, {flags})` in `tb-ide.mjs`, through `tb-launch.ps1`'s
+  `TBBUILD_WINDOWS` mode (a thread put on the desktop with `SetThreadDesktop`, per-monitor DPI
+  aware). On a private desktop `PrintWindow` with `PW_RENDERFULLCONTENT` (2) gives the IDE's
+  window as drawn, WebView2 content included, and Notepad with its Windows 10 frame; flag 0 leaves
+  the WebView2 areas white and black and draws a Windows 7 style frame. The picture is the
+  window's rectangle at the desktop's DPI (144 here, so 1.5x, not 2x), including the invisible
+  resize borders (`DWMWA_EXTENDED_FRAME_BOUNDS` would trim them). It returns the window's and
+  its children's texts for the user-name check; text a window draws itself is not among them.
+  About 0.5 s a call (a PowerShell start). The IDE's window class is `ThunderForm`; the Webpage
+  pane's second WebView2 is a `Chrome_WidgetWin_1` child (title `Google`) of zero size until the
+  pane shows. `tb-launch.ps1` is now 27,800 characters of the 30,000 its environment variable
+  allows.
 
 ## Machine state in the pictures (owner, 2026-10-08)
 

@@ -27,6 +27,9 @@
 //               on localhost, so build.bat has to have run
 //   project     test/addin/helpdemo open, with no add-in: what needs a compiler
 //               that has answered, as About's licence line does
+//   community   the same, its compiler restarted on no licence key (in the page only):
+//               the COMMUNITY EDITION badge, and the LIMITED one while a compiler starts
+//   splash      the same again, for the splash dialog alone (see splashShot)
 //   sample      test/shots/sample, SampleProject: the Project Explorer and the other
 //               panels with a project, and the editor
 //   settings    the sample with a Settings file of test/shots/settings, for the pictures
@@ -174,6 +177,8 @@ private desktop, at 2x, each in the IDE's dark theme (X.png) and then in its Lig
 theme (X.light.png, not kept when it has the dark picture's pixels, and removed
 when there is one already): the help add-in's eight (setup help),
 the menus, dialogs, bars and panels that need no project (setups no-project and project),
+the splash and the status bar's COMMUNITY EDITION and LIMITED badges (setups splash and
+community),
 the panels, editor, Project Settings and icons of a sample project (setups sample,
 settings and glyphs), those of the IDE's Samples 15 and 6 (setups
 global-search and sample6), the form and report designers and the Format menu
@@ -1114,6 +1119,54 @@ async function startFeatureMap(run) {
   return run.lane.open(src);
 }
 
+// ---- community: the demo with the compiler started on no licence key, the status bar's
+// COMMUNITY EDITION badge as the IDE draws it for a key that is not there (the Community
+// Edition), and its LIMITED services badge while a compiler starts.The IDE reads the key from its settings into
+// the page's `licenceKey` and passes it to each compiler it starts, which answers with the
+// edition. The key is emptied in the page only, and the compiler restarted with the toolbar's
+// button, as a key removed in IDE Options would be: the setting itself is never read, changed
+// or removed by the tool, and the page's call that would save one is one PAGE_DEFAULTS has made
+// do nothing (the compiler hands back the key it was given, which is then the page's own, so
+// the IDE has nothing to save anyway).
+
+async function prepareCommunity(run) {
+  const ctx = await prepareProject(run);
+  const { c } = run;
+  if (
+    !(await waitFor(c, () => c.evaluate("licenceIsSet === true && !!compilerLicence.innerText"), {
+      timeout: 60000,
+      interval: 250,
+    }))
+  ) {
+    throw new Error("the compiler never answered the licence check");
+  }
+  await c.evaluate(`licenceKey = ""`);
+  say(run.name, "restarting the compiler with no licence key, in the page only");
+  await run.lane.restartCompiler();
+  const community = await waitFor(c, () => c.evaluate(`compilerLicence.innerText === "COMMUNITY EDITION"`), {
+    timeout: 60000,
+    interval: 250,
+  });
+  if (!community) throw new Error("the compiler started with no key, and the licence badge is not COMMUNITY EDITION");
+  await clearUserFromConsole(c);
+  return ctx;
+}
+
+// A compiler's restart writes a line to the DEBUG CONSOLE that names the project's folder,
+// which is under the Windows user's: while the page shows the user name, the console's Clear
+// button is pressed (a real click), and the page given time to empty it.
+async function clearUserFromConsole(c) {
+  const shows = async () => (await textOf(c)).toLowerCase().includes(USER.toLowerCase());
+  for (let i = 0; i < 5 && (await shows()); i++) {
+    const b = await rectOf(c, '[title="Clear Debug Console"]');
+    if (!b) throw new Error("the DEBUG CONSOLE has no Clear button");
+    await clickAt(c, b.x + b.width / 2, b.y + b.height / 2);
+    await waitFor(c, async () => !(await shows()), { timeout: 10000, interval: 200 });
+  }
+  await parkMouse(c);
+  await frames(c);
+}
+
 const SETUPS = {
   help: { ports: 3, start: startHelp, prepare: prepareHelp },
   "global-search": { ports: 2, start: startGlobalSearch, prepare: prepareGlobalSearch },
@@ -1125,6 +1178,8 @@ const SETUPS = {
   sample9: { ports: 1, start: startSample9, prepare: prepareSample },
   featuremap: { ports: 1, start: startFeatureMap, prepare: prepareSample },
   project: { ports: 1, start: startProject, prepare: prepareProject },
+  community: { ports: 1, start: startProject, prepare: prepareCommunity },
+  splash: { ports: 1, start: startProject, prepare: prepareProject },
   sample: { ports: 1, start: startSample, prepare: prepareSample },
   settings: { ports: 1, start: startSettings("base"), prepare: prepareSample },
   "settings-symbols": { ports: 1, start: startSettings("symbols"), prepare: prepareSample },
@@ -2891,15 +2946,19 @@ const settingRow = (c, key) =>
 
 // A path in the dialog that holds the Windows user name (the build path the lane stages the
 // project with, a library registered under the profile folder) names the user "User"
-// instead, in the page only, in its text and in its text boxes.
-const nameUserAsUser = (c) =>
+// instead, in the page only, in its text and in its text boxes. nameUserAsUserIn does it in
+// each element `css` selects.
+const nameUserAsUserIn = (c, css) =>
   c.evaluate(`(() => {
   const re = new RegExp(${JSON.stringify(USER_PATTERN)}, "gi");
-  const m = [...document.querySelectorAll(".modalDialogContainer")].pop();
-  const walk = document.createTreeWalker(m, NodeFilter.SHOW_TEXT);
-  for (let n = walk.nextNode(); n; n = walk.nextNode()) n.nodeValue = n.nodeValue.replace(re, "User");
-  for (const i of m.querySelectorAll("input, textarea")) i.value = i.value.replace(re, "User");
+  const roots = ${css ? `[...document.querySelectorAll(${JSON.stringify(css)})]` : `[[...document.querySelectorAll(".modalDialogContainer")].pop()]`};
+  for (const m of roots) {
+    const walk = document.createTreeWalker(m, NodeFilter.SHOW_TEXT);
+    for (let n = walk.nextNode(); n; n = walk.nextNode()) n.nodeValue = n.nodeValue.replace(re, "User");
+    for (const i of m.querySelectorAll("input, textarea")) i.value = i.value.replace(re, "User");
+  }
 })()`);
+const nameUserAsUser = (c) => nameUserAsUserIn(c, null);
 
 // The dialog of Project > Project Settings (or Project > References, which filters its
 // list to the library references), picture `out` of it, Cancel to close it. `prepare(c)`
@@ -5120,6 +5179,172 @@ const servicesShot = {
   },
 };
 
+// The services badge with no compiler connected, as the IDE starts with no project. Its
+// tooltip, the four services each Disconnected, is the badge's native title, which no capture
+// holds: on a private desktop no mouse the tool can move raises it (WIP.Screenshots.md).
+const unavailableShot = {
+  out: "IDE/Images/Services_Unavailable.png",
+  setup: "no-project",
+  async take({ c }) {
+    await resetUi(c);
+    const unavailable = await c.evaluate(
+      `!compilerStatusOuter.classList.contains("servicesOK") && !compilerStatusOuter.classList.contains("servicesPARTIAL") && /UNAVAILABLE/.test(compilerStatus.innerText)`,
+    );
+    if (!unavailable) throw new Error("the services badge does not say UNAVAILABLE");
+    say(c.shot.name, `  the badge's title: ${JSON.stringify(await c.evaluate("compilerStatusOuter.title"))}`);
+    return capture(c, "Services_Unavailable", snapOut(await rectOf(c, "#compilerStatusOuter")), {
+      away: () => parkMouse(c),
+    });
+  },
+};
+
+// The licence badge of a compiler started on no licence key (setup community).
+const communityShot = {
+  out: "IDE/Images/Licence_CommunityEdition.png",
+  setup: "community",
+  async take({ c }) {
+    await resetUi(c);
+    const text = await c.evaluate("compilerLicence.innerText");
+    if (text !== "COMMUNITY EDITION") throw new Error(`the licence badge says ${JSON.stringify(text)}`);
+    return capture(c, "Licence_CommunityEdition", snapOut(await rectOf(c, "#compilerLicenceOuter")), {
+      away: () => parkMouse(c),
+    });
+  },
+};
+
+// The services badge while a compiler starts: the IDE draws LIMITED from the moment the new
+// compiler's own connection is up until the page has connected the other three, one after
+// another (FS, then LSP, then the debugger, once the compiler has loaded the project), about
+// 0.6 s, too short to capture. A closed connection is no route to a longer one: the compiler
+// ends within 0.1 s of losing any of its four (and the browser takes a minute to close one),
+// and the IDE starts another, so LIMITED shows for as long again. So the compiler is
+// restarted with the toolbar's button, and the page's first call of the three, fs.connect, is
+// held until the picture is taken: the IDE stays where its start-up is, the compiler up and the
+// other three not yet connected, and draws LIMITED itself. The call is then made as the IDE
+// made it, the other two follow, and the badge goes back to OPERATIONAL.
+const HOLD_FS_CONNECT = `(() => {
+  if (window.tbFsConnect) return;
+  const own = Object.prototype.hasOwnProperty.call(fs, "connect");
+  const connect = fs.connect;
+  window.tbFsConnect = { own, connect, held: null };
+  fs.connect = function (...args) {
+    window.tbFsConnect.held = () => connect.apply(fs, args);
+  };
+})()`;
+const RELEASE_FS_CONNECT = `(() => {
+  const h = window.tbFsConnect;
+  if (!h) return false;
+  delete window.tbFsConnect;
+  if (h.own) fs.connect = h.connect;
+  else delete fs.connect;
+  if (h.held) h.held();
+  return !!h.held;
+})()`;
+const servicesAre = (c, cls) => c.evaluate(`compilerStatusOuter.classList.contains(${JSON.stringify(cls)})`);
+const limitedShot = {
+  out: "IDE/Images/Services_Limited.png",
+  setup: "community",
+  async take({ c }) {
+    await resetUi(c);
+    if (!(await waitFor(c, () => servicesAre(c, "servicesOK"), { timeout: 60000, interval: 250 }))) {
+      throw new Error("the services badge never said OPERATIONAL before the restart");
+    }
+    await c.evaluate(HOLD_FS_CONNECT);
+    try {
+      await click(c, "restartIcon");
+      const held = await waitFor(
+        c,
+        () =>
+          c.evaluate(
+            `!!window.tbFsConnect?.held && compilerStatusOuter.classList.contains("servicesPARTIAL") && /LIMITED/.test(compilerStatus.innerText)`,
+          ),
+        { timeout: 60000, interval: 100 },
+      );
+      if (!held) throw new Error("the restarted compiler never asked for its FS connection, with the badge LIMITED");
+      // The restart's line names the project's folder, under the user's, and the console's
+      // Clear does nothing until the compiler is connected: the name is replaced in the
+      // console's text, in the page only, as nameUserAsUser does in a dialog. The picture
+      // is of the badge, which holds no name.
+      await nameUserAsUserIn(c, ".debugConsoleOuter");
+      say(c.shot.name, `  the badge's title: ${JSON.stringify(await c.evaluate("compilerStatusOuter.title"))}`);
+      return await capture(c, "Services_Limited", snapOut(await rectOf(c, "#compilerStatusOuter")), {
+        away: () => parkMouse(c),
+      });
+    } finally {
+      await c.evaluate(RELEASE_FS_CONNECT);
+      if (!(await waitFor(c, () => servicesAre(c, "servicesOK"), { timeout: 60000, interval: 250 }))) {
+        complain(c.shot.name, "the services badge did not go back to OPERATIONAL after the restart");
+      }
+      await clearUserFromConsole(c);
+    }
+  },
+};
+
+// Resolves once every CSS background image in the top dialog is decoded: the VIP Gold logos
+// are backgrounds, which dialogStill's wait for <img> elements does not cover.
+const dialogBackgrounds = (c) =>
+  c.evaluate(
+    `(async () => {
+  const root = ${TOP_MODAL};
+  if (!root) return 0;
+  const urls = new Set();
+  for (const e of [root, ...root.querySelectorAll("*")]) {
+    for (const m of getComputedStyle(e).backgroundImage.matchAll(/url\\("?([^")]*)"?\\)/g)) urls.add(m[1]);
+  }
+  await Promise.all([...urls].map((u) => { const i = new Image(); i.src = u; return i.decode().catch(() => {}); }));
+  return urls.size;
+})()`,
+    { awaitPromise: true },
+  );
+
+// The splash: the IDE's own dialog, which its start-up shows with showSplashWindow and closes
+// 2.5 s later with the New / Open Project dialog in its place. The page is not yet at its
+// fixed size by then, so the tool calls showSplashWindow again, as start-up does, and holds the
+// 2.5 s close (the one timer of that length the call starts) until the picture is taken; the
+// close then runs as the IDE wrote it, and New / Open Project is cancelled. The sponsors'
+// logos come out scaled one of two ways (one of them about 8,800 pixels apart from the other),
+// by what has drawn them before in the same IDE: in the no-project setup by whether the
+// start-up splash was drawn before or after the page was set to 2x, and in the project setup
+// About's light picture changed with the splash taken before it; and the New / Open Project
+// dialog its close shows leaves the status bar's badges a pixel shorter in the pictures after
+// it. So it has a setup of its own, the demo open, whose IDE draws the logos nowhere else and
+// showed no splash at start-up.
+const splashShot = {
+  out: dialogOut("IDE", "Splash_Screen"),
+  setup: "splash",
+  async take({ c }) {
+    await resetUi(c);
+    const shown = await c.evaluate(`(() => {
+  if (!window.chrome?.webview || inProcessPortNumber !== 0) return false;
+  const real = window.setTimeout;
+  window.setTimeout = (fn, ms, ...rest) => {
+    if (ms === 2500 && !window.tbSplashClose) {
+      window.tbSplashClose = fn;
+      return 0;
+    }
+    return real(fn, ms, ...rest);
+  };
+  try {
+    showSplashWindow();
+  } finally {
+    window.setTimeout = real;
+  }
+  return typeof window.tbSplashClose === "function";
+})()`);
+    if (!shown) throw new Error("showSplashWindow showed no splash");
+    try {
+      if (!(await waitModal(c, "Loading"))) throw new Error("the splash did not open");
+      await dialogStill(c);
+      await dialogBackgrounds(c);
+      return await dialogShot(c, "Splash_Screen");
+    } finally {
+      await c.evaluate(`(() => { const close = window.tbSplashClose; delete window.tbSplashClose; close?.(); })()`);
+      if (await waitModal(c, "New / Open", { timeout: 10000 })) await closeModal(c, "Cancel");
+      await resetUi(c);
+    }
+  },
+};
+
 // ---------------------------------------------------------------- the shots of the help setup
 
 function helpTakes(ctx) {
@@ -5544,6 +5769,10 @@ const SHOTS = [
   ...["Pane", "Hover", "Search", "Choices", "Description", "Settings", "Toolbar", "Window"].map(helpShot),
   aboutShot,
   servicesShot,
+  communityShot,
+  limitedShot,
+  unavailableShot,
+  splashShot,
   menuBarShot,
   menuShot("Menu_File", "File"),
   menuShot("Menu_Edit", "Edit"),
@@ -5609,6 +5838,8 @@ const PARTS = {
 const JOB_SECONDS = {
   help: 79,
   project: 22,
+  community: 25,
+  splash: 15,
   sample: 57,
   "sample-2": 130,
   "sample-3": 106,
