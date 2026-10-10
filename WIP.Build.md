@@ -786,7 +786,7 @@ The decisions, each with what it rules out:
   `scripts/` (`biome.jsonc`), because `check_tree_fresh.mjs` would not see a change to
   what the build imports. `impexp.mjs` is the one exception, by name in the rule: it
   imports nothing, the build already publishes it through `bundle_extra`, and
-  `check_tree_fresh.mjs` now watches it and `add-in/`. Not the compiler executable,
+  `check_tree_fresh.mjs` watches it and `add-in/`. Not the compiler executable,
   which CI does not have, and not `impexp.py`, which CI's Node job need not have.
 - **`--serve` writes it, `--dry-run` does not.** The preview has the page that links to
   it, and packing takes about 100 ms; the help archive is skipped under `--serve` because
@@ -803,8 +803,8 @@ The decisions, each with what it rules out:
 ### Build-time counts as named values
 
 `{{tbdocs:pages}}` in a page renders as the number of pages the build
-discovered. Designed in [builder/PLAN-counts.md](builder/PLAN-counts.md),
-implemented in [builder/counts.mjs](builder/counts.mjs), documented for
+discovered. Design: [builder/PLAN-counts.md](builder/PLAN-counts.md);
+code: [builder/counts.mjs](builder/counts.mjs); documented for
 contributors at [Authoring
 Pages](docs/Documentation/Authoring.md#counts-the-build-fills-in). Twelve names
 are live, and most of the prose is still hand-written.
@@ -1074,14 +1074,13 @@ light one alone, a plain `<img>` (`lightOnly` in
 `scripts/shoot_docs.mjs` writes the pairs ([WIP.Screenshots.md](WIP.Screenshots.md)). Why:
 
 - **Not `<picture>` with a media query.** It follows the OS only, never the toggle.
-- **Lazy, because a hidden lazy image is never fetched.** Checked with puppeteer
-  (`.claude/tooling-review-scratch/themed-shots/lazy-probe.mjs`) in all four modes (light and
+- **Lazy, because a hidden lazy image is never fetched.** Checked with puppeteer in all four modes (light and
   dark stored, system with each OS scheme): only the shown theme's images are requested, and
   toggling requests the other theme's images in view, and nothing else. The book's must not be
   lazy: paged.js raises on an image that has not loaded. **Anything that waits for a page's
   images must skip the hidden one**, whose `decode()` never settles: `gotoPage` in
-  `scripts/lib/axe-scan.mjs` waits only for images that are laid out, made eager (it hung
-  `check.bat` on the Window menu page until the protocol timeout).
+  `scripts/lib/axe-scan.mjs` waits only for images that are laid out, made eager (else
+  `check.bat` hangs until the protocol timeout).
 - **CSS, no script.** The head script sets `data-theme` before first paint, so there is no
   flash. `custom.scss` hides `.pic-light` under `dark-theme` (both of its selectors, so both
   dark modes) and `.pic-dark` under `light-theme`, its exact complement in

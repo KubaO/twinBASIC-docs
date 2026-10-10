@@ -1,7 +1,7 @@
 // Composite pictures for shoot_docs.mjs: a picture made of parts of the IDE that are never on
 // the screen together (the code that declares a property, and the PROPERTIES panel that lists
 // it), with an annotation drawn across them. The plan and the owner's decisions are in
-// WIP.Screenshots.md (Annotations, Composites; Increment 4).
+// WIP.Screenshots.md (Annotations; Designers, code and composites).
 //
 //     const parts = [
 //       { png, clip, anchors: { field: rect }, column: 0 },   // each captured as its own clip

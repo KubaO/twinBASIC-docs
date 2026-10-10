@@ -5279,7 +5279,7 @@ const aboutShot = {
 
 // A badge's tooltip is its plain HTML `title`, which WebView2 draws as a native Windows tooltip
 // on a real mouse hover and in no other way: no capture holds it, and no mouse the tool can
-// move reaches a private desktop (WIP.Screenshots.md, group A). So it is drawn in the page, as
+// move reaches a private desktop (WIP.Screenshots.md, Special IDE states). So it is drawn in the page, as
 // a replica of Windows 10's tooltip holding the badge's own title, read from the IDE: the
 // owner's decision (2026-10-10). The look is calibrated against the pictures taken by hand in
 // January: Segoe UI 9 pt (12 px) in #242424 on white, a 1 px #242424 border, 16 px lines, 7 px

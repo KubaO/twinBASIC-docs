@@ -111,10 +111,6 @@ The six packages carrying `indexed_from` are `AppGlobalClassObject`, `CustomCont
 commit as the content it adds. A stale value is worse than none: it asserts a completeness
 check was run against a build that no longer matches the package.
 
-> **These keys are also in active use by package documentation work that has not landed
-> yet**, covering packages beyond the six above. If you are about to document a package
-> from scratch, ask first --- it may already be written and waiting to merge.
-
 One other inert key is a different thing: `has_children` on four pages is a
 just-the-docs leftover. tbdocs derives the nav tree itself and never reads it. Nobody
 needs to maintain it.

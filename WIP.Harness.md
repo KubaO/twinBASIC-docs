@@ -217,9 +217,7 @@ other 193 are refused at every site.
   run cut short.
 
 **It finds compiler crashes the documentation never would:** a crash in a batch is
-isolated by halving down to one probe beside the canaries, which is how a bare
-`[PopulateFrom]` on an Enum is found to kill the compiler (twinbasic/twinbasic#2450; BETA 997
-does not crash).
+isolated by halving down to one probe beside the canaries.
 
 **Read the report's "accepted at most sites" section before believing an acceptance.**
 `[Description]` is taken at 53 of 61 sites and `[Hidden]` and `[Restricted]` at 42: either
@@ -328,8 +326,8 @@ Running in one process gives four rules:
   a cleanup first; `sweep_attributes` uses it to write the report of what it had learned
   (`salvage`), and `tb-cdp` drops a frame that is not JSON instead of throwing from an event
   callback.
-- **The name.** tb-ide already exports a `buildProject(c)` that builds an exe through an open
-  connection, and the notes below mean that one; the new function is `compileProject`.
+- **The name.** tb-ide exports a `buildProject(c)` that builds an exe through an open
+  connection, and the notes below mean that one; `compileProject` is the compile-only function.
 
 Two further rules:
 
@@ -1424,10 +1422,9 @@ probe lanes:
   been ended.
 
 **Timing, BETA 995:** the thirteen lanes other than widgets (24 s alone on BETA 997) take about two minutes at the default two at a time
-(the env lane is 16 s alone, the help lane 15 to 18 s, of which its sixteen cases are about 6 s). Typical lane costs (BETA 983): an add-in build about 10 s, a host IDE
-about 9 s, scenario 2 s; the keys lane 28 s (about 9 s of it pressing keys), panes 23 s,
-symbols and ideserver about 9 s each (they build nothing), appdata 18 s, arch 56 s (two builds
-and two switches of target), reload 47 s (two builds and two restarts), entry 19 s.
+(the env lane is 16 s alone, the help lane 15 to 18 s, of which its sixteen cases are about 6 s). Typical lane costs: an add-in build about 10 s, a host IDE
+about 9 s, a scenario 2 s; the slowest lanes are arch (56 s: two builds and two switches of
+target) and reload (47 s: two builds and two restarts).
 
 **Known gaps and behaviours:**
 

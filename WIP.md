@@ -387,8 +387,7 @@ for a stated reason rather than by oversight: `scripts/impexp.py` is a published
 offered to readers rather than tooling, `scripts/build_fonts.py` stays Python
 because the JavaScript HarfBuzz build produces wrong CFF2 metrics
 ([WIP.Fonts.md](WIP.Fonts.md)), `scripts/subset_font.py` cuts an SVG screenshot's
-fonts with fontTools, the subsetter the repository already trusts, after harfbuzzjs
-was tried and removed, `scripts/lib/tb-launch.ps1` is Win32 calls
+fonts with fontTools, the subsetter the repository already trusts, `scripts/lib/tb-launch.ps1` is Win32 calls
 Node cannot make without a native FFI addon --- a private desktop, the job
 object the IDE runs in, and the windows on that desktop listed and captured
 (`desktopWindows`, `captureWindow` in `tb-ide.mjs`) --- and is never run as a file, so the execution policy
@@ -439,7 +438,7 @@ line into its description** --- the contributor-facing statement is
 
 **[WIP.ExamplesBuild.md](WIP.ExamplesBuild.md) is the file for this** --- the markup, the
 slots, the template projects and their stage sets, the batching and bisect-on-crash rules,
-what actually collides inside one project, and what the first full run found. Two results
+and what actually collides inside one project. Two facts
 from it concern the harness rather than the samples:
 `[RunAfterBuild]` is **one per project** (TB5114), which `check_run` has to be
 designed around; and **a project that crashes the compiler can look like a clean build**
