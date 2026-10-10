@@ -332,14 +332,19 @@ mkdirSync(outDir, { recursive: true });
 const buildPath = path.join(outDir, "${ProjectName}_${Architecture}.${FileExtension}");
 const projPath = path.join(work, "tbrun-probe.twinproj");
 
-// Every .twin under Sources/, in its subfolders too; `name` is the file's own name,
-// which is how a diagnostic row ends.
+// Every .twin under dir, in its subfolders too, named by its path there with forward
+// slashes, as a diagnostic row ends: "Tests/Probe.twin" for /<Project>/Sources/Tests/Probe.twin.
+function twinFiles(dir) {
+  return readdirSync(dir, { recursive: true })
+    .filter((rel) => rel.toLowerCase().endsWith(".twin"))
+    .sort()
+    .map((rel) => ({ name: rel.split(path.sep).join("/"), text: readFileSync(path.join(dir, rel), "utf8") }));
+}
+
 const sourceFiles = (() => {
   const dir = path.join(srcDir, "Sources");
   if (!existsSync(dir)) return [];
-  return readdirSync(dir, { recursive: true })
-    .filter((f) => f.endsWith(".twin"))
-    .map((rel) => ({ name: path.basename(rel), text: readFileSync(path.join(dir, rel), "utf8") }));
+  return twinFiles(dir);
 })();
 const sourceText = sourceFiles.map((f) => f.text).join(String.fromCharCode(10));
 const hasHook = /\[RunAfterBuild\]/i.test(sourceText);
@@ -352,7 +357,7 @@ if (cases) {
   if (!cases.tests.length && !cases.compiles.length) {
     die(
       2,
-      "tbrun --tests: Sources/*.twin holds no [TestCase] Sub in a [TestFixture] Module, " +
+      "tbrun --tests: Sources/ holds no [TestCase] Sub in a [TestFixture] Module, " +
         "and no line ending in a ' CASE <Name>: <codes> comment",
     );
   }
@@ -365,7 +370,7 @@ if (values.tests) {
   // nothing is built, so nothing runs after a build
 } else if (!hasHook) {
   console.error(
-    "warning: no [RunAfterBuild] in Sources/*.twin -- nothing of yours will " +
+    "warning: no [RunAfterBuild] in Sources/ -- nothing of yours will " +
       "run after the build, so you will capture the IDE's build log and nothing else.",
   );
 } else if (!hasCls) {
@@ -401,11 +406,7 @@ try {
     },
     prepare: (dir) => {
       const sources = path.join(dir, "Sources");
-      const files = existsSync(sources)
-        ? readdirSync(sources)
-            .filter((f) => f.endsWith(".twin"))
-            .map((name) => ({ name, text: readFileSync(path.join(sources, name), "utf8") }))
-        : [];
+      const files = existsSync(sources) ? twinFiles(sources) : [];
       wrap = wrapProbe(files);
       for (const f of wrap.files) writeFileSync(path.join(sources, f.name), f.text, "utf8");
     },

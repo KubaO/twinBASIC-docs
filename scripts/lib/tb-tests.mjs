@@ -39,12 +39,17 @@ const CASE_RE = /'[ \t]*CASE[ \t]+(\w+)[ \t]*:[ \t]*(none|error|TB\d+(?:[ \t]*,[
 // "{ERROR} /Project/Sources/Startup.twin [19,28]: TB5074 Cannot construct ...".
 const ROW_RE = /^\{(\w+)\}[ \t]+(\S+)[ \t]+\[(\d+),\d+\]:[ \t]+(TB\d+)/;
 
+// A row's file as findCases names it: its path under the project's Sources/ folder, in lower case, or
+// null for a file elsewhere, such as a package's.
+const underSources = (row) => /^\/[^/]+\/Sources\/(.+)$/i.exec(row)?.[1].toLowerCase() ?? null;
+
 const isOn = (arg) => arg === undefined || !/^\s*False\s*$/i.test(arg);
 
 /**
  * The cases in a project's sources.
  *
- * @param {{name: string, text: string}[]} files  the .twin files, by file name
+ * @param {{name: string, text: string}[]} files  the .twin files, each named by its path under Sources/, such as
+ *   "Tests/Probe.twin"
  * @returns {{tests: {fixture: string, name: string, file: string, line: number}[],
  *            compiles: {name: string, file: string, line: number, codes: string[], anyError: boolean}[],
  *            problems: string[]}}
@@ -103,9 +108,7 @@ export function findCases(files) {
 export function judgeCompiles(compiles, rows) {
   const reported = rows.map((r) => ROW_RE.exec(r)).filter(Boolean);
   return compiles.map(({ name, file, line, codes, anyError }) => {
-    const rowsHere = reported.filter(
-      (m) => Number(m[3]) === line && m[2].split("/").pop().toLowerCase() === file.toLowerCase(),
-    );
+    const rowsHere = reported.filter((m) => Number(m[3]) === line && underSources(m[2]) === file.toLowerCase());
     const here = rowsHere.map((m) => m[4].toUpperCase());
     const got = here.length ? [...new Set(here)].join(", ") : "none";
     const pass = anyError

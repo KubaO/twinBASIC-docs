@@ -960,7 +960,8 @@ It takes an **exported source tree** (the folder holding `Sources/` and `Setting
 leaves your tree untouched. The staging is in `scripts/lib/tb-project.mjs`.
 
 The probe is an ordinary module with a [`[RunAfterBuild]`](../../tB/Core/Attributes#runafterbuild)
-Sub, which the IDE runs once the exe is linked:
+Sub, which the IDE runs once the exe is linked. It may be in any `.twin` file under `Sources/`,
+its subfolders included:
 
 ```tb check_build
 Module ZoneProbe
