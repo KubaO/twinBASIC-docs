@@ -8,14 +8,14 @@ permalink: /Documentation/Development/Tools
 # Tools and Scripts
 {: .no_toc }
 
-One-line-per-tool reference for every executable in the documentation repository: the nine Windows batch wrappers at the repository root, the Node and Python scripts under `scripts/` (cross-platform except for [`tbbuild.mjs`](#tbbuild), which drives the twinBASIC IDE), the one twinBASIC program there, [`csspngstrip`](#csspngstrip), the `tbdocs` orchestrator and its CLI flags, and the PDF render driver. If you are looking for the day-to-day workflow rather than a cheat sheet, the [Building and Deployment](Building) page is the gentler read; if you are modifying the build pipeline itself, the [tbdocs Internals](Builder) page goes one level deeper. Every Node tool answers `--help` or `-h` by printing its usage to standard output and exiting 0, without doing any of its work. A command line a tool cannot use is refused the same way by every Node tool: an unknown flag, a flag without its value or with an empty one, and an unexpected argument are reported on standard error and exit **2**. So is a crash. So is a value a tool cannot use, before it does any work: a number that is not one or is out of range (a fraction where a whole number is needed), a regular expression that does not compile, a URL that is not an absolute `http` or `https` one, a date that is not ISO 8601, a value outside a fixed set, and options that exclude each other. A tool that reads its command line through `lib/cli.mjs` and takes search terms, file names or folder names takes one that starts with a dash after `--`.
+One-line-per-tool reference for every executable in the documentation repository: the nine Windows batch wrappers at the repository root, the Node and Python scripts under `scripts/` (cross-platform except for [`tbbuild.mjs`](#tbbuild), which drives the twinBASIC IDE), the one twinBASIC program there, [`imagestrip`](#imagestrip), the `tbdocs` orchestrator and its CLI flags, and the PDF render driver. If you are looking for the day-to-day workflow rather than a cheat sheet, the [Building and Deployment](Building) page is the gentler read; if you are modifying the build pipeline itself, the [tbdocs Internals](Builder) page goes one level deeper. Every Node tool answers `--help` or `-h` by printing its usage to standard output and exiting 0, without doing any of its work. A command line a tool cannot use is refused the same way by every Node tool: an unknown flag, a flag without its value or with an empty one, and an unexpected argument are reported on standard error and exit **2**. So is a crash. So is a value a tool cannot use, before it does any work: a number that is not one or is out of range (a fraction where a whole number is needed), a regular expression that does not compile, a URL that is not an absolute `http` or `https` one, a date that is not ISO 8601, a value outside a fixed set, and options that exclude each other. A tool that reads its command line through `lib/cli.mjs` and takes search terms, file names or folder names takes one that starts with a dash after `--`.
 
 * TOC goes here
 {:toc}
 ## Batch wrappers at the repository root
 {: #batch-wrappers }
 
-All nine sit at the repository root, beside `package.json` --- not under `docs/`. Each uses `@pushd "%~dp0"` to run from that root regardless of where it is invoked from, and each entry below gives the POSIX equivalent of what it runs. Those equivalents have no `pushd` in front of them, so **run them from the repository root** --- `tbdocs`'s `--src docs`, [`check_publish_policy.mjs`](#check-publish-policy)'s default source root, and every path handed to [`render-book.mjs`](#bookrender-bookmjs) are all resolved against the working directory. `examples.bat`, `addin-test.bat`, `ide-test.bat` and `try-help-addin.bat` are the exceptions to "each entry below gives the POSIX equivalent": they need a twinBASIC install and drive the IDE, so they are Windows-only, and none is part of the site build. Four other tools are Windows-specific for the same reason and are likewise not part of it: [`scripts/tbbuild.mjs`](#tbbuild) and [`scripts/tbrun.mjs`](#tbrun), which drive the twinBASIC IDE, and [`census_attributes.mjs`](#census-attributes) and [`build_package_api.mjs`](#build-package-api), which unpack the packages of a twinBASIC install --- though those two are cross-platform when given an already-exported tree with `--exported`. [`csspngstrip`](#csspngstrip) is a twinBASIC program, so it runs only on Windows too, and it is not part of the build either. Nothing else in the repository is: `tbdocs` and every gate in both wrappers is a Node script, and CI runs all of them on `ubuntu-latest` except [`check_tree_fresh.mjs`](#check-tree-fresh), which guards against a failure mode CI cannot have.
+All nine sit at the repository root, beside `package.json` --- not under `docs/`. Each uses `@pushd "%~dp0"` to run from that root regardless of where it is invoked from, and each entry below gives the POSIX equivalent of what it runs. Those equivalents have no `pushd` in front of them, so **run them from the repository root** --- `tbdocs`'s `--src docs`, [`check_publish_policy.mjs`](#check-publish-policy)'s default source root, and every path handed to [`render-book.mjs`](#bookrender-bookmjs) are all resolved against the working directory. `examples.bat`, `addin-test.bat`, `ide-test.bat` and `try-help-addin.bat` are the exceptions to "each entry below gives the POSIX equivalent": they need a twinBASIC install and drive the IDE, so they are Windows-only, and none is part of the site build. Four other tools are Windows-specific for the same reason and are likewise not part of it: [`scripts/tbbuild.mjs`](#tbbuild) and [`scripts/tbrun.mjs`](#tbrun), which drive the twinBASIC IDE, and [`census_attributes.mjs`](#census-attributes) and [`build_package_api.mjs`](#build-package-api), which unpack the packages of a twinBASIC install --- though those two are cross-platform when given an already-exported tree with `--exported`. [`imagestrip`](#imagestrip) is a twinBASIC program, so it runs only on Windows too, and it is not part of the build either. Nothing else in the repository is: `tbdocs` and every gate in both wrappers is a Node script, and CI runs all of them on `ubuntu-latest` except [`check_tree_fresh.mjs`](#check-tree-fresh), which guards against a failure mode CI cannot have.
 
 ### build.bat
 
@@ -71,7 +71,7 @@ One of the four does not mean the same thing locally as it does in CI, on any pl
 
     test.bat
 
-The tests the toolchain has to pass. Twenty-two steps, each stopping the run if it fails:
+The tests the toolchain has to pass. Twenty-three steps, each stopping the run if it fails:
 
 1. [`scripts/check_publish_policy.mjs`](#check-publish-policy) --- verifies the publish allowlist still refuses the types it is meant to. Needs neither a browser nor a built tree, so it goes first.
 2. [`scripts/check_gate_lists.mjs`](#check-gate-lists) --- verifies the two gate lists on this page still match the wrappers that run them.
@@ -81,20 +81,21 @@ The tests the toolchain has to pass. Twenty-two steps, each stopping the run if 
 6. [`test/render.test.mjs`](#render-test) --- unit tests for the markdown-it plugins, on inputs no page holds.
 7. [`test/strftime.test.mjs`](#strftime-test) --- unit tests for the footer's date formatter, which no build calls.
 8. [`test/png.test.mjs`](#png-test) --- unit tests for the pictures of a bug reproducer: PNG decoding, comparing and the side-by-side image, the files behind `images` and `expect.imagesDiffer`, and the refusals of `bug_repro.mjs` over fixtures.
-9. [`test/example-batches.test.mjs`](#example-batches-test) --- runs `check_examples.mjs`'s probes, which test how samples are batched and how a crashed batch is cut down, without an IDE.
-10. [`test/ports.test.mjs`](#ports-test) --- unit tests for how the harness claims the DevTools ports its IDEs use, without an IDE.
-11. [`test/addin-project.test.mjs`](#addin-project-test) --- unit tests for how the build packs the help add-in's project file: exactly the files git tracks in `add-in/`, never `Resources/HELP/`, the same bytes from any checkout.
-12. [`scripts/check_regex_safety.mjs`](#check-regex-safety) --- refuses a regex that can backtrack exponentially, written as a literal or built from constants.
-13. [`scripts/check_code_regions.mjs`](#check-code-regions) --- verifies no pre-render rewrite alters the contents of a code fence or code span, that the rewrites over rendered HTML leave a raw `<pre>` or `<code>` alone, and that `lib/markdown.mjs` and `lib/frontmatter.mjs` pass their probes.
-14. [`scripts/check_page_baseline.mjs`](#check-page-baseline) --- verifies the page-count drift guard still refuses a fall.
-15. [`scripts/check_book_coverage.mjs`](#check-book-coverage) --- verifies the build still warns about a page `docs/_book.yml` does not mention.
-16. [`scripts/check_symbol_index.mjs`](#check-symbol-index) --- verifies the symbol index still places each kind of symbol, and its drift guard still refuses a lost URL.
-17. [`scripts/check_twin_parsers.mjs`](#check-twin-parsers) --- verifies the scanners of twinBASIC source and of the attribute reference still read the shapes each once misread.
-18. [`scripts/check_attribute_sweep.mjs`](#check-attribute-sweep) --- verifies the logic of the attribute sweep: its site skeletons, how it reads a probe's diagnostics, how it batches probes, and how it compares the answers with `Attributes.md`.
-19. [`scripts/check_cli.mjs`](#check-cli) --- verifies `lib/cli.mjs`, the command-line parser, and each tool's recorded command-line errors.
-20. [`scripts/check_pdf_shims_equiv.mjs`](#check-pdf-shims-equiv) --- verifies the book's pdf-lib shims write what stock pdf-lib writes, patch the members of pdf-lib it lists, have each of them in their shim's table of targets, and run.
-21. [`scripts/check_impexp_parity.mjs`](#check-impexp-parity) --- verifies the two editions of the impexp tool pass the same built-in tests, and exit, print and write the same for one sequence of commands. Without Python it reports itself skipped and passes, except in CI.
-22. [`scripts/check_axe_patch_equiv.mjs`](#check-axe-patch-equiv) --- verifies the vendored axe source patch still produces identical colour values.
+9. [`test/compact-image.test.mjs`](#compact-image-test) --- unit tests for what an embedded image keeps: an editor's metadata goes, and a notice of whose the picture is and on what terms stays. The half that runs [`imagestrip`](#imagestrip) is skipped unless its exe is named.
+10. [`test/example-batches.test.mjs`](#example-batches-test) --- runs `check_examples.mjs`'s probes, which test how samples are batched and how a crashed batch is cut down, without an IDE.
+11. [`test/ports.test.mjs`](#ports-test) --- unit tests for how the harness claims the DevTools ports its IDEs use, without an IDE.
+12. [`test/addin-project.test.mjs`](#addin-project-test) --- unit tests for how the build packs the help add-in's project file: exactly the files git tracks in `add-in/`, never `Resources/HELP/`, the same bytes from any checkout.
+13. [`scripts/check_regex_safety.mjs`](#check-regex-safety) --- refuses a regex that can backtrack exponentially, written as a literal or built from constants.
+14. [`scripts/check_code_regions.mjs`](#check-code-regions) --- verifies no pre-render rewrite alters the contents of a code fence or code span, that the rewrites over rendered HTML leave a raw `<pre>` or `<code>` alone, and that `lib/markdown.mjs` and `lib/frontmatter.mjs` pass their probes.
+15. [`scripts/check_page_baseline.mjs`](#check-page-baseline) --- verifies the page-count drift guard still refuses a fall.
+16. [`scripts/check_book_coverage.mjs`](#check-book-coverage) --- verifies the build still warns about a page `docs/_book.yml` does not mention.
+17. [`scripts/check_symbol_index.mjs`](#check-symbol-index) --- verifies the symbol index still places each kind of symbol, and its drift guard still refuses a lost URL.
+18. [`scripts/check_twin_parsers.mjs`](#check-twin-parsers) --- verifies the scanners of twinBASIC source and of the attribute reference still read the shapes each once misread.
+19. [`scripts/check_attribute_sweep.mjs`](#check-attribute-sweep) --- verifies the logic of the attribute sweep: its site skeletons, how it reads a probe's diagnostics, how it batches probes, and how it compares the answers with `Attributes.md`.
+20. [`scripts/check_cli.mjs`](#check-cli) --- verifies `lib/cli.mjs`, the command-line parser, and each tool's recorded command-line errors.
+21. [`scripts/check_pdf_shims_equiv.mjs`](#check-pdf-shims-equiv) --- verifies the book's pdf-lib shims write what stock pdf-lib writes, patch the members of pdf-lib it lists, have each of them in their shim's table of targets, and run.
+22. [`scripts/check_impexp_parity.mjs`](#check-impexp-parity) --- verifies the two editions of the impexp tool pass the same built-in tests, and exit, print and write the same for one sequence of commands. Without Python it reports itself skipped and passes, except in CI.
+23. [`scripts/check_axe_patch_equiv.mjs`](#check-axe-patch-equiv) --- verifies the vendored axe source patch still produces identical colour values.
 
 POSIX:
 
@@ -106,6 +107,7 @@ POSIX:
       && node --test test/render.test.mjs \
       && node --test test/strftime.test.mjs \
       && node --test test/png.test.mjs \
+      && node --test test/compact-image.test.mjs \
       && node --test test/example-batches.test.mjs \
       && node --test test/ports.test.mjs \
       && node --test test/addin-project.test.mjs \
@@ -123,7 +125,7 @@ POSIX:
 
 Exit codes: **0** every step passed; otherwise the code of the step that stopped the run, as that step's entry gives it.
 
-**Nineteen of the twenty-two cannot be affected by an edit confined to `docs/`**, which is why they are separate from `check.bat`. Run this one when the change touches `builder/`, `scripts/`, `lib/`, `book/`, `eval/`, `wisdom/` or `test/`, the site's scripts in `docs/assets/js/`, the help add-in's source in `add-in/`, a wrapper, or a workflow. Both CI workflows run all twenty-two unconditionally, so skipping it locally cannot let a tooling regression reach `staging`.
+**Twenty of the twenty-three cannot be affected by an edit confined to `docs/`**, which is why they are separate from `check.bat`. Run this one when the change touches `builder/`, `scripts/`, `lib/`, `book/`, `eval/`, `wisdom/` or `test/`, the site's scripts in `docs/assets/js/`, the help add-in's source in `add-in/`, a wrapper, or a workflow. Both CI workflows run all twenty-three unconditionally, so skipping it locally cannot let a tooling regression reach `staging`.
 
 The three exceptions are [`check_code_regions.mjs`](#check-code-regions), [`check_gate_lists.mjs`](#check-gate-lists), which reads this page, and [`check_lint.mjs`](#check-lint), which lints the site's scripts in `docs/assets/js/`. The first is worth knowing in detail. Its corpus sweep tokenises every markdown file under `docs/`, so a page that provokes a rewrite into altering a code region fails it. Its fixed probes are a different matter: they run against their own sources whatever the tree holds, and they cover the *mirror* fault, where a rewrite silently stops firing. The sweep cannot see that one --- text the rewrite skipped is stashed and restored unchanged, so every region still matches. Add a page with an unusual code construct and run `test.bat`, but read the built page too.
 
@@ -645,6 +647,17 @@ Exit codes: **0** every test passed, **1** a test failed.
     node --test test/png.test.mjs
 
 Unit tests for the pictures a bug reproducer carries (see [`bug_repro.mjs`](#bug-repro)). `scripts/lib/png.mjs` reads and writes PNG files, compares two pictures and draws the side-by-side image: these tests build PNG files by hand for each filter type, for RGB and for palette images, and check that a wrong checksum and every unsupported kind of file is refused, that `comparePngs` counts each differing pixel once, and that the comparison image has the size, the labels and the red pixels it should. `scripts/lib/repro-images.mjs` holds the files and judgements behind `images` and `expect.imagesDiffer`: the check of a reproducer's `PngDump` modules, the `Probe.vbp` line, and the rule that decides whether a run reproduces. The last group runs `bug_repro.mjs` itself over fixture reproducers in a temp folder (`BUG_REPRO_BUGS` names it), through `new --with-images` and the refusals of `verify`, which end before any IDE is looked for. No twinBASIC, no VB6, no browser, no built tree, a few seconds.
+
+Exit codes: **0** every test passed, **1** a test failed.
+
+### compact-image.test.mjs
+{: #compact-image-test }
+
+    node --test test/compact-image.test.mjs
+
+Unit tests for what an embedded image keeps: `compactImage`, `stripFile` and the functions behind them in `scripts/lib/compact-image.mjs`, and [`imagestrip`](#imagestrip), which does to a CSS or SVG file in twinBASIC what `stripFile` does. The IDE's icons contain an editor's metadata --- EXIF, IPTC and XMP profiles, "Created with GIMP", CorelDRAW's and Illustrator's comments --- that is dropped, and one has a licence's attribution that must stay with it. The tests build PNG, JPEG, GIF and SVG images with both kinds and check what comes out: the metadata gone; the pixels, an animated PNG's frames and any colour space but sRGB kept; a JPEG or a GIF labelled by its bytes; and a title, author, source, copyright or licence kept whole, in a text chunk, a comment, or an EXIF, IPTC or XMP profile of its own. They check `stripFile` too: an image inside an SVG inside a CSS file is stripped and keeps its encoding, base64 is read as a browser reads it, a `data:` URI is read only where it follows a quote or `url(`, and an SVG file loses its own metadata and that of the images inside it. No browser, no built tree, well under a second.
+
+The tests of `imagestrip` run only on Windows, and only when `IMAGESTRIP_EXE` names its built exe; otherwise they are skipped, as they are in `test.bat` and CI. They write every image the other tests build into one CSS file, with what a stylesheet can hold around them: CRLF line ends, UTF-8 outside the images, wrong and upper-case labels, a PNG cut short, a BMP, a font, SVGs in base64 and as text with CSS and percent escapes and images inside them, base64 with white space and an escape inside it, and URIs that cannot be read. They run the program on that file and on SVG files on a private desktop, and check that it writes, prints and reports what `stripFile` says, byte for byte. They also check that a second run changes nothing, that the output may be the input, that the program strips the stylesheets of the newest twinBASIC install as `stripFile` does, and its exit codes and messages for empty files, a wrong command line and a file it cannot read or write. About ten seconds.
 
 Exit codes: **0** every test passed, **1** a test failed.
 
@@ -1745,24 +1758,51 @@ Standalone `.twinproj` / `.twinpack` unpacker and packer, with the compiler exec
 
 Exit codes: the table in [Import/Export Tool](../../Features/Packages/Import-Export-Tool#checking-the-result) gives every code. This tool keeps its own codes, which the two editions share and which are not those of the other tools here.
 
-### csspngstrip
-{: #csspngstrip }
+### imagestrip
+{: #imagestrip }
 
-    csspngstrip_win32.exe <input.css> <output.css>
+    imagestrip_win32.exe <input> <output>
 
-A twinBASIC console program, and the one tool under `scripts/` that is not Node. It writes a copy of a CSS file in which every PNG embedded as a base64 `data:` URI keeps only the chunks a browser draws from: `IHDR`, `PLTE`, `IDAT`, `IEND`, `tRNS`, and `acTL`, `fcTL` and `fdAT` for an animated PNG. Text and XMP chunks, Exif and IPTC profiles, time stamps, ICC profiles, gamma and the rest are dropped. The kept chunks are copied byte for byte, so the pixels do not change, and everything outside the PNG payloads is copied unchanged, whatever its encoding. It is for the twinBASIC IDE's own stylesheets, `styles.css`, `formDesigner.css` and the others in an install's `ide` folder, whose embedded icons carry their editors' metadata, and for the twinBASIC developers to run in their build, which has twinBASIC and need not have Node.
+A twinBASIC console program, and the one tool under `scripts/` that is not Node. It writes a copy of a CSS file or an SVG file in which every image embedded as a `data:` URI keeps its pixels and any notice of whose it is, and nothing else. An SVG file loses what only its editor needs as well, and so does an SVG embedded in either, whose own images are stripped in turn, at any depth. A file whose name ends in `.svg` is read as an SVG, and any other as CSS. It is for the twinBASIC IDE's own stylesheets, `styles.css`, `formDesigner.css` and the others in an install's `ide` folder, and for the twinBASIC developers to run in their build, which has twinBASIC and need not have Node. The icons in those stylesheets contain their editors' metadata: GIMP's EXIF, IPTC and XMP profiles around a few hundred bytes of pixels, "Created with GIMP", and CorelDRAW's and Illustrator's comments in the SVG icons, one of which has a PNG inside it with an ICC profile of 2.6 KB. One icon, a lock from fileformat.info, has a CC BY-NC-SA attribution that must stay with it.
 
-A payload is taken to be a PNG by its content, not by its label. A PNG labelled `application/octet-stream` is stripped, and a payload labelled `image/png` that is something else is left unchanged and reported on standard error with its line: in BETA 1005, the IDE's `styles.css` holds a GIF and a JPEG labelled so. A PNG with nothing to strip keeps its original text, so a second run changes nothing. The output may be the input file, since the program reads the whole file before it writes.
+The program does to a file what `stripFile` in `scripts/lib/compact-image.mjs` does. That function is its reference, and [its tests](#compact-image-test) check the program's output against it byte for byte. Each image is stripped as `compactImage`, in the same module, strips it:
 
-The program is `scripts/csspngstrip/src/`, an exported project tree, and `scripts/csspngstrip/csspngstrip.twinproj`, the project file packed from it, which opens in the IDE. Both are checked out byte for byte (`.gitattributes`), so that the two agree in every checkout. After a change to `src/`, pack it again:
+- **A PNG** keeps the chunks a browser draws from (`IHDR`, `PLTE`, `tRNS`, `IDAT` and `IEND`, and `acTL`, `fcTL` and `fdAT` for an animated PNG) and its colour-space chunks (`iCCP`, `sRGB`, `gAMA`, `cHRM`, `sBIT`, `cICP`, `mDCV` and `cLLI`). The colour-space chunks go when all they say is that the picture is sRGB, which is what a browser takes a PNG that says nothing to be: an ICC profile with sRGB's colourants and tone curves (GIMP puts its own in every PNG it saves), or, with no profile, an `sRGB` chunk. `gAMA` and `cHRM` go with them. Any other profile stays, and so does every colour chunk beside a `cICP`. The chunks that stay are copied byte for byte, so the pixels do not change.
+- **A JPEG** keeps the segments that decode it: the frame, the tables, JFIF, the ICC profile and Adobe's colour transform. EXIF, XMP, Photoshop's IPTC, comments and other applications' segments go. Everything from the start of the scan is copied unchanged.
+- **A GIF** loses its comments and its XMP packet. Every other block stays, an animation's included.
+- **An SVG** loses its XML declaration, a DOCTYPE that declares nothing, its comments and its `<metadata>` elements. A DOCTYPE that declares entities stays, and the inside of a CDATA section is left as it is.
 
-    node scripts/impexp.mjs import scripts/csspngstrip/csspngstrip.twinproj scripts/csspngstrip/src --overwrite
+In every format, a notice of whose the picture is and on what terms stays, byte for byte: a PNG text chunk whose keyword is `Title`, `Author`, `Description`, `Source`, `Copyright` or `Disclaimer`, or names a licence or rights; a comment that says "copyright", "licence", "(c)" or "all rights reserved"; and an EXIF, IPTC or XMP profile that gives a value to an author or a rights field. An EXIF that turns the picture stays too. A chunk or a profile the program cannot read stays, because dropping a notice is the mistake to avoid.
 
-Build it in the IDE, which writes `Build\csspngstrip_win32.exe` beside the project file (git ignores it), or with [`tbbuild.mjs`](#tbbuild), which builds in a private folder and prints the path:
+**An image is known by its bytes, not by its label**, and is labelled with what it is. A JPEG labelled `image/png` comes out labelled `image/jpeg`, and the change is reported on standard error with its line. Only the media type is replaced; a parameter after it stays. In BETA 1005, the IDE's `styles.css` has a GIF and a JPEG labelled `image/png`, and two PNGs labelled `/png`, with no `image`. A BMP is labelled `image/bmp` and otherwise left as it is. A payload labelled as a PNG, a JPEG, a GIF or a BMP that is none of the four is left unchanged and reported; anything else, such as a font or a WebP image, is left unchanged without a report.
 
-    node scripts/tbbuild.mjs scripts/csspngstrip/csspngstrip.twinproj --build
+**A `data:` URI is read where it follows a quote or `url(`.** Its header runs from `data:` to the first comma. Its text runs to the quote just before `data:`, or to the `)` of a `url(` before it, with white space allowed between `url(` and `data:`. A `data:` anywhere else is left alone. In CSS, the text's escapes are undone before it is read; in an SVG, nothing is undone. Base64 is read as a browser reads it, with the white space inside it ignored, so the line breaks Illustrator writes into a PNG inside an SVG are no obstacle.
 
-Its summary line goes to standard output and its reports to standard error, so both can be redirected, as [Writing a command-line tool](../../Features/Project-Configuration/Project-Types#writing-a-command-line-tool-output-exit-code-and-arguments) describes. It has no `--help`: run without arguments, it prints its usage to standard error and exits 2. Nothing in this repository runs it, so it is outside every gate and outside CI.
+**An image keeps the encoding it has.** Base64 is written again only when its image changed, and then without white space. An SVG written as text, percent-encoded or not and with CSS escapes such as `\'` or `\3C ` in it, has the characters it loses cut out of the text as the file has it, and the rest of the text is unchanged. Base64 that cannot be read, and an SVG that cannot be read --- a `%` that starts no escape, or bytes that are not UTF-8 --- are left unchanged and reported.
+
+An image with nothing to strip keeps its original text, so a second run changes nothing. Everything outside the images is copied unchanged, whatever its encoding. The output may be the input file, since the program reads the whole file before it writes.
+
+Two differences from `compactImage` are deliberate. `compactImage` converts a BMP to a PNG, which makes the image smaller rather than removing anything from it, and would need a PNG encoder; the program only relabels it. And `compactImage` writes every SVG as percent-encoded text, where the program keeps the encoding the SVG has.
+
+The program is `scripts/imagestrip/src/`, an exported project tree, and `scripts/imagestrip/imagestrip.twinproj`, the project file packed from it, which opens in the IDE. Both are checked out byte for byte (`.gitattributes`), so that the two agree in every checkout. After a change to `src/`, pack it again:
+
+    node scripts/impexp.mjs import scripts/imagestrip/imagestrip.twinproj scripts/imagestrip/src --overwrite
+
+Build it in the IDE, which writes `Build\imagestrip_win32.exe` beside the project file (git ignores it), or with [`tbbuild.mjs`](#tbbuild), which builds in a private folder and prints the path:
+
+    node scripts/tbbuild.mjs scripts/imagestrip/imagestrip.twinproj --build
+
+It prints one summary line to standard output, naming the input as it was given, and one line for each report to standard error. For `styles.css` of BETA 1005:
+
+    styles.css: 140 images, 90 stripped, 4 relabelled; 1042091 -> 870074 bytes
+    styles.css:2947: labelled /png, but is a PNG; now labelled image/png
+
+The images counted include an SVG file itself and each image inside another; *stripped* counts those that lost something of their own, and *relabelled* those whose label changed. A report on an image inside another names the line of the outermost `data:` URI around it. Both streams can be redirected, as [Writing a command-line tool](../../Features/Project-Configuration/Project-Types#writing-a-command-line-tool-output-exit-code-and-arguments) describes. The program has no `--help`: run without arguments, it prints its usage to standard error and exits 2.
+
+No gate builds it, so `test.bat` and CI skip the half of [`compact-image.test.mjs`](#compact-image-test) that runs it. After a change to `src/`, build it and run that half by hand, with `IMAGESTRIP_EXE` naming the exe:
+
+    set IMAGESTRIP_EXE=<path of imagestrip_win32.exe>
+    node --test test/compact-image.test.mjs
 
 Exit codes: **0** the output was written, with or without reports; **1** a file that cannot be read or written: an input that does not exist or is a folder, an output whose folder does not exist or that is itself a folder, or a write that is refused; **2** a command line without exactly two arguments.
 

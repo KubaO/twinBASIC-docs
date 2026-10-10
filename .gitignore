@@ -37,5 +37,5 @@ indexer/.packages/
 # BUGS-TO-REPORT.md); the .twinproj beside it is committed.
 /bugs/**/*.zip
 
-# The IDE builds scripts/csspngstrip/csspngstrip.twinproj into Build\ beside it.
-/scripts/csspngstrip/Build/
+# The IDE builds scripts/imagestrip/imagestrip.twinproj into Build\ beside it.
+/scripts/imagestrip/Build/

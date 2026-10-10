@@ -1,13 +1,13 @@
 {
 	"configuration.inherits": "Defaults",
-	"project.appTitle": "csspngstrip",
+	"project.appTitle": "imagestrip",
 	"project.buildPath": "${SourcePath}\\Build\\${ProjectName}_${Architecture}.${FileExtension}",
 	"project.buildType": "Standard EXE",
-	"project.description": "Strips the metadata from every PNG embedded in a CSS file as a base64 data: URI.",
+	"project.description": "Strips the metadata from an SVG file and from every image a CSS or SVG file embeds as a data: URI, at any depth, and labels each image with the type it is.",
 	"project.exportPathIsV2": true,
 	"project.id": "{5740E0E7-AF43-478F-AE30-2741C5460796}",
 	"project.isConsoleApplication": true,
-	"project.name": "csspngstrip",
+	"project.name": "imagestrip",
 	"project.optionExplicit": true,
 	"project.references": [
 		{

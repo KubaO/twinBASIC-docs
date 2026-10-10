@@ -112,6 +112,14 @@ runs:
     - name: Unit-test the bug reproducers' pictures (test/png.test.mjs)
       shell: bash
       run: node --test test/png.test.mjs
+    # What an embedded image keeps (scripts/lib/compact-image.mjs's
+    # compactImage): an editor's metadata goes, and a notice of whose the
+    # picture is and on what terms stays, over images built in the test. The
+    # half that runs scripts/imagestrip/ needs its exe and Windows, which CI
+    # has not, and is skipped. No browser, no built tree, well under a second.
+    - name: Unit-test what an embedded image keeps (test/compact-image.test.mjs)
+      shell: bash
+      run: node --test test/compact-image.test.mjs
     # check_examples.mjs's probes: batching, crash isolation through a fake
     # lane, the canaries and the fence classifier. check_examples.mjs needs a
     # twinBASIC install, which CI has not; its probes need none.

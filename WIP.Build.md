@@ -121,14 +121,50 @@ execution policy. See [Compiling a twinBASIC project without the IDE in front of
 you](WIP.Harness.md#compiling-a-twinbasic-project-without-the-ide-in-front-of-you).
 
 One folder holds a program written in twinBASIC itself, for a fourth reason.
-**`scripts/csspngstrip/`** strips the metadata from the PNGs a CSS file embeds as `data:`
-URIs, for the IDE's own stylesheets. Its users are the twinBASIC developers, who run it in
-their own build, which has twinBASIC and need not have Node, so a Node edition would serve
-nobody. Nothing in this repository runs it. It is laid out as a reproducer under `bugs/`
-is, an exported tree in `src/` with `csspngstrip.twinproj` packed from it beside it, and
+**`scripts/imagestrip/`** strips the metadata from an SVG file and from the images a CSS or
+SVG file embeds as `data:` URIs, at any depth, for the IDE's own stylesheets. Its users are
+the twinBASIC developers, who run it in their own build, which has twinBASIC and need not
+have Node, so a Node edition of the program would serve nobody. Nothing in this repository
+runs it but the half of `test/compact-image.test.mjs` that is skipped unless `IMAGESTRIP_EXE`
+names its exe, because no gate can build it. It is laid out as a reproducer under `bugs/`
+is, an exported tree in `src/` with `imagestrip.twinproj` packed from it beside it, and
 both are checked out byte for byte so that the two agree; nothing checks that they do, so
 a change to `src/` is packed again by hand. See [Tools and
-Scripts](docs/Documentation/Tools.md#csspngstrip).
+Scripts](docs/Documentation/Tools.md#imagestrip).
+
+**Its reference is `stripFile` in `scripts/lib/compact-image.mjs`.** The test runs the program
+over a corpus of CSS and SVG files and the newest install's stylesheets, and compares its
+output, summary line and reports with `stripFile`'s byte for byte; the negative control (a
+build without one rule) fails it. The two are kept in step by hand: a change to what one
+strips is a change to both. `compactImage` in the same module is what the SVG screenshots
+(branch `svg-screenshots`, `scripts/svgshot/`) embed their images through; that branch has
+its own copy and, once merged, imports this module instead. What both strip was decided by
+the owner, 2026-10-10:
+
+- **An embedded image keeps its pixels and any notice of whose it is, and nothing else.**
+  The IDE's icons carry GIMP's EXIF, IPTC and XMP profiles (12 KB around a 28-pixel icon),
+  "Created with GIMP", Paint.NET's and ImageReady's names, CorelDRAW's and Illustrator's
+  comments and metadata, "Optimized with ezgif" in a GIF; its lock icon, from fileformat.info,
+  carries a CC BY-NC-SA attribution (Title, Author, Description with the source, Copyright)
+  that must stay with it. So a PNG keeps its image and colour chunks and the text chunks that
+  name a picture, its author, source or terms; its colour chunks go when they say only sRGB
+  (GIMP's built-in profile, 672 bytes in every PNG it saves, known by its colourants and
+  curves, with `gAMA` and `cHRM`). A JPEG keeps its coding segments, JFIF, ICC and Adobe's; a
+  GIF all but its comments; an SVG all but its declaration, an empty DOCTYPE, comments and
+  metadata; and any profile, comment or metadata that gives a value to an author or a rights
+  field stays whole, as does an EXIF that turns the picture.
+- **An image is named by its bytes.** The IDE labels a JPEG and a GIF `image/png`, and two
+  PNGs `/png` (BETA 1005).
+- **Recursive, so that CSS and SVG are handled alike.** An SVG image is stripped as an SVG
+  file is, images inside it included; one of the IDE's Illustrator icons holds a PNG with a
+  2.6 KB ICC profile in base64 broken by CR LF, which is why base64 is read as a browser
+  reads it.
+
+Two differences between the program and `compactImage` are deliberate and are `stripFile`'s
+too: a BMP is only relabelled, not converted to a PNG (that is compaction, and would need a
+PNG encoder in twinBASIC), and an image keeps its encoding --- base64 rewritten only when its
+image changed, a text SVG cut in place, escapes and all --- where `compactImage` writes every
+SVG as percent-encoded text.
 
 Two `.mjs` files also run a little PowerShell inline, for Windows state Node has no API
 for, and neither adds a file: `scripts/tbrun.mjs` takes a process snapshot with

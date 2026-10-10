@@ -77,6 +77,13 @@ node --test test/strftime.test.mjs
 @rem No tree, no browser, about 4 s.
 node --test test/png.test.mjs
 @if errorlevel 1 goto :fail
+@rem What an embedded image keeps (scripts/lib/compact-image.mjs): an
+@rem editor's metadata goes, and a notice of whose the picture is and on
+@rem what terms stays, over images built in the test. The half that runs
+@rem scripts/imagestrip/ is skipped unless IMAGESTRIP_EXE names its exe.
+@rem No tree, no browser, well under a second.
+node --test test/compact-image.test.mjs
+@if errorlevel 1 goto :fail
 @rem check_examples.mjs's probes: batching, crash isolation through a fake
 @rem lane, the canaries and the fence classifier. check_examples.mjs needs a
 @rem twinBASIC install, so it runs only by hand; its probes need none.
