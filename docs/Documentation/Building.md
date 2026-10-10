@@ -690,34 +690,16 @@ Afterwards, check the live site:
 
 ## Editing screenshots
 
-One way to edit screenshots is to use an integrated vector / pixel program like [Affinity][af]<sup>1</sup>. A possible workflow:
+The documentation's pictures of the IDE are not edited by hand. [`scripts/shoot_docs.mjs`](Tools#shoot-docs) takes them from an IDE that it starts on a private desktop, so nothing appears on your screen. It draws the arrows, rings and numbered badges on them in one style, and it writes a picture only when the IDE draws something different, so one run brings every picture up to date after a new BETA. The same tool also takes the windows of running programs and the few web pages the documentation shows.
 
-1. <kbd>PrtSc</kbd> to capture the screenshot.
+Each picture is a *shot* in the tool's table: the file it writes, the IDE it is taken in, and the steps that bring that IDE to the state the picture shows. To change a picture, change its shot and run the tool for that picture alone:
 
-2. In Affinity, <kbd>Ctrl-Alt-Shift-N</kbd> (File, New from Clipboard) to get the entire screenshot into the program.
+    node scripts/shoot_docs.mjs --only <part of the picture's path>
 
-3. Use the Vector Crop tool (from the Vector studio) to crop the screenshot down to the relevant part.
+A new picture of the IDE is a new shot, so that the next run takes it again. `node scripts/shoot_docs.mjs --help` lists the options, and [shoot_docs.mjs](Tools#shoot-docs) describes what the tool does to keep the pictures the same from one run to the next and your own settings and name out of them.
 
-   ![Affinity's studio switcher, with Vector selected rather than Pixel](Images/af-vector-studio.png) ![The Vector studio's tool column, with the Vector Crop tool highlighted](Images/af-vector-crop-tool.png)
+A picture the tool does not take, such as the GitHub pages under [Deploying to docs.twinbasic.com](#deploying-to-docstwinbasiccom), is a PNG file in the `Images` folder beside its page. The file an image editor saved it from, if you keep one, goes in the `_Images` folder beside that, which is not published.
 
-4. Select the cropped image and copy it to the clipboard with <kbd>Ctrl-C</kbd>.
-
-5. Create a new file from clipboard again to open a document with just the cropped screenshot <kbd>Ctrl-Alt-Shift-N</kbd> (File, New from Clipboard).
-
-6. Close the file you opened in step 2.
-
-7. Add arrows and labels as needed. Those can be copy-pasted from other `.af` files in this repository.
-
-8. Export to PNG via <kbd>Ctrl-Alt-Shift-W</kbd> (File, Export, Export...).
-
-> [!NOTE]
-> It is a convention to put the `.af` ("source") files in the `_Images` folder, and the exported `.png` files in the `Images` folder. Only the latter is published to the website. The former is preserved as the source for easy editing and updates.
-
----
-
-<sup>1</sup> Affinity is a free-as-in-beer suite that combines a vector editor, a bitmap editor, and a publishing layout editor. A Canva account is required to download; the accounts are free.
-
-[af]: https://www.affinity.studio/download
 [docs-pr]: https://github.com/twinbasic/documentation/compare
 [docs-repo]: https://github.com/twinbasic/documentation
 [hash-docs]: https://discord.com/channels/927638153546829845/1021635324809596988

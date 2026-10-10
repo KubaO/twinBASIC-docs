@@ -412,11 +412,11 @@ scenario("the help add-in: F1 and the help pane", (lane) => {
     assert.equal(r.headers.get("content-encoding"), "gzip");
     assert.ok(Buffer.from(await r.arrayBuffer()).equals(tree("tB/Modules/Interaction/MsgBox.html")));
 
-    r = await get("/Documentation/Images/af-vector-studio.png");
+    r = await get("/favicon.png");
     assert.equal(r.status, 200);
     assert.equal(r.headers.get("content-type"), "image/png");
     assert.equal(r.headers.get("content-encoding"), null);
-    assert.ok(Buffer.from(await r.arrayBuffer()).equals(tree("Documentation/Images/af-vector-studio.png")));
+    assert.ok(Buffer.from(await r.arrayBuffer()).equals(tree("favicon.png")));
 
     r = await get("/Features/Advanced?pane=1");
     assert.equal(r.status, 301);

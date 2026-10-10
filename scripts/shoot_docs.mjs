@@ -76,6 +76,12 @@
 //               the IDE asks about a linked copy; settings-linked the sample linking a package
 //               it has no copy of, and package-check the sample with an older build of a
 //               package from TWINSERV embedded, for the check the IDE makes as it loads it
+//   import      the sample open, and the VB6 project test/shots/vbp imported from a folder of
+//               the tool's own on PACKAGE_ROOT: the Import from twinproj dialog
+//   webpage     the demo open, and the Webpage pane on the documentation's home page, whose
+//               page is captured from its own DevTools target and put into the pane's picture
+//   web         no IDE: a Chrome (puppeteer's) on a private desktop, for the public web pages
+//               the FAQ shows, taken once, at 2x
 //
 // What makes the pictures repeatable, so that a second run changes no byte:
 //
@@ -121,6 +127,7 @@
 import { cpSync, existsSync, mkdirSync, readdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir, userInfo } from "node:os";
 import path from "node:path";
+import puppeteer from "puppeteer";
 import { createStaticHandler } from "../builder/static-files.mjs";
 import {
   die,
@@ -137,6 +144,7 @@ import { frameEval, frameOf, serveLoopback } from "../test/addin/pages.mjs";
 import { annotate as annotateOver, LAYER_ID, resolveAnchors, unannotate } from "./lib/shot-annotate.mjs";
 import { composite, uncomposite } from "./lib/shot-composite.mjs";
 import { decodePng, encodePng } from "./lib/png.mjs";
+import { iconGroup, iconImage, manifestResource, resFile } from "./lib/res-file.mjs";
 import { diffPicture } from "./lib/shot-diff.mjs";
 import { attach } from "./lib/tb-cdp.mjs";
 import { consoleMark, linesSince } from "./lib/tb-ide-console.mjs";
@@ -222,7 +230,10 @@ Project Settings' packages from TWINSERV, signed out, downloaded, embedded and l
 (setups package-server, settings-linked and package-check; they need the network),
 and the windows of a running program, the fixture test/shots/programs (setup
 programs): those are taken once, as the program draws them, at the display's
-DPI, and shown at their size at 96 DPI.
+DPI, and shown at their size at 96 DPI; a VB6 project's import (setup import),
+the Webpage pane on the documentation's home page (setup webpage), and the
+public web pages the FAQ shows, in a Chrome on a private desktop, once (setup
+web; it and webpage need the network).
 A light picture can be a few pixels off the dark one's size, since Light lays
 the window out a little differently; the site shows each at its own size.
 Each setup is one IDE, started when a picture in it is selected. A picture is
@@ -1234,6 +1245,9 @@ const SETUPS = {
   "package-server": { ports: 1, start: startPackageServer, prepare: preparePackageServer },
   "settings-linked": { ports: 1, start: startSettings("linked"), prepare: prepareSample },
   "package-check": { ports: 1, start: startPackageCheck, prepare: prepareSample },
+  import: { ports: 1, start: startImport, prepare: prepareSample },
+  webpage: { ports: 1, start: startProject, prepare: prepareWebpage },
+  web: { ports: 1, start: startWeb, prepare: prepareWeb },
 };
 
 // ---------------------------------------------------------------- the shots of the no-project setup
@@ -1305,8 +1319,8 @@ const TOP_MODAL = `[...document.querySelectorAll(".modalDialogContainer")].filte
 // decoded and the page's fonts loaded, and two frames are drawn: a dialog that fills itself
 // in (Project Settings asks the compiler for its lists) is then done. Says so when the
 // dialog was still changing after `timeout`, and goes on. `root`, an expression for another
-// element, waits for that one instead.
-async function dialogStill(c, { ms = 250, timeout = 5000, root = TOP_MODAL } = {}) {
+// element, waits for that one instead, and `what` names it.
+async function dialogStill(c, { ms = 250, timeout = 5000, root = TOP_MODAL, what = null } = {}) {
   const r = await c.evaluate(
     `(async () => {
   const root = ${root};
@@ -1329,7 +1343,7 @@ async function dialogStill(c, { ms = 250, timeout = 5000, root = TOP_MODAL } = {
   if (r === "moving") {
     say(
       c.shot.name,
-      `  the ${root === TOP_MODAL ? "dialog" : "designer"} was still changing after ${timeout / 1000} s`,
+      `  the ${what ?? (root === TOP_MODAL ? "dialog" : "designer")} was still changing after ${timeout / 1000} s`,
     );
   }
 }
@@ -6586,6 +6600,398 @@ async function startPackageCheck(run) {
   return run.lane.open(src);
 }
 
+// ---------------------------------------------------------------- pictures not of the IDE's own UI
+
+// ---- import: the sample open, and a VB6 project, test/shots/vbp's ImportDemo, imported as the
+// Add menu's Import imports a .vbp. The IDE's own Open dialog is a native window, so the take
+// calls what the IDE calls with the file chosen in it (importFileByPath); the IDE then loads the
+// project in a compiler of its own and shows the Import from twinproj dialog, its tree of what
+// it found. The project is staged on PACKAGE_ROOT, a folder of the tool's own at the root of
+// the temp folder's drive, since the dialog names the .vbp's path: with CRLF line ends, as VB6
+// writes its files, a module in a folder beside the project's (Shared), which the IDE puts
+// under {PARENT-FOLDER}, and a resource file the tool writes (lib/res-file.mjs): three icons
+// and the manifest test/shots/vbp/manifest.xml.
+
+const VBP = path.join(REPO_ROOT, "test", "shots", "vbp");
+const VBP_ROOT = path.join(PACKAGE_ROOT, "Projects");
+const VBP_FILE = path.join(VBP_ROOT, "ImportDemo", "ImportDemo.vbp");
+
+function stageVbp() {
+  rmSync(VBP_ROOT, { recursive: true, force: true });
+  for (const dir of ["ImportDemo", "Shared"]) {
+    mkdirSync(path.join(VBP_ROOT, dir), { recursive: true });
+    for (const f of readdirSync(path.join(VBP, dir))) {
+      const text = readFileSync(path.join(VBP, dir, f), "utf8");
+      writeFileSync(path.join(VBP_ROOT, dir, f), text.replace(/\r?\n/g, "\r\n"));
+    }
+  }
+  writeFileSync(
+    path.join(VBP_ROOT, "ImportDemo", "ImportDemo.res"),
+    resFile([
+      ...iconGroup("APPICON", 1, iconImage(32, [200, 40, 40], "square")),
+      ...iconGroup("CIRCLE", 2, iconImage(32, [40, 90, 200], "circle")),
+      ...iconGroup("SQUARE", 3, iconImage(32, [40, 160, 70], "square")),
+      manifestResource(readFileSync(path.join(VBP, "manifest.xml"))),
+    ]),
+  );
+}
+
+async function startImport(run) {
+  stageVbp();
+  return startSample(run);
+}
+
+// A row of the import dialog's tree, by its name.
+const importRow = (name) => `[...document.querySelectorAll(".objListImportItem")].find((r) =>
+  r.querySelector(".objListText2")?.textContent.trim() === ${JSON.stringify(name)})`;
+const IMPORT_TICKED = ["Form1.frm.tbform", "Form1.frm.twin"];
+
+// The dialog with every folder open (the IDE opens all but Miscellaneous) and the form's two
+// files ticked with real clicks, as the FAQ tells the reader to: the dialog's title bar and its
+// tree, down to the last row and across to the end of the widest, as the page has always shown
+// it, without the empty rest of the list and the buttons.
+const importShot = {
+  out: "Miscellaneous/Images/16833fae-4bd7-418f-bb16-691a611a5b01.png",
+  setup: "import",
+  async take({ c }) {
+    await resetUi(c);
+    await c.evaluate(`importFileByPath(${JSON.stringify(VBP_FILE)}, () => {})`);
+    try {
+      if (!(await waitModal(c, "Import from twinproj", { timeout: 60000 }))) {
+        throw new Error("the Import from twinproj dialog did not open");
+      }
+      if (!(await waitFor(c, () => c.evaluate(`!!${importRow("Miscellaneous")}`), { timeout: 30000 }))) {
+        throw new Error("the import dialog never listed the project's files");
+      }
+      for (const name of IMPORT_TICKED) {
+        const box = await c.evaluate(`(() => {
+  const r = ${importRow(name)}?.querySelector("#checkMark")?.getBoundingClientRect();
+  return r ? { x: r.x + r.width / 2, y: r.y + r.height / 2 } : null;
+})()`);
+        if (!box) throw new Error(`the import dialog has no ${name}`);
+        await clickAt(c, box.x, box.y);
+        const ticked = `${importRow(name)}?.querySelector("#checkMark")?.classList.contains("codicon-check")`;
+        if (!(await waitFor(c, () => c.evaluate(ticked), { timeout: 3000, interval: 50 }))) {
+          throw new Error(`${name} was not ticked`);
+        }
+      }
+      await dialogStill(c);
+      return await dialogShot(c, "import", async (m) => {
+        const rows = await c.evaluate(`(() => {
+  const rs = [...document.querySelectorAll(".objListImportItem")].filter((r) => r.getBoundingClientRect().width);
+  const right = Math.max(...rs.flatMap((r) => [...r.children].map((k) => k.getBoundingClientRect().right)));
+  return { right, bottom: Math.max(...rs.map((r) => r.getBoundingClientRect().bottom)) };
+})()`);
+        // the dialog is centred, so its box can start half a CSS pixel above its border, on
+        // what is behind it
+        const top = Math.ceil(m.y);
+        return { x: m.x, y: top, width: rows.right + 16 - m.x, height: rows.bottom + 12 - top };
+      });
+    } finally {
+      await cancelImport(c);
+    }
+  },
+};
+
+// Cancel ends the compiler the IDE loaded the project in, and the IDE then restarts its own:
+// once that is done, the DEBUG CONSOLE's line about it, which names the work folder, under the
+// user's, is cleared, so that the next picture's page does not hold it. A compiler that does not
+// come back is said; the next picture's user-name check fails if its line is still there.
+async function cancelImport(c) {
+  if (!(await modals(c)).length) return;
+  await closeModal(c, "Cancel");
+  await waitFor(c, async () => /restarting from/.test(await consoleText(c)), { timeout: 15000, interval: 200 });
+  if (!(await waitFor(c, () => servicesAre(c, "servicesOK"), { timeout: 60000, interval: 250 }))) {
+    complain(c.shot.name, "the compiler did not come back after the import was cancelled");
+  }
+  await clearUserFromConsole(c);
+}
+
+// ---- webpage: the demo open, and the Webpage pane on its own, floating, showing the
+// documentation's home page at the IDE's default zoom, 70%. The pane's page is a second
+// WebView2 that the IDE's host lays over the pane, so a capture of the IDE's page holds the
+// pane's header and an empty body: the page is captured from its own DevTools target (the
+// host's WebView2s share the IDE's port) at the same 2x and put where the host puts it, one
+// pixel inside the pane's body (syncPosition). The pane's settings are the IDE's defaults with
+// the documentation's address, in the page only (the IDE's call that saves them is one
+// PAGE_DEFAULTS has made do nothing). The page follows the OS's light or dark preference,
+// set to the theme of the picture.
+
+const WEBPAGE_URL = "https://docs.twinbasic.com/";
+const WEBPAGE_PANEL = "webpagePanel._this.sectionHeader.panelDiv";
+const WEBPAGE_BOX = { left: 140, top: 120, width: 340, height: 500 };
+
+// The pane's page's target once it shows `url` and has loaded, its fonts and images too.
+async function paneTarget(port, url) {
+  const p = await waitFor(
+    null,
+    async () => {
+      try {
+        return await attach(port, url);
+      } catch {
+        return null;
+      }
+    },
+    { timeout: 30000, interval: 250 },
+  );
+  if (!p) throw new Error(`the Webpage pane never showed ${url}`);
+  // the page is still being replaced when its target first has the address: an evaluation
+  // then finds no document to run in
+  const loaded = `location.href === ${JSON.stringify(url)} && document.readyState === "complete" && document.fonts.status === "loaded" && [...document.images].every((i) => i.complete)`;
+  const ready = () => p.evaluate(loaded).catch(() => false);
+  if (!(await waitFor(p, ready, { timeout: 30000, interval: 100 }))) {
+    p.close();
+    throw new Error(`${url} did not finish loading in the Webpage pane`);
+  }
+  return p;
+}
+
+// Copies the pixels of `part` into `whole` (both decoded pictures) at (x, y).
+function paste(whole, part, x, y) {
+  for (let row = 0; row < part.height; row++) {
+    whole.rgba.set(
+      part.rgba.subarray(row * part.width * 4, (row + 1) * part.width * 4),
+      ((y + row) * whole.width + x) * 4,
+    );
+  }
+}
+
+async function prepareWebpage(run) {
+  return { ...(await prepareProject(run)), port: run.ports[0] };
+}
+
+const webpageShot = {
+  out: "IDE/Images/Webpage.png",
+  setup: "webpage",
+  async take({ c, port }) {
+    await resetUi(c);
+    const dark = await pageIsDark(c);
+    await c.evaluate(`liveWebpanelSettings = { zoom: 0.7, url: ${JSON.stringify(WEBPAGE_URL)}, mobileMode: false }`);
+    await command(c, "tbWebpage_ShowPanel");
+    let p = null;
+    try {
+      if (
+        !(await waitFor(c, () => c.evaluate(`!!${WEBPAGE_PANEL}?.getBoundingClientRect().width`), { timeout: 5000 }))
+      ) {
+        throw new Error("the Webpage pane did not appear");
+      }
+      await c.evaluate(`(() => {
+  Object.assign(${WEBPAGE_PANEL}.style, ${JSON.stringify(Object.fromEntries(Object.entries(WEBPAGE_BOX).map(([k, v]) => [k, `${v}px`])))});
+  webpagePanel.syncSettings();
+  webpagePanel.syncPosition();
+})()`);
+      const url = () => c.evaluate("webpagePanel.webpagePanelHeaderUrl.value");
+      if (!(await waitFor(c, async () => (await url()) === WEBPAGE_URL, { timeout: 30000 }))) {
+        throw new Error(`the Webpage pane's address is ${await url()}, not ${WEBPAGE_URL}`);
+      }
+      p = await paneTarget(port, WEBPAGE_URL);
+      p.shot = newShotState("webpage");
+      const inner = await rectOf(c, ".webpagePanelInner");
+      const view = { width: inner.width - 2, height: inner.height - 2 };
+      if (!Number.isInteger(inner.x) || !Number.isInteger(inner.y) || !Number.isInteger(view.width)) {
+        throw new Error(`the Webpage pane's body is not on whole pixels: ${JSON.stringify(inner)}`);
+      }
+      await p.send("Emulation.setEmulatedMedia", {
+        features: [{ name: "prefers-color-scheme", value: dark ? "dark" : "light" }],
+      });
+      await p.send("Emulation.setDeviceMetricsOverride", { ...view, deviceScaleFactor: SCALE, mobile: false });
+      await p.evaluate("window.scrollTo(0, 0)");
+      await frames(p);
+      const page = decodePng(await capture(p, "webpage", null));
+      if (page.width !== view.width * SCALE || page.height !== view.height * SCALE) {
+        throw new Error(
+          `the pane's page came out ${page.width}x${page.height} px, not ${view.width}x${view.height} at 2x`,
+        );
+      }
+      const panel = await c.evaluate(
+        `(() => { const r = ${WEBPAGE_PANEL}.getBoundingClientRect(); return { x: r.x, y: r.y, width: r.width, height: r.height }; })()`,
+      );
+      const clip = snapOut(panel);
+      const whole = decodePng(await capture(c, "Webpage", clip, { frame: p, away: () => parkMouse(c) }));
+      paste(whole, page, (inner.x + 1 - clip.x) * SCALE, (inner.y + 1 - clip.y) * SCALE);
+      return encodePng(whole);
+    } finally {
+      if (p) {
+        await p.send("Emulation.clearDeviceMetricsOverride").catch(() => {});
+        p.close();
+      }
+      await command(c, "tbWebpage_HidePanel");
+    }
+  },
+};
+
+// ---- web: public web pages the FAQ shows, in a Chrome the tool starts on a private desktop
+// of its own (puppeteer's, with a profile in the job's work folder), driven over DevTools as the
+// IDE's page is. A page is no part of the IDE, so each picture is taken once, at 2x, in the
+// page's light colours (the OS preference set to light). Their numbers are whatever the page
+// says today: a release's size and age, a runtime's version.
+
+async function startWeb(run) {
+  run.step = "open";
+  const port = run.ports[0];
+  const exe = await puppeteer.executablePath();
+  if (!existsSync(exe)) throw new Error(`no Chrome at ${exe}: run npm install`);
+  say(run.name, "starting Chrome");
+  const browser = await launchOnDesktop({
+    exe,
+    args: [
+      `--remote-debugging-port=${port}`,
+      `--user-data-dir=${path.join(run.work, "chrome")}`,
+      "--no-first-run",
+      "--no-default-browser-check",
+      "--force-device-scale-factor=1",
+      "--window-size=1400,1000",
+      // a window on a desktop nobody sees counts as hidden, and Chrome then draws no frames:
+      // the captures would wait for one, or hold a blank page
+      "--disable-features=CalculateNativeWinOcclusion",
+      "--disable-backgrounding-occluded-windows",
+      "--disable-renderer-backgrounding",
+      "about:blank",
+    ],
+    desktop: `tbshoot-web-${port}`,
+    env: process.env,
+  });
+  // ended as an IDE is, by the lane: by its process id, with every process it started
+  run.lane.run = browser;
+  const c = await waitFor(
+    null,
+    async () => {
+      try {
+        return await attach(port, "about:blank");
+      } catch {
+        return null;
+      }
+    },
+    { timeout: 30000, interval: 250 },
+  );
+  if (!c) throw new Error("Chrome never offered its page on its DevTools port");
+  c.dialogs = [];
+  run.lane.c = c;
+  await c.send("Page.enable");
+  await c.send("Emulation.setEmulatedMedia", { features: [{ name: "prefers-color-scheme", value: "light" }] });
+  return c;
+}
+
+async function prepareWeb(run) {
+  run.step = "shoot";
+  return { c: run.c };
+}
+
+// Loads `url` into the page at `width` by IDE_SIZE.height CSS pixels, and waits until it and
+// its fonts and images have loaded.
+async function webPage(c, url, width) {
+  await c.send("Emulation.setDeviceMetricsOverride", {
+    width,
+    height: IDE_SIZE.height,
+    deviceScaleFactor: SCALE,
+    mobile: false,
+  });
+  await c.send("Page.navigate", { url });
+  const loaded = `document.readyState === "complete" && document.fonts.status === "loaded" && [...document.images].every((i) => i.complete)`;
+  if (
+    !(await waitFor(c, () => c.evaluate(`location.href !== "about:blank" && ${loaded}`), {
+      timeout: 60000,
+      interval: 250,
+    }))
+  ) {
+    throw new Error(`${url} did not finish loading`);
+  }
+  await quiet(c);
+}
+
+// The element the expression `find` gives, scrolled so that its top is `top` CSS pixels below
+// the window's (out from under a page's fixed header), once what scrolling into view starts has
+// settled; its box. A page that is still building itself after it has loaded (Microsoft's
+// replaces its content, and the document's scroll goes back to the top) is waited for: the page
+// is left until nothing in it has changed for a second, then scrolled, and that again until
+// the element stays where it was put.
+async function scrolledTo(c, find, top) {
+  const at = () =>
+    c.evaluate(
+      `(() => { const e = ${find}; if (!e) return null; const r = e.getBoundingClientRect(); return { x: r.x, y: r.y, width: r.width, height: r.height }; })()`,
+    );
+  for (let i = 0; i < 6; i++) {
+    await dialogStill(c, { ms: 1000, timeout: 15000, root: "document.body", what: "page" });
+    const box = await waitFor(c, at, { timeout: 15000, interval: 200 });
+    if (!box) throw new Error(`nothing on the page answers ${find}`);
+    if (Math.abs(box.y - top) < 1) return box;
+    await c.evaluate(`window.scrollBy(0, ${Math.round(box.y - top)})`);
+    await sleep(500);
+  }
+  throw new Error(`the page would not keep ${find} where it was scrolled to`);
+}
+
+// A capture's clip is in the document's coordinates, not the window's: the window's box `r`,
+// inside a window `width` CSS pixels wide, snapped to whole device pixels and moved by how far
+// the page is scrolled.
+async function pageClip(c, r, width) {
+  const clip = snapOut(r, width);
+  const { x, y } = await c.evaluate("({ x: scrollX, y: scrollY })");
+  return { ...clip, x: clip.x + x, y: clip.y + y };
+}
+
+// Microsoft's WebView2 download page, its three cards: the arrow and the ring point at the
+// Evergreen Standalone Installer's x86 download. At the width of a desktop's window, where the
+// cards are in one row and the Fixed Version's two lists side by side.
+const WV2_HEADING = `[...document.querySelectorAll("h2")].find((h) => /Download the WebView2 Runtime/.test(h.textContent))`;
+const WV2_CARD = { css: "h3", text: "Evergreen Standalone Installer" };
+const WV2_WIDTH = 1280;
+const webView2Shot = {
+  out: "Miscellaneous/Images/94490c87-fafe-4d5b-ae39-d3cedba1c21d.png",
+  setup: "web",
+  once: true,
+  async take({ c }) {
+    await webPage(c, "https://developer.microsoft.com/en-us/microsoft-edge/webview2", WV2_WIDTH);
+    const heading = await scrolledTo(c, WV2_HEADING, 100);
+    const cards = await c.evaluate(`(() => {
+  const r = document.querySelector(".block-webview2").getBoundingClientRect();
+  return { x: r.x, y: r.y, width: r.width, height: r.height };
+})()`);
+    const area = {
+      x: cards.x - 8,
+      y: heading.y - 24,
+      width: cards.width + 16,
+      height: cards.y + cards.height + 16 - heading.y + 24,
+    };
+    try {
+      const { box } = await annotateOver(c, [
+        { type: "arrow", from: { of: WV2_CARD, at: "left", dx: -44 }, to: { of: WV2_CARD, at: "left", dx: -2 } },
+        { type: "ring", on: { css: "button", text: "x86" } },
+      ]);
+      return await capture(c, "webview2", await pageClip(c, union(area, box), WV2_WIDTH));
+    } finally {
+      await unannotate(c);
+    }
+  },
+};
+
+// The newest twinBASIC release on GitHub, its Assets list opened with a real click, as the
+// FAQ tells the reader to: the first release of the repository's list of releases, in a window
+// wide enough for the start of the file's SHA-256. The list, without the release's box around it.
+const ASSETS = `[...document.querySelectorAll("summary")].find((s) => /^Assets/.test(s.textContent.trim()))`;
+const RELEASE_WIDTH = 1280;
+const releaseShot = {
+  out: "Miscellaneous/Images/ac019c1a-dcef-4964-a730-bc5b86c644ba.png",
+  setup: "web",
+  once: true,
+  async take({ c }) {
+    await webPage(c, "https://github.com/twinbasic/twinbasic/releases", RELEASE_WIDTH);
+    const summary = await scrolledTo(c, ASSETS, 120);
+    const open = () => c.evaluate(`${ASSETS}.parentElement.open && /\\.zip/.test(${ASSETS}.parentElement.innerText)`);
+    if (!(await open())) {
+      await clickAt(c, summary.x + 20, summary.y + summary.height / 2);
+      if (!(await waitFor(c, open, { timeout: 15000, interval: 200 }))) throw new Error("the Assets list did not open");
+    }
+    await dialogStill(c, { ms: 500, timeout: 10000, root: `${ASSETS}.parentElement`, what: "Assets list" });
+    const list = await c.evaluate(
+      `(() => { const r = ${ASSETS}.parentElement.getBoundingClientRect(); return { x: r.x, y: r.y, width: r.width, height: r.height }; })()`,
+    );
+    return capture(c, "release", await pageClip(c, grow(list, 12), RELEASE_WIDTH), { away: () => parkMouse(c) });
+  },
+};
+
+const notIdeShots = [importShot, webpageShot, webView2Shot, releaseShot];
+
 // ---------------------------------------------------------------- the shots of the help setup
 
 function helpTakes(ctx) {
@@ -7054,6 +7460,7 @@ const SHOTS = [
   packageBuildShot,
   fusionShot,
   ...packageServerShots,
+  ...notIdeShots,
 ];
 
 // ---------------------------------------------------------------- the jobs
@@ -7114,6 +7521,9 @@ const JOB_SECONDS = {
   "package-server": 150,
   "settings-linked": 12,
   "package-check": 15,
+  import: 20,
+  webpage: 20,
+  web: 20,
 };
 
 // ---------------------------------------------------------------- run
@@ -7191,13 +7601,14 @@ const savedApps = [...new Set(wanted.filter((name) => ADDIN_SETTINGS[name]).map(
 const settingsBefore = savedApps.length ? snapshotKeys(savedApps.map(settingsKey)) : null;
 if (settingsBefore) deleteSettings(savedApps);
 
-// The build folder the package and fusion setups write into, and the APPDATA of the
-// package-server setup, removed at the end unless it was there before the run; the APPDATA,
-// the tool's own, is removed either way.
+// The build folder the package and fusion setups write into, the APPDATA of the
+// package-server setup and the VB6 project the import setup stages, removed at the end unless
+// it was there before the run; the APPDATA and the project, the tool's own, are removed either way.
 const removePackageRoot = !existsSync(PACKAGE_ROOT)
   ? () => rmSync(PACKAGE_ROOT, { recursive: true, force: true })
   : () => {
       if (wanted.includes("package-server")) rmSync(PACKAGES_APPDATA, { recursive: true, force: true });
+      if (wanted.includes("import")) rmSync(VBP_ROOT, { recursive: true, force: true });
     };
 
 const running = new Set(); // the jobs with an IDE open: { lane, server }

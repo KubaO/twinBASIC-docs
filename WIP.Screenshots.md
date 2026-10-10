@@ -169,7 +169,8 @@ back).
   RESYNC), and `forms` (the same without the add-in), `community` (the demo, its compiler
   restarted on an empty licence key in the page) and `splash` (the demo, for the splash
   alone), group B's `programs`, `codelens`, `package` and `fusion`, and group C's
-  `package-server`, `settings-linked` and `package-check` (below). A setup is
+  `package-server`, `settings-linked` and `package-check`, and group D's `import`, `webpage`
+  and `web` (a Chrome, not an IDE) (below). A setup is
   `{name, start, prepare}`.
   Every add-in a setup loads has its `SaveSetting` key snapshotted, emptied and restored
   (`tbDocsHelp`, `GlobalSearchAddIn`).
@@ -455,6 +456,50 @@ deleted, each page keeping its own alt text); `packPublishPackage1` keeps its ol
   queued. `applyChanges` clears the DEBUG CONSOLE first, so one crash does not fail every later
   Apply, and prints the crash lines.
 - All pictures are page captures, so the page-text check for the user name covers them.
+
+### Group D, not of the IDE (2026-10-10)
+
+Four retaken on BETA 1005; the two Affinity crops (`af-vector-studio`, `af-vector-crop-tool`)
+deleted with their `.af` sources, and `Building.md`'s "Editing screenshots" now points at the
+tool. The six GitHub walkthrough pictures, the GIF and `favicon.png` are untouched (owner).
+**12 images under `docs/` are now outside the tool**: the two tooltips, `packPublishPackage1`,
+`packPublishComplete1`, the six GitHub pictures, `tbWebView2InAForm.gif` and `favicon.png`.
+
+- **`16833fae`** (setup `import`): the sample open, and `test/shots/vbp` (ImportDemo: a form,
+  a module, `..\Shared\modShared.bas` for `{PARENT-FOLDER}`) staged with CRLF on
+  `PACKAGE_ROOT\Projects` (the path the dialog shows, `C:\tbshots\Projects\ImportDemo\ImportDemo.vbp`),
+  with a `.res` the tool writes (`scripts/lib/res-file.mjs`: three icons and the fixture's
+  manifest). The IDE's Open dialog is native, so the take calls `importFileByPath` with the
+  file, what the IDE calls with the file chosen; the form's two files are ticked with real
+  clicks. Cancel ends the import's compiler and the IDE then restarts its own, writing a
+  DEBUG CONSOLE line that names the work folder: the take waits for the restart and clears the
+  console, or the light pass's page fails the user-name check. Both themes (the title bar).
+- **`IDE/Images/Webpage.png`** (setup `webpage`): the pane's page is a second WebView2 on the
+  IDE's DevTools port (its own `page` target, title the page's). The take sets
+  `liveWebpanelSettings` in the page (the IDE's defaults, zoom 0.7, with
+  `https://docs.twinbasic.com/`; the user's saved settings are read by the IDE but never shown
+  or written), floats the pane at 340x500, captures the pane's target with
+  `setDeviceMetricsOverride` at the body's size less 2 (the host puts the WebView2 one pixel
+  inside it, `syncPosition`) at 2x, and pastes it into the page's capture of the pane. The page's
+  `prefers-color-scheme` follows the picture's theme, so the dark picture shows the docs dark.
+  The IDE itself draws a host screenshot into the pane when something covers it
+  (`AskForAdditionalWebview2Screenshot`, `checkObscured`), at the host's 1.5x: not used.
+  The target's text is searched for the user name with the page's.
+- **`94490c87`, `ac019c1a`** (setup `web`): no IDE; puppeteer's Chrome started by
+  `launchOnDesktop` on a private desktop (not headless, so its user agent is the ordinary one)
+  with `CalculateNativeWinOcclusion` and the backgrounding of occluded windows off: on a desktop
+  nobody sees, Chrome otherwise draws no frame and a capture waits forever or holds a blank page.
+  Both `once`, at 2x, light. A clip is in document coordinates (`pageClip`): nothing else in the
+  tool scrolls. Microsoft's page rebuilds itself after `load` and puts its scroll back to the
+  top, so `scrolledTo` waits for the page to stay still and scrolls until the element stays
+  put. Its cookie banner is at the top of the page and outside the crop; nothing is clicked on
+  it. The arrow and ring are the overlay's. The GitHub page is the repository's release list,
+  whose first release is the newest (`releases/latest` skips pre-releases); Assets is opened
+  with a real click. Its numbers (39.3 MB, "yesterday", the version) are today's; the FAQ's alt
+  no longer names them, and its install-size entry now says about 40 MB and 120 MB (the BETA
+  1005 folder less the runtime's `.WebView2` data folder).
+- `test/addin/help.test.mjs` fetched `af-vector-studio.png` as its sample PNG; it now fetches
+  `/favicon.png`.
 
 ## Machine state in the pictures (owner, 2026-10-08)
 
