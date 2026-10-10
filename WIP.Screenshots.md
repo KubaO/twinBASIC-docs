@@ -690,8 +690,28 @@ that box. The chevron is 8 by 4 px, stroked 2 px wide, centred in the 16 px box 
 box's right edge whatever the padding, its top 2 px above the box's middle rounded down: fitted
 against Chromium's own arrow in Edge.
 
+**Underlines** (`decoratingBoxes`, `underlineBand`, `inkBand` in `snapshot-svg.mjs`). A text
+decoration is not inherited: the converter walks up from the text and takes the line of every box
+that sets one, through blocks, stopping after an atomic inline box, a float or a positioned box.
+Fitted in Edge 155 on `bench/decoration.html`, in whole CSS px since Chromium snaps the line at
+1x: the baseline rounded; an auto thickness `max(1, floor(size/10))`, a given one rounded; an auto
+offset `max(1, ceil(size/10/2))` below the baseline, a given one rounded with no gap of its own
+(the package-server tip is 13 px with the IDE's `text-underline-offset: 2px`, so 2 px down, 1
+thick); the sizes and the colour (`text-decoration-color`) from the box that sets the line. Chromium
+cuts a gap round each descender, as wide as the unrounded thickness on each side; `capture.mjs`
+finds the ink by drawing the run 16 times as large on a canvas in the measuring layer
+(`convert.mjs`, which runs no measuring layer, draws lines whole). Reported as not drawn:
+overline, line-through, every style but solid, and `text-underline-position` other than auto.
+`test/svgshot.test.mjs` holds the fitted figures.
+
+**A background image is sized by its bytes** (`naturalSize`), not by the type its URL names:
+the IDE calls a JPEG and a BMP `image/png`. The About dialog's EXCALIBUR logo is such a JPEG,
+drawn with `background-size: contain`; read as a PNG, its JFIF header gave 4,718,592 by about 4.3
+billion pixels, and the logo came out 0.054 px wide. That, not the logos' resampling, is what
+kept `Menu_Help_About` a PNG.
+
 **The bench** (`node scripts/svgshot/bench.mjs`, outside every gate, needs Edge and fontTools)
-draws the pages under `scripts/svgshot/bench/` (scrollbars, drop-down lists) with the converter
+draws the pages under `scripts/svgshot/bench/` (scrollbars, drop-down lists, underlines) with the converter
 and compares them with the browser's own picture: in Edge, whose Chromium is the IDE's WebView2's
 (Puppeteer's trails it, and draws the select's arrow otherwise), laid out at 1x and drawn at 2x
 as the IDE is, text without ClearType. Each page is held to the figures recorded in
@@ -703,6 +723,12 @@ A new replica gets a page there.
 
 **Not drawn yet:** the platform's own scrollbars, a textarea's resize grip, a number input's spin
 buttons, an indeterminate checkbox, conic gradients, the 2011 `-webkit-radial-gradient`, `filter:
-hue-rotate`, an inset shadow's blur, the help pane's cross-origin frame. Drawn wrongly: a
-collapsed table border, doubled (the IDE has none). A canvas is a raster (the editor's minimap is
-drawn with `putImageData`). The run reports each under "not drawn".
+hue-rotate`, an inset shadow's blur, the help pane's cross-origin frame, and the Webpage pane's
+page (another target, which `webpage` pastes into the PNG from its own capture), so those
+pictures stay PNG. A web page's fonts from a cross-origin style sheet are not embedded: `webFont`
+reads `document.styleSheets`, whose rules such a sheet hides. Of the `web` setup's two pages,
+the WebView2 download page (`94490c87`) is kept as PNG for it, and for its icons, its drop-down
+lists and its annotation, which do not come out either (not looked into: it is Microsoft's page,
+taken once). Drawn wrongly: a collapsed table border, doubled (the IDE has none). A canvas is a
+raster (the editor's minimap is drawn with `putImageData`). The run reports each under "not
+drawn".

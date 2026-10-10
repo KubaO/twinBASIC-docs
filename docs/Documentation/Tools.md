@@ -82,7 +82,7 @@ The tests the toolchain has to pass. Twenty-four steps, each stopping the run if
 7. [`test/strftime.test.mjs`](#strftime-test) --- unit tests for the footer's date formatter, which no build calls.
 8. [`test/png.test.mjs`](#png-test) --- unit tests for the pictures of a bug reproducer: PNG decoding, comparing and the side-by-side image, the files behind `images` and `expect.imagesDiffer`, and the refusals of `bug_repro.mjs` over fixtures.
 9. [`test/compact-image.test.mjs`](#compact-image-test) --- unit tests for what an embedded image keeps: an editor's metadata goes, and a notice of whose the picture is and on what terms stays. The half that runs [`imagestrip`](#imagestrip) is skipped unless its exe is named.
-10. [`test/svgshot.test.mjs`](#svgshot-test) --- unit tests that an SVG screenshot is written on one line.
+10. [`test/svgshot.test.mjs`](#svgshot-test) --- unit tests that an SVG screenshot is written on one line, that its underlines are placed as Chromium places them, and that a background image is sized by its bytes.
 11. [`test/example-batches.test.mjs`](#example-batches-test) --- runs `check_examples.mjs`'s probes, which test how samples are batched and how a crashed batch is cut down, without an IDE.
 12. [`test/ports.test.mjs`](#ports-test) --- unit tests for how the harness claims the DevTools ports its IDEs use, without an IDE.
 13. [`test/addin-project.test.mjs`](#addin-project-test) --- unit tests for how the build packs the help add-in's project file: exactly the files git tracks in `add-in/`, never `Resources/HELP/`, the same bytes from any checkout.
@@ -668,7 +668,7 @@ Exit codes: **0** every test passed, **1** a test failed.
 
     node --test test/svgshot.test.mjs
 
-Unit tests for `oneLine` in `scripts/svgshot/snapshot-svg.mjs`, which writes a picture's SVG on one line (see [A picture as SVG](Authoring#a-picture-as-svg)). A line break inside a tag becomes a space, and one in text becomes a character reference, so the picture looks the same. Git may check an SVG out with Windows line endings, and on one line only its last line ending changes. What the SVG keeps of an image it embeds is `compactImage`'s, from `scripts/lib/compact-image.mjs`, which [`compact-image.test.mjs`](#compact-image-test) tests. No browser, no built tree, well under a second.
+Unit tests for `oneLine` in `scripts/svgshot/snapshot-svg.mjs`, which writes a picture's SVG on one line (see [A picture as SVG](Authoring#a-picture-as-svg)). A line break inside a tag becomes a space, and one in text becomes a character reference, so the picture looks the same. Git may check an SVG out with Windows line endings, and on one line only its last line ending changes. The same file tests where an underline goes: `underlineBand` gives its distance below the baseline and its thickness from the font size, by figures checked against Edge, and `decoratingBoxes` finds the boxes whose underline applies to a text. It also tests `naturalSize`, which reads a background image's size from its bytes rather than from the type its URL names, since the IDE labels a JPEG as `image/png`. What the SVG keeps of an image it embeds is `compactImage`'s, from `scripts/lib/compact-image.mjs`, which [`compact-image.test.mjs`](#compact-image-test) tests. No browser, no built tree, well under a second.
 
 Exit codes: **0** every test passed, **1** a test failed.
 

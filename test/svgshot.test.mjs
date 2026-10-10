@@ -1,15 +1,39 @@
 // Tests for scripts/svgshot/snapshot-svg.mjs that need no browser: oneLine, which keeps a
 // picture's SVG on one line, so that a CRLF checkout changes only its last line ending, and
 // underlineBand and decoratingBoxes, which place an underline as Chromium does: the figures
-// below are the ones scripts/svgshot/bench/decoration.html was fitted to in Edge. What a
-// picture's SVG keeps of an image it embeds is compactImage's, in
-// scripts/lib/compact-image.mjs, and test/compact-image.test.mjs tests it.
+// below are the ones scripts/svgshot/bench/decoration.html was fitted to in Edge; and
+// naturalSize, which sizes a background image by its bytes. What a picture's SVG keeps of an
+// image it embeds is compactImage's, in scripts/lib/compact-image.mjs, and
+// test/compact-image.test.mjs tests it.
 //
 // Runs with a bare `node --test test/svgshot.test.mjs`: no tree, no build.
 
 import assert from "node:assert/strict";
 import { describe, test } from "node:test";
-import { decoratingBoxes, oneLine, underlineBand } from "../scripts/svgshot/snapshot-svg.mjs";
+import { decoratingBoxes, naturalSize, oneLine, underlineBand } from "../scripts/svgshot/snapshot-svg.mjs";
+
+describe("naturalSize", () => {
+  const png = (bytes) => `data:image/png;base64,${Buffer.from(bytes).toString("base64")}`;
+  // A JFIF header, a quantisation table segment, then a baseline frame of 480 by 240.
+  const jpeg = [
+    ...[0xff, 0xd8, 0xff, 0xe0, 0x00, 0x10, 0x4a, 0x46, 0x49, 0x46, 0x00, 0x01, 0x01, 0x00, 0x00, 0x48, 0x00, 0x48],
+    ...[0x00, 0x00, 0xff, 0xdb, 0x00, 0x04, 0x00, 0x00],
+    ...[
+      0xff, 0xc0, 0x00, 0x11, 0x08, 0x00, 0xf0, 0x01, 0xe0, 0x03, 0x01, 0x22, 0x00, 0x02, 0x11, 0x01, 0x03, 0x11, 0x01,
+    ],
+  ];
+
+  test("reads a JPEG the IDE calls image/png from its frame header, not as a PNG", () => {
+    assert.deepEqual(naturalSize(png(jpeg)), { w: 480, h: 240 });
+  });
+
+  test("reads a PNG and a GIF from their headers", () => {
+    const ihdr = [0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a, 0, 0, 0, 13, 0x49, 0x48, 0x44, 0x52];
+    assert.deepEqual(naturalSize(png([...ihdr, 0, 0, 0, 16, 0, 0, 0, 9, 8, 6, 0, 0, 0])), { w: 16, h: 9 });
+    const gif = [0x47, 0x49, 0x46, 0x38, 0x39, 0x61, 20, 0, 10, 0, 0, 0, 0];
+    assert.deepEqual(naturalSize(png(gif)), { w: 20, h: 10 });
+  });
+});
 
 describe("oneLine", () => {
   test("puts a break in a tag as a space and one in text as a character reference", () => {

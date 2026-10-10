@@ -658,8 +658,25 @@ function backgroundBoxes(st, b, r, bw) {
   };
 }
 
+// The size a JPEG's frame header (a SOF marker) gives, or null when the segments
+// before it cannot be followed.
+function jpegSize(b) {
+  let i = 2;
+  while (i + 9 < b.length) {
+    if (b[i] !== 0xff) return null;
+    const marker = b[i + 1];
+    // Fill bytes, and the markers that have no length: RSTn, TEM.
+    if (marker === 0xff) i += 1;
+    else if ((marker >= 0xd0 && marker <= 0xd7) || marker === 0x01) i += 2;
+    else if (marker >= 0xc0 && marker <= 0xcf && marker !== 0xc4 && marker !== 0xc8 && marker !== 0xcc)
+      return { w: b.readUInt16BE(i + 7), h: b.readUInt16BE(i + 5) };
+    else i += 2 + b.readUInt16BE(i + 2);
+  }
+  return null;
+}
+
 // Natural size of a data: image, or null when it has none (an SVG with only a viewBox).
-function naturalSize(url) {
+export function naturalSize(url) {
   const m = /^data:([^;,]+)((?:;[^;,]*)*),(.*)$/s.exec(url);
   if (!m) return null;
   let body;
@@ -669,9 +686,16 @@ function naturalSize(url) {
     // A stray % that is no escape: the text as it stands.
     body = Buffer.from(m[3]);
   }
+  // A raster is told by its bytes, not by the type the URL names: the IDE calls a
+  // JPEG and a BMP image/png, and a JPEG's header read as a PNG's gives a size
+  // 4 million wide by 4 billion tall.
   if (body.length > 26 && body[0] === 0x42 && body[1] === 0x4d && body.readUInt32LE(14) >= 40)
     return { w: Math.abs(body.readInt32LE(18)), h: Math.abs(body.readInt32LE(22)) };
-  if (m[1] === "image/png" && body.length > 24) return { w: body.readUInt32BE(16), h: body.readUInt32BE(20) };
+  if (body.length > 24 && body.readUInt32BE(0) === 0x89504e47)
+    return { w: body.readUInt32BE(16), h: body.readUInt32BE(20) };
+  if (body.length > 10 && body.toString("latin1", 0, 4) === "GIF8")
+    return { w: body.readUInt16LE(6), h: body.readUInt16LE(8) };
+  if (body.length > 4 && body[0] === 0xff && body[1] === 0xd8) return jpegSize(body);
   if (m[1].startsWith("image/svg")) {
     const root = /<svg\b[^>]*>/.exec(body.toString("utf8"))?.[0] ?? "";
     const a = (n) => new RegExp(`\\s${n}=["']([\\d.]+)(px)?["']`).exec(root)?.[1];
