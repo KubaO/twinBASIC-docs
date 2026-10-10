@@ -1,0 +1,390 @@
+' csspngstrip <input.css> <output.css> -- strips the metadata from every PNG embedded in a CSS file.
+Module MainModule
+    Private Declare PtrSafe Function GetStdHandle Lib "kernel32" (ByVal nStdHandle As Long) As LongPtr
+    Private Declare PtrSafe Function GetConsoleMode Lib "kernel32" (ByVal hConsoleHandle As LongPtr, ByRef lpMode As Long) As Long
+    Private Declare PtrSafe Function WriteConsoleW Lib "kernel32" (ByVal hConsoleOutput As LongPtr, ByVal lpBuffer As LongPtr, ByVal nNumberOfCharsToWrite As Long, ByRef lpNumberOfCharsWritten As Long, ByVal lpReserved As LongPtr) As Long
+    Private Declare PtrSafe Function WriteFile Lib "kernel32" (ByVal hFile As LongPtr, ByRef lpBuffer As Any, ByVal nNumberOfBytesToWrite As Long, ByRef lpNumberOfBytesWritten As Long, ByVal lpOverlapped As LongPtr) As Long
+    Private Declare PtrSafe Sub ExitProcess Lib "kernel32" (ByVal uExitCode As Long)
+
+    Private Const STD_OUTPUT_HANDLE As Long = -11
+    Private Const STD_ERROR_HANDLE As Long = -12
+    Private Const B64_ALPHABET As String = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"
+
+    Private mB64Char(0 To 63) As Byte
+    Private mB64Value(0 To 255) As Integer
+
+    Private mOut() As Byte
+    Private mOutLen As Long
+    Private mOutCap As Long
+
+    Private mInputName As String
+    Private mPngs As Long
+    Private mStripped As Long
+
+    Public Sub Main()
+        Dim args As Collection
+        Set args = SplitArgs(Command$())
+        If args.Count <> 2 Then
+            WriteErr "Usage: csspngstrip <input.css> <output.css>"
+            WriteErr ""
+            WriteErr "Writes a copy of the CSS file in which every PNG embedded as a base64 data: URI"
+            WriteErr "keeps only the chunks a browser draws from: IHDR, PLTE, IDAT, IEND, tRNS, and"
+            WriteErr "acTL, fcTL and fdAT for an animated PNG. They are copied byte for byte, so the"
+            WriteErr "pixels do not change. Everything else in the file is copied unchanged. The"
+            WriteErr "output may be the input file."
+            WriteErr ""
+            WriteErr "Exit codes: 0 written, 1 a file could not be read or written, 2 a wrong command line."
+            ExitProcess 2
+        End If
+
+        ' Opening a missing file for Binary creates it, so the paths are checked first.
+        Dim attrs As Long, folder As String
+        attrs = Attributes(args(1))
+        If attrs = -1 Then Fail "no such file: " & args(1)
+        If (attrs And vbDirectory) <> 0 Then Fail "not a file: " & args(1)
+        attrs = Attributes(args(2))
+        If attrs <> -1 Then
+            If (attrs And vbDirectory) <> 0 Then Fail "not a file: " & args(2)
+        End If
+        folder = FolderOf(args(2))
+        If Len(folder) > 0 Then
+            attrs = Attributes(folder)
+            If attrs = -1 Then Fail "no such folder: " & folder
+            If (attrs And vbDirectory) = 0 Then Fail "no such folder: " & folder
+        End If
+
+        Dim css() As Byte, cssLen As Long
+        mInputName = args(1)
+        On Error Resume Next
+        cssLen = ReadAll(args(1), css)
+        If Err.Number <> 0 Then Fail "cannot read " & args(1) & ": " & Err.Description
+        On Error GoTo 0
+
+        InitBase64
+        CleanCss css, cssLen
+
+        On Error Resume Next
+        WriteAll args(2), mOut, mOutLen
+        If Err.Number <> 0 Then Fail "cannot write " & args(2) & ": " & Err.Description
+        On Error GoTo 0
+
+        WriteOut mInputName & ": " & mPngs & " PNGs, " & mStripped & " stripped; " & cssLen & " -> " & mOutLen & " bytes"
+    End Sub
+
+    Private Sub CleanCss(css() As Byte, ByVal cssLen As Long)
+        Dim i As Long, copied As Long, comma As Long, payloadEnd As Long
+        mOutCap = cssLen + 16
+        ReDim mOut(0 To mOutCap - 1)
+        Do While i + 5 <= cssLen
+            If IsDataUri(css, i) Then
+                comma = FindBase64Comma(css, cssLen, i + 5)
+                If comma >= 0 Then
+                    payloadEnd = comma + 1
+                    Do While payloadEnd < cssLen
+                        If mB64Value(css(payloadEnd)) < 0 And css(payloadEnd) <> 61 Then Exit Do
+                        payloadEnd = payloadEnd + 1
+                    Loop
+                    EmitRange css, copied, comma + 1 - copied
+                    EmitPayload css, i, comma, payloadEnd
+                    copied = payloadEnd
+                    i = payloadEnd - 1
+                End If
+            End If
+            i = i + 1
+        Loop
+        EmitRange css, copied, cssLen - copied
+    End Sub
+
+    ' A payload is a PNG by its content, not by its label.
+    Private Sub EmitPayload(css() As Byte, ByVal uriStart As Long, ByVal comma As Long, ByVal payloadEnd As Long)
+        Dim start As Long, count As Long, label As String
+        Dim data() As Byte, dataLen As Long, clean() As Byte, cleanLen As Long
+        start = comma + 1
+        count = payloadEnd - start
+        If count = 0 Then Exit Sub
+        label = LCase$(AsciiText(css, uriStart + 5, comma - 7 - (uriStart + 5)))
+        If DecodeBase64(css, start, count, data, dataLen) Then
+            If IsPng(data, dataLen) Then
+                mPngs = mPngs + 1
+                If StripPng(data, dataLen, clean, cleanLen) Then
+                    ' A PNG with nothing to strip keeps its original text.
+                    If cleanLen < dataLen Then
+                        EmitBase64 clean, cleanLen
+                        mStripped = mStripped + 1
+                        Exit Sub
+                    End If
+                Else
+                    Warn css, uriStart, "a damaged PNG; left unchanged"
+                End If
+            ElseIf label = "image/png" Then
+                Warn css, uriStart, "labelled image/png, but is " & Describe(data, dataLen) & "; left unchanged"
+            End If
+        ElseIf label = "image/png" Then
+            Warn css, uriStart, "labelled image/png, but is not valid base64; left unchanged"
+        End If
+        EmitRange css, start, count
+    End Sub
+
+    Private Function StripPng(png() As Byte, ByVal pngLen As Long, clean() As Byte, cleanLen As Long) As Boolean
+        Dim pos As Long, chunkLen As Long, total As Long, chunkType As String
+        ReDim clean(0 To pngLen - 1)
+        CopyBytes png, 0, clean, 0, 8
+        cleanLen = 8
+        pos = 8
+        Do
+            If pos + 12 > pngLen Then Exit Function
+            If png(pos) > 127 Then Exit Function
+            chunkLen = png(pos) * &H1000000 + png(pos + 1) * &H10000& + png(pos + 2) * &H100& + png(pos + 3)
+            If chunkLen > pngLen - pos - 12 Then Exit Function
+            chunkType = AsciiText(png, pos + 4, 4)
+            If pos = 8 And chunkType <> "IHDR" Then Exit Function
+            total = chunkLen + 12
+            If KeepChunk(chunkType) Then
+                CopyBytes png, pos, clean, cleanLen, total
+                cleanLen = cleanLen + total
+            End If
+            pos = pos + total
+        Loop Until chunkType = "IEND"
+        StripPng = True
+    End Function
+
+    Private Function KeepChunk(ByVal chunkType As String) As Boolean
+        Select Case chunkType
+            Case "tRNS", "acTL", "fcTL", "fdAT"
+                KeepChunk = True
+            Case Else
+                ' A critical chunk, whose name starts with a capital, is part of the image whatever it is.
+                KeepChunk = (Asc(chunkType) And 32) = 0
+        End Select
+    End Function
+
+    Private Function IsPng(data() As Byte, ByVal dataLen As Long) As Boolean
+        If dataLen < 8 Then Exit Function
+        IsPng = data(0) = 137 And data(1) = 80 And data(2) = 78 And data(3) = 71 And _
+                data(4) = 13 And data(5) = 10 And data(6) = 26 And data(7) = 10
+    End Function
+
+    Private Function Describe(data() As Byte, ByVal dataLen As Long) As String
+        Describe = "not a PNG"
+        If dataLen >= 4 Then
+            If AsciiText(data, 0, 4) = "GIF8" Then Describe = "a GIF"
+        End If
+        If dataLen >= 3 Then
+            If data(0) = &HFF And data(1) = &HD8 And data(2) = &HFF Then Describe = "a JPEG"
+        End If
+    End Function
+
+    Private Function IsDataUri(css() As Byte, ByVal i As Long) As Boolean
+        IsDataUri = (css(i) Or 32) = 100 And (css(i + 1) Or 32) = 97 And (css(i + 2) Or 32) = 116 And _
+                    (css(i + 3) Or 32) = 97 And css(i + 4) = 58
+    End Function
+
+    ' Returns the position of the comma ending a "data:<type>;base64," header, or -1.
+    Private Function FindBase64Comma(css() As Byte, ByVal cssLen As Long, ByVal start As Long) As Long
+        Dim j As Long, header As String
+        FindBase64Comma = -1
+        For j = start To start + 127
+            If j >= cssLen Then Exit Function
+            Select Case css(j)
+                Case 44
+                    If LCase$(Right$(header, 7)) = ";base64" Then FindBase64Comma = j
+                    Exit Function
+                Case 43, 45 To 57, 59, 61, 65 To 90, 95, 97 To 122
+                    header = header & Chr$(css(j))
+                Case Else
+                    Exit Function
+            End Select
+        Next
+    End Function
+
+    Private Sub InitBase64()
+        Dim i As Long
+        For i = 0 To 255
+            mB64Value(i) = -1
+        Next
+        For i = 0 To 63
+            mB64Char(i) = Asc(Mid$(B64_ALPHABET, i + 1, 1))
+            mB64Value(mB64Char(i)) = i
+        Next
+    End Sub
+
+    Private Function DecodeBase64(src() As Byte, ByVal start As Long, ByVal count As Long, data() As Byte, dataLen As Long) As Boolean
+        Dim i As Long, k As Long, r As Long, o As Long, v(0 To 3) As Long
+        Do While count > 0
+            If src(start + count - 1) <> 61 Then Exit Do
+            count = count - 1
+        Loop
+        If count = 0 Or count Mod 4 = 1 Then Exit Function
+        dataLen = (count * 3) \ 4
+        ReDim data(0 To dataLen - 1)
+        For i = 0 To count - 1 Step 4
+            r = count - i
+            If r > 4 Then r = 4
+            For k = 0 To 3
+                v(k) = 0
+                If k < r Then
+                    v(k) = mB64Value(src(start + i + k))
+                    If v(k) < 0 Then Exit Function
+                End If
+            Next
+            o = (i \ 4) * 3
+            data(o) = (v(0) * 4) Or (v(1) \ 16)
+            If r > 2 Then data(o + 1) = ((v(1) And 15) * 16) Or (v(2) \ 4)
+            If r > 3 Then data(o + 2) = ((v(2) And 3) * 64) Or v(3)
+        Next
+        DecodeBase64 = True
+    End Function
+
+    Private Sub EmitBase64(data() As Byte, ByVal dataLen As Long)
+        Dim i As Long, r As Long, b0 As Long, b1 As Long, b2 As Long
+        Reserve ((dataLen + 2) \ 3) * 4
+        For i = 0 To dataLen - 1 Step 3
+            r = dataLen - i
+            b0 = data(i)
+            b1 = 0
+            b2 = 0
+            If r > 1 Then b1 = data(i + 1)
+            If r > 2 Then b2 = data(i + 2)
+            EmitByte mB64Char(b0 \ 4)
+            EmitByte mB64Char(((b0 And 3) * 16) Or (b1 \ 16))
+            If r > 1 Then EmitByte mB64Char(((b1 And 15) * 4) Or (b2 \ 64)) Else EmitByte 61
+            If r > 2 Then EmitByte mB64Char(b2 And 63) Else EmitByte 61
+        Next
+    End Sub
+
+    Private Sub EmitRange(src() As Byte, ByVal start As Long, ByVal count As Long)
+        If count <= 0 Then Exit Sub
+        Reserve count
+        CopyBytes src, start, mOut, mOutLen, count
+        mOutLen = mOutLen + count
+    End Sub
+
+    Private Sub EmitByte(ByVal b As Byte)
+        mOut(mOutLen) = b
+        mOutLen = mOutLen + 1
+    End Sub
+
+    Private Sub Reserve(ByVal count As Long)
+        If mOutLen + count <= mOutCap Then Exit Sub
+        mOutCap = 2 * (mOutLen + count)
+        ReDim Preserve mOut(0 To mOutCap - 1)
+    End Sub
+
+    Private Sub CopyBytes(src() As Byte, ByVal srcStart As Long, dst() As Byte, ByVal dstStart As Long, ByVal count As Long)
+        Dim i As Long
+        For i = 0 To count - 1
+            dst(dstStart + i) = src(srcStart + i)
+        Next
+    End Sub
+
+    Private Function AsciiText(data() As Byte, ByVal start As Long, ByVal count As Long) As String
+        Dim i As Long
+        For i = start To start + count - 1
+            AsciiText = AsciiText & Chr$(data(i))
+        Next
+    End Function
+
+    Private Function LineOf(data() As Byte, ByVal pos As Long) As Long
+        Dim i As Long
+        LineOf = 1
+        For i = 0 To pos - 1
+            If data(i) = 10 Then LineOf = LineOf + 1
+        Next
+    End Function
+
+    Private Function ReadAll(ByVal path As String, data() As Byte) As Long
+        Dim f As Integer
+        f = FreeFile
+        Open path For Binary Access Read As #f
+        ReadAll = LOF(f)
+        If ReadAll > 0 Then
+            ReDim data(0 To ReadAll - 1)
+            Get #f, , data
+        End If
+        Close #f
+    End Function
+
+    Private Sub WriteAll(ByVal path As String, data() As Byte, ByVal length As Long)
+        Dim f As Integer
+        ' Opening for Output empties the file; Binary alone would keep the tail of a longer one.
+        f = FreeFile
+        Open path For Output As #f
+        Close #f
+        If length = 0 Then Exit Sub
+        ReDim Preserve data(0 To length - 1)
+        f = FreeFile
+        Open path For Binary Access Write As #f
+        Put #f, , data
+        Close #f
+    End Sub
+
+    ' -1 when the path does not exist.
+    Private Function Attributes(ByVal path As String) As Long
+        On Error Resume Next
+        Attributes = -1
+        Attributes = GetAttr(path)
+    End Function
+
+    Private Function FolderOf(ByVal path As String) As String
+        Dim i As Long
+        For i = Len(path) To 1 Step -1
+            If Mid$(path, i, 1) = "\" Or Mid$(path, i, 1) = "/" Then
+                FolderOf = Left$(path, i)
+                Exit Function
+            End If
+        Next
+    End Function
+
+    ' Command$ returns the arguments as typed, quotes included.
+    Private Function SplitArgs(ByVal line As String) As Collection
+        Dim result As New Collection, current As String, started As Boolean, inQuotes As Boolean
+        Dim i As Long, ch As String
+        For i = 1 To Len(line)
+            ch = Mid$(line, i, 1)
+            If ch = """" Then
+                inQuotes = Not inQuotes
+                started = True
+            ElseIf (ch = " " Or ch = vbTab) And Not inQuotes Then
+                If started Then result.Add current
+                current = ""
+                started = False
+            Else
+                current = current & ch
+                started = True
+            End If
+        Next
+        If started Then result.Add current
+        Set SplitArgs = result
+    End Function
+
+    Private Sub Warn(css() As Byte, ByVal pos As Long, ByVal message As String)
+        WriteErr mInputName & ":" & LineOf(css, pos) & ": " & message
+    End Sub
+
+    Private Sub Fail(ByVal message As String)
+        Close
+        WriteErr "csspngstrip: " & message
+        ExitProcess 1
+    End Sub
+
+    Public Sub WriteOut(ByVal text As String)
+        WriteTo STD_OUTPUT_HANDLE, text & vbCrLf
+    End Sub
+
+    Public Sub WriteErr(ByVal text As String)
+        WriteTo STD_ERROR_HANDLE, text & vbCrLf
+    End Sub
+
+    ' WriteConsoleW writes nothing to a file or a pipe, so redirected output goes through WriteFile.
+    Private Sub WriteTo(ByVal stream As Long, ByVal text As String)
+        Dim handle As LongPtr, mode As Long, written As Long
+        handle = GetStdHandle(stream)
+        If GetConsoleMode(handle, mode) <> 0 Then
+            WriteConsoleW handle, StrPtr(text), Len(text), written, 0
+        Else
+            Dim bytes() As Byte
+            bytes = StrConv(text, vbFromUnicode)
+            WriteFile handle, bytes(0), UBound(bytes) + 1, written, 0
+        End If
+    End Sub
+End Module

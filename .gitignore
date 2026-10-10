@@ -36,3 +36,6 @@ indexer/.packages/
 # A bug reproducer's zip is only for attaching to its GitHub issue (see
 # BUGS-TO-REPORT.md); the .twinproj beside it is committed.
 /bugs/**/*.zip
+
+# The IDE builds scripts/csspngstrip/csspngstrip.twinproj into Build\ beside it.
+/scripts/csspngstrip/Build/

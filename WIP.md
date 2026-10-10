@@ -381,16 +381,18 @@ must never do: [WIP.Typography.md](WIP.Typography.md).
 ### Tooling is JavaScript
 
 Everything under `scripts/`, `builder/`, `lib/`, `book/`, `eval/` and `wisdom/` is
-Node.js, and a new tool joins them there. Three files are not, each for a stated
-reason rather than by oversight: `scripts/impexp.py` is a published download
+Node.js, and a new tool joins them there. Three files and one folder are not, each
+for a stated reason rather than by oversight: `scripts/impexp.py` is a published download
 offered to readers rather than tooling, `scripts/build_fonts.py` stays Python
 because the JavaScript HarfBuzz build produces wrong CFF2 metrics
-([WIP.Fonts.md](WIP.Fonts.md)), and `scripts/lib/tb-launch.ps1` is Win32 calls
+([WIP.Fonts.md](WIP.Fonts.md)), `scripts/lib/tb-launch.ps1` is Win32 calls
 Node cannot make without a native FFI addon --- a private desktop, the job
 object the IDE runs in, and the windows on that desktop listed and captured
 (`desktopWindows`, `captureWindow` in `tb-ide.mjs`) --- and is never run as a file, so the execution policy
-never comes into it. The full accounting, and what the two ports gained, is in
-[WIP.Build.md](WIP.Build.md).
+never comes into it, and `scripts/csspngstrip/` is a twinBASIC program, because the
+twinBASIC developers run it in their own build, which has twinBASIC and need not have
+Node. After a change to its `src/`, pack `csspngstrip.twinproj` again with `impexp`.
+The full accounting, and what the two ports gained, is in [WIP.Build.md](WIP.Build.md).
 
 ### The published docs assume manual work
 

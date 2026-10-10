@@ -120,6 +120,16 @@ without a native FFI addon. Adding one for a few calls would mean
 execution policy. See [Compiling a twinBASIC project without the IDE in front of
 you](WIP.Harness.md#compiling-a-twinbasic-project-without-the-ide-in-front-of-you).
 
+One folder holds a program written in twinBASIC itself, for a fourth reason.
+**`scripts/csspngstrip/`** strips the metadata from the PNGs a CSS file embeds as `data:`
+URIs, for the IDE's own stylesheets. Its users are the twinBASIC developers, who run it in
+their own build, which has twinBASIC and need not have Node, so a Node edition would serve
+nobody. Nothing in this repository runs it. It is laid out as a reproducer under `bugs/`
+is, an exported tree in `src/` with `csspngstrip.twinproj` packed from it beside it, and
+both are checked out byte for byte so that the two agree; nothing checks that they do, so
+a change to `src/` is packed again by hand. See [Tools and
+Scripts](docs/Documentation/Tools.md#csspngstrip).
+
 Two `.mjs` files also run a little PowerShell inline, for Windows state Node has no API
 for, and neither adds a file: `scripts/tbrun.mjs` takes a process snapshot with
 `Get-Process`, and `scripts/lib/tb-registry.mjs` reads and restores the IDE's registry
