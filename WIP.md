@@ -503,6 +503,19 @@ it meant to and nowhere else. See [WIP.Build.md](WIP.Build.md#the-pipeline).
 
 ### The gates, and where their internals are
 
+**The Tools and Scripts page is a landing page and seven group pages.**
+`Tools.md` holds the batch wrappers (and with them the two numbered gate lists
+`check_gate_lists.mjs` reads from that file and no other), the command-line
+conventions and the configuration files. Every other tool's entry is on one of
+`docs/Documentation/Tools-<Group>.md` --- Build, Site-Checks, Toolchain-Tests,
+Compiler, Samples, IDE, Defects --- published at
+`/Documentation/Development/Tools-<Group>`. The permalinks are flat, as the
+tbdocs Builder's children are, because a `Tools/` folder beside `Tools.html`
+makes the link check resolve `Tools#anchor` to the folder. **A new tool gets an
+entry on the group page it fits and a node in
+`docs/Documentation/Images/Tools-Groups.dot`**, the map on the landing page; a
+link to a tool's entry names the group page, never `Tools#<tool>`.
+
 [Tools and Scripts](docs/Documentation/Tools.md) owns the authoritative lists,
 and `scripts/check_gate_lists.mjs` fails the run if `README.md` or any page
 under `docs/Documentation/` disagrees with them --- **so do not state a gate

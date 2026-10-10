@@ -37,7 +37,7 @@ The documentation is rendered to HTML by `tbdocs`, a custom Node.js static site 
 - **Node.js 22+** for `tbdocs` itself.
 - **`npm ci`** at the repository root installs everything: the static site generator's deps and the PDF renderer's deps. A single `package.json` at the repo root contains the whole dependency set. The `build.bat` / `serve.bat` wrappers assume the install has run.
 - **Chromium** is required for four things: rendering the PDF book (`book.bat`), two of `check.bat`'s steps --- the diagram-fit check (`scripts/check_dot_fit.mjs`), which re-renders each diagram with the real webfont, and the accessibility scan (`scripts/check_a11y.mjs`) --- and one of `test.bat`'s, the axe source-patch equivalence check (`scripts/check_axe_patch_equiv.mjs`). `npm install` normally brings it down as part of `puppeteer`'s own postinstall; `npx puppeteer browsers install chrome` fetches it on its own if that step was skipped. Add `--install-deps` only on Linux --- it installs system packages, needs root, and is not supported anywhere else. The day-to-day `build.bat` / `serve.bat` flow does not need it --- only `check.bat`, `test.bat` and `book.bat` do.
-- **Windows and a twinBASIC IDE install**, for [`scripts/tbbuild.mjs`](Tools#tbbuild) alone. It compiles a `.twinproj` unattended by driving a real IDE, which is how a claim this documentation makes about the *language* gets checked against the compiler. Nothing that builds, serves, checks or publishes the site needs either, so skip this one unless you are writing or verifying a probe project.
+- **Windows and a twinBASIC IDE install**, for [`scripts/tbbuild.mjs`](Tools-Compiler#tbbuild) alone. It compiles a `.twinproj` unattended by driving a real IDE, which is how a claim this documentation makes about the *language* gets checked against the compiler. Nothing that builds, serves, checks or publishes the site needs either, so skip this one unless you are writing or verifying a probe project.
 
 ### On macOS and Linux
 {: #posix-equivalents }
@@ -59,7 +59,7 @@ Each `.bat` opens with `@pushd "%~dp0"`, which is what lets it be invoked from a
 
 `--check-audit-index` is the part most easily dropped in transcription, and dropping it is silent --- see [Building](#building) below for what it costs. Anyone who types `build.bat` gets the link check without thinking about it; anyone who types the underlying command has to include it themselves.
 
-`check.bat` is a sequence of separate scripts rather than one command, each stopping the run if it fails. [`check_tree_fresh`](Tools#check-tree-fresh) runs first so a stale tree fails cheaply, before anything else looks at it; [`check_a11y`](Tools#check-a11y) runs second even though it is the slowest, so the composite action can run it first in CI and overlap its Chromium work with the backgrounded book PDF render:
+`check.bat` is a sequence of separate scripts rather than one command, each stopping the run if it fails. [`check_tree_fresh`](Tools-Site-Checks#check-tree-fresh) runs first so a stale tree fails cheaply, before anything else looks at it; [`check_a11y`](Tools-Site-Checks#check-a11y) runs second even though it is the slowest, so the composite action can run it first in CI and overlap its Chromium work with the backgrounded book PDF render:
 
     node scripts/check_tree_fresh.mjs \
       && node scripts/check_a11y.mjs \
@@ -119,11 +119,11 @@ or directly, from the repository root:
 
 A single `tbdocs` run produces all three trees. The `also_build_offline` and `also_build_pdf` keys in `_config.yml` toggle the sibling outputs; the `--no-offline` and `--no-pdf` flags do the same from the command line if you only want `_site/`.
 
-Every build writes `add-in/Resources/HELP/site.zip`, an archive of the offline tree that the IDE help add-in embeds, and prints one line for it. The archive is made once the offline tree is complete and before the Gantt chart goes into the build-information page. The file is not committed. `--no-help-archive` turns the step off. [Tools and Scripts](Tools#the-help-archive) describes the archive.
+Every build writes `add-in/Resources/HELP/site.zip`, an archive of the offline tree that the IDE help add-in embeds, and prints one line for it. The archive is made once the offline tree is complete and before the Gantt chart goes into the build-information page. The file is not committed. `--no-help-archive` turns the step off. [Build and Generation Tools](Tools-Build#the-help-archive) describes the archive.
 
-Every build, CI's included, also packs the IDE help add-in's source folder, `add-in/`, into its project file, `tB/IDE/AddIns/downloads/tbDocsHelp.twinproj` in the online tree, which [Help Add-In](../../tB/IDE/AddIns/Help) offers as a download, and prints one line for it. Only the files git tracks there are packed, with the symbol index the same build wrote and the archive that build wrote; a build that wrote no archive packs none and says so. The offline tree holds no copy of the file, and its links to it open the website's copy. [Tools and Scripts](Tools#the-help-add-ins-project-file) describes the file.
+Every build, CI's included, also packs the IDE help add-in's source folder, `add-in/`, into its project file, `tB/IDE/AddIns/downloads/tbDocsHelp.twinproj` in the online tree, which [Help Add-In](../../tB/IDE/AddIns/Help) offers as a download, and prints one line for it. Only the files git tracks there are packed, with the symbol index the same build wrote and the archive that build wrote; a build that wrote no archive packs none and says so. The offline tree holds no copy of the file, and its links to it open the website's copy. [Build and Generation Tools](Tools-Build#the-help-add-ins-project-file) describes the file.
 
-The full set of `tbdocs` CLI flags --- every flag, what each one does, when to use it --- lives on the [Tools and Scripts](Tools#tbdocs) page.
+The full set of `tbdocs` CLI flags --- every flag, what each one does, when to use it --- lives on the [Build and Generation Tools](Tools-Build#tbdocs) page.
 
 **A build that stops with `Nav-parent orphan detected` or `Nav-parent ambiguity detected`** has pages whose `parent:` names no page, or a title two pages share --- most often after a page's `title:` was changed. [Authoring Pages](Authoring#nav-parent-orphan) has the fix for each message.
 
@@ -263,7 +263,7 @@ It covers all three trees --- `_site/` (the online tree), `_site-offline/` (the 
 
 A failing check does not abort the build --- a broken link still produces a site worth looking at --- so it sets the exit code to 1 instead, whether the check found link failures, integrity failures or both. The summary lines say which.
 
-[`scripts/check_links.mjs`](Tools#check-links) is still the tool for a tree this build did not produce: a release zip, a bisect, someone else's artifact.
+[`scripts/check_links.mjs`](Tools-Site-Checks#check-links) is still the tool for a tree this build did not produce: a release zip, a bisect, someone else's artifact.
 
 ## What the build refuses to publish
 
@@ -299,7 +299,7 @@ often than widening `SOURCE_EXTENSIONS`. A refusal from the second sweep gives
 different advice: nothing in `docs/` produced that file, so the message names
 `BUILD_EXTENSIONS` instead.
 
-`test.bat` runs [`scripts/check_publish_policy.mjs`](Tools#check-publish-policy)
+`test.bat` runs [`scripts/check_publish_policy.mjs`](Tools-Toolchain-Tests#check-publish-policy)
 first, and it exists because a clean build proves only half of this. "Nothing in
 `docs/` is currently refused" is also what a list widened until it refuses
 nothing would report. The self-test asserts the other half against named probes
@@ -364,7 +364,7 @@ below reads for its font metrics.
   baseline either.
 
 Because the file is a build output rather than a build input,
-[`scripts/check_tree_fresh.mjs`](Tools#check-tree-fresh) skips it when it looks
+[`scripts/check_tree_fresh.mjs`](Tools-Site-Checks#check-tree-fresh) skips it when it looks
 for sources newer than the built tree. Without that, the build writing a raised
 baseline at the end of its own run would make the tree it had just produced
 report as stale.
@@ -383,7 +383,7 @@ gave a heading, read from the rendered HTML. What the pages cannot say --- the
 kind of a member, the values of an enumeration --- comes from
 `builder/package-api.json`, a committed snapshot of what the shipped packages
 declare. The build never regenerates it, because that needs a twinBASIC
-install; [`build_package_api.mjs`](Tools#build-package-api) does, when the
+install; [`build_package_api.mjs`](Tools-Build#build-package-api) does, when the
 reference is re-indexed against a newer build. The summary line says how many
 entries the index has, and how many public symbols no page documents.
 
@@ -429,7 +429,7 @@ documents.
 
     check.bat
 
-[`scripts/check_a11y.mjs`](Tools#check-a11y) drives `axe-core` inside headless Chromium (via `puppeteer`) over thirteen sample pages against WCAG 2.0/2.1/2.2 at Level A + AA (plus the `heading-order` best-practice rule), and exits non-zero on any violation. It runs last, because the cheaper gates ahead of it stop the run if they fail: a freshness check that refuses a stale tree, the [DOT diagram fit check](#diagram-fonts-and-why-checkbat-measures-them), and the sample-coverage check that says whether the thirteen pages still cover every markup construct the site uses. [Tools and Scripts](Tools#checkbat) has the list in order.
+[`scripts/check_a11y.mjs`](Tools-Site-Checks#check-a11y) drives `axe-core` inside headless Chromium (via `puppeteer`) over thirteen sample pages against WCAG 2.0/2.1/2.2 at Level A + AA (plus the `heading-order` best-practice rule), and exits non-zero on any violation. It runs last, because the cheaper gates ahead of it stop the run if they fail: a freshness check that refuses a stale tree, the [DOT diagram fit check](#diagram-fonts-and-why-checkbat-measures-them), and the sample-coverage check that says whether the thirteen pages still cover every markup construct the site uses. [Tools and Scripts](Tools#checkbat) has the list in order.
 
 Each page is scanned in **both the light and dark themes** --- dark mode is a separate palette, so a light-mode pass says nothing about it --- and the scan runs against `_site-offline/` rather than `_site/`, because the online tree's root-absolute asset URLs do not resolve under `file://` and would leave every page unstyled. This stage needs the Chromium install from the [requirements](#requirements); the plain `build.bat` flow does not.
 
@@ -451,12 +451,12 @@ when the change touches `builder/`, `scripts/`, `lib/`, `book/`, `eval/` or
 `wisdom/`.
 
 **Two of them do read `docs/`**, and the smaller one is easy to predict:
-[`check_gate_lists.mjs`](Tools#check-gate-lists) reads this page, `README.md`
+[`check_gate_lists.mjs`](Tools-Toolchain-Tests#check-gate-lists) reads this page, `README.md`
 and every other page under `docs/Documentation/`, and fails on any gate count
 stated in prose that the wrappers do not run. So an edit to a developer page can
 fail it, and is meant to --- that is a count nothing else derives.
 
-[`check_code_regions.mjs`](Tools#check-code-regions) is the other, and it is the
+[`check_code_regions.mjs`](Tools-Toolchain-Tests#check-code-regions) is the other, and it is the
 one worth knowing about. It tokenises every markdown file under `docs/`, applies
 the build's real pre-render rewrite chain, tokenises again, and compares the code
 regions on either side --- so a page that introduces a code construct the corpus has not
@@ -500,7 +500,7 @@ would still mean something against an empty `docs/` --- and that one would, on
 the probes it carries with it.
 
 One more is worth knowing about before you write a regex.
-[`check_regex_safety.mjs`](Tools#check-regex-safety) refuses a pattern that can
+[`check_regex_safety.mjs`](Tools-Toolchain-Tests#check-regex-safety) refuses a pattern that can
 backtrack exponentially, because that class of fault does not fail a build --- it
 stops one. The corpus passes for as long as no page contains the trigger, and
 then a worker sits inside `String.replace` and never returns. It has happened
@@ -547,7 +547,7 @@ One thing does happen to Graphviz before it lays anything out. The WASM build ca
 Two consequences for anyone editing a diagram:
 
 - **Never hand-edit a `.svg`, and never set `font-family` anywhere but the `.dot`.** The SVG is a build artifact the next build overwrites, and Graphviz sizes every box to the text *it* measured --- a face the layout never saw leaves labels hanging outside their boxes.
-- **`check.bat` runs [`scripts/check_dot_fit.mjs`](Tools#check-dot-fit)**, which re-renders every committed diagram with the real webfont and fails if a label sits outside the box Graphviz drew for it. Nothing in the build compares the two, and axe does not evaluate SVG `<text>` geometry, so without this gate a mismatch ships on a green build.
+- **`check.bat` runs [`scripts/check_dot_fit.mjs`](Tools-Site-Checks#check-dot-fit)**, which re-renders every committed diagram with the real webfont and fails if a label sits outside the box Graphviz drew for it. Nothing in the build compares the two, and axe does not evaluate SVG `<text>` geometry, so without this gate a mismatch ships on a green build.
 
 ### When the diagram-fit check fails
 {: #dot-fit-remediation }
@@ -601,7 +601,7 @@ The deploy workflow passes `--url` and `--baseurl` from the `configure-pages` ou
 
 ### The link-checker parity fixtures
 
-[`scripts/check_links_diff.mjs`](Tools#check-links-diff) compares the check's two front ends: the standalone [`scripts/check_links.mjs`](Tools#check-links), still the tool for a tree this build did not produce, and the pass fused into the build. They run the same functions and differ only in how they read the tree, which is still enough to hide a fault, because **a checker that silently checks less reports a clean pass.** `check.bat` runs neither invocation; CI runs one or both.
+[`scripts/check_links_diff.mjs`](Tools-Site-Checks#check-links-diff) compares the check's two front ends: the standalone [`scripts/check_links.mjs`](Tools-Site-Checks#check-links), still the tool for a tree this build did not produce, and the pass fused into the build. They run the same functions and differ only in how they read the tree, which is still enough to hide a fault, because **a checker that silently checks less reports a clean pass.** `check.bat` runs neither invocation; CI runs one or both.
 
 | Invocation | Where | What it holds to the comparison |
 |---|---|---|
@@ -691,13 +691,13 @@ Afterwards, check the live site:
 
 ## Editing screenshots
 
-The documentation's pictures of the IDE are not edited by hand. [`scripts/shoot_docs.mjs`](Tools#shoot-docs) takes them from an IDE that it starts on a private desktop, so nothing appears on your screen. It draws the arrows, rings and numbered badges on them in one style, and it writes a picture only when the IDE draws something different, so one run brings every picture up to date after a new BETA. The same tool also takes the windows of running programs and the few web pages the documentation shows.
+The documentation's pictures of the IDE are not edited by hand. [`scripts/shoot_docs.mjs`](Tools-IDE#shoot-docs) takes them from an IDE that it starts on a private desktop, so nothing appears on your screen. It draws the arrows, rings and numbered badges on them in one style, and it writes a picture only when the IDE draws something different, so one run brings every picture up to date after a new BETA. The same tool also takes the windows of running programs and the few web pages the documentation shows.
 
 Each picture is a *shot* in the tool's table: the file it writes, the IDE it is taken in, and the steps that bring that IDE to the state the picture shows. To change a picture, change its shot and run the tool for that picture alone:
 
     node scripts/shoot_docs.mjs --only <part of the picture's path>
 
-A new picture of the IDE is a new shot, so that the next run takes it again. `node scripts/shoot_docs.mjs --help` lists the options, and [shoot_docs.mjs](Tools#shoot-docs) describes what the tool does to keep the pictures the same from one run to the next and your own settings and name out of them.
+A new picture of the IDE is a new shot, so that the next run takes it again. `node scripts/shoot_docs.mjs --help` lists the options, and [shoot_docs.mjs](Tools-IDE#shoot-docs) describes what the tool does to keep the pictures the same from one run to the next and your own settings and name out of them.
 
 A picture the tool does not take, such as the GitHub pages under [Deploying to docs.twinbasic.com](#deploying-to-docstwinbasiccom), is a PNG file in the `Images` folder beside its page. The file an image editor saved it from, if you keep one, goes in the `_Images` folder beside that, which is not published.
 

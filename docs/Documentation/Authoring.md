@@ -467,7 +467,7 @@ That failure is not hypothetical. The attribute reference once shipped all six o
 its admonitions as the literal text `[!NOTE]`, because the same pairing closed
 that page's opening fence on a marker in the middle of a line and every pairing
 after it was off by one. The mid-line case is fixed --- the rewrite now asks the
-site's parser where the fences are --- and [`check_code_regions.mjs`](Tools#check-code-regions), which
+site's parser where the fences are --- and [`check_code_regions.mjs`](Tools-Toolchain-Tests#check-code-regions), which
 `test.bat` runs, is the only gate that sees this class of fault at all.
 
 ### Typography
@@ -714,7 +714,7 @@ only half marked rather than reporting a missing symbol in the sample that is fi
 sample carrying one would simply never be compiled; the tool reports an unrecognised token
 rather than skipping it in silence.
 
-[Tools and Scripts](Tools#check-examples) covers running it --- the census and survey
+[Code Samples and Attributes](Tools-Samples#check-examples) covers running it --- the census and survey
 modes, the flags, and what the report means.
 
 ## Bullet lists, dashes, and parentheses
@@ -960,7 +960,7 @@ Three severities, used distinctly:
 
 A known defect in twinBASIC follows the same scale. A defect that silently gives a wrong result --- a function that returns the wrong value and raises no error --- is a `> [!WARNING]` until a fixed build is released, because nothing tells the reader that their data is wrong. A defect that crashes the program is a `> [!WARNING]` too, because whatever it had not saved is lost. So is a defect whose error hides a silent part, such as a procedure that runs twice before the error is raised. A defect the reader cannot miss and that loses nothing, such as an error raised or a statement the compiler refuses, is a `> [!NOTE]`. Either callout names the build it applies to. Once a fixed build is out, the callout is removed, and the page describes the correct behaviour with no mention of the defect: the documentation is not a record of past defects.
 
-Where twinBASIC and VB6 behave differently, say what VB6 does. Check it in VB6 --- [`vb6run.mjs`](Tools#vb6run) builds and runs a sample there --- rather than writing it from memory. Where twinBASIC's behaviour is the intended one, the VB6 behaviour goes in a `> [!NOTE]`. Inside a defect's `> [!WARNING]` it is one sentence, such as "VB6 raises error 6, *Overflow*."
+Where twinBASIC and VB6 behave differently, say what VB6 does. Check it in VB6 --- [`vb6run.mjs`](Tools-Defects#vb6run) builds and runs a sample there --- rather than writing it from memory. Where twinBASIC's behaviour is the intended one, the VB6 behaviour goes in a `> [!NOTE]`. Inside a defect's `> [!WARNING]` it is one sentence, such as "VB6 raises error 6, *Overflow*."
 
 Use one callout per concern, and reserve them for genuine notes --- plain "why this is useful" prose should stay a plain paragraph.
 

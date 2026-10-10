@@ -193,7 +193,7 @@ node scripts/check_cli.mjs
 node scripts/check_pdf_shims_equiv.mjs
 @if errorlevel 1 goto :fail
 @rem impexp.mjs and impexp.py are one published tool in two languages, and
-@rem Tools.md promises they print the same and write the same bytes. Both
+@rem Tools-Compiler.md promises they print the same and write the same bytes. Both
 @rem built-in test suites must pass with the same names, and one sequence
 @rem of commands runs through each edition, comparing exit codes, output
 @rem and written files. Without Python it says SKIPPED and passes here;

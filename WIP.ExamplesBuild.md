@@ -7,7 +7,7 @@ this sample actually build*.
 [scripts/lib/tb-fences.mjs](scripts/lib/tb-fences.mjs) holds the half that needs no
 compiler, and [test/example-projects/](test/example-projects/) holds the template trees.
 Reader-facing documentation is the [`check_examples.mjs`
-entry](docs/Documentation/Tools.md) in Tools.md and [Checking that a sample
+entry](docs/Documentation/Tools-Samples.md#check-examples) in Tools-Samples.md and [Checking that a sample
 compiles](docs/Documentation/Authoring.md) in Authoring.md.
 
 ## State

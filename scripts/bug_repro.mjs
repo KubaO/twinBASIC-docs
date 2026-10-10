@@ -22,7 +22,7 @@
 // bugs/<slug>/repro.json says how to ask. `verify` reads it for every reproducer:
 // the mode (compile, build, run, test, cli, lane, probe or manual), the target, and
 // what a reproduction looks like (`expect`). Its keys are listed by loadRepro() below,
-// and the contributor-facing description is docs/Documentation/Tools.md. A test
+// and the contributor-facing description is docs/Documentation/Tools-Defects.md. A test
 // reproducer holds the issue's regression tests, [TestCase] Subs and compile cases,
 // and is judged by the PASS and FAIL lines `tbrun --tests` prints for them. A lane
 // reproducer names a lane of test/ide or test/addin and the tests in it that pass

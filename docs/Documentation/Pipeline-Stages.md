@@ -433,7 +433,7 @@ addinProject.expected = ["symbolIndex", "prepDest"]
 addinProject.execute({ symbolIndex }) → { rel, bytes, files, untracked, roots, ms } | { failed, rel, error } | null
 ```
 
-Writes the help add-in's project file, the download [Help Add-In](../../tB/IDE/AddIns/Help) offers (see [Tools and Scripts](Tools#the-help-add-ins-project-file)). Reads `addin_project` from the config with `addinProjectOf`, and returns `null` when the config declares none or under `--dry-run`. Otherwise calls `writeAddinProject` from `addin-project.mjs` with the add-in's folder (`src`, resolved against the source root), `symbolIndex.json` and the trees to write: the online tree, and the offline tree unless the build has none or `offline_exclude` leaves the file out of it. `dispatch` has already put `dest` in both trees' indexes and in `sitePaths`, so the links to the file resolve in both trees, and `checkReport` waits for this task. A failure --- `git` missing, an unreadable file --- is caught and returned rather than thrown, so the trees are still written; `runBuild` prints the result and fails the build on `failed`. ~100 ms.
+Writes the help add-in's project file, the download [Help Add-In](../../tB/IDE/AddIns/Help) offers (see [Build and Generation Tools](Tools-Build#the-help-add-ins-project-file)). Reads `addin_project` from the config with `addinProjectOf`, and returns `null` when the config declares none or under `--dry-run`. Otherwise calls `writeAddinProject` from `addin-project.mjs` with the add-in's folder (`src`, resolved against the source root), `symbolIndex.json` and the trees to write: the online tree, and the offline tree unless the build has none or `offline_exclude` leaves the file out of it. `dispatch` has already put `dest` in both trees' indexes and in `sitePaths`, so the links to the file resolve in both trees, and `checkReport` waits for this task. A failure --- `git` missing, an unreadable file --- is caught and returned rather than thrown, so the trees are still written; `runBuild` prints the result and fails the build on `failed`. ~100 ms.
 
 ### `writeAux` (main)
 
@@ -509,7 +509,7 @@ checkReport.execute({ linkJoin, checkBook }) → void
 Formats every tree's result, decides the exit code, and optionally writes the machine-readable findings.
 
 - **Exit code** follows the same scheme as `check_links.mjs`: `1` when the check found a link or an integrity failure, whichever it was; the summary lines name which. Set through `failBuild`, which marks the build failed in `process.exitCode`, never by throwing.
-- **`--check-findings <path>`** writes the findings as JSON for [`check_links_diff.mjs`](Tools#check-links-diff) to diff against the standalone script's. Written *before* the exit code is decided, so a failing check still produces the file that says what it found.
+- **`--check-findings <path>`** writes the findings as JSON for [`check_links_diff.mjs`](Tools-Site-Checks#check-links-diff) to diff against the standalone script's. Written *before* the exit code is decided, so a failing check still produces the file that says what it found.
 - **`--check-audit-index`** additionally diffs the tree index the build derived from its own records against what actually landed on disk. This is the one failure mode the two-checker findings comparison structurally cannot see: a *missing* index entry turns a working link into a reported break, which is loud, but a *spurious* one makes the oracle answer "exists" for a path that 404s in production, and on a clean site nothing links to a path that does not exist, so nothing would ever notice. Cost is one `readdir` per tree.
 
 `scss` is in `expected` for a reason worth keeping: `--check-audit-index` reads the tree off disk, and the combined stylesheet is in the index from the moment `dispatch` builds it. Without that edge the audit can run first and report the file as "indexed but not on disk" --- which it was, for another few milliseconds. On the real site `scss` finishes long before the check; on a three-page fixture it does not, and the audit failed the build over nothing. `symbolIndex` is there for the same reason: `tB/symbols.json` is in the online tree's index too. So is `addinProject`, whose project file is in both trees' indexes.
@@ -522,7 +522,7 @@ The same modules as above, with the full export list per file.
 
 ### `check.mjs`
 
-The link and integrity check over rendered pages, which the standalone [`scripts/check_links.mjs`](Tools#check-links) also runs, over a tree it reads from disk. The build imports it dynamically --- on the workers by `renderEnvInit`, on main by `linkJoin` / `checkBook` / `checkReport` --- because `htmlparser2` costs ~23 ms to import and a build without `--check` must not pay it on sixteen lanes.
+The link and integrity check over rendered pages, which the standalone [`scripts/check_links.mjs`](Tools-Site-Checks#check-links) also runs, over a tree it reads from disk. The build imports it dynamically --- on the workers by `renderEnvInit`, on main by `linkJoin` / `checkBook` / `checkReport` --- because `htmlparser2` costs ~23 ms to import and a build without `--check` must not pay it on sixteen lanes.
 
 | Symbol | Signature | Description |
 |---|---|---|
@@ -547,7 +547,7 @@ The link and integrity check over rendered pages, which the standalone [`scripts
 
 ### `link-check.mjs`
 
-The pure core shared by the build's fused check and the standalone [`scripts/check_links.mjs`](Tools#check-links). No filesystem traversal and no CLI --- it takes HTML and an oracle and returns findings, which is what lets one implementation serve both front ends. **The two front ends read the tree differently, and a checker that silently checks less reports a clean pass, so run [`check_links_diff.mjs`](Tools#check-links-diff) whenever this file, `check.mjs` or `check_links.mjs` changes.**
+The pure core shared by the build's fused check and the standalone [`scripts/check_links.mjs`](Tools-Site-Checks#check-links). No filesystem traversal and no CLI --- it takes HTML and an oracle and returns findings, which is what lets one implementation serve both front ends. **The two front ends read the tree differently, and a checker that silently checks less reports a clean pass, so run [`check_links_diff.mjs`](Tools-Site-Checks#check-links-diff) whenever this file, `check.mjs` or `check_links.mjs` changes.**
 
 | Symbol | Signature | Description |
 |---|---|---|

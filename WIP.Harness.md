@@ -171,7 +171,7 @@ short: an entry written from the two targets someone tried, a Sub and a Const, s
 name (the page's, the compiler's token table's, `--names`) at each of about 60 sites in
 [scripts/lib/attribute-sites.mjs](scripts/lib/attribute-sites.mjs), in each argument shape ---
 and lays the answers against the page. Its reader-facing description is
-[Tools and Scripts](docs/Documentation/Tools.md#sweep-attributes); this is why it is built as
+[Tools and Scripts](docs/Documentation/Tools-Samples.md#sweep-attributes); this is why it is built as
 it is.
 
 **Against BETA 987: 34,526 probes in 134 builds, 8 to 16 minutes on four lanes.** That is
@@ -519,7 +519,7 @@ Build, then reads the DEBUG CONSOLE back over CDP. The staging is
 [scripts/lib/tb-project.mjs](scripts/lib/tb-project.mjs), which the add-in harness shares.
 The probe is a module with a `[RunAfterBuild]` Sub, which the IDE runs once the exe is
 linked. Reader-facing documentation is the [`tbrun.mjs` entry in
-Tools.md](docs/Documentation/Tools.md).
+Tools-Compiler.md](docs/Documentation/Tools-Compiler.md#tbrun).
 
 **The script owns the tree because of a silent trap.** A project whose `project.buildPath`
 is still the default `${SourcePath}\Build\...` template opens a native *Save* dialog when

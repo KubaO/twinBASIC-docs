@@ -138,7 +138,7 @@ names its exe, because no gate can build it. It is laid out as a reproducer unde
 is, an exported tree in `src/` with `imagestrip.twinproj` packed from it beside it, and
 both are checked out byte for byte so that the two agree; nothing checks that they do, so
 a change to `src/` is packed again by hand. See [Tools and
-Scripts](docs/Documentation/Tools.md#imagestrip).
+Scripts](docs/Documentation/Tools-IDE.md#imagestrip).
 
 **Its own unit tests are twinBASIC `[TestFixture]` modules in `src/Sources/Tests/`**, with
 the images they build in `TestImages`, run by `tbrun --tests` (owner, 2026-10-10), which reads

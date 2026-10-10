@@ -111,7 +111,7 @@ what VB6 drew, the pixels that differ in red. `test/png.test.mjs` fails when an 
 `REPORT.md` does not embed one. `expect.imagesDiffer` lets `verify` judge by them.
 
 `scripts/bug_repro.mjs` makes and checks them (the tool's page is
-[Tools and Scripts](docs/Documentation/Tools.md#bug-repro)):
+[Tools and Scripts](docs/Documentation/Tools-Defects.md#bug-repro)):
 
 ```sh
 node scripts/bug_repro.mjs new <slug> "<entry title>"   # bugs/<slug>/src/ and repro.json
