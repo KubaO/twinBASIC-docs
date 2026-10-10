@@ -293,8 +293,8 @@ disposition, group by group:
 
 ### Group A, special IDE states (2026-10-10)
 
-Four of the six retaken, in both themes; the two tooltips keep their old files. **49 images
-under `docs/` are now outside the tool.**
+Four of the six retaken, in both themes; the two tooltips were drawn as replicas later the same
+day (below). **49 images under `docs/` were outside the tool then, 47 with the tooltips.**
 
 - **`Services_Unavailable`**: the badge in the `no-project` setup. With no project the badge's
   title reads each service `Not initialized`; all four read `Disconnected` only for the 0.1 s
@@ -327,12 +327,29 @@ under `docs/` are now outside the tool.**
   folder, under the user's, and Clear does nothing until the compiler is connected, so
   `nameUserAsUserIn(c, ".debugConsoleOuter")` replaces the name there in the page; the console
   is cleared with its button once the compiler is back.
-- **The tooltips** (`Services_Unavailable_Tooltip`, `Services_Operational_Tooltip`) keep their
-  old files. A native `title` tooltip never appears on a private desktop: neither a CDP mouse move
+- **The tooltips** (`Services_Unavailable_Tooltip`, `Services_Operational_Tooltip`) are
+  **replicas**, by the owner's decision of 2026-10-10 (first they kept their old files). A native
+  `title` tooltip never appears on a private desktop: neither a CDP mouse move
   over the badge nor a `WM_MOUSEMOVE` posted or sent to any of the page's three windows
   (`Chrome_WidgetWin_0`, `Chrome_WidgetWin_1`, `Chrome_RenderWidgetHostHWND`) made a new
   top-level window appear in 3 s, and the page saw no hover from the messages. Real input
-  reaches only the desktop on screen. No replica is drawn (owner's decision).
+  reaches only the desktop on screen. So `tooltipOn` (`shoot_docs.mjs`) puts one `div` into the
+  page, holding the badge's own `title` read live, styled by `TOOLTIP_CSS`, placed as Windows
+  places a tooltip by the cursor (cursor taken at the badge's middle; the badge is at the
+  window's bottom, so it goes above), captured alone and removed, in the badge's own setups
+  (`project` for OPERATIONAL, `no-project` for UNAVAILABLE). Calibrated against the January
+  pictures (154x73 and 158x73 px) by rendering the same text in puppeteer's Chrome at 1x: Segoe
+  UI 12 px (9 pt), 16 px lines, `#242424` for the 1 px border **and** the text (the January
+  pictures' darkest text pixel is 36 grey levels, not black), 7 px side padding, 3 above and 4
+  below, the width rounded up to whole pixels. Result in a 1x render with the January text: the
+  same size to the pixel and a mean luminance difference of 0.4 grey levels (maximum 9). In the
+  IDE at 2x, shown at half size, OPERATIONAL is 158x73 like the January picture (its text a
+  little softer than a 1x ClearType picture: mean difference 8 after a box-filter to 1x).
+  **The text is the IDE's live one**: with no project the badge's title reads each service
+  `Not initialized` (the January picture says `Disconnected`, the state for 0.1 s between
+  compilers), so the UNAVAILABLE picture is 155x73 and its alt text says Not initialized. The
+  replica does not follow the theme, so the Light pass takes the dark pixels and keeps no
+  `.light.png` file.
 - **Window capture, for groups B and D**: `desktopWindows(desktop, {children})` and
   `captureWindow(desktop, hwnd, file, {flags})` in `tb-ide.mjs`, through `tb-launch.ps1`'s
   `TBBUILD_WINDOWS` mode (a thread put on the desktop with `SetThreadDesktop`, per-monitor DPI
@@ -462,8 +479,9 @@ deleted, each page keeping its own alt text); `packPublishPackage1` keeps its ol
 Four retaken on BETA 1005; the two Affinity crops (`af-vector-studio`, `af-vector-crop-tool`)
 deleted with their `.af` sources, and `Building.md`'s "Editing screenshots" now points at the
 tool. The six GitHub walkthrough pictures, the GIF and `favicon.png` are untouched (owner).
-**12 images under `docs/` are now outside the tool**: the two tooltips, `packPublishPackage1`,
-`packPublishComplete1`, the six GitHub pictures, `tbWebView2InAForm.gif` and `favicon.png`.
+**12 images under `docs/` were outside the tool then, 10 now** (the two tooltips became replicas
+in group A): `packPublishPackage1`, `packPublishComplete1`, the six GitHub pictures,
+`tbWebView2InAForm.gif` and `favicon.png`.
 
 - **`16833fae`** (setup `import`): the sample open, and `test/shots/vbp` (ImportDemo: a form,
   a module, `..\Shared\modShared.bas` for `{PARENT-FOLDER}`) staged with CRLF on

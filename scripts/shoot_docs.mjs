@@ -119,8 +119,9 @@
 // The Windows user name must never be in a published picture. Before a picture
 // is kept, the visible text of the page it was taken from (the document, every
 // shadow root and the docs page in the pane's frame) is searched for it, and a
-// picture whose page holds it is refused. A tooltip is not drawn and is not
-// read; the IDE's title tooltip holds the project's path. A program's window is
+// picture whose page holds it is refused. A native tooltip is not drawn and is not
+// read (the IDE's title tooltip holds the project's path), except the services badge's, a
+// replica drawn in the page (TOOLTIP_CSS) that is read like the rest. A program's window is
 // not a page: the texts of the window and its child windows are searched instead,
 // and what the program draws itself is the fixture's own text (see programShot).
 
@@ -5249,40 +5250,128 @@ const aboutShot = {
   },
 };
 
-// The status bar's services badge once the compiler's services have all answered. (Its tooltip,
-// the four services each OPERATIONAL, is the badge's native title, which no capture holds.)
+// A badge's tooltip is its plain HTML `title`, which WebView2 draws as a native Windows tooltip
+// on a real mouse hover and in no other way: no capture holds it, and no mouse the tool can
+// move reaches a private desktop (WIP.Screenshots.md, group A). So it is drawn in the page, as
+// a replica of Windows 10's tooltip holding the badge's own title, read from the IDE: the
+// owner's decision (2026-10-10). The look is calibrated against the pictures taken by hand in
+// January: Segoe UI 9 pt (12 px) in #242424 on white, a 1 px #242424 border, 16 px lines, 7 px
+// of padding at the sides, 3 above and 4 below, the box a whole number of pixels wide. It does
+// not follow the IDE's theme, so the Light pass takes the dark pass's picture and keeps no file
+// of its own. It is placed as Windows places a tooltip by the cursor, which is taken to be at
+// the badge's middle: its left edge at the cursor, 21 px below it, or above the badge when it
+// would not fit below (the status bar is at the bottom of the window), and inside the window.
+const TOOLTIP_ID = "tbShotTooltip";
+const TOOLTIP_CSS =
+  "all:initial;position:fixed;z-index:2147483647;pointer-events:none;box-sizing:border-box;" +
+  "border:1px solid #242424;background:#fff;color:#242424;white-space:pre-line;" +
+  "font:12px/16px 'Segoe UI',sans-serif;padding:3px 7px 4px 7px;display:block";
+
+// Puts the replica of the tooltip of the element `sel` into the page; returns its text and
+// its rectangle in CSS pixels. Throws when the element has no title.
+async function tooltipOn(c, sel) {
+  const r = await c.evaluate(`(() => {
+    const badge = document.querySelector(${JSON.stringify(sel)});
+    if (!badge) return { error: "no such element" };
+    const text = badge.title;
+    if (!text) return { error: "the element has no title" };
+    document.getElementById(${JSON.stringify(TOOLTIP_ID)})?.remove();
+    const e = document.createElement("div");
+    e.id = ${JSON.stringify(TOOLTIP_ID)};
+    e.style.cssText = ${JSON.stringify(TOOLTIP_CSS)};
+    e.textContent = text;
+    document.body.appendChild(e);
+    e.style.left = "0px";
+    e.style.top = "0px";
+    e.style.width = Math.ceil(e.getBoundingClientRect().width) + "px";
+    const t = e.getBoundingClientRect();
+    const b = badge.getBoundingClientRect();
+    const cursor = { x: b.x + b.width / 2, y: b.y + b.height / 2 };
+    const left = Math.max(0, Math.min(window.innerWidth - t.width, Math.round(cursor.x)));
+    const below = Math.round(cursor.y) + 21;
+    const top = below + t.height <= window.innerHeight ? below : Math.round(b.y) - t.height - 2;
+    e.style.left = left + "px";
+    e.style.top = top + "px";
+    const f = e.getBoundingClientRect();
+    return { text, rect: { x: f.x, y: f.y, width: f.width, height: f.height } };
+  })()`);
+  if (r.error) throw new Error(`the tooltip of ${sel}: ${r.error}`);
+  return r;
+}
+
+const tooltipOff = (c) => c.evaluate(`document.getElementById(${JSON.stringify(TOOLTIP_ID)})?.remove()`);
+
+// The picture of the replica alone, as the January ones are.
+async function tooltipShotTake(c, name, sel) {
+  const { text, rect } = await tooltipOn(c, sel);
+  try {
+    say(c.shot.name, `  the tooltip text: ${JSON.stringify(text)}`);
+    return await capture(c, name, snapOut(rect), { away: () => parkMouse(c) });
+  } finally {
+    await tooltipOff(c);
+  }
+}
+
+// The status bar's services badge once the compiler's services have all answered.
+const servicesBadgeReady = async (c) => {
+  await resetUi(c);
+  const ready = await waitFor(
+    c,
+    () =>
+      c.evaluate(
+        `(() => { const e = document.getElementById("compilerStatusOuter"); return !!e && e.classList.contains("servicesOK") && e.innerText.includes("OPERATIONAL"); })()`,
+      ),
+    { timeout: 60000, interval: 250 },
+  );
+  if (!ready) throw new Error("the services badge never said OPERATIONAL");
+};
+
 const servicesShot = {
   out: "IDE/Images/Services_Operational.png",
   setup: "project",
   async take({ c }) {
-    await resetUi(c);
-    const ready = await waitFor(
-      c,
-      () =>
-        c.evaluate(
-          `(() => { const e = document.getElementById("compilerStatusOuter"); return !!e && e.classList.contains("servicesOK") && e.innerText.includes("OPERATIONAL"); })()`,
-        ),
-      { timeout: 60000, interval: 250 },
-    );
-    if (!ready) throw new Error("the services badge never said OPERATIONAL");
+    await servicesBadgeReady(c);
     return capture(c, "Services_Operational", snapOut(await rectOf(c, "#compilerStatusOuter")), {
       away: () => parkMouse(c),
     });
   },
 };
 
-// The services badge with no compiler connected, as the IDE starts with no project. Its
-// tooltip, the four services each Disconnected, is the badge's native title, which no capture
-// holds: on a private desktop no mouse the tool can move raises it (WIP.Screenshots.md).
+// The tooltip of that badge, the four services each OPERATIONAL (a replica, see TOOLTIP_CSS).
+const servicesTooltipShot = {
+  out: "IDE/Images/Services_Operational_Tooltip.png",
+  setup: "project",
+  async take({ c }) {
+    await servicesBadgeReady(c);
+    return tooltipShotTake(c, "Services_Operational_Tooltip", "#compilerStatusOuter");
+  },
+};
+
+// The services badge with no compiler connected, as the IDE starts with no project.
+const unavailableBadgeReady = async (c) => {
+  await resetUi(c);
+  const unavailable = await c.evaluate(
+    `!compilerStatusOuter.classList.contains("servicesOK") && !compilerStatusOuter.classList.contains("servicesPARTIAL") && /UNAVAILABLE/.test(compilerStatus.innerText)`,
+  );
+  if (!unavailable) throw new Error("the services badge does not say UNAVAILABLE");
+};
+
+// Its tooltip, each of the four services Not initialized (they read Disconnected only for 0.1 s
+// between one compiler and the next), is the badge's own title, drawn as a replica.
+const unavailableTooltipShot = {
+  out: "IDE/Images/Services_Unavailable_Tooltip.png",
+  setup: "no-project",
+  async take({ c }) {
+    await unavailableBadgeReady(c);
+    return tooltipShotTake(c, "Services_Unavailable_Tooltip", "#compilerStatusOuter");
+  },
+};
+
 const unavailableShot = {
   out: "IDE/Images/Services_Unavailable.png",
   setup: "no-project",
   async take({ c }) {
-    await resetUi(c);
-    const unavailable = await c.evaluate(
-      `!compilerStatusOuter.classList.contains("servicesOK") && !compilerStatusOuter.classList.contains("servicesPARTIAL") && /UNAVAILABLE/.test(compilerStatus.innerText)`,
-    );
-    if (!unavailable) throw new Error("the services badge does not say UNAVAILABLE");
+    await unavailableBadgeReady(c);
     say(c.shot.name, `  the badge's title: ${JSON.stringify(await c.evaluate("compilerStatusOuter.title"))}`);
     return capture(c, "Services_Unavailable", snapOut(await rectOf(c, "#compilerStatusOuter")), {
       away: () => parkMouse(c),
@@ -7416,9 +7505,11 @@ const SHOTS = [
   ...["Pane", "Hover", "Search", "Choices", "Description", "Settings", "Toolbar", "Window"].map(helpShot),
   aboutShot,
   servicesShot,
+  servicesTooltipShot,
   communityShot,
   limitedShot,
   unavailableShot,
+  unavailableTooltipShot,
   splashShot,
   menuBarShot,
   menuShot("Menu_File", "File"),
