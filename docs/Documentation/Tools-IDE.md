@@ -157,7 +157,7 @@ Exit codes: **0** the IDE was closed, and the registry is as it was found; **1**
 ## shoot_docs.mjs
 {: #shoot-docs }
 
-    node scripts/shoot_docs.mjs [--only <regex>] [--out <dir>] [--diffs <dir>] [--jobs N] [--port N] [--ide <path>]
+    node scripts/shoot_docs.mjs [--only <regex>] [--out <dir>] [--diffs <dir>] [--jobs N] [--port N] [--ide <path>] [--svg] [--bundles <dir>]
 
 Takes the documentation's screenshots of the IDE, so that one run regenerates them after a new
 BETA. Each picture belongs to a *setup*, one IDE brought to a known state, and a setup's IDE is
@@ -247,7 +247,42 @@ that builds the add-in, whose browser process can hold its port for a while afte
 ends. The add-in's saved settings (`tbDocsHelp`) are emptied for the run and, with the IDE's
 registry entries, put back at the end.
 
+`--svg` also draws each picture as SVG, from the page as it stands at the capture, and writes
+it beside the PNG as `X.svg` when it is close enough to the PNG (see [A picture as
+SVG](Authoring#a-picture-as-svg)); it needs Python with fontTools. What the SVG is drawn from
+--- the page's layout and styles, and what the tool measured in the page --- is saved for each
+picture as a *bundle* in the folder `--bundles` names, `.svgshot-bundles` in the repository by
+default, so that [`replay.mjs`](#replay) can draw the SVG again without the IDE. Git ignores
+that folder, and it must stay outside `docs`: a bundle holds the Windows user name.
+
 Exit codes: **0** every picture was written or was unchanged; **1** a picture failed (an element was not found, the page showed the user name, or a light picture was more than 32 pixels off the dark one's size), the add-in did not build, or the demo project does not compile; **2** the tool could not run: a refused command line, no IDE, no built site, a registry it could not record, or a crash; **3** the registry or the work folder was not put back (see the lines above).
+
+## replay.mjs
+{: #replay }
+
+    node scripts/svgshot/replay.mjs [--only <regex>] [--bundles <dir>] [--out <dir>] [--diffs <dir>] [--jobs N]
+
+Draws each picture's SVG again from the bundle that [`shoot_docs.mjs --svg`](#shoot-docs)
+saved when it took the picture, with the SVG converter as it is now. It starts no IDE and
+takes no picture, so a change to the converter under `scripts/svgshot/` is tried on every
+picture with no IDE, in about three and a half minutes for every picture today. Each SVG is compared with its PNG and
+written, left unchanged or removed exactly as `shoot_docs.mjs` does. A replay with the
+converter unchanged reports every picture `unchanged`.
+
+A bundle holds only what the converter asked for when the picture was taken. A picture is
+left as it is and listed as needing a retake when its PNG has changed since its bundle was
+saved, when its bundle lacks a computed style the converter now reads, or when the converter
+asks for something the bundle cannot answer, such as the width of a run of text it did not
+draw before. The list ends with the `shoot_docs.mjs --svg --only` command that takes those
+pictures again.
+
+`--only` takes the pictures whose path under `docs` matches a regular expression, a light
+picture's path ending in `.light.png`. `--bundles` is the bundle folder, `.svgshot-bundles` by
+default, and `--out` the folder the pictures are in, `docs` by default. `--diffs` names a
+folder for each SVG's difference picture against its PNG, and `--jobs` is how many pictures are
+drawn at once, 6 by default. Needs Python with fontTools, as `--svg` does.
+
+Exit codes: **0** every picture was drawn again; **1** a picture needs a retake, could not be drawn, or its SVG holds the Windows user name; **2** the tool could not run: a refused command line, no bundle folder, no browser, or a crash.
 
 ## imagestrip
 {: #imagestrip }

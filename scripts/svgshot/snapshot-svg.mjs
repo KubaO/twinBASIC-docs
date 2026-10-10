@@ -201,8 +201,9 @@ function decodeDocument(snapshot, di, styleNames, grid, seen) {
     const s = L.scrollRects?.[li];
     return {
       li,
-      // Unique across the documents of a snapshot (a map of layout objects is keyed by it).
-      key: `${di}:${li}`,
+      // Unique across the documents of a snapshot (a map of layout objects is keyed by it); in
+      // a snapshot cut down to a picture (bundle.mjs trimSnapshot), the index it had before.
+      key: `${di}:${L.originalIndex?.[li] ?? li}`,
       node: nodes[n],
       bounds: { x, y, w: snap(bx + bw) - x, h: snap(by + bh) - y },
       // Unsnapped, as the text a control draws inside it is placed.
@@ -765,7 +766,7 @@ export function canvasColor(doc) {
   return [root, body].map((n) => n?.style?.["background-color"]).find((c) => !transparent(c)) ?? null;
 }
 
-function parseShadows(v) {
+export function parseShadows(v) {
   if (!v || v === "none") return [];
   return splitTop(v).map((s) => {
     const inset = /\binset\b/.test(s);

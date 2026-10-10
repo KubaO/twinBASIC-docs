@@ -164,8 +164,9 @@ import {
   sleep,
   waitForCompile,
 } from "./lib/tb-ide.mjs";
+import { writeBundle } from "./svgshot/bundle.mjs";
 import { svgOfPage } from "./svgshot/capture.mjs";
-import { diffSvg, svgClip } from "./svgshot/diff.mjs";
+import { holdsUserName, judgeSvg, SVG_FAITHFUL, writeSvg } from "./svgshot/keep.mjs";
 import { unpackProject } from "./lib/tb-project.mjs";
 import { findIde } from "./lib/tb-install.mjs";
 import { Lane } from "./lib/tb-lane.mjs";
@@ -203,6 +204,7 @@ const DEMO_FILE = "/Inventory/Sources/Inventory.twin";
 const DEMO_SOURCE = path.join(DEMO, "Sources", "Inventory.twin");
 const SITE = path.join(REPO_ROOT, "docs", "_site");
 const DEFAULT_OUT = path.join(REPO_ROOT, "docs");
+const DEFAULT_BUNDLES = path.join(REPO_ROOT, ".svgshot-bundles");
 
 // The IDE page's size in CSS pixels, and the detached window's. Both at 2x.
 const IDE_SIZE = { width: 1280, height: 880 };
@@ -289,7 +291,10 @@ name.
                    is not written, and one written before is removed, so that
                    the page shows the PNG; with --diffs it goes there instead,
                    as <name>.svg. An SVG that holds the Windows user name fails
-                   the picture
+                   the picture. Each picture's bundle, what its SVG is drawn
+                   from, goes to the bundle cache for scripts/svgshot/replay.mjs
+  --bundles <dir>  with --svg, the bundle cache (default .svgshot-bundles in the
+                   repository, which git ignores); never under docs
   -h, --help       print this text and exit
 
 Exit codes:
@@ -308,6 +313,7 @@ const { values } = withUsageError(() =>
       only: { type: "string" },
       out: { type: "string" },
       diffs: { type: "string" },
+      bundles: { type: "string" },
       jobs: { type: "string" },
       port: { type: "string" },
       ide: { type: "string" },
@@ -327,12 +333,17 @@ const firstPort = withUsageError(() =>
 );
 const outRoot = path.resolve(values.out ?? DEFAULT_OUT);
 const diffsRoot = values.diffs === undefined ? null : path.resolve(values.diffs);
+// With --svg, each picture's bundle (svgshot/bundle.mjs), for replay.mjs: never under docs,
+// since a bundle holds the Windows user name.
+const bundlesRoot = values.svg ? path.resolve(values.bundles ?? DEFAULT_BUNDLES) : null;
 // path.relative gives an absolute path across drives, which is outside docs and does not start with "..".
-if (diffsRoot) {
-  const rel = path.relative(path.join(REPO_ROOT, "docs"), diffsRoot);
-  if (!rel.startsWith("..") && !path.isAbsolute(rel)) {
-    die(2, `--diffs must not be under docs: ${values.diffs}`);
-  }
+for (const [option, root] of [
+  ["--diffs", diffsRoot],
+  ["--bundles", bundlesRoot],
+]) {
+  if (!root) continue;
+  const rel = path.relative(path.join(REPO_ROOT, "docs"), root);
+  if (!rel.startsWith("..") && !path.isAbsolute(rel)) die(2, `${option} must not be under docs: ${root}`);
 }
 
 const ide = findIde(values.ide || undefined);
@@ -7891,19 +7902,12 @@ function dropLight(name, out) {
 let svgBrowser = null;
 const svgResults = [];
 
-// The most an SVG may differ from its PNG and still be written: the share of
-// its pixels (percent) more than 96 grey levels off the PNG's, a shift of one
-// pixel allowed. Past it something is drawn wrongly or not at all -- a part
-// the converter does not draw, the help pane's page from another origin --
-// and the page goes on showing the PNG.
-const SVG_FAITHFUL = 0.25;
-
 // Writes a picture's SVG beside its PNG when it is faithful to the PNG it was
-// taken with and its bytes differ from the file's, refused when it holds the
-// user name; an SVG that is not faithful is not written, and one written
-// before is removed. Says how much of it differs from the PNG. The search
-// skips base64 payloads (fonts, images), in which four given letters turn up
-// by chance often enough to fail runs.
+// taken with (keep.mjs) and its bytes differ from the file's, refused when it
+// holds the user name; an SVG that is not faithful is not written, and one
+// written before is removed. Says how much of it differs from the PNG. The
+// picture's bundle goes to the bundle cache whether or not its SVG is written,
+// so that replay.mjs can draw it again once the converter draws it better.
 async function keepSvg(name, out, png, picture) {
   const svgOut = out.replace(/\.png$/i, ".svg");
   const file = path.join(outRoot, svgOut);
@@ -7916,21 +7920,14 @@ async function keepSvg(name, out, png, picture) {
     drop("the picture is not a single capture");
     return;
   }
-  const { svg, stats } = picture;
-  const at = svg
-    .replace(/;base64,[A-Za-z0-9+/=]+/g, ";base64,")
-    .toLowerCase()
-    .indexOf(USER.toLowerCase());
-  if (at >= 0) throw new Error(`the SVG of ${out} holds the Windows user name`);
+  const { svg, stats, misses, bundle } = picture;
+  if (holdsUserName(svg, USER)) throw new Error(`the SVG of ${out} holds the Windows user name`);
+  // The bundle names the PNG as the file holds it: a capture within the noise of the file
+  // leaves the file as it was, and that file is what replay.mjs compares with.
+  const pngFile = path.join(outRoot, out);
+  if (bundlesRoot) writeBundle(bundlesRoot, out, bundle, existsSync(pngFile) ? readFileSync(pngFile) : png, misses);
   svgBrowser ??= launchBrowser();
-  const page = await (await svgBrowser).newPage();
-  let diff;
-  try {
-    const clip = svgClip(svg);
-    diff = await diffSvg(page, svg, png, { refOrigin: { x: clip.x, y: clip.y } });
-  } finally {
-    await page.close();
-  }
+  const { diff, faithful, measures } = await judgeSvg(await svgBrowser, svg, png, stats);
   if (diffsRoot) {
     mkdirSync(diffsRoot, { recursive: true });
     writeFileSync(
@@ -7938,13 +7935,8 @@ async function keepSvg(name, out, png, picture) {
       diff.diff,
     );
   }
-  const unsupported = Object.entries(stats.unsupported).map(([k, n]) => `${k} x${n}`);
   const bytes = Buffer.byteLength(svg);
-  const faithful = diff.stats.pct96 < SVG_FAITHFUL;
   svgResults.push({ out: svgOut, bytes, png: png.length, faithful, ...diff.stats });
-  const measures =
-    `${diff.stats.pct32}% of pixels differ, ${diff.stats.pct96}% strongly` +
-    `${unsupported.length ? `; not drawn: ${unsupported.join(", ")}` : ""}`;
   if (!faithful) {
     drop(measures);
     // To see what went wrong, the SVG goes beside its difference map.
@@ -7952,11 +7944,7 @@ async function keepSvg(name, out, png, picture) {
       writeFileSync(path.join(diffsRoot, `${out.replace(/[\\/]/g, "__").replace(/\.png$/i, "")}.svg`), svg);
     return;
   }
-  // The file may have been checked out with CRLF line endings, on its last line alone
-  // (the SVG is on one line, oneLine in snapshot-svg.mjs).
-  let state = "new";
-  if (existsSync(file)) state = readFileSync(file, "utf8").replace(/\r\n/g, "\n") === svg ? "unchanged" : "updated";
-  if (state !== "unchanged") writeFileSync(file, svg);
+  const state = writeSvg(file, svg);
   say(
     name,
     `${svgOut}: ${state} (${(bytes / 1024).toFixed(0)} KB against the PNG's ${(png.length / 1024).toFixed(0)} KB; ${measures})`,

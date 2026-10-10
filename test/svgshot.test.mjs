@@ -16,8 +16,20 @@
 
 import assert from "node:assert/strict";
 import fs from "node:fs";
+import os from "node:os";
+import path from "node:path";
 import { describe, test } from "node:test";
 import { REPO_ROOT } from "../lib/repo-paths.mjs";
+import {
+  BUNDLE_VERSION,
+  bundleFile,
+  drawBundle,
+  pngHash,
+  readBundle,
+  renderBundle,
+  trimSnapshot,
+  writeBundle,
+} from "../scripts/svgshot/bundle.mjs";
 import { webFontFiles } from "../scripts/svgshot/capture.mjs";
 import {
   bakeable,
@@ -160,6 +172,143 @@ describe("colour filters", () => {
       '<use href="#d5"/>',
     );
     assert.equal(defs[5], '<g id="d5" filter="url(#dF)"><use href="#d4"/></g>');
+  });
+});
+
+describe("bundles", () => {
+  // A page of a <select> 200 by 20 at 10, 10, whose selected option reads "Shown": a
+  // run the converter measures (its font's metrics, the label's width).
+  const STYLES = ["visibility", "background-color", "color", "font-family", "font-size", "font-weight", "font-style"];
+  function bundleOf(page) {
+    const strings = [];
+    const s = (v) => {
+      const i = strings.indexOf(v);
+      return i >= 0 ? i : strings.push(v) - 1;
+    };
+    const names = ["#document", "HTML", "BODY", "SELECT", "OPTION", "#text"];
+    const style = (bg) => [s("visible"), s(bg), s("rgb(0, 0, 0)"), s("Arial"), s("13px"), s("400"), s("normal")];
+    const snapshot = {
+      strings,
+      documents: [
+        {
+          documentURL: s("http://localhost:1/"),
+          baseURL: s("http://localhost:1/"),
+          frameId: s("PAGE"),
+          contentWidth: 400,
+          contentHeight: 100,
+          scrollOffsetX: 0,
+          scrollOffsetY: 0,
+          nodes: {
+            parentIndex: [-1, 0, 1, 2, 3, 4],
+            nodeType: [9, 1, 1, 1, 1, 3],
+            nodeName: names.map(s),
+            nodeValue: names.map((n) => (n === "#text" ? s("Shown") : -1)),
+            backendNodeId: names.map((_, i) => 100 + i),
+            attributes: names.map(() => []),
+            optionSelected: { index: [4] },
+          },
+          layout: {
+            nodeIndex: [1, 2, 3],
+            styles: [style("rgb(255, 255, 255)"), style("rgba(0, 0, 0, 0)"), style("rgb(240, 240, 240)")],
+            bounds: [
+              [0, 0, 400, 100],
+              [0, 0, 400, 100],
+              [10, 10, 200, 20],
+            ],
+            text: [-1, -1, -1],
+            paintOrders: [0, 1, 2],
+            offsetRects: [[], [], []],
+            clientRects: [[], [], []],
+            scrollRects: [[], [], []],
+          },
+          textBoxes: { layoutIndex: [], bounds: [], start: [], length: [] },
+        },
+      ],
+    };
+    const key = JSON.stringify(["normal", "400", "13px", "Arial"]);
+    return {
+      version: BUNDLE_VERSION,
+      styles: STYLES,
+      view: { x: 0, y: 0, w: 400, h: 100 },
+      background: true,
+      snapshot,
+      docs: [
+        {
+          frameId: "PAGE",
+          scale: null,
+          inner: null,
+          page: page(key),
+          skips: [],
+          platform: [],
+          webFonts: {},
+          scrollbars: [],
+        },
+      ],
+    };
+  }
+  const measured = (key) => ({
+    allRuns: [[key, "Shown"]],
+    widths: [34],
+    metrics: { [key]: { ascent: 12, height: 15, line: 15 } },
+    gaps: [],
+    overlays: [],
+    marked: [],
+    canvases: [],
+    placeholderColor: "rgb(117, 117, 117)",
+  });
+
+  test("is drawn the same from the bundle and from its file, and asks nothing it has no answer for", async () => {
+    const bundle = bundleOf(measured);
+    const live = await renderBundle(bundle);
+    assert.match(live.svg, /<text [^>]*textLength="34"[^>]*>Shown<\/text>/);
+    // Its platform fonts were not read: the one question the bundle cannot answer.
+    assert.deepEqual(
+      live.misses.map((m) => m.split(" ")[0]),
+      ["fonts"],
+    );
+    const root = fs.mkdtempSync(path.join(os.tmpdir(), "bundle-test-"));
+    try {
+      const png = Buffer.from("not a real picture");
+      writeBundle(root, "Images/x.light.png", bundle, png, live.misses);
+      const back = readBundle(bundleFile(root, "Images/x.light.png"));
+      assert.equal(back.png, pngHash(png));
+      assert.deepEqual(back.misses, live.misses);
+      assert.equal((await renderBundle(back)).svg, live.svg);
+    } finally {
+      fs.rmSync(root, { recursive: true, force: true });
+    }
+  });
+
+  test("counts each question a bundle has no answer for, once", async () => {
+    const { misses } = await renderBundle(
+      bundleOf((key) => ({ ...measured(key), allRuns: [], widths: [], metrics: {} })),
+    );
+    assert.deepEqual(
+      misses.map((m) => m.split(" ")[0]),
+      ["fonts", "metrics", "width"],
+    );
+  });
+
+  test("refuses a bundle of another version", async () => {
+    await assert.rejects(renderBundle({ ...bundleOf(measured), version: BUNDLE_VERSION + 1 }), /a bundle of version/);
+  });
+
+  test("trimmed to its view, draws the same picture, and drops what is far from it", () => {
+    const bundle = bundleOf(measured);
+    const trimmed = trimSnapshot(bundle.snapshot, bundle.view, bundle.styles);
+    assert.equal(drawBundle({ ...bundle, snapshot: trimmed }).drawn.svg, drawBundle(bundle).drawn.svg);
+    // A view of the page's corner, away from the <select>: the select's layout object goes,
+    // and its own background's string with it; the root's and the body's stay, each with
+    // the index it had, by which what was measured of it is found.
+    const corner = trimSnapshot(bundle.snapshot, { x: 300, y: 60, w: 10, h: 10 }, bundle.styles);
+    const layout = corner.documents[0].layout;
+    assert.deepEqual(layout.nodeIndex, [1, 2]);
+    assert.deepEqual(layout.originalIndex, [0, 1]);
+    assert.ok(!corner.strings.includes("rgb(240, 240, 240)"));
+    assert.ok(bundle.snapshot.strings.includes("rgb(240, 240, 240)"));
+    // Every node stays, the option's text with it.
+    assert.equal(corner.documents[0].nodes.parentIndex.length, 6);
+    assert.ok(corner.strings.includes("Shown"));
   });
 });
 

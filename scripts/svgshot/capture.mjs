@@ -1,5 +1,7 @@
 // An SVG picture of a clip of a live page, over a CDP connection: what
-// shoot_docs.mjs --svg writes beside each PNG.
+// shoot_docs.mjs --svg writes beside each PNG. collectBundle reads what the
+// converter needs from the page into a bundle, data alone; bundle.mjs's
+// renderBundle draws the SVG from it, and replay.mjs draws it again later.
 //
 // Everything is read from the page as it stands when the PNG has just been
 // captured, in this order:
@@ -24,14 +26,12 @@
 // another process is not reached: it has a DevTools target of its own.
 
 import { createHash } from "node:crypto";
-import { PictureFonts, withFaces } from "./fonts.mjs";
+import { BUNDLE_VERSION, renderBundle, trimSnapshot } from "./bundle.mjs";
 import {
   decodeSnapshot,
   frameGeometry,
   framesIn,
   frameView,
-  oneLine,
-  renderSvg,
   scrollbarPartList,
   scrollersIn,
   textNeeds,
@@ -543,9 +543,16 @@ async function webFontData(url) {
 /**
  * The SVG picture of `clip` ({x, y, width, height} CSS px; null for the whole
  * viewport) of the page `conn` is attached to. `background` is false for a
- * cut-out. Returns {svg, stats}.
+ * cut-out. Returns {svg, stats, misses, bundle}: the picture drawn from the
+ * bundle read from the page (bundle.mjs), and the bundle.
  */
-export async function svgOfPage(conn, clip, { background = true } = {}) {
+export async function svgOfPage(conn, clip, options = {}) {
+  const bundle = await collectBundle(conn, clip, options);
+  return { ...(await renderBundle(bundle)), bundle };
+}
+
+/** Everything the converter reads from the page for `clip`, as data (bundle.mjs). */
+export async function collectBundle(conn, clip, { background = true } = {}) {
   const snapshot = await conn.send(
     "DOMSnapshot.captureSnapshot",
     { computedStyles: SNAPSHOT_STYLES, includePaintOrder: true, includeDOMRects: true },
@@ -584,7 +591,11 @@ export async function svgOfPage(conn, clip, { background = true } = {}) {
     for (let i = 0; i < docs.length; i++) {
       const entry = docs[i];
       try {
-        measured.set(entry.doc, await measureDocument(entry));
+        measured.set(entry.doc, {
+          frameId: entry.doc.frameId,
+          scale: entry.geometry ? entry.geometry.scale : null,
+          ...(await measureDocument(entry)),
+        });
       } catch (error) {
         // A frame that cannot be measured is left out, and renderSvg says so; the page must be.
         if (i === 0) throw error;
@@ -655,21 +666,12 @@ export async function svgOfPage(conn, clip, { background = true } = {}) {
       // Named by its bytes, so that one font the page and a frame both use is one face of the picture.
       conn.svgWebFonts.set(cached, data && { family: createHash("sha1").update(data).digest("hex"), data });
     }
-    const fontsFor = (key, text) => {
-      const file = files[key];
+    // The web font each run's font key was drawn with, by key.
+    const webFonts = {};
+    for (const [key, file] of Object.entries(files)) {
       const web = file && conn.svgWebFonts.get(`${origin}|${file.url}`);
-      let drawn = false;
-      return (platform.get(`${key}\u0000${text}`) ?? [])
-        .toSorted((a, b) => b.glyphCount - a.glyphCount)
-        .map((f) => {
-          if (!f.isCustomFont) return { ps: f.postScriptName };
-          // One face for the web font, whichever names it reported.
-          if (drawn || !web) return null;
-          drawn = true;
-          return { ...web, weight: JSON.parse(key)[1] };
-        })
-        .filter((s) => s?.ps || s?.data);
-    };
+      if (web) webFonts[key] = web;
+    }
 
     // Each scrolling box's scrollbar styles, and the frame's viewport's.
     const scrollbars = new Map();
@@ -695,44 +697,16 @@ export async function svgOfPage(conn, clip, { background = true } = {}) {
     const bars = geometry && viewportScroller(doc, geometry, inner);
     if (bars) await partsOf(bars, viewportStyleSources(doc), true);
 
-    return { page, skips, fontsFor, scrollbars, inner };
+    return { page, skips, platform: [...platform], webFonts, scrollbars: [...scrollbars], inner };
   }
 
-  const fonts = new PictureFonts();
-  const envOf = ({ page, skips, fontsFor, scrollbars, inner }) => {
-    const widths = new Map(page.allRuns.map(([key, text], k) => [`${key}\u0000${text}`, page.widths[k]]));
-    const gaps = new Map(skips.map((skip, k) => [skip.join("\u0000"), page.gaps[k]]));
-    return {
-      metrics: (key) => page.metrics[key] ?? { ascent: 0, height: 0, line: 0 },
-      textWidth: (key, text) => widths.get(`${key}\u0000${text}`) ?? null,
-      inkGaps: (...skip) => gaps.get(skip.join("\u0000")) ?? null,
-      placeholderColor: page.placeholderColor,
-      canvases: page.canvases,
-      fontsFor,
-      scrollbars,
-      inner,
-    };
-  };
-  const mine = measured.get(decoded);
-  const overlays = mine.page.overlays.map((xml) =>
-    xml.replace(/--tbk:\s*(\d+);?/g, (_, k) => {
-      const { key, text } = mine.page.marked[Number(k)];
-      const [style, weight] = JSON.parse(key);
-      // Into a style="..." attribute: the face names' quotes must not end it.
-      const css = fonts.css(text, mine.fontsFor(key, text), weight, style)?.replace(/"/g, "'");
-      return css ? `${css};` : "";
-    }),
-  );
-  const drawn = renderSvg(decoded, {
-    clip: view,
-    ...envOf(mine),
-    fonts,
+  return {
+    version: BUNDLE_VERSION,
+    styles: SNAPSHOT_STYLES,
+    view,
     background,
-    overlays,
-    frames: (doc) => (measured.has(doc) ? envOf(measured.get(doc)) : null),
-  });
-  const svg = oneLine(await withFaces(drawn.svg, fonts));
-  const failed = fonts.failed?.length ?? 0;
-  if (failed) drawn.stats.unsupported["text in a font that could not be cut"] = failed;
-  return { svg, stats: drawn.stats };
+    // Cut down to what the picture is drawn from: the same picture, a bundle about half the size.
+    snapshot: trimSnapshot(snapshot, view, SNAPSHOT_STYLES),
+    docs: [...measured.values()],
+  };
 }

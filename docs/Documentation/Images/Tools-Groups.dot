@@ -149,10 +149,13 @@ digraph tools_groups {
         i1 [label="addin_test"]     i2 [label="ide_test"]
         i3 [label="try_help_addin"] i4 [label="shoot_docs"]
         i5 [label="imagestrip"]     i6 [label="probe_ide_image_labels"]
-        i1 -> i3 -> i5
-        i2 -> i4 -> i6
+        i7 [label="svgshot/replay"]
+        ip [style=invis label=""]
+        i1 -> i3 -> i5 -> i7
+        i2 -> i4 -> i6 -> ip
         { rank=same; i3 i4 }
         { rank=same; i5 i6 }
+        { rank=same; i7 ip }
     }
     subgraph cluster_defects {
         margin=12

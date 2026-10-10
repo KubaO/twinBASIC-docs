@@ -570,6 +570,26 @@ the PNG was just captured from, and the build shows it in place of the PNG
   clip shows the half of the edge the PNG cuts off. That column alone put a small picture past
   the bar (a 16-pixel icon at 11%, a menu at 0.5%), so `capture` gives `svgOfPage` the clip
   with the PNG's width and height.
+- **A converter change is tried with `replay.mjs`, not a retake** (owner, 2026-10-10).
+  `capture.mjs`'s `collectBundle` reads everything the converter needs from the page into a
+  *bundle*: the snapshot, its style names (positional, so a bundle carries its own list), and
+  per document the measuring layer's answers, the runs' platform fonts, the web fonts' bytes,
+  the scrollbar styles and a frame's viewport and zoom. `bundle.mjs`'s `renderBundle` draws the
+  SVG from it alone, and `svgOfPage` is the one then the other, so a replay with the converter
+  unchanged gives the same bytes. `--svg` saves every picture's bundle, faithful or not, in
+  `.svgshot-bundles/` (gitignored, never under `docs/`: a bundle holds the user name), about
+  160 KB gzipped each: `trimSnapshot` cuts the snapshot to the clip (the layout objects near
+  it, every ancestor's, a frame's document only when its `<iframe>` is kept, `<style>` and
+  `<script>` text emptied, unused strings dropped; every DOM node kept), 97 MB to 58 MB for
+  the 370, and all 370 draw the same SVG trimmed as whole. A trimmed layout object keeps its
+  old index in `layout.originalIndex`, which its key is made of: the scrollbar styles
+  measured at the capture are found by it. A bundle answers only what the converter asked at capture; a question
+  it has no answer for is a *miss*, counted by `renderBundle`, and replay lists a picture whose
+  misses are new since its capture, whose PNG hash changed, or whose bundle lacks a style now
+  read, with the `--only` command that retakes them. Answering misses offline in headless
+  Chromium, and drawing bundles in `tbdocs`, are later steps, not done: the second needs the
+  bundles committed, so cleaned of the user name, and complete, since CI
+  has no Windows fonts to measure with.
 - **A filter of colour functions is baked, not drawn** (`colour-filter.mjs`; owner, 2026-10-10).
   Chromium's PDF backend cannot express an SVG `<filter>` and draws the whole filtered group as a
   300 dpi bitmap, text included: the book lost the text of 44 of its 110 SVGs that way. Every CSS
