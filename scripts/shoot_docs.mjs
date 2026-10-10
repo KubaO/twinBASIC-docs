@@ -166,6 +166,7 @@ import {
 } from "./lib/tb-ide.mjs";
 import { writeBundle } from "./svgshot/bundle.mjs";
 import { svgOfPage } from "./svgshot/capture.mjs";
+import { useSubsetCache } from "./svgshot/fonts.mjs";
 import { holdsUserName, judgeSvg, SVG_FAITHFUL, writeSvg } from "./svgshot/keep.mjs";
 import { unpackProject } from "./lib/tb-project.mjs";
 import { findIde } from "./lib/tb-install.mjs";
@@ -345,6 +346,8 @@ for (const [option, root] of [
   const rel = path.relative(path.join(REPO_ROOT, "docs"), root);
   if (!rel.startsWith("..") && !path.isAbsolute(rel)) die(2, `${option} must not be under docs: ${root}`);
 }
+// The fonts' cuts are kept beside the bundles, as replay.mjs keeps them (fonts.mjs).
+if (bundlesRoot) useSubsetCache(path.join(bundlesRoot, "subsets"));
 
 const ide = findIde(values.ide || undefined);
 if (!ide || !existsSync(ide)) {

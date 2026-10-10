@@ -10,14 +10,16 @@
 // answer for (a miss the capture did not have). The list ends with the
 // shoot_docs.mjs command that takes them again.
 
+import { spawn } from "node:child_process";
 import { existsSync, mkdirSync, readdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
-import { userInfo } from "node:os";
+import { availableParallelism, userInfo } from "node:os";
 import path from "node:path";
 import { exitOnCrash, numberOption, parseCli, printHelpAndExit, regexOption, withUsageError } from "../../lib/cli.mjs";
 import { REPO_ROOT } from "../../lib/repo-paths.mjs";
-import { launchBrowser } from "../lib/browser.mjs";
+import { LAUNCH_ARGS, launchBrowser } from "../lib/browser.mjs";
 import { pngHash, readBundle, renderBundle } from "./bundle.mjs";
 import { SNAPSHOT_STYLES } from "./capture.mjs";
+import { useSubsetCache } from "./fonts.mjs";
 import { holdsUserName, judgeSvg, SVG_FAITHFUL, writeSvg } from "./keep.mjs";
 
 exitOnCrash();
@@ -41,7 +43,10 @@ the shoot_docs.mjs command that takes them again.
   --bundles <dir>  the bundle cache (default .svgshot-bundles in the repository)
   --out <dir>      the folder the pictures are in (default docs)
   --diffs <dir>    write each SVG's difference map there, as <name>.svg-diff.png
-  --jobs N         pictures drawn at once (default 6)
+  --recheck        compare every SVG with its PNG, also one that is the same
+                   bytes as the file (which the bar passed when it was written)
+  --jobs N         processes drawing at once, each with a browser of its own
+                   (default: half the logical processors, at most 8)
   -h, --help       print this text and exit
 
 Exit codes:
@@ -58,6 +63,7 @@ const { values } = withUsageError(() =>
       bundles: { type: "string" },
       out: { type: "string" },
       diffs: { type: "string" },
+      recheck: { type: "boolean", default: false },
       jobs: { type: "string" },
       help: { type: "boolean", short: "h", default: false },
     },
@@ -67,7 +73,12 @@ const { values } = withUsageError(() =>
 if (values.help) printHelpAndExit(USAGE);
 const only = values.only === undefined ? null : withUsageError(() => regexOption(values.only, { option: "--only" }));
 const jobs = withUsageError(() =>
-  numberOption(values.jobs ?? "6", { option: "--jobs", integer: true, min: 1, max: 32 }),
+  numberOption(values.jobs ?? String(Math.min(8, Math.max(1, Math.floor(availableParallelism() / 2)))), {
+    option: "--jobs",
+    integer: true,
+    min: 1,
+    max: 32,
+  }),
 );
 const bundlesRoot = path.resolve(values.bundles ?? path.join(REPO_ROOT, ".svgshot-bundles"));
 const outRoot = path.resolve(values.out ?? path.join(REPO_ROOT, "docs"));
@@ -77,6 +88,18 @@ if (!existsSync(bundlesRoot)) {
   process.exit(2);
 }
 const USER = userInfo().username;
+// The fonts' cuts are kept beside the bundles: a picture drawn again mostly cuts what it did.
+useSubsetCache(path.join(bundlesRoot, "subsets"));
+
+// A child process the parent started (below) has its share of the pictures in this
+// variable, "k/n", and ends its output with one line that starts with RESULT.
+const SHARD_ENV = "SVGSHOT_REPLAY_SHARD";
+const SHARD = (() => {
+  const m = /^(\d+)\/(\d+)$/.exec(process.env[SHARD_ENV] ?? "");
+  return m ? { k: Number(m[1]), of: Number(m[2]) } : null;
+})();
+const RESULT = "@@replay-result ";
+const IN_FLIGHT = 2;
 
 // Every bundle under the cache, as the picture's path under docs with forward slashes.
 const SUFFIX = ".bundle.json.gz";
@@ -91,9 +114,7 @@ const counts = {};
 const retakes = [];
 let failed = 0;
 const say = (out, line) => console.log(`${out.replace(/\.png$/i, ".svg")}: ${line}`);
-const browser = await launchBrowser();
-
-async function replay(out) {
+async function replay(out, browser) {
   const bundle = readBundle(path.join(bundlesRoot, out.replace(/\.png$/i, SUFFIX)));
   const pngFile = path.join(outRoot, out);
   const svgFile = pngFile.replace(/\.png$/i, ".svg");
@@ -115,6 +136,13 @@ async function replay(out) {
       `no answer for ${fresh.length} question${fresh.length > 1 ? "s" : ""}: ${fresh.slice(0, 3).join("; ")}`,
     );
   if (holdsUserName(svg, USER)) throw new Error("the SVG holds the Windows user name");
+  // The same bytes as the file, beside the PNG its bundle was taken with: the bar passed this
+  // SVG against that PNG when it was written, and would again. Most of a replay is this.
+  if (!values.recheck && existsSync(svgFile) && readFileSync(svgFile, "utf8").replace(/\r\n/g, "\n") === svg) {
+    say(out, "unchanged (the same SVG as the file)");
+    counts.unchanged = (counts.unchanged ?? 0) + 1;
+    return;
+  }
   const { diff, faithful, measures } = await judgeSvg(browser, svg, png, stats);
   if (diffsRoot) {
     mkdirSync(diffsRoot, { recursive: true });
@@ -135,25 +163,68 @@ async function replay(out) {
   counts[state] = (counts[state] ?? 0) + 1;
 }
 
-try {
-  let next = 0;
-  await Promise.all(
-    Array.from({ length: Math.min(jobs, outs.length) }, async () => {
-      while (next < outs.length) {
-        const out = outs[next++];
-        try {
-          await replay(out);
-        } catch (e) {
-          failed++;
-          counts.failed = (counts.failed ?? 0) + 1;
-          say(out, `FAILED: ${e.message}`);
+if (SHARD) {
+  // A child: its share of the pictures, two at a time (one drawn while the other is
+  // judged), then what it found, on a line of its own.
+  const mine = outs.filter((_, i) => i % SHARD.of === SHARD.k);
+  // Without the GPU: the browsers of every process share one, which held a replay to the
+  // speed of four processes; drawn in software, eight go faster. The SVG's bytes do not
+  // depend on it, only how close its render comes to the PNG, which the bar judges.
+  const browser = await launchBrowser({ args: [...LAUNCH_ARGS, "--disable-gpu"] });
+  try {
+    let next = 0;
+    await Promise.all(
+      Array.from({ length: Math.min(IN_FLIGHT, mine.length) }, async () => {
+        while (next < mine.length) {
+          const out = mine[next++];
+          try {
+            await replay(out, browser);
+          } catch (e) {
+            failed++;
+            counts.failed = (counts.failed ?? 0) + 1;
+            say(out, `FAILED: ${e.message}`);
+          }
         }
-      }
-    }),
-  );
-} finally {
-  await browser.close();
+      }),
+    );
+  } finally {
+    await browser.close();
+  }
+  console.log(`${RESULT}${JSON.stringify({ counts, retakes, failed })}`);
+  process.exit(0);
 }
+
+// The parent: `jobs` children, each with a browser of its own, since drawing a picture
+// is JavaScript that one process runs one at a time.
+const children = await Promise.all(
+  Array.from(
+    { length: Math.min(jobs, outs.length) },
+    (_, k) =>
+      new Promise((resolve) => {
+        const child = spawn(process.execPath, process.argv.slice(1), {
+          env: { ...process.env, [SHARD_ENV]: `${k}/${Math.min(jobs, outs.length)}` },
+          stdio: ["ignore", "pipe", "inherit"],
+        });
+        let result = null;
+        let rest = "";
+        child.stdout.on("data", (d) => {
+          const lines = (rest + d).split("\n");
+          rest = lines.pop();
+          for (const line of lines) {
+            if (line.startsWith(RESULT)) result = JSON.parse(line.slice(RESULT.length));
+            else console.log(line.replace(/\r$/, ""));
+          }
+        });
+        child.on("close", (code) => resolve(result ?? { counts: { failed: 1 }, retakes: [], failed: code || 1 }));
+      }),
+  ),
+);
+for (const c of children) {
+  for (const [k, n] of Object.entries(c.counts)) counts[k] = (counts[k] ?? 0) + n;
+  retakes.push(...c.retakes);
+  failed += c.failed;
+}
+retakes.sort((a, b) => a.out.localeCompare(b.out));
 
 console.log(
   `\n${outs.length} bundle${outs.length === 1 ? "" : "s"}: ${

@@ -583,7 +583,16 @@ the PNG was just captured from, and the build shows it in place of the PNG
   `<script>` text emptied, unused strings dropped; every DOM node kept), 97 MB to 58 MB for
   the 370, and all 370 draw the same SVG trimmed as whole. A trimmed layout object keeps its
   old index in `layout.originalIndex`, which its key is made of: the scrollbar styles
-  measured at the capture are found by it. A bundle answers only what the converter asked at capture; a question
+  measured at the capture are found by it. **A replay takes about 20 s for the 370** (it
+  took 3.4 min at first): an SVG that comes out byte-identical to its file beside the PNG its
+  bundle names is not compared again (`--recheck` compares all); the fonts' cuts, about two
+  thirds of an SVG's time, are kept in `.svgshot-bundles/subsets/` under a hash of the font
+  (file, face, size, time, or a web font's bytes), its weight, the characters, the hinting and
+  `subset_font.py` (`fonts.mjs` `useSubsetCache`; `shoot_docs` uses it too); and `--jobs`
+  are processes, each with a browser started with `--disable-gpu`, half the logical
+  processors and at most 8 by default. Drawing is synchronous, so one process gains nothing
+  from more pictures in flight; with the GPU on, every browser shared it and four processes
+  were as fast as fourteen, and fourteen timed a screenshot out. A bundle answers only what the converter asked at capture; a question
   it has no answer for is a *miss*, counted by `renderBundle`, and replay lists a picture whose
   misses are new since its capture, whose PNG hash changed, or whose bundle lacks a style now
   read, with the `--only` command that retakes them. Answering misses offline in headless

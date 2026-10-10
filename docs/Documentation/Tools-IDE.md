@@ -260,14 +260,20 @@ Exit codes: **0** every picture was written or was unchanged; **1** a picture fa
 ## replay.mjs
 {: #replay }
 
-    node scripts/svgshot/replay.mjs [--only <regex>] [--bundles <dir>] [--out <dir>] [--diffs <dir>] [--jobs N]
+    node scripts/svgshot/replay.mjs [--only <regex>] [--bundles <dir>] [--out <dir>] [--diffs <dir>] [--recheck] [--jobs N]
 
 Draws each picture's SVG again from the bundle that [`shoot_docs.mjs --svg`](#shoot-docs)
 saved when it took the picture, with the SVG converter as it is now. It starts no IDE and
 takes no picture, so a change to the converter under `scripts/svgshot/` is tried on every
-picture with no IDE, in about three and a half minutes for every picture today. Each SVG is compared with its PNG and
-written, left unchanged or removed exactly as `shoot_docs.mjs` does. A replay with the
-converter unchanged reports every picture `unchanged`.
+picture in about 20 seconds. Each SVG is compared with its PNG and written, left unchanged or
+removed exactly as `shoot_docs.mjs` does, except that an SVG that comes out the same as the
+file already there is not compared again: it passed the comparison when it was written. A
+replay with the converter unchanged reports every picture `unchanged`.
+
+Most of the time an SVG takes is cutting its fonts down to the characters it draws, and a
+picture drawn again mostly cuts what it cut before. So each cut is kept in the `subsets`
+folder of the bundle folder, named by a hash of the font, the characters and the cutting
+script, and [`shoot_docs.mjs --svg`](#shoot-docs) keeps and reuses them the same way.
 
 A bundle holds only what the converter asked for when the picture was taken. A picture is
 left as it is and listed as needing a retake when its PNG has changed since its bundle was
@@ -279,8 +285,11 @@ pictures again.
 `--only` takes the pictures whose path under `docs` matches a regular expression, a light
 picture's path ending in `.light.png`. `--bundles` is the bundle folder, `.svgshot-bundles` by
 default, and `--out` the folder the pictures are in, `docs` by default. `--diffs` names a
-folder for each SVG's difference picture against its PNG, and `--jobs` is how many pictures are
-drawn at once, 6 by default. Needs Python with fontTools, as `--svg` does.
+folder for each SVG's difference picture against its PNG. `--recheck` compares every SVG with
+its PNG, also one that is the same as the file, for when the comparison itself has changed.
+`--jobs` is how many processes draw at once, each with a browser of its own, by default half
+the logical processors and at most 8. Needs Python with fontTools, as `--svg` does, for a cut
+that is not kept yet.
 
 Exit codes: **0** every picture was drawn again; **1** a picture needs a retake, could not be drawn, or its SVG holds the Windows user name; **2** the tool could not run: a refused command line, no bundle folder, no browser, or a crash.
 

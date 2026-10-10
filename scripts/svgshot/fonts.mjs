@@ -9,12 +9,59 @@
 // scripts/subset_font.py (fontTools), so the picture carries nothing more.
 
 import { spawn } from "node:child_process";
+import { createHash } from "node:crypto";
 import fs from "node:fs";
 import path from "node:path";
 import zlib from "node:zlib";
 import { REPO_ROOT } from "../../lib/repo-paths.mjs";
 
 const SUBSET_SCRIPT = path.join(REPO_ROOT, "scripts", "subset_font.py");
+
+// --- the subset cache -------------------------------------------------------------
+
+// A cut is the same bytes for the same job (subset_font.py keeps the font's own
+// timestamp), and a picture drawn again mostly cuts what it cut before: so each
+// result is kept, in a folder replay.mjs and shoot_docs.mjs --svg name, under a
+// hash of everything that decides it -- the font (its file's path, face, size and
+// time, or a web font's bytes), the weight a variable font is cut at, the
+// characters, the hinting, and subset_font.py itself.
+let subsetCache = null;
+
+/** Keep the fonts' cuts in `dir` from now on (null: no cache). */
+export function useSubsetCache(dir) {
+  subsetCache = dir;
+  if (dir) fs.mkdirSync(dir, { recursive: true });
+}
+
+let scriptHash = null;
+export function subsetKey(job) {
+  scriptHash ??= sha1(fs.readFileSync(SUBSET_SCRIPT));
+  let font;
+  if (job.path) {
+    const st = fs.statSync(job.path);
+    font = { path: job.path, index: job.index, size: st.size, time: st.mtimeMs };
+  } else font = { data: sha1(job.data), weight: job.weight };
+  return sha1(JSON.stringify({ script: scriptHash, font, unicodes: job.unicodes, hinting: job.hinting }));
+}
+
+const sha1 = (v) => createHash("sha1").update(v).digest("hex");
+
+function cachedCut(key) {
+  try {
+    return JSON.parse(fs.readFileSync(path.join(subsetCache, `${key}.json`), "utf8"));
+  } catch {
+    return null;
+  }
+}
+
+// Written beside and renamed into place, so that a picture drawn at the same time
+// never reads half a file.
+function keepCut(key, result) {
+  const file = path.join(subsetCache, `${key}.json`);
+  const temp = `${file}.${process.pid}.${Math.random().toString(36).slice(2)}`;
+  fs.writeFileSync(temp, JSON.stringify(result));
+  fs.renameSync(temp, file);
+}
 
 // --- reading a font's tables ----------------------------------------------------
 
@@ -287,6 +334,30 @@ export class PictureFonts {
     const used = this.faces.filter((f) => f.used.size > 1);
     if (!used.length) return "";
     const jobs = used.map((f) => ({ ...f.job, unicodes: [...f.used].sort((a, b) => a - b), hinting: this.hinting }));
+    const keys = jobs.map((j) => (subsetCache ? subsetKey(j) : null));
+    const results = keys.map((k) => (k ? cachedCut(k) : null));
+    const todo = results.flatMap((r, i) => (r ? [] : [i]));
+    if (todo.length) {
+      const fresh = await this.cut(todo.map((i) => jobs[i]));
+      for (const [k, i] of todo.entries()) {
+        results[i] = fresh[k];
+        if (keys[i]) keepCut(keys[i], fresh[k]);
+      }
+    }
+    // A font fontTools cannot cut gets no rule: its text falls back to the viewer's
+    // own font, which the comparison with the PNG then judges, and the run says why.
+    this.failed = results.filter((r) => r.error).map((r) => r.error);
+    return used
+      .map((f, i) =>
+        results[i].woff2
+          ? `@font-face{font-family:"${f.name}";src:url(data:font/woff2;base64,${results[i].woff2})}`
+          : "",
+      )
+      .join("");
+  }
+
+  /** The cuts of `jobs` by subset_font.py, in order: {woff2} or {error} each. */
+  async cut(jobs) {
     const stdout = await new Promise((resolve, reject) => {
       const child = spawn(this.python, [SUBSET_SCRIPT], { windowsHide: true });
       const out = [];
@@ -300,17 +371,7 @@ export class PictureFonts {
       });
       child.stdin.end(JSON.stringify(jobs));
     });
-    const results = JSON.parse(stdout);
-    // A font fontTools cannot cut gets no rule: its text falls back to the viewer's
-    // own font, which the comparison with the PNG then judges, and the run says why.
-    this.failed = results.filter((r) => r.error).map((r) => r.error);
-    return used
-      .map((f, i) =>
-        results[i].woff2
-          ? `@font-face{font-family:"${f.name}";src:url(data:font/woff2;base64,${results[i].woff2})}`
-          : "",
-      )
-      .join("");
+    return JSON.parse(stdout);
   }
 }
 

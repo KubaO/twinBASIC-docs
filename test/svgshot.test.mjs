@@ -40,7 +40,15 @@ import {
   mapColour,
   stepsOpacity,
 } from "../scripts/svgshot/colour-filter.mjs";
-import { cmapCoverage, faceStyle, isVariable, PictureFonts, readable } from "../scripts/svgshot/fonts.mjs";
+import {
+  cmapCoverage,
+  faceStyle,
+  isVariable,
+  PictureFonts,
+  readable,
+  subsetKey,
+  useSubsetCache,
+} from "../scripts/svgshot/fonts.mjs";
 import {
   canvasColor,
   decodeSnapshot,
@@ -721,6 +729,27 @@ describe("web fonts as WOFF2", () => {
     // Any other font is left as it is.
     const plain = Buffer.from("not woff2");
     assert.equal(readable(plain), plain);
+  });
+
+  test("a font's cut comes from the subset cache when it is there, and no Python runs", async () => {
+    const root = fs.mkdtempSync(path.join(os.tmpdir(), "subsets-test-"));
+    useSubsetCache(root);
+    try {
+      // No such Python: a cut that is not in the cache cannot be made.
+      const fonts = new PictureFonts({ python: "no-such-python-anywhere" });
+      fonts.css("Aa", [{ family: "inter", data: dataUrl("inter-variable.woff2"), weight: "400" }], "400", "normal");
+      await assert.rejects(fonts.faceRules(), /subset_font\.py could not run/);
+      // The same cut in the cache, under the key of everything that decides it.
+      const [face] = fonts.faces;
+      const job = { ...face.job, unicodes: [...face.used].sort((a, b) => a - b), hinting: fonts.hinting };
+      fs.writeFileSync(path.join(root, `${subsetKey(job)}.json`), JSON.stringify({ woff2: "QUJD" }));
+      assert.equal(await fonts.faceRules(), '@font-face{font-family:"f0";src:url(data:font/woff2;base64,QUJD)}');
+      // Other characters are another cut.
+      assert.notEqual(subsetKey({ ...job, unicodes: [66, 98] }), subsetKey(job));
+    } finally {
+      useSubsetCache(null);
+      fs.rmSync(root, { recursive: true, force: true });
+    }
   });
 
   test("a variable font is one face for each weight a picture draws it at, and a run at that weight needs no bold", () => {
