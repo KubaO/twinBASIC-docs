@@ -857,15 +857,15 @@ from outside the IDE.
   it started. So can an IDE of a run from another session, which is why a check of the
   registry waits until no other session's run is going.
 
-**An association that names the temp folder is never put back.** A run that starts while
-another run's IDE copy is open finds the association pointing at that copy. Put back at the
-end, it would point `.twinproj` files at a folder that has been deleted, and other sessions
-run `examples.bat` while add-in tests run copies, so the overlap is ordinary. `startTidy`
-notes whether the association it recorded names the temp folder, and if it did, `finishTidy`
-leaves the association as the IDEs set it and says so; the next IDE started from a real
-install points it at that install. An association found naming a deleted copy makes
-`.twinproj` files open nothing until an IDE is started from a real install. Fix it
-by hand if you find it so.
+**An association that names the temp folder is put back pointing at the newest install.** A
+run that starts while another run's IDE copy is open finds the association pointing at that
+copy. Put back as found, it would point `.twinproj` files at a folder that has been deleted,
+and other sessions run `examples.bat` while add-in tests run copies, so the overlap is
+ordinary. `startTidy` notes whether the association it recorded names the temp folder, and if
+it did, `finishTidy` puts it back with every path to a copy's `twinBASIC.exe` replaced by
+`findIde()`'s, the newest install on the Desktop (owner, 2026-10-10): what that install's IDE
+writes when it is next started. With no install outside the temp folder it leaves the
+association as the IDEs set it and says so.
 
 **The recent list is put back as it was found, not only swept.** On a real list the IDE
 changes it by itself while a run's projects are on it, in two ways, both in

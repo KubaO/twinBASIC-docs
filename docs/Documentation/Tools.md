@@ -1490,7 +1490,8 @@ a run opens. The copies must go and the lost entries come back. The build target
 the run's folder go, and every other one stays, in its order and its exact text. The IDE's
 theme, which an add-in scenario switches, comes back, and every other IDE option stays as it
 is. So is the rule that a file association pointing into the temp folder when a run began --- at another
-run's private copy of the IDE --- is left as it is rather than put back. It also checks that
+run's private copy of the IDE --- is put back pointing at the newest install instead, and left as it
+is when there is none. It also checks that
 the module refuses to sweep outside the temp folder or restore a key near the root of the
 registry. It deletes the scratch key when it ends.
 
