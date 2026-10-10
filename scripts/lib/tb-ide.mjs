@@ -400,8 +400,15 @@ export function desktopWindows(desktop, { children = false } = {}) {
  * @param {number} hwnd   from desktopWindows
  * @param {string} file   the PNG file to write
  * @param {object} [o]
+ * The picture includes the invisible resize borders of a Windows 10 frame: `frame` is the
+ * visible frame in it (DWMWA_EXTENDED_FRAME_BOUNDS) and `client` the client area, each
+ * [left, top, right, bottom] in the picture's pixels. With PW_CLIENTONLY (1) the client area
+ * is drawn at the picture's top left. `layered` is a layered window's [colour key as a
+ * COLORREF, alpha, LWA_ flags], else null: PW_RENDERFULLCONTENT draws the key colour's pixels
+ * black and every pixel opaque, and flags 1 draws them in the key colour.
+ *
  * @param {number} [o.flags]  PrintWindow's flags (default 2)
- * @returns {Promise<{width: number, height: number, dpi: number, texts: string[]}>}
+ * @returns {Promise<{width: number, height: number, dpi: number, frame: number[], client: number[], layered: number[] | null, texts: string[]}>}
  */
 export function captureWindow(desktop, hwnd, file, { flags = 2 } = {}) {
   return onDesktopWindows(desktop, {

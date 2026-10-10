@@ -61,6 +61,15 @@
 //   no-project  no project, as from the IDE's icon: every menu in its
 //               no-project state, the dialogs that need no project, and the window,
 //               its bars and its panels (each shown as a floating window on its own)
+//   programs    test/shots/programs, ShotPrograms, built in the IDE: each picture is the
+//               window of the exe, started on a private desktop with a command line naming
+//               its form, taken with PrintWindow (lib/tb-ide.mjs's captureWindow), once,
+//               in no theme; the ListView's is of the project run from the IDE (F5)
+//   codelens    test/shots/codelens: a procedure run by its CodeLens bar, the editor above
+//               the DEBUG CONSOLE
+//   package     the sample built as a TWINPACK package, and fusion test/shots/fusion, whose
+//               Fusion host the compiler builds as it loads: the DEBUG CONSOLE's lines,
+//               the paths they name on a folder of the tool's own (PACKAGE_ROOT)
 //
 // What makes the pictures repeatable, so that a second run changes no byte:
 //
@@ -99,7 +108,9 @@
 // is kept, the visible text of the page it was taken from (the document, every
 // shadow root and the docs page in the pane's frame) is searched for it, and a
 // picture whose page holds it is refused. A tooltip is not drawn and is not
-// read; the IDE's title tooltip holds the project's path.
+// read; the IDE's title tooltip holds the project's path. A program's window is
+// not a page: the texts of the window and its child windows are searched instead,
+// and what the program draws itself is the fixture's own text (see programShot).
 
 import { cpSync, existsSync, mkdirSync, readdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir, userInfo } from "node:os";
@@ -119,12 +130,20 @@ import { hoverText, mouseAway, pointOf, restMouse } from "../test/addin/hover.mj
 import { frameEval, frameOf, serveLoopback } from "../test/addin/pages.mjs";
 import { annotate as annotateOver, LAYER_ID, resolveAnchors, unannotate } from "./lib/shot-annotate.mjs";
 import { composite, uncomposite } from "./lib/shot-composite.mjs";
-import { decodePng } from "./lib/png.mjs";
+import { decodePng, encodePng } from "./lib/png.mjs";
 import { diffPicture } from "./lib/shot-diff.mjs";
 import { attach } from "./lib/tb-cdp.mjs";
 import { consoleMark, linesSince } from "./lib/tb-ide-console.mjs";
 import { removeTree } from "./lib/tb-ide-copy.mjs";
-import { shutdownIde, sleep } from "./lib/tb-ide.mjs";
+import {
+  buildProject,
+  captureWindow,
+  desktopWindows,
+  killTree,
+  launchOnDesktop,
+  shutdownIde,
+  sleep,
+} from "./lib/tb-ide.mjs";
 import { unpackProject } from "./lib/tb-project.mjs";
 import { findIde } from "./lib/tb-install.mjs";
 import { Lane } from "./lib/tb-lane.mjs";
@@ -186,8 +205,12 @@ global-search and sample6), the form and report designers and the Format menu
 forms and settings-webview2), and the CustomControls tutorial's pictures of a
 custom control's code and PROPERTIES (setup customcontrols), and the editor alone:
 the build select's greying, inline hints, a hover, a form's JSON (setups code,
-customcontrols and sample9), and the whole window with its features named (setup
-featuremap).
+customcontrols and sample9), the whole window with its features named (setup
+featuremap), a procedure run by its CodeLens bar (setup codelens), the DEBUG
+CONSOLE after a package build and a Fusion host build (setups package and fusion),
+and the windows of a running program, the fixture test/shots/programs (setup
+programs): those are taken once, as the program draws them, at the display's
+DPI, and shown at their size at 96 DPI.
 A light picture can be a few pixels off the dark one's size, since Light lays
 the window out a little differently; the site shows each at its own size.
 Each setup is one IDE, started when a picture in it is selected. A picture is
@@ -199,11 +222,12 @@ saved settings of the add-ins it loads are put back afterwards. The help add-in'
 shows pages from docs/_site, so run build.bat first for those.
 
 A picture is refused, and the run fails, when the visible text of the page it
-was taken from holds the Windows user name.
+was taken from, or a text of the program window it is of, holds the Windows user
+name.
 
   --only <regex>   only the pictures whose path under the output folder
                    (IDE/Menu/Images/Menu_File.png, or its .light.png) matches;
-                   each is taken in both themes
+                   each is taken in both themes, a program's window once
   --out <dir>      the folder the pictures' paths are under (default docs)
   --diffs <dir>    write a difference picture into <dir> (not under docs) for
                    each picture that is updated, named for its path and theme
@@ -1191,6 +1215,10 @@ const SETUPS = {
   "settings-fusion": { ports: 1, start: startSettings("fusion"), prepare: prepareFusion },
   glyphs: { ports: 1, start: startSample, prepare: prepareSample },
   "no-project": { ports: 1, start: startNoProject, prepare: prepareNoProject },
+  programs: { ports: 1, start: startPrograms, prepare: preparePrograms },
+  codelens: { ports: 1, start: startCodeLens, prepare: prepareSample },
+  package: { ports: 1, start: startPackage, prepare: prepareSample },
+  fusion: { ports: 1, start: startFusion, prepare: prepareSample },
 };
 
 // ---------------------------------------------------------------- the shots of the no-project setup
@@ -3369,24 +3397,48 @@ const gsShot = (name, query, { packages = false, head = false } = {}) => ({
 // The toolbar with a project open, the Global Search add-in's button at the right: as wide
 // as Toolbar_1 and the button, which comes after the theme's, so that the close button of
 // the bar is as far from it as it is from the theme's there. `before(c)` brings the editor
-// to the state the toolbar shows.
-const searchToolbarShot = (name, setup, before) => ({
+// to the state the toolbar shows, and `after(c)`, when given, takes it out of that state.
+const searchToolbarShot = (name, setup, before, after = null) => ({
   out: `IDE/Images/${name}.png`,
   setup,
   async take({ c }) {
     await resetUi(c);
-    await before(c);
-    const theme = await rectOf(c, "#menuBarColorMode");
-    const b = await rectOf(c, `#${GS_BUTTON}`);
-    if (!theme || !b) throw new Error("the toolbar has no theme button or no Global Search button");
-    const width = Math.ceil(TOOLBAR_WIDTH + b.x + b.width - (theme.x + theme.width));
-    return atSize(c, width, IDE_SIZE.height, async () =>
-      capture(c, name, snapOut(await toolbarRect(c), width, IDE_SIZE.height), {
-        away: () => parkMouse(c),
-      }),
-    );
+    try {
+      await before(c);
+      const theme = await rectOf(c, "#menuBarColorMode");
+      const b = await rectOf(c, `#${GS_BUTTON}`);
+      if (!theme || !b) throw new Error("the toolbar has no theme button or no Global Search button");
+      const width = Math.ceil(TOOLBAR_WIDTH + b.x + b.width - (theme.x + theme.width));
+      return await atSize(c, width, IDE_SIZE.height, async () =>
+        capture(c, name, snapOut(await toolbarRect(c), width, IDE_SIZE.height), {
+          away: () => parkMouse(c),
+        }),
+      );
+    } finally {
+      if (after) await after(c);
+    }
   },
 });
+
+// Whether the IDE is running the project (Start pressed, not yet ended).
+const codeExecuting = (c) => c.evaluate("!!context.codeExecuting?.value");
+
+// The project run, as Start does, once the IDE says it is running; and ended, as Stop does.
+async function startRun(c) {
+  await command(c, "tbDebug_StartOrContinue");
+  if (!(await waitFor(c, () => codeExecuting(c), { timeout: 60000, interval: 100 }))) {
+    throw new Error("the IDE never started running the project");
+  }
+  await frames(c);
+}
+async function stopRun(c) {
+  if (!(await codeExecuting(c))) return;
+  await command(c, "tbDebug_Stop");
+  if (!(await waitFor(c, async () => !(await codeExecuting(c)), { timeout: 30000, interval: 100 }))) {
+    throw new Error("the IDE did not stop running the project");
+  }
+  await frames(c);
+}
 
 const globalSearchShots = [
   {
@@ -3793,6 +3845,17 @@ const designerShots = [
   formatShot("Menu_Format_VerticalSpacing", "Vertical Spacing"),
   // the toolbar with a form open in the designer
   searchToolbarShot("Toolbar_3", "designer", (c) => openDesigner(c, "MyForm.tbform")),
+  // the same while the project runs: its Sub Main shows frmMain, which stays open until Stop
+  searchToolbarShot(
+    "Toolbar_4",
+    "designer",
+    async (c) => {
+      await openDesigner(c, "MyForm.tbform");
+      await startRun(c);
+      await clearUserFromConsole(c);
+    },
+    stopRun,
+  ),
   // the report's pictures last: the first of them adds the report to the project
   designerShot("tbReport", "MyReport.tbreport", { report: true }),
   {
@@ -5345,6 +5408,468 @@ const splashShot = {
   },
 };
 
+// ---------------------------------------------------------------- pictures of a running program
+
+// The windows of a running program (setup programs): test/shots/programs, ShotPrograms, a
+// Standard EXE whose command line names the form it shows. The project is opened in the
+// setup's IDE and built there; each picture starts the exe on a private desktop of its own,
+// as a person starts a program, takes its window with PrintWindow (captureWindow in
+// lib/tb-ide.mjs) and ends it. The program and the tool take turns through files in a folder
+// (TB_SHOT_SIGNALS): the program writes "shown" once its form is drawn, a form that shows
+// anchoring is made larger on "grow" and writes "grown", and "end" ends it. The ListView's
+// picture is of the program run from the IDE (F5) instead, since Immediate Memory
+// Invalidation is the debugger's: the fixture's Settings give the run its command line,
+// "listview", and turn the setting on.
+//
+// A program's window is drawn as the system draws it, not by the IDE, so it is taken once: the
+// shot is `once`, taken in the dark pass only. Its pixels are at the desktop's DPI (144 on a
+// display at 150%), not at the page pictures' 2x; the page shows it at its size at 96 DPI
+// (`scale`). The capture is cropped to the window's visible frame: the invisible resize
+// borders of a Windows 10 frame are left out. A picture of two windows (a form before and
+// after it is made larger) has them side by side, their tops level, with a transparent gap.
+// The Windows user name: captureWindow returns the texts of the window and its child windows,
+// which are searched for it; the text the program draws itself (labels, the ListView's rows,
+// a frame's caption) is the fixture's own, which reads nothing from the machine.
+
+const PROGRAMS = path.join(REPO_ROOT, "test", "shots", "programs");
+// The class of a twinBASIC form's window: ThunderRT6FormDC in an exe, ThunderFormDC run from
+// the IDE (whose own window is a ThunderForm).
+const FORM_CLASS = /^Thunder(RT6)?Form(DC)?$/;
+// The gap between two windows of one picture, in pixels at 96 DPI.
+const WINDOW_GAP = 16;
+
+async function startPrograms(run) {
+  run.step = "open";
+  run.signals = path.join(run.work, "signals");
+  mkdirSync(run.signals, { recursive: true });
+  say(run.name, `opening ${path.relative(REPO_ROOT, PROGRAMS)}`);
+  return run.lane.open(PROGRAMS, { env: { TB_SHOT_SIGNALS: path.join(run.signals, "ide") } });
+}
+
+async function preparePrograms(run) {
+  const { c } = run;
+  run.step = "shoot";
+  const built = await buildProject(c);
+  if (!built.ok || !/\.exe$/i.test(built.file ?? "")) {
+    throw new Error(`ShotPrograms did not build: ${built.message ?? built.file}`);
+  }
+  say(run.name, `built ${path.basename(built.file)}`);
+  return {
+    c,
+    exe: built.file,
+    signals: run.signals,
+    // the programs' own desktop, and the IDE's, where a program run from the IDE shows
+    desktop: `tbshoot-programs-${run.ports[0]}`,
+    ideDesktop: `tbbuild-${run.ports[0]}`,
+  };
+}
+
+// Waits for the program's signal `name` in the folder `dir`.
+async function signalled(dir, name, { timeout = 30000 } = {}) {
+  if (!(await waitFor(null, () => existsSync(path.join(dir, name)), { timeout, interval: 50 }))) {
+    throw new Error(`the program never wrote "${name}"`);
+  }
+}
+
+// The visible form window on `desktop`: the program `pid`'s, or the one titled `title`.
+async function formWindow(desktop, { pid = null, title = null, timeout = 15000 } = {}) {
+  const found = await waitFor(
+    null,
+    async () =>
+      (await desktopWindows(desktop)).find(
+        (w) =>
+          w.depth === 0 &&
+          w.visible &&
+          FORM_CLASS.test(w.class) &&
+          (pid === null || w.pid === pid) &&
+          (title === null || w.title === title),
+      ),
+    { timeout, interval: 200 },
+  );
+  if (!found) throw new Error(`no form window${title ? ` titled ${JSON.stringify(title)}` : ""} on ${desktop}`);
+  return found;
+}
+
+// The pixels of a picture, `box` [left, top, right, bottom] of them.
+function crop({ width, rgba }, [left, top, right, bottom]) {
+  const w = right - left;
+  const h = bottom - top;
+  const out = Buffer.alloc(w * h * 4);
+  for (let y = 0; y < h; y++)
+    out.set(rgba.subarray(((top + y) * width + left) * 4, ((top + y) * width + right) * 4), y * w * 4);
+  return { width: w, height: h, rgba: out };
+}
+
+// One capture of a window, as `captureWindow` writes it to `file`, once two in a row are equal
+// (a window being drawn can differ from one to the next); refused when a text of the window
+// holds the user name.
+async function stableWindow(desktop, hwnd, name, file, flags = 2) {
+  let last = null;
+  for (let i = 0; i < 8; i++) {
+    const info = await captureWindow(desktop, hwnd, file, { flags });
+    const named = info.texts.find((t) => t.toLowerCase().includes(USER.toLowerCase()));
+    if (named !== undefined)
+      throw new Error(`the window of ${name} shows the Windows user name in ${JSON.stringify(named)}`);
+    const png = readFileSync(file);
+    if (last?.equals(png)) return { info, picture: decodePng(png) };
+    last = png;
+    await sleep(250);
+  }
+  throw new Error(`the window of ${name} kept changing: no two captures in a row were equal`);
+}
+
+// A window's picture, cropped to its visible frame. A layered window (a form's Opacity and
+// TransparencyKey) is given the alpha the system blends it with what is under it: its alpha
+// everywhere, and none where its client area has the key colour. PW_RENDERFULLCONTENT draws
+// those pixels black, so they are read from a capture of the client area alone (flags 1),
+// which draws them in the key colour. The page is then what is under the window.
+async function windowPicture(desktop, hwnd, name, file) {
+  const { info, picture } = await stableWindow(desktop, hwnd, name, file);
+  if (info.layered) {
+    const [key, alpha, lwa] = info.layered;
+    const { picture: client } = await stableWindow(desktop, hwnd, name, file.replace(/\.png$/, "-client.png"), 1);
+    const [cl, ct, cr, cb] = info.client;
+    const k = [key & 255, (key >> 8) & 255, (key >> 16) & 255];
+    for (let y = 0; y < picture.height; y++) {
+      for (let x = 0; x < picture.width; x++) {
+        let a = lwa & 2 ? alpha : 255;
+        if (lwa & 1 && x >= cl && x < cr && y >= ct && y < cb) {
+          const j = ((y - ct) * client.width + (x - cl)) * 4;
+          if (client.rgba[j] === k[0] && client.rgba[j + 1] === k[1] && client.rgba[j + 2] === k[2]) a = 0;
+        }
+        picture.rgba[(y * picture.width + x) * 4 + 3] = a;
+      }
+    }
+  }
+  return { picture: crop(picture, info.frame), dpi: info.dpi };
+}
+
+// The pictures of windows side by side, their tops level, WINDOW_GAP apart on a transparent
+// ground, as a PNG to be shown at its size at 96 DPI.
+function besideEachOther(windows) {
+  const { dpi } = windows[0];
+  const gap = Math.round((WINDOW_GAP * dpi) / 96);
+  const width = windows.reduce((n, w) => n + w.picture.width, 0) + gap * (windows.length - 1);
+  const height = Math.max(...windows.map((w) => w.picture.height));
+  const rgba = Buffer.alloc(width * height * 4);
+  let x0 = 0;
+  for (const { picture: p } of windows) {
+    for (let y = 0; y < p.height; y++)
+      rgba.set(p.rgba.subarray(y * p.width * 4, (y + 1) * p.width * 4), (y * width + x0) * 4);
+    x0 += p.width + gap;
+  }
+  return { png: encodePng({ width, height, rgba }), scale: dpi / 96 };
+}
+
+// Starts the program with `scene` on the setup's desktop, waits for its form, runs `fn` with
+// its folder of signals and its window, and ends it: by "end", or by its process id when it
+// has not ended ten seconds later. A box it opened (an unhandled error opens one) fails the
+// picture.
+async function withProgram(ctx, scene, fn) {
+  const dir = path.join(ctx.signals, scene);
+  rmSync(dir, { recursive: true, force: true });
+  mkdirSync(dir, { recursive: true });
+  const run = await launchOnDesktop({
+    exe: ctx.exe.split("/").join("\\"),
+    arg: scene,
+    desktop: ctx.desktop,
+    env: { ...process.env, TB_SHOT_SIGNALS: dir },
+    dialogs: "close",
+  });
+  let result;
+  try {
+    await signalled(dir, "shown");
+    result = await fn(dir, await formWindow(ctx.desktop, { pid: run.pid }));
+  } finally {
+    writeFileSync(path.join(dir, "end"), "");
+    if (!(await Promise.race([run.exited.then(() => true), sleep(10000).then(() => false)]))) {
+      killTree(run.pid);
+      run.launcher.kill();
+    }
+  }
+  const { dialogs } = await run.finished;
+  if (dialogs.length) {
+    throw new Error(`the program opened a box: ${dialogs.map((d) => `${d.title}: ${d.text}`).join("; ")}`);
+  }
+  return result;
+}
+
+// A form of the program, `scene` its command line; with `grow`, the form and then the form
+// made larger, side by side.
+const programShot = (out, scene, { grow = false } = {}) => ({
+  out,
+  setup: "programs",
+  once: true,
+  take: (ctx) =>
+    withProgram(ctx, scene, async (dir, w) => {
+      const shown = [await windowPicture(ctx.desktop, w.hwnd, scene, path.join(dir, "before.png"))];
+      if (grow) {
+        writeFileSync(path.join(dir, "grow"), "");
+        await signalled(dir, "grown");
+        shown.push(await windowPicture(ctx.desktop, w.hwnd, scene, path.join(dir, "after.png")));
+      }
+      return besideEachOther(shown);
+    }),
+});
+
+// The ListView whose column headers were given a freed string, run from the IDE with Immediate
+// Memory Invalidation on: the IDE's run (F5) of the project, whose command line is "listview".
+// Its window is on the IDE's desktop, where the IDE's window has the input; the program draws
+// its frame as the active window's (MainModule's Activate).
+const listViewShot = {
+  out: "Features/Images/021f6cbf-acce-445d-ade7-3fcad0af4927.png",
+  setup: "programs",
+  once: true,
+  async take(ctx) {
+    const { c } = ctx;
+    const dir = path.join(ctx.signals, "ide");
+    rmSync(dir, { recursive: true, force: true });
+    mkdirSync(dir, { recursive: true });
+    await startRun(c);
+    try {
+      await signalled(dir, "shown", { timeout: 60000 });
+      const w = await formWindow(ctx.ideDesktop, { title: "ListView Demo" });
+      return besideEachOther([await windowPicture(ctx.ideDesktop, w.hwnd, "listview", path.join(dir, "window.png"))]);
+    } finally {
+      // the program ends itself on "end"; Stop when it has not ten seconds later
+      writeFileSync(path.join(dir, "end"), "");
+      if (!(await waitFor(c, async () => !(await codeExecuting(c)), { timeout: 10000, interval: 200 }))) {
+        await stopRun(c);
+      }
+    }
+  },
+};
+
+const ANCHORS = (name) => `Features/Images/${name}.png`;
+const programShots = [
+  programShot(ANCHORS("fddbffa9-2b71-47f5-b925-e67fc66b9e5c"), "anchors-all", { grow: true }),
+  programShot(ANCHORS("3fa1cf2b-0af5-44ae-ae6a-3c0662f51f57"), "anchors-top-left-bottom", { grow: true }),
+  programShot(ANCHORS("0aeb25f6-d864-4ebb-a9f5-bbd7b5d242e8"), "anchors-right-bottom", { grow: true }),
+  programShot(ANCHORS("4829696d-788b-40ee-bebd-5afa44477460"), "frame-all", { grow: true }),
+  programShot(ANCHORS("bc9f3756-a14b-4ee7-b819-6822497b640a"), "frame-no-bottom", { grow: true }),
+  programShot(ANCHORS("599a66ad-31d5-449f-bbf5-00963fe9aa2a"), "dock-bottom"),
+  programShot(ANCHORS("80185a8d-2952-415f-bc02-ec3ddea89568"), "dock-multi"),
+  programShot(ANCHORS("4ad9c774-b31d-47d3-9963-6d99ac4f37bb"), "multiframe"),
+  programShot(ANCHORS("5fc60b7b-4f54-445c-8504-451019b7ec55"), "checkmark"),
+  programShot(ANCHORS("85f25aa2-abc8-4d42-8510-078f8ee4a324"), "translucent"),
+  listViewShot,
+];
+
+// ---- codelens: test/shots/codelens, CodeLensDemo, two modules whose procedures the editor's
+// CodeLens bar runs (setup codelens): the editor above the DEBUG CONSOLE, in a layout set in
+// the page, the procedure run by a real click on its bar. The console's line times (the
+// page's clock for some lines, the compiler's for what the procedure prints) and the time the
+// run took change from run to run: they are set in the page once the real ones are shown, as
+// the feature map's memory figures are.
+
+const CODELENS = path.join(REPO_ROOT, "test", "shots", "codelens");
+const CODELENS_TIME = "16:41:58.204";
+const CODELENS_LAYOUT = {
+  type: "horizontal",
+  variableSize: true,
+  size: "0%",
+  content: [
+    { id: "TOOLBAR", variableSize: false, size: "fit-content" },
+    { id: "EDITOR", variableSize: true, size: "0%" },
+    { id: "DEBUG CONSOLE", variableSize: false, size: "20%" },
+  ],
+};
+
+async function startCodeLens(run) {
+  run.step = "open";
+  say(run.name, `opening ${path.relative(REPO_ROOT, CODELENS)}`);
+  return run.lane.open(CODELENS);
+}
+
+// The text of the DEBUG CONSOLE.
+const consoleText = (c) => c.evaluate(`document.querySelector(".debugConsoleOuter")?.innerText ?? ""`);
+
+// The CodeLens bar of `file`, which runs `procedure` (as the bar names it), clicked, and the
+// editor down to the end of the file with the DEBUG CONSOLE below it, once the console holds
+// each of `lines` ([text, how many times], once by default) and the time taken. `size` is the page's; the picture is `width` wide from
+// the editor's left edge.
+function codeLensShot(out, file, procedure, lines, { size, width, taken }) {
+  return {
+    out,
+    setup: "codelens",
+    async take({ c }) {
+      await resetUi(c);
+      try {
+        return await atSize(c, size.width, size.height, async () => {
+          if (!(await c.evaluate(`restorePanelLayout(${JSON.stringify(JSON.stringify(CODELENS_LAYOUT))})`))) {
+            throw new Error("the page refused the layout");
+          }
+          await openFile(c, `/CodeLensDemo/Sources/${file}`);
+          const bar = await waitFor(
+            c,
+            () =>
+              c.evaluate(`(() => {
+  const w = [...document.querySelectorAll(".codeLensWidget")].find((e) => e.innerText.includes(${JSON.stringify(procedure)}));
+  const t = w && [...w.querySelectorAll("*")].reverse().find((e) => e.innerText?.includes(${JSON.stringify(procedure)}));
+  const r = (t ?? w)?.getBoundingClientRect();
+  return r && r.width ? { x: r.x, y: r.y, width: r.width, height: r.height } : null;
+})()`),
+            { timeout: 30000, interval: 200 },
+          );
+          if (!bar) throw new Error(`the editor shows no CodeLens bar for ${procedure}`);
+          const clear = await rectOf(c, '[title="Clear Debug Console"]');
+          if (!clear) throw new Error("the DEBUG CONSOLE has no Clear button");
+          await clickAt(c, clear.x + clear.width / 2, clear.y + clear.height / 2);
+          if (!(await waitFor(c, () => c.evaluate("debugConsoleContent.dataNodes.length === 0"), { timeout: 5000 }))) {
+            throw new Error("the DEBUG CONSOLE was not cleared");
+          }
+          await clickAt(c, bar.x + Math.min(bar.width / 2, 40), bar.y + bar.height / 2);
+          const done = await waitFor(
+            c,
+            async () => {
+              const text = await consoleText(c);
+              return /time taken: [\d.]+s/.test(text) && lines.every(([l, n = 1]) => text.split(l).length > n);
+            },
+            { timeout: 30000, interval: 200 },
+          );
+          if (!done) throw new Error(`the run of ${procedure} printed ${JSON.stringify(await consoleText(c))}`);
+          // each line's time and the time taken, once the real ones are shown
+          await fixConsoleTimes(c, taken);
+          await parkMouse(c);
+          const area = await c.evaluate(`(() => {
+  const m = document.querySelector(".monaco-editor .lines-content").closest(".monaco-editor").getBoundingClientRect();
+  const dc = [...document.querySelectorAll(".sectionHeaderInner")].find((e) => e.textContent === "DEBUG CONSOLE").closest(".toolWindowContainer").getBoundingClientRect();
+  return { x: m.x, y: m.y, width: ${width}, height: dc.bottom - m.y };
+})()`);
+          return capture(c, path.basename(out, ".png"), snapOut(area, size.width, size.height));
+        });
+      } finally {
+        await closeTabs(c, [], { discard: true });
+        await defaultLayout(c);
+      }
+    },
+  };
+}
+
+const codeLensShots = [
+  codeLensShot(
+    "Features/Images/b0724fe2-636d-47db-a8fc-531a585ddaf9.png",
+    "Vehicles.twin",
+    "Garage.DoHonk",
+    [["Executing 'CodeLensDemo.Garage.DoHonk'"], ["HONK!", 2]],
+    { size: { width: 680, height: 860 }, width: 530, taken: "0.0000534s" },
+  ),
+  codeLensShot(
+    "Features/Images/351d0147-cad3-4e16-89e5-0a9e43496740.png",
+    "MyModule.twin",
+    "MyModule.CheckScale",
+    [["Executing 'CodeLensDemo.MyModule.CheckScale'"], ["Scale factor: "]],
+    { size: { width: 800, height: 880 }, width: 640, taken: "0.0001564s" },
+  ),
+];
+
+// ---- package: the sample, a TWINPACK package, built (setup package), with its build path on a
+// folder of the tool's own at the root of the temp folder's drive, PACKAGE_ROOT: the DEBUG
+// CONSOLE names the file the build creates, and the lane's own build path is under the
+// user's profile. The folder is made by the IDE and removed at the end of the run, unless it
+// was there before it. The console's times are set in the page once the real ones are shown,
+// as the CodeLens pictures' are.
+
+const PACKAGE_ROOT = path.join(path.parse(tmpdir()).root, "tbshots");
+const PACKAGE_BUILD_PATH = path.join(PACKAGE_ROOT, "Build", "${ProjectName}_${Architecture}.${FileExtension}");
+
+// Sets every line time of the DEBUG CONSOLE to CODELENS_TIME, and the time a CodeLens run took
+// to `taken` when given, in the page.
+const fixConsoleTimes = (c, taken = null) =>
+  c.evaluate(`(() => {
+  const walk = document.createTreeWalker(document.querySelector(".debugConsoleOuter"), NodeFilter.SHOW_TEXT);
+  for (let n = walk.nextNode(); n; n = walk.nextNode()) {
+    n.nodeValue = n.nodeValue.replace(/^\\d\\d:\\d\\d:\\d\\d\\.\\d{3}$/, ${JSON.stringify(CODELENS_TIME)});
+    ${taken ? `n.nodeValue = n.nodeValue.replace(/time taken: [\\d.]+s/, ${JSON.stringify(`time taken: ${taken}`)});` : ""}
+  }
+})()`);
+
+// ---- fusion: test/shots/fusion, FusionDemo, a Standard EXE referencing the 32-bit Microsoft
+// Windows Common Controls 6.0 (MSCOMCTL.OCX, which has to be registered on the machine) with
+// its Fusion mode fusionAllTo32: the compiler builds the Fusion host EXE as it loads the
+// project. Its output path, the project's ActiveX Fusion Host EXE Output Path, is set in the
+// staged copy to PACKAGE_ROOT, as the package's build path is.
+
+const FUSION = path.join(REPO_ROOT, "test", "shots", "fusion");
+const FUSION_LINE = "[BUILD] successfully built Fusion server file";
+
+async function startFusion(run) {
+  run.step = "open";
+  say(run.name, `opening ${path.relative(REPO_ROOT, FUSION)}, its Fusion host path ${PACKAGE_BUILD_PATH}`);
+  const src = path.join(run.work, "fusion-src");
+  cpSync(FUSION, src, { recursive: true });
+  const file = path.join(src, "Settings");
+  const settings = JSON.parse(readFileSync(file, "utf8"));
+  settings["project.fusionBuildPath"] = PACKAGE_BUILD_PATH;
+  writeFileSync(file, JSON.stringify(settings, null, "\t"));
+  return run.lane.open(src);
+}
+
+// The DEBUG CONSOLE as the project's load leaves it, the line that says the host was built its
+// only one in BETA 997, floated on its own. A line before it would name the lane's folder: the
+// user's name is replaced in the console's text in the page, as for the LIMITED picture's
+// restart line, and the panel is sized to show the last line, which the console scrolls to.
+const fusionShot = {
+  out: "Features/Images/569099635-bc9553a6-fcce-487d-a478-dbee557f33b1.png",
+  setup: "fusion",
+  async take({ c }) {
+    await resetUi(c);
+    try {
+      // the panel's text is read once it shows: a hidden one has none
+      const box = await floatPanel(c, "DEBUG CONSOLE", { width: 560, height: 116 });
+      const text = await waitFor(
+        c,
+        async () => {
+          const t = await consoleText(c);
+          return (t.includes(FUSION_LINE) || /failed to build Fusion/.test(t)) && t;
+        },
+        { timeout: 60000, interval: 200 },
+      );
+      if (!text?.includes(FUSION_LINE)) {
+        throw new Error(
+          `the compiler did not build the Fusion host: ${JSON.stringify(text?.match(/.*Fusion.*/)?.[0])}`,
+        );
+      }
+      await nameUserAsUserIn(c, ".debugConsoleOuter");
+      await fixConsoleTimes(c);
+      return await capture(c, "569099635", snapOut(box), { away: () => parkMouse(c) });
+    } finally {
+      await unfloatPanel(c, "DEBUG CONSOLE");
+    }
+  },
+};
+
+async function startPackage(run) {
+  run.step = "open";
+  say(run.name, `opening ${path.relative(REPO_ROOT, SAMPLE)}, its build path ${PACKAGE_BUILD_PATH}`);
+  return run.lane.open(stageSample(run), { buildPath: PACKAGE_BUILD_PATH });
+}
+
+const packageBuildShot = {
+  out: "Features/Packages/Images/8d74d820-9907-4e76-ac42-71d0233187f1.png",
+  setup: "package",
+  async take({ c }) {
+    await resetUi(c);
+    try {
+      const box = await floatPanel(c, "DEBUG CONSOLE", { width: 560, height: 160 });
+      const clear = await rectOf(c, '[title="Clear Debug Console"]');
+      if (!clear) throw new Error("the DEBUG CONSOLE has no Clear button");
+      await clickAt(c, clear.x + clear.width / 2, clear.y + clear.height / 2);
+      if (!(await waitFor(c, () => c.evaluate("debugConsoleContent.dataNodes.length === 0"), { timeout: 5000 }))) {
+        throw new Error("the DEBUG CONSOLE was not cleared");
+      }
+      const built = await buildProject(c);
+      if (!built.ok || !/\.twinpack$/i.test(built.file ?? "")) {
+        throw new Error(`the sample did not build a package: ${built.message ?? built.file}`);
+      }
+      await fixConsoleTimes(c);
+      return await capture(c, "8d74d820", snapOut(box), { away: () => parkMouse(c) });
+    } finally {
+      await unfloatPanel(c, "DEBUG CONSOLE");
+    }
+  },
+};
+
 // ---------------------------------------------------------------- the shots of the help setup
 
 function helpTakes(ctx) {
@@ -5808,6 +6333,10 @@ const SHOTS = [
   ...sample9Shots,
   featureMapShot,
   newProjectOptionsShot,
+  ...programShots,
+  ...codeLensShots,
+  packageBuildShot,
+  fusionShot,
 ];
 
 // ---------------------------------------------------------------- the jobs
@@ -5861,6 +6390,10 @@ const JOB_SECONDS = {
   "no-project": 68,
   "no-project-2": 59,
   "no-project-3": 70,
+  programs: 45,
+  codelens: 35,
+  package: 25,
+  fusion: 20,
 };
 
 // ---------------------------------------------------------------- run
@@ -5938,6 +6471,12 @@ const savedApps = [...new Set(wanted.filter((name) => ADDIN_SETTINGS[name]).map(
 const settingsBefore = savedApps.length ? snapshotKeys(savedApps.map(settingsKey)) : null;
 if (settingsBefore) deleteSettings(savedApps);
 
+// The build folder the package and fusion setups write into, removed at the end unless it was
+// there before the run.
+const removePackageRoot = !existsSync(PACKAGE_ROOT)
+  ? () => rmSync(PACKAGE_ROOT, { recursive: true, force: true })
+  : () => {};
+
 const running = new Set(); // the jobs with an IDE open: { lane, server }
 
 function restoreSettings() {
@@ -5949,6 +6488,7 @@ exitOnCrash(() => {
   for (const run of running) if (run.lane.run) shutdownIde(run.lane.run);
   finishTidy(tidy);
   restoreSettings();
+  removePackageRoot();
 });
 
 // How many pictures of each theme came out in each state, for the run's last lines.
@@ -5972,7 +6512,7 @@ const SIZE_SLACK = 32;
 // light file there already is removed, since the page shows X.png in both themes then; one
 // more than SIZE_SLACK off its size fails. A picture within a capture's noise of its file is
 // not written either.
-function keep(name, out, png, theme, dark) {
+function keep(name, out, png, theme, dark, scale = SCALE) {
   const file = path.join(outRoot, themedOut(out, theme));
   const { w, h } = pngSize(png);
   let other = "";
@@ -6025,8 +6565,16 @@ function keep(name, out, png, theme, dark) {
   count(theme, state);
   say(
     name,
-    `${themedOut(out, theme)}: ${state} (${w}x${h} px, ${png.length} bytes; shown at {:width="${w / SCALE}" height="${h / SCALE}"}${other})`,
+    `${themedOut(out, theme)}: ${state} (${w}x${h} px, ${png.length} bytes; shown at {:width="${Math.round(w / scale)}" height="${Math.round(h / scale)}"}${other})`,
   );
+}
+
+// A `once` picture has no light file: one left from before is removed.
+function dropLight(name, out) {
+  const file = path.join(outRoot, themedOut(out, "light"));
+  if (!existsSync(file)) return;
+  rmSync(file);
+  say(name, `${themedOut(out, "light")}: removed (the picture is taken once, in no theme)`);
 }
 
 // Ends a job's IDE and what it served.
@@ -6107,15 +6655,19 @@ async function runJob(job) {
     // later one sees (tabs, Recently Closed, a take's done-once marks). A light picture
     // with no file yet prefers a capture equal to the dark picture, so that one the theme
     // does not change comes out identical to it rather than a capture's noise away.
+    // A `once` shot, a picture the IDE's theme has no part in (a running program's window), is
+    // taken in the dark pass only; a job of them has no light pass.
     const darks = new Map();
     const prepared = await setupState(run.c, ctx);
     for (const theme of THEMES) {
+      const shots = theme === "dark" ? job.shots : job.shots.filter((s) => !s.once);
+      if (!shots.length) continue;
       if (theme !== "dark") {
         await backToPrepared(run.c, ctx, prepared);
         await ensureTheme(run.c, theme);
         say(job.name, `the IDE in its ${THEME_NAME[theme]} theme`);
       }
-      for (const shot of job.shots) {
+      for (const shot of shots) {
         const out = themedOut(shot.out, theme);
         const file = path.join(outRoot, out);
         const darkFile = path.join(outRoot, shot.out);
@@ -6125,9 +6677,12 @@ async function runJob(job) {
         state.prefer = dark;
         state.out = out;
         try {
-          const png = await shot.take(ctx);
+          // a take returns the PNG's bytes, or { png, scale } for a picture not at SCALE
+          const taken = await shot.take(ctx);
+          const png = Buffer.isBuffer(taken) ? taken : taken.png;
           if (theme === "dark") darks.set(shot.out, png);
-          keep(job.name, shot.out, png, theme, dark);
+          keep(job.name, shot.out, png, theme, dark, Buffer.isBuffer(taken) ? SCALE : taken.scale);
+          if (shot.once) dropLight(job.name, shot.out);
         } catch (e) {
           complain(job.name, `${out}: FAILED: ${e.message}`);
           count(theme, "failed");
@@ -6178,6 +6733,11 @@ try {
   removeTree(root);
 } catch (e) {
   problems.push(`${root} could not be removed (${e.code})`);
+}
+try {
+  removePackageRoot();
+} catch (e) {
+  problems.push(`${PACKAGE_ROOT} could not be removed (${e.code})`);
 }
 if (problems.length) {
   console.error(problems.join("\n"));

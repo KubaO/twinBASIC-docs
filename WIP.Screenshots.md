@@ -168,7 +168,8 @@ back).
   page's `currentDPI` to the 2x ratio, or the IDE's 5 s DPI check covers every designer with
   RESYNC), and `forms` (the same without the add-in), `community` (the demo, its compiler
   restarted on an empty licence key in the page) and `splash` (the demo, for the splash
-  alone). A setup is `{name, start, prepare}`.
+  alone), and group B's `programs`, `codelens`, `package` and `fusion` (below). A setup is
+  `{name, start, prepare}`.
   Every add-in a setup loads has its `SaveSetting` key snapshotted, emptied and restored
   (`tbDocsHelp`, `GlobalSearchAddIn`).
 - **Jobs**: `--jobs N` (default 6) runs setups at once, each IDE on its own claimed ports and
@@ -343,6 +344,62 @@ under `docs/` are now outside the tool.**
   pane's second WebView2 is a `Chrome_WidgetWin_1` child (title `Google`) of zero size until the
   pane shows. `tb-launch.ps1` is now 27,800 characters of the 30,000 its environment variable
   allows.
+
+### Group B, pictures of a running program (2026-10-10)
+
+Sixteen of the seventeen retaken, on BETA 997; `packPublishComplete1` keeps its old file (it is
+the result of a real publish). **33 images under `docs/` are now outside the tool.**
+
+- **The program's window is captured by the harness** (`captureWindow`), not by the program:
+  no fixture needs a capture module, the frame is the system's, and group D uses the same route.
+  `tb-launch.ps1`'s capture now also returns the visible frame (`DWMWA_EXTENDED_FRAME_BOUNDS`),
+  the client area and a layered window's key and alpha; it is 28,576 characters.
+- **Sizing.** The picture is the window's pixels at the desktop's DPI (144 here, 1.5x), cropped
+  to its visible frame (the invisible resize borders are left out), and shown at its size at
+  96 DPI: `keep` takes a `scale` from the shot (`{png, scale}`), 2 for every page picture.
+  Not upscaled to 2x, which would add nothing. A run on a display at 100% writes 1x pictures
+  with the same `{:width height}`. A shot is `once: true`: taken in the dark pass only, any
+  `.light.png` removed; a job of them has no light pass.
+- **Setup `programs`**: `test/shots/programs`, ShotPrograms, opened and built in the IDE; each
+  picture starts the exe on a private desktop of its own (`launchOnDesktop`) with its command
+  line naming the form, and the two take turns through files (`TB_SHOT_SIGNALS`: `shown`,
+  `grow`, `grown`, `end`). An anchoring picture is one window before and after the program makes
+  it 100 by 80 pixels larger (96 DPI), side by side 16 pixels apart on a transparent ground: no
+  size pill, no hatched desktop. The `.tbform` files were written by a generator
+  (`.claude/tooling-review-scratch/inc6/B/gen-forms.mjs`) and are committed as its output.
+  **The foreground is not dependable on a private desktop**: a program started on its own takes
+  it and loses it again now and then, and one run from the IDE never gets it, so the form draws
+  its frame as active (`WM_NCACTIVATE`) whenever it is not the foreground window; and no control
+  takes the focus (`TabStop` off), since a focused one drew a caret or, now and then, a focus
+  rectangle. With both, three runs in a row were unchanged.
+- **85f25aa2** (Opacity 75, TransparencyKey red): `PW_RENDERFULLCONTENT` draws the key colour
+  black and every pixel opaque, so the tool reads the key's pixels from a client-only capture
+  (flags 1) and gives the picture the window's own alpha (191) and alpha 0 there: the page is
+  what lies under the form, a plain background in each site theme.
+- **021f6cbf** is the project run from the IDE (F5) with `debugger.immediateMemoryInvalidation`
+  and `debugger.runtimeCommandLineArguments` "listview" in the fixture's Settings: a Win32
+  ListView whose column headers get the pointer of a String freed on return (`DanglingPtr`)
+  shows rows of warning signs; built as an exe, the same code shows the old text.
+- **CodeLens** (`b0724fe2`, `351d0147`; setup `codelens`, `test/shots/codelens`, CodeLensDemo):
+  the bar clicked for real, the editor above the DEBUG CONSOLE in a layout set in the page. The
+  line times (the page's clock for some lines, the compiler's for `Debug.Print`) and the time
+  taken are set in the page once shown. `Scale factor` prints what the lane's compiler reads,
+  1.50 on this machine.
+- **`Toolbar_4`**: setup `designer`, the sample run with Start (`context.codeExecuting`) and
+  stopped after.
+- **`8d74d820`** (setup `package`) and **Fusion's `569099635`** (setup `fusion`): the paths the
+  console names are on `PACKAGE_ROOT`, `\tbshots` at the root of the temp folder's drive
+  (`Lane.open`'s new `buildPath`; the fixture's `project.fusionBuildPath` in the staged copy),
+  removed at the end unless it was there before.
+- **Fusion's build failure was the fixture, not the lane or the IDE.** `settings-fusion`'s
+  three Fusion references (Windows Script Host Object Model, Shell Controls and Automation, ADO
+  6.1) hold no ActiveX controls; each on its own makes the host build fail, with no cause
+  given, in the lane's staging, with the IDE's placeholders, with the `Build` folder made first,
+  with `projects\` copied, as a package or a Standard EXE, win32 or win64. A reference to
+  MSCOMCTL.OCX (32-bit only, registered by VB6) with `fusionAllTo32` builds the host, win32 and
+  win64: `test/shots/fusion` uses it, so the shot needs MSCOMCTL.OCX registered. Not queued:
+  Fusion is documented for controls; a failure message that names no cause may be worth an
+  issue (the main session's call).
 
 ## Machine state in the pictures (owner, 2026-10-08)
 

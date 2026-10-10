@@ -50,8 +50,10 @@
 #                            default: without it what a WebView2 or any other
 #                            DirectComposition content draws is left out), into
 #                            the PNG file TBBUILD_FILE; the line gives its size,
-#                            its DPI and the texts of the window and its child
-#                            windows, for the caller to search for the user name
+#                            its DPI, its visible frame and client area, a layered
+#                            window's colour key and alpha, and the texts of the
+#                            window and its child windows, for the caller to
+#                            search for the user name
 #
 # The calls are made on a thread of their own that has been put on the desktop,
 # since a thread sees and draws only the windows of its own desktop, and that is
@@ -124,6 +126,10 @@ public static class TbWindows {
   [DllImport("user32.dll")] static extern uint GetDpiForWindow(IntPtr h);
   [DllImport("user32.dll")] static extern IntPtr SetThreadDpiAwarenessContext(IntPtr ctx);
   [DllImport("user32.dll", SetLastError = true)] static extern bool PrintWindow(IntPtr h, IntPtr hdc, uint flags);
+  [DllImport("user32.dll")] static extern bool GetLayeredWindowAttributes(IntPtr h, out uint key, out byte alpha, out uint flags);
+  [DllImport("dwmapi.dll")] static extern int DwmGetWindowAttribute(IntPtr h, int a, out RECT r, int n);
+  [DllImport("user32.dll")] static extern bool GetClientRect(IntPtr h, out RECT r);
+  [DllImport("user32.dll")] static extern int MapWindowPoints(IntPtr from, IntPtr to, ref RECT r, int n);
   [DllImport("kernel32.dll")] static extern IntPtr OpenProcess(uint access, bool inherit, uint pid);
   [DllImport("kernel32.dll", CharSet = CharSet.Unicode)]
   static extern bool QueryFullProcessImageName(IntPtr p, int flags, StringBuilder sb, ref int size);
@@ -200,6 +206,11 @@ public static class TbWindows {
     return "[" + string.Join(",", rows.ToArray()) + "]";
   }
 
+  // [left, top, right, bottom] of `a` relative to `o`'s top left
+  static string Box(RECT a, RECT o) {
+    return "[" + (a.Left - o.Left) + "," + (a.Top - o.Top) + "," + (a.Right - o.Left) + "," + (a.Bottom - o.Top) + "]";
+  }
+
   public static string Capture(string desktop, long hwnd, uint flags, string file) {
     string result = null;
     OnDesktop(desktop, (desk) => {
@@ -220,8 +231,15 @@ public static class TbWindows {
       List<string> texts = new List<string>();
       texts.Add(Str(Txt(h)));
       EnumChildWindows(h, delegate(IntPtr c, IntPtr l) { string t = Txt(c); if (t.Length > 0) texts.Add(Str(t)); return true; }, IntPtr.Zero);
+      // the visible frame (DWMWA_EXTENDED_FRAME_BOUNDS) and the client area in the picture,
+      // and a layered window's colour key, alpha and LWA_ flags
+      RECT f; if (DwmGetWindowAttribute(h, 9, out f, 16) != 0) f = r;
+      RECT cr; GetClientRect(h, out cr); MapWindowPoints(h, IntPtr.Zero, ref cr, 2);
+      uint key, lf; byte alpha;
+      string layered = GetLayeredWindowAttributes(h, out key, out alpha, out lf) ? "[" + key + "," + alpha + "," + lf + "]" : "null";
       result = "{\"width\":" + w + ",\"height\":" + ht + ",\"dpi\":" + GetDpiForWindow(h) +
-        ",\"texts\":[" + string.Join(",", texts.ToArray()) + "]}";
+        ",\"frame\":" + Box(f, r) + ",\"client\":" + Box(cr, r) +
+        ",\"layered\":" + layered + ",\"texts\":[" + string.Join(",", texts.ToArray()) + "]}";
     });
     return result;
   }

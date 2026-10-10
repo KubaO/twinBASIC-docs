@@ -44,7 +44,7 @@ Use this option if you want to just create a local TWINPACK file that you can us
 ![The twinBASIC toolbar with a red ring round the Build button, the last of the three icons after the win32 list](Images/4d90f313-35d5-426d-8fc3-852ca03382fa.png){:width="323" height="83"}
 <br>
 <br>
-![The DEBUG CONSOLE reporting the TWINPACK file being created and the build succeeding](Images/8d74d820-9907-4e76-ac42-71d0233187f1.png)
+![The DEBUG CONSOLE reporting the TWINPACK file being created and the build succeeding](Images/8d74d820-9907-4e76-ac42-71d0233187f1.png){:width="560" height="160"}
 
 You'll see the build output notification in the `DEBUG CONSOLE`, as seen above.
 
