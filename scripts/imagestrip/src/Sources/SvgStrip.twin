@@ -87,7 +87,9 @@ Module SvgStrip
         Compact = k
     End Function
 
-    ' /^\u{FEFF}?\s*<\?xml\b[^?]*\?>\s*/u: where the XML declaration and the white space around it end, or 0.
+    ' /^\u{FEFF}?\s*<\?xml\s[^?]*\?>\s*/u: where the XML declaration and the white space around it end,
+    ' or 0. The declaration is <?xml and white space: <?xml-stylesheet ...?> is an instruction that
+    ' styles the picture.
     Private Function DeclarationEnd(w() As Long, ByVal m As Long) As Long
         Dim p As Long, q As Long
         Do While p < m
@@ -96,7 +98,7 @@ Module SvgStrip
         Loop
         If Not TextAt(w, m, p, "<?xml", False) Then Exit Function
         If p + 5 >= m Then Exit Function
-        If Bytes.IsWordUnit(w(p + 5)) Then Exit Function
+        If Not Bytes.IsJsSpace(w(p + 5)) Then Exit Function
         q = p + 5
         Do While q < m
             If w(q) = 63 Then Exit Do

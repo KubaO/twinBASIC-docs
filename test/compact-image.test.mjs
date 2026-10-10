@@ -412,10 +412,17 @@ const SVG_CDATA =
   "<![CDATA[ <!-- .fil0 {fill:#373435} --> ]]></style></defs>" +
   '<metadata id="CorelCorpID_0Corel-Layer"/><path class="fil0" d="M0 0h1"/></svg>';
 const SVG_ESCAPES = '<!-- Creator: CorelDRAW X6 --><svg><path fill="#f00" d="M0 0h100%"/></svg>';
+// <?xml-stylesheet?> starts as the declaration does, and styles the picture.
+const SVG_STYLESHEET = '<?xml-stylesheet href="style.css" type="text/css"?><svg><path class="a"/></svg>';
 
 describe("compactImage, SVG", () => {
   test("drops the declaration, a DOCTYPE that declares nothing, comments and metadata", () => {
     assert.equal(compactSvgText(SVG_COREL), SVG_COREL_STRIPPED);
+  });
+
+  test("keeps a style sheet instruction, which is not the declaration, even first", () => {
+    for (const svg of [SVG_STYLESHEET, `<?xml version="1.0"?>\n${SVG_STYLESHEET}`])
+      assert.equal(compactSvgText(svg), SVG_STYLESHEET);
   });
 
   test("keeps a DOCTYPE that declares entities, and a comment or metadata that is a notice", () => {
@@ -756,6 +763,7 @@ describe("imagestrip", { skip: toolSkip }, () => {
     await strip("icon.svg", SVG_FILE);
     await strip("NESTED.SVG", Buffer.from(NESTED_SVG));
     await strip("latin1.svg", ascii("<svg><title>Zo\xeb</title><!-- x --></svg>"));
+    await strip("stylesheet.svg", Buffer.from(`\r\n${SVG_STYLESHEET}\r\n<!-- x -->`));
   });
 
   test("changes nothing when run on what it wrote", async () => {

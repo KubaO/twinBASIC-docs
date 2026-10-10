@@ -452,7 +452,8 @@ export function compactGif(b) {
 
 /**
  * Which UTF-16 units of an SVG's text are the SVG's own and not only its
- * editor's: 1 for each kept, 0 for each of the XML declaration, a DOCTYPE that
+ * editor's: 1 for each kept, 0 for each of the XML declaration (<?xml and
+ * white space: <?xml-stylesheet?> styles the picture and stays), a DOCTYPE that
  * declares nothing (one whose internal subset declares the entities an
  * Illustrator file uses stays), comments ("Creator: CorelDRAW", "Generator:
  * Adobe Illustrator") and metadata elements, but for a comment or metadata
@@ -483,7 +484,7 @@ function svgKeep(text) {
       wo = outo;
     };
     if (first) {
-      step([/^\u{FEFF}?\s*<\?xml\b[^?]*\?>\s*/u.exec(w)], () => true);
+      step([/^\u{FEFF}?\s*<\?xml\s[^?]*\?>\s*/u.exec(w)], () => true);
       step([/<!DOCTYPE\s[^[>]*>\s*/i.exec(w)], () => true);
     }
     step(w.matchAll(/<!--([\s\S]*?)-->/g), (m) => !noticeText(m[1]));
