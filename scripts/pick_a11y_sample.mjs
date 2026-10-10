@@ -117,7 +117,7 @@ const FAMILIES = {
   footnote: { re: /class="footnote/g, min: 1, why: "footnote back-reference link names" },
   sup: { re: /<sup[\s>]/g, min: 1, why: "color-contrast at small type sizes" },
   deepHeadings: { re: /<h3[\s>]/g, min: 4, why: "heading-order across a real h2/h3 nesting" },
-  svgDiagram: { re: /class="svg-container"/g, min: 1, why: "role-img-alt on an inlined diagram" },
+  svgDiagram: { re: /class="fig-container" data-svg-src=/g, min: 1, why: "role-img-alt on an inlined diagram" },
   codeDense: { re: /<code[\s>]/g, min: 200, why: "color-contrast at the density that dominates audit cost" },
   listDense: { re: /<li[\s>]/g, min: 150, why: "list, listitem at scale" },
 };

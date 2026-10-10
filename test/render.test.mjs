@@ -36,6 +36,15 @@ const md = createMarkdownIt({
 });
 const inline = (src) => md.renderInline(src, { page: {} });
 
+// A picture's figure (figurePlugin) as the paragraph it took the place of: the pairing
+// tests are about the images in it, and the figure has tests of its own. A diagram's
+// figure, whose container carries the diagram's source, is left as it is.
+const bare = (html) =>
+  html.replace(
+    /^<div class="fig-wrap"[^>]*><div class="fig-controls">[\s\S]*?<\/div><div class="fig-container">([\s\S]*)<\/div><\/div>$/,
+    "<p>$1</p>",
+  );
+
 describe("kramdownEllipsisPlugin", () => {
   const cases = [
     ["three dots", "wait...", "wait…"],
@@ -152,7 +161,7 @@ describe("themePairPlugin and lightOnly", () => {
       "IDE/Images/S p.light.png",
     ]),
   });
-  const render = (src) => paired.render(src, { page: { srcRel: "IDE/Page.md" } }).trim();
+  const render = (src) => bare(paired.render(src, { page: { srcRel: "IDE/Page.md" } }).trim());
   const pair = (src, alt, attrs) =>
     `<img src="/IDE/Images/${src}.light.png" alt="${alt}"${attrs} class="pic-light" loading="lazy" />` +
     `<img src="/IDE/Images/${src}.png" alt="${alt}"${attrs} class="pic-dark" loading="lazy" />`;
@@ -197,7 +206,7 @@ describe("themePairPlugin and lightOnly", () => {
       pictureSizes: { "IDE/Images/A.light.png": [2432, 62, 2456, 70] },
     });
     assert.equal(
-      sized.render('![t](Images/A.png){:width="1228" height="35"}', { page: { srcRel: "IDE/Page.md" } }).trim(),
+      bare(sized.render('![t](Images/A.png){:width="1228" height="35"}', { page: { srcRel: "IDE/Page.md" } }).trim()),
       '<p><img src="/IDE/Images/A.light.png" alt="t" width="1216" height="31" class="pic-light" loading="lazy" />' +
         '<img src="/IDE/Images/A.png" alt="t" width="1228" height="35" class="pic-dark" loading="lazy" /></p>',
     );
@@ -297,7 +306,7 @@ describe("themePairPlugin with pictures drawn as SVG", () => {
       ["IDE/Images/D.svg", "<svg/>"],
     ]),
   });
-  const render = (src) => md.render(src, { page: { srcRel: "IDE/Page.md" } }).trim();
+  const render = (src) => bare(md.render(src, { page: { srcRel: "IDE/Page.md" } }).trim());
 
   test("each theme's SVG takes its PNG's place, the light one still sized by the PNGs", () => {
     assert.equal(
@@ -340,7 +349,7 @@ describe("themePairPlugin with pictures drawn as SVG", () => {
   });
 
   test("an SVG with no PNG beside it is a diagram, and is still inlined", () => {
-    assert.match(render("![d](Images/D.svg)"), /svg-inline-wrap/);
+    assert.match(render("![d](Images/D.svg)"), /fig-wrap" data-kind="diagram"/);
   });
 
   test("a page that names a light SVG itself is refused", () => {
@@ -368,5 +377,69 @@ describe("themePairPlugin with pictures drawn as SVG", () => {
       offline: false,
       book: true,
     });
+  });
+});
+
+describe("figurePlugin", () => {
+  const md = createMarkdownIt({
+    highlighter: null,
+    linkTables: { byPath: new Map(), byUrl: new Map(), byRedirect: new Map() },
+    baseurl: "",
+    staticFiles: new Set([
+      "IDE/Images/A.png",
+      "IDE/Images/A.light.png",
+      "IDE/Images/A.svg",
+      "IDE/Images/A.light.svg",
+      "IDE/Images/B.png",
+      "IDE/Images/J.jpg",
+      "IDE/Images/D.svg",
+      "IDE/Images/S.svg",
+    ]),
+    svgContents: new Map([
+      ["IDE/Images/D.svg", '<svg width="600pt" height="300pt" viewBox="0 0 600 300"></svg>'],
+      ["IDE/Images/S.svg", '<svg width="600pt" height="60pt" viewBox="0 0 600 60"></svg>'],
+    ]),
+  });
+  const render = (src) => md.render(src, { page: { srcRel: "IDE/Page.md" } }).trim();
+  const actions = (html) => [...html.matchAll(/data-action="([a-z-]+)"/g)].map((m) => m[1]);
+  const labels = (html) => [...html.matchAll(/aria-label="([^"]+)"/g)].map((m) => m[1]);
+
+  test("a picture drawn as SVG offers both formats and Zoom, around both of its images", () => {
+    const html = render('![x](Images/A.png){:width="400" height="300"}');
+    assert.match(html, /^<div class="fig-wrap" data-kind="picture" data-tall>/);
+    assert.deepEqual(actions(html), ["download-svg", "copy-svg", "download-png", "copy-png", "zoom"]);
+    assert.match(
+      html,
+      /<div class="fig-container"><img src="\/IDE\/Images\/A\.light\.svg"[^>]*\/><img src="\/IDE\/Images\/A\.svg"[^>]*\/><\/div><\/div>$/,
+    );
+  });
+
+  test("a raster image offers its own format, copied as PNG", () => {
+    assert.deepEqual(actions(render("![x](Images/B.png)")), ["download-png", "copy-png", "zoom"]);
+    assert.deepEqual(labels(render("![x](Images/J.jpg)")), ["Download JPEG", "Copy as PNG", "Zoom"]);
+  });
+
+  test("an image with text beside it, or inside a link, stays in its paragraph with no bar", () => {
+    assert.doesNotMatch(render("See ![x](Images/B.png) here."), /fig-wrap/);
+    assert.doesNotMatch(render("[![x](Images/B.png)](https://example.com/)"), /fig-wrap/);
+  });
+
+  test("a figure is tall when the page shows it at least as tall as its bar on end", () => {
+    // The bar of a picture drawn as SVG is 220px on end; of a raster, 126px.
+    assert.match(render('![x](Images/A.png){:width="400" height="220"}'), /data-tall/);
+    assert.doesNotMatch(render('![x](Images/A.png){:width="400" height="219"}'), /data-tall/);
+    assert.match(render('![x](Images/B.png){:width="400" height="126"}'), /data-tall/);
+    // Shown in the 736px column, a 1472px-wide picture is half as tall as it says.
+    assert.doesNotMatch(render('![x](Images/B.png){:width="1472" height="250"}'), /data-tall/);
+    // A size the page does not state is taken as short.
+    assert.doesNotMatch(render("![x](Images/B.png)"), /data-tall/);
+  });
+
+  test("a diagram is inlined, tall or short by its own size in pt", () => {
+    const tall = render("![d](Images/D.svg)");
+    assert.match(tall, /^<div class="fig-wrap" data-kind="diagram" data-tall>/);
+    assert.match(tall, /<div class="fig-container" data-svg-src="IDE\/Images\/D\.svg" role="img" aria-label="d"><svg /);
+    assert.doesNotMatch(tall, /<img/);
+    assert.doesNotMatch(render("![s](Images/S.svg)"), /data-tall/);
   });
 });

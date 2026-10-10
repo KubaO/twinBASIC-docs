@@ -531,7 +531,7 @@ axe's `image-alt` asks only whether an accessible name exists.
 
 `tbdocs` regenerates each `.svg` from its `.dot` sibling when the SVG is missing or older than its source --- editing a `.dot` by one character regenerates the SVG on the next build. Both files belong in git; the `.dot` is the canonical source, the `.svg` is the build artifact.
 
-At render time, any markdown image reference to a build-local `.svg` is replaced with the SVG content inlined directly in the HTML. Each inlined SVG gets a click-to-zoom overlay and four control links (Download SVG, Copy SVG, Download PNG, Copy PNG). The controls are hidden in print output. See the [SVG inlining](Builder#svg-inlining) section of the Builder page for the implementation details.
+At render time, a markdown image reference to a build-local `.svg` that stands alone in its paragraph is replaced with the SVG content inlined directly in the HTML. Like every image that stands alone, it is shown as a figure, with a bar of buttons to download it and copy it as SVG or PNG and to zoom it; a click on the figure zooms it too. The bar is hidden in print output. See the [Figures](Builder#figures) section of the Builder page for the implementation details.
 
 The renderer calls `@hpcc-js/wasm-graphviz` directly: one WASM module load (~50 ms) covers the whole batch, then each diagram is a synchronous `gv.dot(src)` call. No headless browser and no Chromium dependency for diagrams. Two failure modes are handled distinctly:
 

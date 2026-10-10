@@ -478,7 +478,7 @@ The site ships its own fonts, so a page renders the same on every platform: **In
 
 Those two example glyphs are, deliberately, the only characters on the whole site that fall back --- so the ✔ and ⋮ above are being drawn by your system's symbol font right now, next to text that is not. That difference in weight and shape is the effect this section is about.
 
-Diagram exports carry the font with them. The Download / Copy SVG and PNG buttons above each diagram embed the typeface into the exported file, because an exported SVG has no access to the site's stylesheet and would otherwise render in whatever the viewer has installed. All four buttons work on every diagram.
+Diagram exports carry the font with them. The Download / Copy SVG and PNG buttons of each diagram embed the typeface into the exported file, because an exported SVG has no access to the site's stylesheet and would otherwise render in whatever the viewer has installed. All four buttons work on every diagram.
 
 **Do not hand-edit a diagram's `.svg`.** It is a build artifact: the `.dot` beside it is the source, and the next build overwrites your edit. Changing the face is the edit that looks most harmless and is not --- Graphviz sizes each box to the text it measured, so a diagram whose labels are painted in a font the layout never saw has text hanging outside its boxes. `check.bat` fails on that; see [Diagrams](#diagrams) below.
 
@@ -861,6 +861,12 @@ There are three reasons, in increasing order of severity:
 - **The PDF book fails to build.** The forked paged.js in `book/lib/` dropped support for loading images asynchronously, so an image that has not finished downloading by the time the page-breaking pass runs raises an error and aborts the whole render. A remote image makes `book.bat` depend on a reachable third-party host; when that host is slow, blocked, or has expired the asset, the build does not degrade to a missing picture --- it stops.
 
 [`build.bat`](Building#checking-link-integrity) enforces this. A remote `<img>` --- `http://`, `https://`, or protocol-relative `//host/...` --- is reported as `remote-asset:` and fails the run.
+
+### A figure's buttons
+
+An image that stands alone in its paragraph is shown as a *figure*: the image with a bar of buttons to download it, copy it and zoom it. That holds for a diagram, a picture in both themes and any other PNG, JPEG, GIF or WebP, with no markup of yours. An image inside a sentence, or inside a link, is a plain image and gets no bar, so put an image you want to be zoomable on a line of its own.
+
+Give a picture its `{:width="..." height="..."}`. The build uses the size to decide where the bar goes: a figure at least as tall as the bar stood on end gets the bar beside it, in the margin of a wide window and in view while the figure scrolls past, and a shorter figure gets the bar above it or at its top right. A picture with no stated size is treated as short: its bar stays above it, however tall it is. The decision is made in the build, so nothing on the page moves after it loads.
 
 ### A picture in both themes
 

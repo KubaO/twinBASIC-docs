@@ -73,7 +73,7 @@
       })
       .catch(function (err) {
         console.warn(
-          "svg-inline: could not embed " +
+          "figure: could not embed " +
             rel +
             " in the export (" +
             err.message +
@@ -147,46 +147,115 @@
     });
   }
 
+  // ---- Figures --------------------------------------------------------
+  //
+  // A figure (builder/render.mjs, figurePlugin) is a .fig-wrap holding a
+  // .fig-controls bar and a .fig-container. A diagram's container holds its
+  // SVG inline; a picture's holds one <img>, or two for a picture in two
+  // themes, of which the stylesheet shows one. Every action works on what the
+  // reader sees: the inline SVG, or the <img> the theme shows.
+
+  // Opened from disk (the offline copy), a page can neither read a file to
+  // put on the clipboard -- fetch() refuses a file:// URL, and a canvas an
+  // image from disk was drawn on refuses to be read back -- nor download one:
+  // the browser ignores `download` on a file:// link and opens the image in
+  // place of the page.
+  var FROM_DISK = location.protocol === "file:";
+
+  var SVG_URL = /\.svg(?=[?#]|$)/i;
+
+  // The <img> of a picture's figure that the theme shows.
+  function shownImage(wrap) {
+    var imgs = wrap.querySelectorAll(".fig-container > img");
+    for (var i = 0; i < imgs.length; i++) {
+      if (getComputedStyle(imgs[i]).display !== "none") return imgs[i];
+    }
+    return imgs[0] || null;
+  }
+
+  // What a picture's figure offers: its SVG when it is shown as one, and the
+  // raster beside it (the PNG a picture's SVG was drawn with), or the image
+  // itself when it is a raster.
+  function sources(wrap) {
+    var img = shownImage(wrap);
+    if (!img) return null;
+    var src = img.src;
+    var svg = SVG_URL.test(src) ? src : null;
+    return { img: img, svg: svg, raster: svg ? src.replace(SVG_URL, ".png") : src };
+  }
+
+  function fileName(url) {
+    var path = new URL(url, location.href).pathname;
+    return decodeURIComponent(path.slice(path.lastIndexOf("/") + 1));
+  }
+
+  // Each bar offers only what works where the page is read. The offline copy
+  // shows a picture's PNG in place of its SVG, so its vector group goes; read
+  // from disk, a picture keeps only Zoom. (A diagram's actions work on its
+  // inline SVG and need no file, so they all stay.)
+  function prepareBars() {
+    var wraps = document.querySelectorAll('.fig-wrap[data-kind="picture"]');
+    for (var i = 0; i < wraps.length; i++) {
+      var s = sources(wraps[i]);
+      var groups = wraps[i].querySelectorAll(".fig-group[data-format]");
+      for (var j = 0; j < groups.length; j++) {
+        var vector = groups[j].dataset.format === "vector";
+        if (FROM_DISK || (vector && s && !s.svg)) groups[j].hidden = true;
+      }
+    }
+  }
+  prepareBars();
+
+  // ---- Zoom -------------------------------------------------------------
+  //
+  // The container itself becomes the overlay; the stylesheet lays it out
+  // (custom.scss, `.fig-container[data-zoomed]`). Only the background is set
+  // here, the body's, so the overlay matches the theme the page is in.
+
+  // The element a zoom enlarges: a diagram's SVG, or the <img> the theme shows.
+  function zoomed(container) {
+    return container.querySelector(":scope > svg") || shownImage(container.closest(".fig-wrap"));
+  }
+
+  // Zoom shows a figure at twice its size on the page, as far as the window's
+  // width allows, and never smaller than on the page. Twice is what a
+  // screenshot was taken at: its SVG is drawn at the page's size and its PNG
+  // at twice that, so a zoomed screenshot is the PNG's pixels exactly. A
+  // raster is never stretched past its own pixels. Only the width is fitted:
+  // a figure taller than the window scrolls, as it would in an image viewer,
+  // rather than shrinking to fit and losing the detail zoom is for.
+  function zoomWidth(el, shown, container) {
+    var target = 2 * shown;
+    if (el.tagName === "IMG" && !SVG_URL.test(el.src) && el.naturalWidth) {
+      target = Math.min(target, el.naturalWidth);
+    }
+    var cs = getComputedStyle(container);
+    var room = container.clientWidth - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight);
+    return Math.max(shown, Math.min(target, room));
+  }
+
   function zoomIn(container) {
-    var svg = container.querySelector("svg");
-    var bg = getComputedStyle(document.body).backgroundColor;
-    Object.assign(container.style, {
-      position: "fixed",
-      top: "0",
-      left: "0",
-      width: "100vw",
-      height: "100vh",
-      zIndex: "9999",
-      background: bg,
-      padding: "1rem",
-      boxSizing: "border-box",
-      overflow: "auto",
-      cursor: "zoom-out",
-    });
-    if (svg) svg.style.maxWidth = "100%";
+    var el = zoomed(container);
+    var width = el ? el.getBoundingClientRect().width : 0;
+    container.style.backgroundColor = getComputedStyle(document.body).backgroundColor;
     container.dataset.zoomed = "1";
     container.scrollTop = 0;
+    if (el && width) {
+      // Measured on the page first, sized once the overlay is up and its
+      // width is known.
+      el.style.width = zoomWidth(el, width, container) + "px";
+      el.style.height = "auto";
+      el.style.maxWidth = "none";
+    }
 
-    // Insert a visible close button
     var closeBtn = document.createElement("button");
     closeBtn.type = "button";
-    closeBtn.className = "svg-zoom-close";
+    closeBtn.className = "fig-zoom-close";
     closeBtn.setAttribute("aria-label", "Close zoom");
-    closeBtn.textContent = "×";
-    Object.assign(closeBtn.style, {
-      position: "fixed",
-      top: "0.5rem",
-      right: "0.5rem",
-      zIndex: "10000",
-      fontSize: "1.5rem",
-      lineHeight: "1",
-      padding: "0.25rem 0.5rem",
-      background: "rgba(0,0,0,0.5)",
-      color: "#fff",
-      border: "none",
-      borderRadius: "4px",
-      cursor: "pointer",
-    });
+    closeBtn.title = "Close zoom";
+    // The glyph is the page's own sprite symbol, so it takes the theme's text
+    // colour like the bar's buttons; custom.scss places and sizes it.
+    closeBtn.innerHTML = '<svg aria-hidden="true" focusable="false"><use href="#fig-close"></use></svg>';
     container.appendChild(closeBtn);
     closeBtn.focus();
 
@@ -196,17 +265,29 @@
 
   function zoomOut(container) {
     container.removeEventListener("keydown", trapFocus);
-    var closeBtn = container.querySelector(".svg-zoom-close");
+    var closeBtn = container.querySelector(".fig-zoom-close");
     if (closeBtn) closeBtn.remove();
-    container.removeAttribute("style");
-    container.style.cursor = "zoom-in";
-    var svg = container.querySelector("svg");
-    if (svg) svg.style.maxWidth = "";
+    container.style.backgroundColor = "";
     delete container.dataset.zoomed;
+    var el = zoomed(container);
+    if (el) {
+      el.style.width = "";
+      el.style.height = "";
+      el.style.maxWidth = "";
+    }
 
     if (zoomTrigger) {
       zoomTrigger.focus();
       zoomTrigger = null;
+    }
+  }
+
+  function toggleZoom(container, trigger) {
+    if (container.dataset.zoomed) {
+      zoomOut(container);
+    } else {
+      zoomTrigger = trigger;
+      zoomIn(container);
     }
   }
 
@@ -230,39 +311,16 @@
     }
   }
 
-  // Click on .svg-container (not on controls) toggles zoom
+  // A click on the figure itself toggles zoom, as does its close button.
   document.addEventListener("click", function (e) {
-    var container = e.target.closest(".svg-container");
+    var container = e.target.closest(".fig-container");
     if (!container) return;
-    if (e.target.closest(".svg-controls")) return;
-    if (e.target.closest(".svg-zoom-close")) {
-      e.preventDefault();
+    e.preventDefault();
+    if (e.target.closest(".fig-zoom-close")) {
       zoomOut(container);
       return;
     }
-    e.preventDefault();
-    if (container.dataset.zoomed) {
-      zoomOut(container);
-    } else {
-      zoomTrigger = e.target;
-      zoomIn(container);
-    }
-  });
-
-  // Zoom button in controls bar
-  document.addEventListener("click", function (e) {
-    var btn = e.target.closest('.svg-controls button[data-action="zoom-svg"]');
-    if (!btn) return;
-    e.preventDefault();
-    var wrap = btn.closest(".svg-inline-wrap");
-    var container = wrap && wrap.querySelector(".svg-container");
-    if (!container) return;
-    if (container.dataset.zoomed) {
-      zoomOut(container);
-    } else {
-      zoomTrigger = btn;
-      zoomIn(container);
-    }
+    toggleZoom(container, e.target);
   });
 
   // Escape closes zoom
@@ -270,29 +328,115 @@
     "keydown",
     function (e) {
       if (e.key !== "Escape") return;
-      var zoomed = document.querySelector(".svg-container[data-zoomed]");
+      var zoomed = document.querySelector(".fig-container[data-zoomed]");
       if (!zoomed) return;
       zoomOut(zoomed);
     },
     { capture: true }
   );
 
-  // SVG action buttons (download/copy)
+  // ---- The bar's buttons ---------------------------------------------------
+
   document.addEventListener("click", function (e) {
-    var btn = e.target.closest(".svg-controls button[data-action]");
+    var btn = e.target.closest(".fig-controls button[data-action]");
     if (!btn) return;
-    var action = btn.dataset.action;
-    if (action === "zoom-svg") return;
     e.preventDefault();
-    var wrap = btn.closest(".svg-inline-wrap");
-    var svg = wrap && wrap.querySelector(".svg-container > svg");
-    if (!svg) return;
+    var wrap = btn.closest(".fig-wrap");
+    var container = wrap && wrap.querySelector(".fig-container");
+    if (!container) return;
+    var action = btn.dataset.action;
+    if (action === "zoom") return toggleZoom(container, btn);
+    var svg = container.querySelector(":scope > svg");
+    if (svg) diagramAction(svg, action, btn);
+    else pictureAction(wrap, action, btn);
+  });
+
+  // A picture's or an image's: its files are on the site, so a download is a
+  // link to the file, and a copy is the file's bytes (or, for a raster that is
+  // no PNG, the image drawn on a canvas and encoded as one).
+  function pictureAction(wrap, action, btn) {
+    var s = sources(wrap);
+    if (!s) return;
+    if (action === "download-svg" && s.svg) return downloadUrl(s.svg);
+    if (action === "download-png") return downloadUrl(s.raster);
+    if (action === "copy-svg" && s.svg) {
+      var text = fetchBlob(s.svg).then(function (b) {
+        return b.text();
+      });
+      return copyItem(
+        btn,
+        "SVG",
+        text.then(function (t) {
+          return new Blob([t], { type: "text/plain" });
+        }),
+        "text/plain"
+      );
+    }
+    if (action === "copy-png") {
+      var png = /\.png(?=[?#]|$)/i.test(s.raster)
+        ? fetchBlob(s.raster).then(function (b) {
+            return new Blob([b], { type: "image/png" });
+          })
+        : drawnAsPng(s.raster);
+      return copyItem(btn, "PNG", png, "image/png");
+    }
+  }
+
+  function fetchBlob(url) {
+    return fetch(url).then(function (r) {
+      if (!r.ok) throw new Error(r.status + " " + r.statusText);
+      return r.blob();
+    });
+  }
+
+  function drawnAsPng(url) {
+    return new Promise(function (resolve, reject) {
+      var img = new Image();
+      img.onerror = function () {
+        reject(new Error("the image did not load"));
+      };
+      img.onload = function () {
+        var c = document.createElement("canvas");
+        c.width = img.naturalWidth;
+        c.height = img.naturalHeight;
+        c.getContext("2d").drawImage(img, 0, 0);
+        c.toBlob(function (b) {
+          if (b) resolve(b);
+          else reject(new Error("the image could not be encoded"));
+        }, "image/png");
+      };
+      img.src = url;
+    });
+  }
+
+  // The item is handed to the clipboard while its bytes are still on their
+  // way, which is what lets the write keep the click's permission in Safari.
+  function copyItem(btn, format, blobPromise, type) {
+    var item = {};
+    item[type] = blobPromise;
+    navigator.clipboard.write([new ClipboardItem(item)]).then(
+      function () {
+        copied(btn, format);
+      },
+      function (err) {
+        exportFailed(format + " copy", "the clipboard refused the write (" + err.message + ").");
+      }
+    );
+  }
+
+  function downloadUrl(url) {
+    var a = document.createElement("a");
+    a.href = url;
+    a.download = fileName(url);
+    a.click();
+  }
+
+  // A diagram's: it is inline SVG, so every action serializes it.
+  function diagramAction(svg, action, btn) {
     var filename = btn.dataset.filename || "diagram";
 
     // Every branch goes through serializeWithFonts, so a copied or
-    // downloaded diagram carries its own typeface. copy-svg used
-    // svg.outerHTML and download-svg used XMLSerializer; they are one path
-    // now, which also means the two buttons can no longer drift apart.
+    // downloaded diagram carries its own typeface.
     //
     // The catch degrades to a plain serialization rather than dropping the
     // click: an export in the wrong font is worth having, an export that
@@ -300,21 +444,26 @@
     // failures, so this only fires on something unforeseen.)
     serializeWithFonts(svg)
       .catch(function (err) {
-        console.warn("svg-inline: embedding fonts failed (" + err.message + "); exporting without them.");
+        console.warn("figure: embedding fonts failed (" + err.message + "); exporting without them.");
         return new XMLSerializer().serializeToString(svg);
       })
       .then(function (data) {
         if (action === "download-svg") {
           triggerDownload(new Blob([data], { type: "image/svg+xml;charset=utf-8" }), filename + ".svg");
         } else if (action === "copy-svg") {
-          navigator.clipboard.writeText(data).catch(function (err) {
-            exportFailed("SVG copy", "the clipboard refused the write (" + err.message + ").");
-          });
+          navigator.clipboard.writeText(data).then(
+            function () {
+              copied(btn, "SVG");
+            },
+            function (err) {
+              exportFailed("SVG copy", "the clipboard refused the write (" + err.message + ").");
+            }
+          );
         } else if (action === "download-png" || action === "copy-png") {
-          rasterise(svg, data, action, filename);
+          rasterise(svg, data, action, filename, btn);
         }
       });
-  });
+  }
 
   // SVG -> PNG via an offscreen canvas.
   //
@@ -326,7 +475,7 @@
   // hand-authored SVG could reintroduce a foreignObject, and the throw lands
   // inside an onload handler where nothing surfaces it and the click simply
   // appears to do nothing. Say so instead.
-  function rasterise(svg, data, action, filename) {
+  function rasterise(svg, data, action, filename, btn) {
     var url = URL.createObjectURL(new Blob([data], { type: "image/svg+xml;charset=utf-8" }));
     var img = new Image();
     img.onerror = function () {
@@ -346,13 +495,7 @@
         c.toBlob(function (b) {
           if (!b) return exportFailed("PNG export", "the image could not be encoded.");
           if (action === "download-png") return triggerDownload(b, filename + ".png");
-          // The clipboard can refuse this -- an unfocused document and a
-          // denied permission both reject here -- and the rejection used to
-          // go nowhere, so the click looked like it had worked. Say so, the
-          // same way the SVG copy branch does.
-          navigator.clipboard.write([new ClipboardItem({ "image/png": b })]).catch(function (err) {
-            exportFailed("PNG copy", "the clipboard refused the write (" + err.message + ").");
-          });
+          copyItem(btn, "PNG", Promise.resolve(b), "image/png");
         }, "image/png");
       } catch (err) {
         exportFailed(
@@ -367,12 +510,30 @@
     img.src = url;
   }
 
+  // A copy that worked: the clipboard glyph is ticked for a moment, as the
+  // code blocks' copy button does, and a screen reader is told.
+  function copied(btn, format) {
+    var use = btn.querySelector("use");
+    if (use) {
+      use.setAttribute("href", "#fig-copied");
+      clearTimeout(btn._copiedTimer);
+      btn._copiedTimer = setTimeout(function () {
+        use.setAttribute("href", "#fig-copy");
+      }, 1500);
+    }
+    announce(format + " copied to the clipboard.");
+  }
+
   function exportFailed(what, why) {
-    console.warn("svg-inline: " + what + " failed -- " + why);
-    var el = document.getElementById("svg-export-status");
+    console.warn("figure: " + what + " failed -- " + why);
+    announce(what + " failed: " + why);
+  }
+
+  function announce(message) {
+    var el = document.getElementById("fig-export-status");
     if (!el) {
       el = document.createElement("div");
-      el.id = "svg-export-status";
+      el.id = "fig-export-status";
       el.className = "sr-only";
       el.setAttribute("role", "status");
       document.body.appendChild(el);
@@ -380,7 +541,7 @@
     // Cleared first so an identical repeat message is still announced.
     el.textContent = "";
     setTimeout(function () {
-      el.textContent = what + " failed: " + why;
+      el.textContent = message;
     }, 50);
   }
 

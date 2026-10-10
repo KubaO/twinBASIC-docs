@@ -1126,9 +1126,26 @@ SVGs: online and book do, offline (and so the help archive) does not. Why:
   patterns, so `offlineExcluded` (and its copy in `check-tree.mjs`) compares a pattern with no
   wildcard as a string instead of compiling it. The archive is a stored zip, 37 MB without
   the SVGs, and the 310 of them (2026-10-10) would add 18 MB.
-- **A picture's SVG is never inlined.** `svgInlinePlugin` inlines a diagram's SVG with its zoom
-  and export controls; a picture's (`isPictureSvg`: an `.svg` with its `.png` beside it) stays
-  an `<img>`, and `tbdocs.mjs` does not put it in the `svgContentsMap` the workers receive.
+- **A picture's SVG is never inlined.** `figurePlugin` inlines a diagram's SVG in its figure; a
+  picture's (`isPictureSvg`: an `.svg` with its `.png` beside it) stays an `<img>` in the
+  figure's container, and `tbdocs.mjs` does not put it in the `svgContentsMap` the workers
+  receive.
+- **What becomes a figure.** An image that is its paragraph's only content (or the two images of
+  a light and dark pair), of any kind: a diagram, a picture, a raster. `figurePlugin`'s `figures`
+  core rule decides it on the token stream, so an image with text beside it or inside a link
+  stays a plain `<img>`. The bar's groups (vector, raster, zoom) are chosen when `figure_open`
+  renders, from the image's `src` as `remoteImagePlugin` will write it.
+- **`data-tall` is decided at build time, so nothing moves after load.** The wrapper gets it when
+  the figure at the 736 px content column is at least as tall as its bar stood on end (220 px
+  with both groups, 126 px with the raster group only); the size is the page's `{:width height}`
+  for a picture and the root `<svg>`'s width and height (pt) for a diagram, and a picture with
+  no stated size counts as short. Measuring in the browser instead would reflow the page after
+  the first paint, and the sticky bar needs to know its side before layout.
+- **On `file://` a picture's bar keeps only Zoom.** The browser can neither fetch a `file://`
+  URL to put on the clipboard nor honour `download` on a `file://` link, so `figure.js` hides
+  a picture's download and copy groups there; the offline tree shows pictures as PNG, so its
+  vector group is hidden anyway. A diagram's actions serialise the SVG already in the page and
+  work offline.
 - **No `<picture>` with a PNG fallback** (owner): every browser the site supports shows an SVG
   in an `<img>`. The fallback a page needs is the per-picture `png`.
 - **A page that names `X.light.svg` fails the build**, as one that names `X.light.png` does.

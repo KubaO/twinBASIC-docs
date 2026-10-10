@@ -82,7 +82,7 @@ Two rules that are easy to get wrong:
 ## Diagrams
 
 Inline SVG inherits the page's font environment, so the self-hosted faces apply
-to diagram labels too --- `svg-inline.js` puts the SVG in the DOM rather than
+to diagram labels too --- `figure.js` and `figurePlugin` put the SVG in the DOM rather than
 behind an `<img src>`, which would isolate it from the document's `@font-face`
 rules. The DOT sources --- `docs/assets/images/dot/` for shared diagrams,
 `Images/` beside a page for one that belongs to it --- and `builder/gantt.mjs`
@@ -177,7 +177,7 @@ stale but correct SVG beats a freshly wrong one.
 
 ### Diagram scale on the web: never stretch a diagram up
 
-The rule is `.svg-container svg { width: auto; max-width: 100% }`. A
+The rule is `.fig-container > svg { width: auto; max-width: 100% }`. A
 `width: 100%` rule would stretch every diagram to the column whatever its own
 size, and label size would become an accident of how wide Graphviz drew the
 diagram. Label size against 16px body text in a 736px column under `width: 100%`:
@@ -219,7 +219,7 @@ and on the printed page alike.
 ### Diagram scale in print: `zoom: 0.875`, never a text-only shrink
 
 **Do not shrink diagram text alone in `print.css`** (a rule such as
-`.svg-container text { font-size: 75% }`). Graphviz sizes each box to the text it
+`.fig-container text { font-size: 75% }`). Graphviz sizes each box to the text it
 measured and positions the label with `text-anchor="start"` at an x computed for
 that size, so shrinking only the text leaves it undersized *and* left of centre
 in a box that did not move. Across the book's five diagrams the worst off-centre
@@ -281,9 +281,9 @@ themes swapped.
 
 ## Diagram exports carry their own font
 
-The four buttons above each inlined diagram (Download / Copy, SVG / PNG) all
+The four export buttons of each inlined diagram (Download / Copy, SVG / PNG) all
 route through `serializeWithFonts` in
-[docs/assets/js/svg-inline.js](docs/assets/js/svg-inline.js), which embeds the
+[docs/assets/js/figure.js](docs/assets/js/figure.js), which embeds the
 faces the diagram paints with as `data:` URIs in an inline `@font-face`.
 
 This is necessary because **an exported diagram is cut off from the page's
