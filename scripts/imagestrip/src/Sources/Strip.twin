@@ -14,7 +14,7 @@ Module Strip
     ' file[0, n), a CSS file or, when isSvg, an SVG file, with every image it embeds stripped and,
     ' for an SVG, what is only its editor's, into out; returns its length.
     Public Function StripFile(file() As Byte, ByVal n As Long, ByVal isSvg As Boolean, out() As Byte) As Long
-        Dim edits As New EditList, t() As Long, posMap() As Long, i As Long
+        Dim edits As New EditList, t() As Long, posMap() As Long, i As Long, noRef() As Boolean
         Images = 0
         Stripped = 0
         Relabelled = 0
@@ -28,7 +28,7 @@ Module Strip
             For i = 0 To n - 1
                 t(i) = file(i)
             Next
-            ScanUris t, n, True, posMap, -1, edits
+            ScanUris t, n, True, posMap, -1, edits, noRef, False
         End If
         StripFile = edits.Apply(file, n, out)
     End Function
@@ -45,7 +45,8 @@ Module Strip
     ' Adds to edits the edits that strip each image embedded as a data: URI in t[0, n): the bytes
     ' of a CSS file (css), or the UTF-16 units of an SVG. A report on a URI at t(i) names the
     ' file's byte i when posMode is -1, posMap(i) when it is -2, and posMode itself otherwise.
-    Public Sub ScanUris(t() As Long, ByVal n As Long, ByVal css As Boolean, posMap() As Long, ByVal posMode As Long, edits As EditList)
+    ' When hasRef, ref(i) says whether t(i) was written as a reference (XmlDecode).
+    Public Sub ScanUris(t() As Long, ByVal n As Long, ByVal css As Boolean, posMap() As Long, ByVal posMode As Long, edits As EditList, ref() As Boolean, ByVal hasRef As Boolean)
         Dim i As Long, j As Long, comma As Long, finish As Long, pos As Long
         Do While i + 5 <= n
             finish = -1
@@ -67,7 +68,7 @@ Module Strip
                     Else
                         pos = posMap(i)
                     End If
-                    finish = StripUri(t, n, css, i, comma, edits, pos)
+                    finish = StripUri(t, n, css, i, comma, edits, pos, ref, hasRef)
                 End If
             End If
             If finish >= 0 Then i = finish Else i = i + 1
@@ -75,12 +76,14 @@ Module Strip
     End Sub
 
     ' Adds to edits the edits that strip an SVG given as UTF-8 bytes b[0, n): what is only its
-    ' editor's (SvgStrip), and each image it embeds, at any depth. False when it is not UTF-8.
-    ' A report names the file's byte posFixed, or, when that is -1, the byte of b it is about.
+    ' editor's (SvgStrip), and each image it embeds, at any depth, read with the SVG's references
+    ' undone (XmlDecode). False when it is not UTF-8. A report names the file's byte posFixed,
+    ' or, when that is -1, the byte of b it is about.
     Public Function StripSvgBytes(b() As Byte, ByVal n As Long, edits As EditList, ByVal posFixed As Long) As Boolean
         Dim units() As Long, us() As Long, ue() As Long, un As Long, valid As Boolean, keep() As Boolean
         Dim w() As Long, wo() As Long, wn As Long, k As Long, first As Long, removed As Boolean
         Dim posMap() As Long, nested As New EditList
+        Dim d() As Long, ds() As Long, de() As Long, ref() As Boolean, dn As Long, a As Long, z As Long
         un = Bytes.Utf8Units(b, 0, n, units, us, ue, valid)
         If Not valid Then Exit Function
         StripSvgBytes = True
@@ -107,23 +110,161 @@ Module Strip
             End If
         Loop
         If removed Then Stripped = Stripped + 1
-        If posFixed < 0 And wn > 0 Then
-            ReDim posMap(0 To wn - 1)
-            For k = 0 To wn - 1
-                posMap(k) = us(wo(k))
+        ' d's units come from w's [ds, de), and w's from the SVG's units wo.
+        dn = XmlDecode(w, wn, d, ds, de, ref)
+        If posFixed < 0 And dn > 0 Then
+            ReDim posMap(0 To dn - 1)
+            For k = 0 To dn - 1
+                posMap(k) = us(wo(ds(k)))
             Next
-            ScanUris w, wn, False, posMap, -2, nested
+            ScanUris d, dn, False, posMap, -2, nested, ref, True
         Else
-            ScanUris w, wn, False, posMap, posFixed, nested
+            ScanUris d, dn, False, posMap, posFixed, nested, ref, True
         End If
         For k = 0 To nested.Count - 1
-            edits.Add us(wo(nested.StartOf(k))), ue(wo(nested.EndOf(k) - 1)), nested.TextOf(k)
+            a = ds(nested.StartOf(k))
+            z = de(nested.EndOf(k) - 1)
+            edits.Add us(wo(a)), ue(wo(z - 1)), nested.TextOf(k)
         Next
+    End Function
+
+    ' An SVG's text t[0, n) with its references undone, as an XML parser undoes them, but in CDATA
+    ' sections, into units; returns how many. Unit k came from t[s(k), e(k)), and ref(k) says
+    ' whether it was written as a reference: a quote written as one does not end an attribute's
+    ' value, so PayloadEnd tells the two apart.
+    Private Function XmlDecode(t() As Long, ByVal n As Long, units() As Long, s() As Long, e() As Long, ref() As Boolean) As Long
+        Dim i As Long, m As Long, cdEnd As Long, cp As Long, finish As Long, inCdata As Boolean
+        If n <= 0 Then Exit Function
+        ReDim units(0 To n)
+        ReDim s(0 To n)
+        ReDim e(0 To n)
+        ReDim ref(0 To n)
+        Do While i < n
+            inCdata = False
+            If t(i) = 60 Then
+                If UnitsAt(t, n, i, "<![CDATA[") Then
+                    cdEnd = UnitsIndexOf(t, n, "]]>", i + 9)
+                    inCdata = cdEnd >= 0
+                End If
+            End If
+            If inCdata Then
+                Do While i < cdEnd + 3
+                    units(m) = t(i)
+                    s(m) = i
+                    e(m) = i + 1
+                    m = m + 1
+                    i = i + 1
+                Loop
+            ElseIf t(i) = 38 And XmlReference(t, n, i, cp, finish) Then
+                If cp >= &H10000 Then
+                    units(m) = &HD800& + (cp - &H10000) \ 1024
+                    units(m + 1) = &HDC00& + ((cp - &H10000) And 1023)
+                    s(m) = i
+                    e(m) = finish
+                    ref(m) = True
+                    s(m + 1) = i
+                    e(m + 1) = finish
+                    ref(m + 1) = True
+                    m = m + 2
+                Else
+                    units(m) = cp
+                    s(m) = i
+                    e(m) = finish
+                    ref(m) = True
+                    m = m + 1
+                End If
+                i = finish
+            Else
+                units(m) = t(i)
+                s(m) = i
+                e(m) = i + 1
+                m = m + 1
+                i = i + 1
+            End If
+        Loop
+        XmlDecode = m
+    End Function
+
+    ' Whether t(i), which is "&", starts a character reference or one of the five references XML
+    ' defines without a DTD: then cp is its character and finish the unit after its ";". A
+    ' reference to an entity a DTD declares, such as Illustrator's &ns_svg;, stays as written.
+    Private Function XmlReference(t() As Long, ByVal n As Long, ByVal i As Long, ByRef cp As Long, ByRef finish As Long) As Boolean
+        Dim k As Long, from As Long, v As Long, isHex As Boolean, value As Double, name As String
+        If t(i) <> 38 Then Exit Function
+        k = i + 1
+        If k >= n Then Exit Function
+        If t(k) = 35 Then
+            If k + 1 < n Then isHex = (t(k + 1) = 120)
+            If isHex Then k = k + 2 Else k = k + 1
+            from = k
+            Do While k < n And k < from + 8
+                If isHex Then
+                    v = HexDigit(t(k))
+                ElseIf t(k) >= 48 And t(k) <= 57 Then
+                    v = t(k) - 48
+                Else
+                    v = -1
+                End If
+                If v < 0 Then Exit Do
+                If isHex Then value = value * 16 + v Else value = value * 10 + v
+                k = k + 1
+            Loop
+            If k = from Or k >= n Then Exit Function
+            If t(k) <> 59 Then Exit Function
+            If value < 1 Or value > &H10FFFF Then Exit Function
+            If value >= &HD800& And value <= &HDFFF& Then Exit Function
+            cp = CLng(value)
+        Else
+            Do While k < n And k < i + 6
+                If t(k) < 97 Or t(k) > 122 Then Exit Do
+                name = name & ChrW$(t(k))
+                k = k + 1
+            Loop
+            If k >= n Then Exit Function
+            If t(k) <> 59 Then Exit Function
+            Select Case name
+                Case "lt"
+                    cp = 60
+                Case "gt"
+                    cp = 62
+                Case "amp"
+                    cp = 38
+                Case "quot"
+                    cp = 34
+                Case "apos"
+                    cp = 39
+                Case Else
+                    Exit Function
+            End Select
+        End If
+        finish = k + 1
+        XmlReference = True
+    End Function
+
+    ' Whether text is at t(p).
+    Private Function UnitsAt(t() As Long, ByVal n As Long, ByVal p As Long, ByVal text As String) As Boolean
+        Dim k As Long
+        If p < 0 Or p + Len(text) > n Then Exit Function
+        For k = 0 To Len(text) - 1
+            If t(p + k) <> AscW(Mid$(text, k + 1, 1)) Then Exit Function
+        Next
+        UnitsAt = True
+    End Function
+
+    Private Function UnitsIndexOf(t() As Long, ByVal n As Long, ByVal text As String, ByVal from As Long) As Long
+        Dim i As Long
+        For i = from To n - Len(text)
+            If UnitsAt(t, n, i, text) Then
+                UnitsIndexOf = i
+                Exit Function
+            End If
+        Next
+        UnitsIndexOf = -1
     End Function
 
     ' Adds the edits for the data: URI at t(start), whose header ends at t(comma), and returns where
     ' its text ends; -1 when it is none this reads.
-    Private Function StripUri(t() As Long, ByVal n As Long, ByVal css As Boolean, ByVal start As Long, ByVal comma As Long, edits As EditList, ByVal pos As Long) As Long
+    Private Function StripUri(t() As Long, ByVal n As Long, ByVal css As Boolean, ByVal start As Long, ByVal comma As Long, edits As EditList, ByVal pos As Long, ref() As Boolean, ByVal hasRef As Boolean) As Long
         Dim header As String, label As String, semi As Long, isBase64 As Boolean, finish As Long, k As Long
         Dim url() As Byte, us() As Long, ue() As Long, un As Long
         Dim svg() As Byte, ss() As Long, se() As Long, sn As Long, inner As EditList
@@ -134,7 +275,7 @@ Module Strip
         If semi > 0 Then label = LCase$(Left$(header, semi - 1)) Else label = LCase$(header)
         isBase64 = (LCase$(Right$(header, 7)) = ";base64")
         If Not isBase64 And label <> "image/svg+xml" Then Exit Function
-        finish = PayloadEnd(t, n, css, start, comma)
+        finish = PayloadEnd(t, n, css, start, comma, ref, hasRef)
         If finish <= comma + 1 Then Exit Function
         StripUri = finish
         If css Then
@@ -211,9 +352,11 @@ Module Strip
     ' Where the text of the data: URI at t(start) ends: at the quote just before it, or at the ) of
     ' a url( before it, white space between them allowed, with the white space before that ) left
     ' out. In CSS a backslash escapes the character after it, and a string ends at a line end; in
-    ' an SVG neither. -1 for no such end, or no such opener.
-    Private Function PayloadEnd(t() As Long, ByVal n As Long, ByVal css As Boolean, ByVal start As Long, ByVal comma As Long) As Long
-        Dim p As Long, q As Long, k As Long, closer As Long
+    ' an SVG neither, and a quote written as a reference (ref, when hasRef) is ended only by a
+    ' quote written as one, a quote written as itself only by itself. -1 for no such end, or no
+    ' such opener.
+    Private Function PayloadEnd(t() As Long, ByVal n As Long, ByVal css As Boolean, ByVal start As Long, ByVal comma As Long, ref() As Boolean, ByVal hasRef As Boolean) As Long
+        Dim p As Long, q As Long, k As Long, closer As Long, refQuote As Boolean
         PayloadEnd = -1
         p = start - 1
         Do While p >= 0
@@ -229,9 +372,13 @@ Module Strip
         Else
             Exit Function
         End If
+        If hasRef And closer <> 41 Then refQuote = ref(p)
         k = comma + 1
         Do While k < n
-            If t(k) = closer Then Exit Do
+            If t(k) = closer Then
+                If Not hasRef Or closer = 41 Then Exit Do
+                If ref(k) = refQuote Then Exit Do
+            End If
             If css And t(k) = 92 Then
                 k = k + 2
             ElseIf css And closer <> 41 And (t(k) = 10 Or t(k) = 12 Or t(k) = 13) Then

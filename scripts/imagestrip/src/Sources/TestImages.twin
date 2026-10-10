@@ -113,14 +113,18 @@ Module TestImages
 
     ' Base64 as Illustrator writes it inside an SVG: in lines of 76, each ended by CR LF.
     Public Function Wrapped(ByVal b As Variant) As String
-        Dim s As String, k As Long, out As String
-        s = B64(b)
+        Wrapped = Broken(B64(b), vbCrLf)
+    End Function
+
+    ' s with sep after each whole 76 characters, as the JS test's replace(/.{76}/g, "$&" + sep).
+    Public Function Broken(ByVal s As String, ByVal sep As String) As String
+        Dim k As Long, out As String
         For k = 1 To Len(s) Step 76
             out = out & Mid$(s, k, 76)
-            If k + 76 <= Len(s) Then out = out & vbCrLf
+            If k + 76 <= Len(s) Then out = out & sep
         Next
-        If Len(s) Mod 76 = 0 And Len(s) > 0 Then out = out & vbCrLf
-        Wrapped = out
+        If Len(s) Mod 76 = 0 And Len(s) > 0 Then out = out & sep
+        Broken = out
     End Function
 
     ' Percent-encodes all but A to Z, a to z, 0 to 9 and - _ . ~, as the JS test's urlText does.
@@ -631,6 +635,19 @@ Module TestImages
                     vbTab & "<rect style=""fill: url( data:image/gif;base64," & B64(GifWithComment()) & " )""/>" & vbCrLf & _
                     vbTab & "<image href=""data:image/svg+xml," & UrlText(SvgCorel()) & """/>" & vbCrLf & _
                     "</svg>" & vbCrLf
+    End Function
+
+    ' An SVG that writes its URIs with references, as a serializer writes a style attribute: a
+    ' quote as &quot; around a URI, a line break as &#10; in base64, and an SVG written as text
+    ' whose own quotes, as &quot;, do not end the attribute. In CDATA a reference is text, so the
+    ' last URI is not read.
+    Public Function SvgReferences() As String
+        Dim gimp As String
+        gimp = B64(GimpPng())
+        SvgReferences = "<svg><g style=""cursor: url(&quot;data:image/png;base64," & gimp & "&quot;), auto""/>" & _
+                        "<image href=""data:image/png;base64," & Broken(gimp, "&#10;") & """/>" & _
+                        "<image href=""data:image/svg+xml,&lt;svg a=&quot;b&quot;&gt;&lt;!-- x --&gt;&lt;/svg&gt;""/>" & _
+                        "<style><![CDATA[ .a { cursor: url(&quot;data:image/png;base64," & gimp & "&quot;) } ]]></style></svg>"
     End Function
 
     Public Function JpegReport() As String

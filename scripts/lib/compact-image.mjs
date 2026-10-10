@@ -765,21 +765,101 @@ const isHeaderChar = (c) =>
 
 const isSpace = (c) => c === 9 || c === 10 || c === 12 || c === 13 || c === 32;
 
+// The references XML defines without a DTD.
+const XML_ENTITIES = { lt: 60, gt: 62, amp: 38, quot: 34, apos: 39 };
+
+/**
+ * The character reference or predefined entity reference at t[i], which is
+ * "&": { cp, end }, or null when there is none there, or one for no character
+ * (a reference to an entity a DTD declares, such as Illustrator's &ns_svg;,
+ * stays as it is written).
+ */
+function xmlReference(t, i) {
+  let k = i + 1;
+  let cp = 0;
+  if (t[k] === 35) {
+    const hex = t[k + 1] === 120;
+    k += hex ? 2 : 1;
+    const from = k;
+    for (; k < t.length && k < from + 8; k++) {
+      const v = hex ? hexDigit(t[k]) : t[k] >= 48 && t[k] <= 57 ? t[k] - 48 : -1;
+      if (v < 0) break;
+      cp = cp * (hex ? 16 : 10) + v;
+    }
+    if (k === from || t[k] !== 59 || cp < 1 || cp > 0x10ffff || (cp >= 0xd800 && cp <= 0xdfff)) return null;
+    return { cp, end: k + 1 };
+  }
+  let name = "";
+  for (; k < t.length && k < i + 6 && t[k] >= 97 && t[k] <= 122; k++) name += String.fromCharCode(t[k]);
+  if (t[k] !== 59 || !Object.hasOwn(XML_ENTITIES, name)) return null;
+  return { cp: XML_ENTITIES[name], end: k + 1 };
+}
+
+/**
+ * An SVG's text t with its references undone, as an XML parser undoes them,
+ * but in CDATA sections: unit k came from t[s[k], e[k]), and ref[k] says
+ * whether it was written as a reference. A quote written as one does not end
+ * an attribute's value, so payloadEnd tells the two apart.
+ */
+function xmlDecode(t) {
+  const units = [];
+  const s = [];
+  const e = [];
+  const ref = [];
+  const push = (u, a, z, r) => {
+    units.push(u);
+    s.push(a);
+    e.push(z);
+    ref.push(r);
+  };
+  const at = (k, text) => [...text].every((c, j) => t[k + j] === c.charCodeAt(0));
+  for (let i = 0; i < t.length; ) {
+    if (t[i] === 60 && at(i, "<![CDATA[")) {
+      let close = -1;
+      for (let k = i + 9; k + 3 <= t.length; k++)
+        if (at(k, "]]>")) {
+          close = k;
+          break;
+        }
+      if (close >= 0) {
+        for (; i < close + 3; i++) push(t[i], i, i + 1, 0);
+        continue;
+      }
+    }
+    const r = t[i] === 38 ? xmlReference(t, i) : null;
+    if (!r) {
+      push(t[i], i, i + 1, 0);
+      i++;
+    } else if (r.cp >= 0x10000) {
+      push(0xd800 + ((r.cp - 0x10000) >> 10), i, r.end, 1);
+      push(0xdc00 + ((r.cp - 0x10000) & 1023), i, r.end, 1);
+      i = r.end;
+    } else {
+      push(r.cp, i, r.end, 1);
+      i = r.end;
+    }
+  }
+  return { units, s, e, ref };
+}
+
 /**
  * Where the text of the data: URI at t[start] ends: at the quote just before
  * it, or at the ) of a url( before it, white space between them allowed, with
  * the white space before that ) left out. In CSS a backslash escapes the
- * character after it, and a string ends at a line end; in an SVG neither. -1
- * for no such end, or no such opener.
+ * character after it, and a string ends at a line end; in an SVG neither, and
+ * a quote written as a reference (ref) is ended only by a quote written as
+ * one, a quote written as itself only by itself. -1 for no such end, or no
+ * such opener.
  */
-function payloadEnd(t, n, css, start, comma) {
+function payloadEnd(t, n, css, start, comma, ref) {
   let p = start - 1;
   while (p >= 0 && isSpace(t[p])) p--;
   const q = p >= 0 ? t[p] : -1;
   const closer = p === start - 1 && (q === 34 || q === 39) ? q : q === 40 ? 41 : -1;
   if (closer < 0) return -1;
+  const byRef = ref && closer !== 41 ? ref[p] : 0;
   let k = comma + 1;
-  while (k < n && t[k] !== closer) {
+  while (k < n && !(t[k] === closer && (!ref || closer === 41 || ref[k] === byRef))) {
     if (css && t[k] === 92) k += 2;
     else if (css && closer !== 41 && (t[k] === 10 || t[k] === 12 || t[k] === 13)) return -1;
     else k++;
@@ -794,9 +874,10 @@ function payloadEnd(t, n, css, start, comma) {
  * of a CSS file (css), or the UTF-16 units of an SVG. A URI's header runs from
  * data: to a comma, in at most 127 characters; its text, to its closer. An
  * image in base64 is known by its bytes, whatever its label, and an SVG by its
- * label. at(i) is the offset in the file a report on a URI at t[i] names.
+ * label. at(i) is the offset in the file a report on a URI at t[i] names; ref,
+ * for an SVG, says which units were written as references (xmlDecode).
  */
-function scanUris(t, n, css, ctx, at) {
+function scanUris(t, n, css, ctx, at, ref = null) {
   const edits = [];
   for (let i = 0; i + 5 <= n; ) {
     let end = -1;
@@ -812,7 +893,7 @@ function scanUris(t, n, css, ctx, at) {
         if (t[j] === 44) comma = j;
         if (!isHeaderChar(t[j])) break;
       }
-      if (comma >= 0) end = stripUri(t, n, css, i, comma, edits, ctx, at(i));
+      if (comma >= 0) end = stripUri(t, n, css, i, comma, edits, ctx, at(i), ref);
     }
     i = end >= 0 ? end : i + 1;
   }
@@ -821,13 +902,13 @@ function scanUris(t, n, css, ctx, at) {
 
 // Adds the edits for the data: URI at t[start], whose header ends at t[comma], and returns where
 // its text ends; -1 when it is none this reads.
-function stripUri(t, n, css, start, comma, edits, ctx, pos) {
+function stripUri(t, n, css, start, comma, edits, ctx, pos, ref) {
   let header = "";
   for (let k = start + 5; k < comma; k++) header += String.fromCharCode(t[k]);
   const label = header.split(";")[0].toLowerCase();
   const base64 = header.toLowerCase().endsWith(";base64");
   if (!base64 && label !== "image/svg+xml") return -1;
-  const end = payloadEnd(t, n, css, start, comma);
+  const end = payloadEnd(t, n, css, start, comma, ref);
   if (end <= comma + 1) return -1;
   const url = css ? cssUnescape(t, comma + 1, end) : unitsUtf8(t, comma + 1, end);
   if (!base64) {
@@ -873,8 +954,9 @@ function stripUri(t, n, css, start, comma, edits, ctx, pos) {
 
 /**
  * The edits that strip an SVG given as UTF-8 bytes: what is only its editor's
- * (svgKeep), and each image it embeds, at any depth. null when it is not
- * UTF-8. at(p) is the offset in the file a report on its byte p names.
+ * (svgKeep), and each image it embeds, at any depth, read with the SVG's
+ * references undone (xmlDecode). null when it is not UTF-8. at(p) is the
+ * offset in the file a report on its byte p names.
  */
 function stripSvgBytes(b, ctx, at) {
   const { units, s, e, valid } = utf8Units(b);
@@ -895,8 +977,13 @@ function stripSvgBytes(b, ctx, at) {
     edits.push({ start: s[first], end: e[k - 1], text: "" });
   }
   if (edits.length) ctx.stripped++;
-  for (const x of scanUris(w, w.length, false, ctx, (i) => at(s[wo[i]])))
-    edits.push({ start: s[wo[x.start]], end: e[wo[x.end - 1]], text: x.text });
+  // d's units come from w's [d.s, d.e), and w's from the SVG's units wo.
+  const d = xmlDecode(w);
+  for (const x of scanUris(d.units, d.units.length, false, ctx, (i) => at(s[wo[d.s[i]]]), d.ref)) {
+    const from = d.s[x.start];
+    const to = d.e[x.end - 1];
+    edits.push({ start: s[wo[from]], end: e[wo[to - 1]], text: x.text });
+  }
   return edits;
 }
 

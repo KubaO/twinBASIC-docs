@@ -496,6 +496,21 @@ const SVG_FILE = Buffer.from(
     `<image href="data:image/svg+xml;base64,${b64(NESTED_SVG)}"/><title>Zoë</title></svg>\n`,
 );
 
+// An SVG that writes its URIs with references, as a serializer writes a style attribute: a quote
+// as &quot; around a URI, a line break as &#10; in base64, and an SVG written as text whose own
+// quotes, as &quot;, do not end the attribute. In CDATA a reference is text, so the last URI is
+// not read.
+const SVG_REFERENCES =
+  `<svg><g style="cursor: url(&quot;data:image/png;base64,${GIMP_PNG.toString("base64")}&quot;), auto"/>` +
+  `<image href="data:image/png;base64,${GIMP_PNG.toString("base64").replace(/.{76}/g, "$&&#10;")}"/>` +
+  '<image href="data:image/svg+xml,&lt;svg a=&quot;b&quot;&gt;&lt;!-- x --&gt;&lt;/svg&gt;"/>' +
+  `<style><![CDATA[ .a { cursor: url(&quot;data:image/png;base64,${GIMP_PNG.toString("base64")}&quot;) } ]]></style></svg>`;
+const SVG_REFERENCES_STRIPPED =
+  `<svg><g style="cursor: url(&quot;data:image/png;base64,${compactPng(GIMP_PNG).toString("base64")}&quot;), auto"/>` +
+  `<image href="data:image/png;base64,${compactPng(GIMP_PNG).toString("base64")}"/>` +
+  '<image href="data:image/svg+xml,&lt;svg a=&quot;b&quot;&gt;&lt;/svg&gt;"/>' +
+  `<style><![CDATA[ .a { cursor: url(&quot;data:image/png;base64,${GIMP_PNG.toString("base64")}&quot;) } ]]></style></svg>`;
+
 describe("stripFile", () => {
   test("reads base64 as a browser reads a data: URI", () => {
     const decode = (s) => decodeBase64(Buffer.from(s, "latin1"));
@@ -552,6 +567,13 @@ describe("stripFile", () => {
     assert.ok(r.output.equals(latin1));
     assert.deepEqual(r.reports, [{ line: 1, message: "an SVG that is not UTF-8; left unchanged" }]);
     assert.equal(r.images, 0);
+  });
+
+  test("reads a URI an SVG writes with references, and keeps them in what stays", () => {
+    const r = stripFile(Buffer.from(SVG_REFERENCES), { svg: true });
+    assert.equal(r.output.toString(), SVG_REFERENCES_STRIPPED);
+    // The SVG, the two PNGs it reads, and the SVG written with references; not the PNG in CDATA.
+    assert.deepEqual([r.images, r.stripped, r.relabelled], [4, 3, 0]);
   });
 });
 
@@ -674,6 +696,7 @@ function corpusCss() {
     `.n0 { background: url("data:image/svg+xml,${urlText(NESTED_SVG)}"); }`,
     `.n1 { background: url('data:image/svg+xml;utf8,${partly(NESTED_SVG)}'); }`,
     `.n2 { background: url(data:image/svg+xml;base64,${b64(SVG_FILE.toString())}); }`,
+    `.n3 { background: url("data:image/svg+xml,${urlText(SVG_REFERENCES)}"); }`,
     // Base64 after white space, with white space and a CSS escape inside it, and padded wrongly.
     `.b0 { background: url(  data:image/png;base64,${gimp}  ); }`,
     `.b1 { background: url("data:image/png;base64,${gimp.replace(/.{60}/g, "$& ")}"); }`,
@@ -764,6 +787,7 @@ describe("imagestrip", { skip: toolSkip }, () => {
     await strip("NESTED.SVG", Buffer.from(NESTED_SVG));
     await strip("latin1.svg", ascii("<svg><title>Zo\xeb</title><!-- x --></svg>"));
     await strip("stylesheet.svg", Buffer.from(`\r\n${SVG_STYLESHEET}\r\n<!-- x -->`));
+    await strip("references.svg", Buffer.from(SVG_REFERENCES));
   });
 
   test("changes nothing when run on what it wrote", async () => {

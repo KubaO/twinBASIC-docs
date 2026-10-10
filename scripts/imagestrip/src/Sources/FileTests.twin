@@ -82,6 +82,20 @@ Module FileTests
     End Sub
 
     [TestCase]
+    Public Sub ReadsAUriAnSvgWritesWithReferencesAndKeepsThemInWhatStays()
+        Dim gimp As String, lean As String, out As String
+        gimp = B64(GimpPng())
+        lean = B64(CompactPngOf(GimpPng()))
+        out = StripText(SvgReferences(), True)
+        ' The SVG, the two PNGs it reads, and the SVG written with references; not the PNG in CDATA.
+        Assert.Strict.AreEqual "4 3 0", Counts()
+        Assert.Strict.AreEqual "<svg><g style=""cursor: url(&quot;data:image/png;base64," & lean & "&quot;), auto""/>" & _
+                               "<image href=""data:image/png;base64," & lean & """/>" & _
+                               "<image href=""data:image/svg+xml,&lt;svg a=&quot;b&quot;&gt;&lt;/svg&gt;""/>" & _
+                               "<style><![CDATA[ .a { cursor: url(&quot;data:image/png;base64," & gimp & "&quot;) } ]]></style></svg>", out
+    End Sub
+
+    [TestCase]
     Public Sub WritesAnEmptyFileForAnEmptyOne()
         Assert.Strict.AreEqual 0&, Size(StripBytes(Cat(), False))
         Assert.Strict.AreEqual "0 0 0", Counts()
