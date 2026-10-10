@@ -96,6 +96,30 @@ Module FileTests
     End Sub
 
     [TestCase]
+    Public Sub ReadsAnSvgsStyleElementsAndAttributesAsCss()
+        Dim head As String, tail As String, gimp As String, lean As String, svg As String, expected As String
+        ' An SVG's own CSS, read by CSS's rules: a <style> element with a CSS escape in a URI, a style
+        ' attribute whose base64 is broken over lines, which XML reads as spaces, a namespaced
+        ' <svg:style> that imports a style sheet, and a style attribute holding an SVG as text.
+        head = ".a { background: url(data:image/png;base64,"
+        tail = ") }"
+        gimp = B64(GimpPng())
+        lean = B64(CompactPngOf(GimpPng()))
+        svg = "<svg><style>.a { cursor: url(""data:image/png;base64,\69 " & Mid$(gimp, 2) & """) }</style>" & _
+              "<g style=""cursor: url('data:image/png;base64," & Wrapped(GimpPng()) & "')""/>" & _
+              "<svg:style xmlns:svg=""http://www.w3.org/2000/svg"">@import url(""data:text/css," & UrlText(head & gimp & tail) & """);</svg:style>" & _
+              "<g style='fill: url(""data:image/svg+xml,%3Csvg%3E%3C!-- x --%3E%3C/svg%3E"")'/></svg>"
+        expected = "<svg><style>.a { cursor: url(""data:image/png;base64," & lean & """) }</style>" & _
+                   "<g style=""cursor: url('data:image/png;base64," & lean & "')""/>" & _
+                   "<svg:style xmlns:svg=""http://www.w3.org/2000/svg"">@import url(""data:text/css," & UrlText(head) & lean & UrlText(tail) & """);</svg:style>" & _
+                   "<g style='fill: url(""data:image/svg+xml,%3Csvg%3E%3C/svg%3E"")'/></svg>"
+        Assert.Strict.AreEqual expected, StripText(svg, True)
+        ' The SVG, three PNGs and the SVG in a style attribute.
+        Assert.Strict.AreEqual "5 4 0", Counts()
+        Assert.Strict.AreEqual "", ReportsText()
+    End Sub
+
+    [TestCase]
     Public Sub StripsTheImagesOfAStyleSheetInADataUri()
         Dim head As String, tail As String, gimp As String, lean As String, css As String, expected As String, svg As String
         ' A style sheet that embeds a PNG, imported in base64 and as text, and two that cannot be

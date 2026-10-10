@@ -968,11 +968,89 @@ function stripUri(t, n, css, start, comma, edits, ctx, pos, ref) {
   return end;
 }
 
+const isTagStart = (c) => (c >= 65 && c <= 90) || (c >= 97 && c <= 122) || c === 95 || c === 58 || c >= 128;
+const isTagChar = (c) => isTagStart(c) || (c >= 48 && c <= 57) || c === 45 || c === 46;
+
+/**
+ * Where an SVG's text t holds CSS: the text of each <style> element, CDATA and
+ * all, and the value of each style attribute (attribute: true), as
+ * [{ start, end, attribute }] in t. Comments, CDATA sections, processing
+ * instructions and declarations are passed over, and so is the rest of a tag.
+ */
+function cssRegions(t) {
+  const n = t.length;
+  const regions = [];
+  const at = (k, text) => [...text].every((c, j) => t[k + j] === c.charCodeAt(0));
+  const indexOf = (text, from) => {
+    for (let k = from; k + text.length <= n; k++) if (at(k, text)) return k;
+    return -1;
+  };
+  const skipTo = (text, from) => {
+    const k = indexOf(text, from);
+    return k < 0 ? n : k + text.length;
+  };
+  const name = (a, z) => String.fromCharCode(...t.slice(a, z));
+  for (let i = 0; i < n; ) {
+    if (t[i] !== 60) i++;
+    else if (at(i, "<!--")) i = skipTo("-->", i + 4);
+    else if (at(i, "<![CDATA[")) i = skipTo("]]>", i + 9);
+    else if (at(i, "<?")) i = skipTo("?>", i + 2);
+    else if (at(i, "<!") || at(i, "</")) i = skipTo(">", i + 2);
+    else if (!isTagStart(t[i + 1])) i++;
+    else {
+      // A start tag: its name, and each attribute, its value quoted or not.
+      let k = i + 1;
+      while (k < n && isTagChar(t[k])) k++;
+      const tag = name(i + 1, k);
+      let empty = false;
+      for (;;) {
+        while (k < n && isSpace(t[k])) k++;
+        if (k >= n) break;
+        if (t[k] === 62) {
+          k++;
+          break;
+        }
+        if (t[k] === 47 && t[k + 1] === 62) {
+          empty = true;
+          k += 2;
+          break;
+        }
+        const a = k;
+        while (k < n && !isSpace(t[k]) && t[k] !== 61 && t[k] !== 62 && t[k] !== 47) k++;
+        if (k === a) {
+          k++;
+          continue;
+        }
+        const attribute = name(a, k);
+        while (k < n && isSpace(t[k])) k++;
+        if (t[k] !== 61) continue;
+        k++;
+        while (k < n && isSpace(t[k])) k++;
+        if (t[k] === 34 || t[k] === 39) {
+          let z = k + 1;
+          while (z < n && t[z] !== t[k]) z++;
+          if (attribute === "style") regions.push({ start: k + 1, end: z, attribute: true });
+          k = Math.min(z + 1, n);
+        } else while (k < n && !isSpace(t[k]) && t[k] !== 62) k++;
+      }
+      i = k;
+      if ((tag === "style" || tag.endsWith(":style")) && !empty) {
+        const close = indexOf(`</${tag}`, i);
+        const end = close < 0 ? n : close;
+        regions.push({ start: i, end, attribute: false });
+        i = end;
+      }
+    }
+  }
+  return regions;
+}
+
 /**
  * The edits that strip an SVG given as UTF-8 bytes: what is only its editor's
  * (svgKeep), and each image it embeds, at any depth, read with the SVG's
- * references undone (xmlDecode). null when it is not UTF-8. at(p) is the
- * offset in the file a report on its byte p names.
+ * references undone (xmlDecode), and its CSS (cssRegions) read as CSS, its
+ * escapes undone. null when it is not UTF-8. at(p) is the offset in the file a
+ * report on its byte p names.
  */
 function stripSvgBytes(b, ctx, at) {
   const { units, s, e, valid } = utf8Units(b);
@@ -995,7 +1073,31 @@ function stripSvgBytes(b, ctx, at) {
   if (edits.length) ctx.stripped++;
   // d's units come from w's [d.s, d.e), and w's from the SVG's units wo.
   const d = xmlDecode(w);
-  for (const x of scanUris(d.units, d.units.length, false, ctx, (i) => at(s[wo[d.s[i]]]), d.ref)) {
+  const regions = cssRegions(w);
+  const region = new Int32Array(w.length).fill(-1);
+  for (const [k, r] of regions.entries()) region.fill(k, r.start, r.end);
+  // Each run of d in the same region, or in none, is read on its own: CSS by CSS's rules, as
+  // UTF-8, and the rest by an SVG's. scanned holds the edits in d.
+  const scanned = [];
+  for (let a = 0; a < d.units.length; ) {
+    const id = region[d.s[a]];
+    let z = a + 1;
+    while (z < d.units.length && region[d.s[z]] === id) z++;
+    if (id < 0) {
+      const found = scanUris(d.units.slice(a, z), z - a, false, ctx, (i) => at(s[wo[d.s[a + i]]]), d.ref.slice(a, z));
+      for (const x of found) scanned.push({ start: a + x.start, end: a + x.end, text: x.text });
+    } else {
+      // An attribute's value has its line breaks and tabs read as spaces, as XML reads them.
+      const raw = (j) =>
+        regions[id].attribute && !d.ref[j] && (d.units[j] === 9 || d.units[j] === 10 || d.units[j] === 13);
+      const units = d.units.slice(a, z).map((c, j) => (raw(a + j) ? 32 : c));
+      const text = unitsUtf8(units, 0, units.length);
+      for (const x of scanUris(text.bytes, text.bytes.length, true, ctx, (i) => at(s[wo[d.s[a + text.s[i]]]])))
+        scanned.push({ start: a + text.s[x.start], end: a + text.e[x.end - 1], text: x.text });
+    }
+    a = z;
+  }
+  for (const x of scanned) {
     const from = d.s[x.start];
     const to = d.e[x.end - 1];
     edits.push({ start: s[wo[from]], end: e[wo[to - 1]], text: x.text });

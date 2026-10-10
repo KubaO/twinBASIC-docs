@@ -529,6 +529,20 @@ const SHEETS_CSS_STRIPPED =
   '@import url("data:text/css;base64,A===");\n';
 const SVG_SHEET = `<?xml-stylesheet type="text/css" href="data:text/css,${encodeURIComponent(SHEET)}"?><svg/>`;
 
+// An SVG's own CSS, read by CSS's rules: a <style> element with a CSS escape in a URI, a style
+// attribute whose base64 is broken over lines, which XML reads as spaces, a namespaced <svg:style>
+// that imports a style sheet, and a style attribute holding an SVG as text.
+const SVG_CSS =
+  `<svg><style>.a { cursor: url("data:image/png;base64,\\69 ${GIMP_PNG.toString("base64").slice(1)}") }</style>` +
+  `<g style="cursor: url('data:image/png;base64,${wrapped(GIMP_PNG)}')"/>` +
+  `<svg:style xmlns:svg="http://www.w3.org/2000/svg">@import url("data:text/css,${encodeURIComponent(SHEET)}");</svg:style>` +
+  `<g style='fill: url("data:image/svg+xml,%3Csvg%3E%3C!-- x --%3E%3C/svg%3E")'/></svg>`;
+const SVG_CSS_STRIPPED =
+  `<svg><style>.a { cursor: url("data:image/png;base64,${LEAN_PNG}") }</style>` +
+  `<g style="cursor: url('data:image/png;base64,${LEAN_PNG}')"/>` +
+  `<svg:style xmlns:svg="http://www.w3.org/2000/svg">@import url("data:text/css,${encodeURIComponent(SHEET_HEAD)}${LEAN_PNG}${encodeURIComponent(SHEET_TAIL)}");</svg:style>` +
+  `<g style='fill: url("data:image/svg+xml,%3Csvg%3E%3C/svg%3E")'/></svg>`;
+
 describe("stripFile", () => {
   test("reads base64 as a browser reads a data: URI", () => {
     const decode = (s) => decodeBase64(Buffer.from(s, "latin1"));
@@ -592,6 +606,14 @@ describe("stripFile", () => {
     assert.equal(r.output.toString(), SVG_REFERENCES_STRIPPED);
     // The SVG, the two PNGs it reads, and the SVG written with references; not the PNG in CDATA.
     assert.deepEqual([r.images, r.stripped, r.relabelled], [4, 3, 0]);
+  });
+
+  test("reads an SVG's style elements and style attributes as CSS", () => {
+    const r = stripFile(Buffer.from(SVG_CSS), { svg: true });
+    assert.equal(r.output.toString(), SVG_CSS_STRIPPED);
+    // The SVG, three PNGs and the SVG in a style attribute.
+    assert.deepEqual([r.images, r.stripped, r.relabelled], [5, 4, 0]);
+    assert.deepEqual(r.reports, []);
   });
 
   test("strips the images of a style sheet in a data: URI, in base64 and as text", () => {
@@ -733,6 +755,7 @@ function corpusCss() {
     `.n1 { background: url('data:image/svg+xml;utf8,${partly(NESTED_SVG)}'); }`,
     `.n2 { background: url(data:image/svg+xml;base64,${b64(SVG_FILE.toString())}); }`,
     `.n3 { background: url("data:image/svg+xml,${urlText(SVG_REFERENCES)}"); }`,
+    `.n4 { background: url("data:image/svg+xml,${urlText(SVG_CSS)}"); }`,
     // Base64 after white space, with white space and a CSS escape inside it, and padded wrongly.
     `.b0 { background: url(  data:image/png;base64,${gimp}  ); }`,
     `.b1 { background: url("data:image/png;base64,${gimp.replace(/.{60}/g, "$& ")}"); }`,
@@ -828,6 +851,7 @@ describe("imagestrip", { skip: toolSkip }, () => {
     await strip("stylesheet.svg", Buffer.from(`\r\n${SVG_STYLESHEET}\r\n<!-- x -->`));
     await strip("references.svg", Buffer.from(SVG_REFERENCES));
     await strip("sheet.svg", Buffer.from(SVG_SHEET));
+    await strip("css.svg", Buffer.from(SVG_CSS));
   });
 
   test("changes nothing when run on what it wrote", async () => {

@@ -82,8 +82,10 @@ Module Strip
     Public Function StripSvgBytes(b() As Byte, ByVal n As Long, edits As EditList, ByVal posFixed As Long) As Boolean
         Dim units() As Long, us() As Long, ue() As Long, un As Long, valid As Boolean, keep() As Boolean
         Dim w() As Long, wo() As Long, wn As Long, k As Long, first As Long, removed As Boolean
-        Dim posMap() As Long, nested As New EditList
         Dim d() As Long, ds() As Long, de() As Long, ref() As Boolean, dn As Long, a As Long, z As Long
+        Dim rStart() As Long, rEnd() As Long, rAttr() As Boolean, rn As Long, region() As Long, id As Long, j As Long, c As Long
+        Dim run() As Long, runRef() As Boolean, runMap() As Long, mode As Long, found As EditList, scanned As New EditList
+        Dim cssBytes() As Byte, bs() As Long, be() As Long, bn As Long, noRef() As Boolean
         un = Bytes.Utf8Units(b, 0, n, units, us, ue, valid)
         If Not valid Then Exit Function
         StripSvgBytes = True
@@ -112,20 +114,197 @@ Module Strip
         If removed Then Stripped = Stripped + 1
         ' d's units come from w's [ds, de), and w's from the SVG's units wo.
         dn = XmlDecode(w, wn, d, ds, de, ref)
-        If posFixed < 0 And dn > 0 Then
-            ReDim posMap(0 To dn - 1)
-            For k = 0 To dn - 1
-                posMap(k) = us(wo(ds(k)))
+        rn = CssRegions(w, wn, rStart, rEnd, rAttr)
+        If wn > 0 Then
+            ReDim region(0 To wn - 1)
+            For k = 0 To wn - 1
+                region(k) = -1
             Next
-            ScanUris d, dn, False, posMap, -2, nested, ref, True
-        Else
-            ScanUris d, dn, False, posMap, posFixed, nested, ref, True
+            For id = 0 To rn - 1
+                For k = rStart(id) To rEnd(id) - 1
+                    region(k) = id
+                Next
+            Next
         End If
-        For k = 0 To nested.Count - 1
-            a = ds(nested.StartOf(k))
-            z = de(nested.EndOf(k) - 1)
-            edits.Add us(wo(a)), ue(wo(z - 1)), nested.TextOf(k)
+        If posFixed < 0 Then mode = -2 Else mode = posFixed
+        ' Each run of d in the same region, or in none, is read on its own: CSS by CSS's rules, as
+        ' UTF-8, and the rest by an SVG's. scanned holds the edits in d.
+        a = 0
+        Do While a < dn
+            id = region(ds(a))
+            z = a + 1
+            Do While z < dn
+                If region(ds(z)) <> id Then Exit Do
+                z = z + 1
+            Loop
+            Set found = New EditList
+            If id < 0 Then
+                ReDim run(0 To z - a - 1)
+                ReDim runRef(0 To z - a - 1)
+                ReDim runMap(0 To z - a - 1)
+                For j = a To z - 1
+                    run(j - a) = d(j)
+                    runRef(j - a) = ref(j)
+                    runMap(j - a) = us(wo(ds(j)))
+                Next
+                ScanUris run, z - a, False, runMap, mode, found, runRef, True
+                For k = 0 To found.Count - 1
+                    scanned.Add a + found.StartOf(k), a + found.EndOf(k), found.TextOf(k)
+                Next
+            Else
+                ' An attribute's value has its line breaks and tabs read as spaces, as XML reads them.
+                ReDim run(0 To z - a - 1)
+                For j = a To z - 1
+                    c = d(j)
+                    If rAttr(id) And Not ref(j) Then
+                        If c = 9 Or c = 10 Or c = 13 Then c = 32
+                    End If
+                    run(j - a) = c
+                Next
+                bn = UnitsUtf8(run, 0, z - a, cssBytes, bs, be)
+                ToLongs cssBytes, bn, run
+                ReDim runMap(0 To bn - 1)
+                For j = 0 To bn - 1
+                    runMap(j) = us(wo(ds(a + bs(j))))
+                Next
+                ScanUris run, bn, True, runMap, mode, found, noRef, False
+                For k = 0 To found.Count - 1
+                    scanned.Add a + bs(found.StartOf(k)), a + be(found.EndOf(k) - 1), found.TextOf(k)
+                Next
+            End If
+            a = z
+        Loop
+        For k = 0 To scanned.Count - 1
+            a = ds(scanned.StartOf(k))
+            z = de(scanned.EndOf(k) - 1)
+            edits.Add us(wo(a)), ue(wo(z - 1)), scanned.TextOf(k)
         Next
+    End Function
+
+    ' Where an SVG's text t[0, n) holds CSS: the text of each <style> element, CDATA and all, and
+    ' the value of each style attribute (rAttr), as [rStart, rEnd) in t; returns how many.
+    ' Comments, CDATA sections, processing instructions and declarations are passed over, and so is
+    ' the rest of a tag.
+    Private Function CssRegions(t() As Long, ByVal n As Long, rStart() As Long, rEnd() As Long, rAttr() As Boolean) As Long
+        Dim i As Long, k As Long, a As Long, z As Long, m As Long, tag As String, attrName As String, isEmpty As Boolean, closing As Long
+        ReDim rStart(0 To 15)
+        ReDim rEnd(0 To 15)
+        ReDim rAttr(0 To 15)
+        Do While i < n
+            If t(i) <> 60 Then
+                i = i + 1
+            ElseIf UnitsAt(t, n, i, "<!--") Then
+                i = SkipTo(t, n, "-->", i + 4)
+            ElseIf UnitsAt(t, n, i, "<![CDATA[") Then
+                i = SkipTo(t, n, "]]>", i + 9)
+            ElseIf UnitsAt(t, n, i, "<?") Then
+                i = SkipTo(t, n, "?>", i + 2)
+            ElseIf UnitsAt(t, n, i, "<!") Or UnitsAt(t, n, i, "</") Then
+                i = SkipTo(t, n, ">", i + 2)
+            ElseIf Not IsTagStart(UnitAt(t, n, i + 1)) Then
+                i = i + 1
+            Else
+                ' A start tag: its name, and each attribute, its value quoted or not.
+                k = i + 1
+                Do While k < n
+                    If Not IsTagChar(t(k)) Then Exit Do
+                    k = k + 1
+                Loop
+                tag = Bytes.UnitsText(t, i + 1, k - i - 1)
+                isEmpty = False
+                Do
+                    Do While k < n
+                        If Not IsSpace(t(k)) Then Exit Do
+                        k = k + 1
+                    Loop
+                    If k >= n Then Exit Do
+                    If t(k) = 62 Then
+                        k = k + 1
+                        Exit Do
+                    End If
+                    If t(k) = 47 And UnitAt(t, n, k + 1) = 62 Then
+                        isEmpty = True
+                        k = k + 2
+                        Exit Do
+                    End If
+                    a = k
+                    Do While k < n
+                        If IsSpace(t(k)) Or t(k) = 61 Or t(k) = 62 Or t(k) = 47 Then Exit Do
+                        k = k + 1
+                    Loop
+                    If k = a Then
+                        k = k + 1
+                    Else
+                        attrName = Bytes.UnitsText(t, a, k - a)
+                        Do While k < n
+                            If Not IsSpace(t(k)) Then Exit Do
+                            k = k + 1
+                        Loop
+                        If UnitAt(t, n, k) = 61 Then
+                            k = k + 1
+                            Do While k < n
+                                If Not IsSpace(t(k)) Then Exit Do
+                                k = k + 1
+                            Loop
+                            If UnitAt(t, n, k) = 34 Or UnitAt(t, n, k) = 39 Then
+                                z = k + 1
+                                Do While z < n
+                                    If t(z) = t(k) Then Exit Do
+                                    z = z + 1
+                                Loop
+                                If attrName = "style" Then m = AddRegion(rStart, rEnd, rAttr, m, k + 1, z, True)
+                                If z + 1 < n Then k = z + 1 Else k = n
+                            Else
+                                Do While k < n
+                                    If IsSpace(t(k)) Or t(k) = 62 Then Exit Do
+                                    k = k + 1
+                                Loop
+                            End If
+                        End If
+                    End If
+                Loop
+                i = k
+                If (tag = "style" Or Right$(tag, 6) = ":style") And Not isEmpty Then
+                    closing = UnitsIndexOf(t, n, "</" & tag, i)
+                    If closing < 0 Then closing = n
+                    m = AddRegion(rStart, rEnd, rAttr, m, i, closing, False)
+                    i = closing
+                End If
+            End If
+        Loop
+        CssRegions = m
+    End Function
+
+    Private Function AddRegion(rStart() As Long, rEnd() As Long, rAttr() As Boolean, ByVal m As Long, ByVal s As Long, ByVal e As Long, ByVal isAttr As Boolean) As Long
+        If m > UBound(rStart) Then
+            ReDim Preserve rStart(0 To 2 * m - 1)
+            ReDim Preserve rEnd(0 To 2 * m - 1)
+            ReDim Preserve rAttr(0 To 2 * m - 1)
+        End If
+        rStart(m) = s
+        rEnd(m) = e
+        rAttr(m) = isAttr
+        AddRegion = m + 1
+    End Function
+
+    ' Where text is in t from the position given, and past it; n when it is not there.
+    Private Function SkipTo(t() As Long, ByVal n As Long, ByVal text As String, ByVal from As Long) As Long
+        Dim k As Long
+        k = UnitsIndexOf(t, n, text, from)
+        If k < 0 Then SkipTo = n Else SkipTo = k + Len(text)
+    End Function
+
+    ' t(i), or -1 past either end.
+    Private Function UnitAt(t() As Long, ByVal n As Long, ByVal i As Long) As Long
+        If i < 0 Or i >= n Then UnitAt = -1 Else UnitAt = t(i)
+    End Function
+
+    Private Function IsTagStart(ByVal c As Long) As Boolean
+        IsTagStart = (c >= 65 And c <= 90) Or (c >= 97 And c <= 122) Or c = 95 Or c = 58 Or c >= 128
+    End Function
+
+    Private Function IsTagChar(ByVal c As Long) As Boolean
+        IsTagChar = IsTagStart(c) Or (c >= 48 And c <= 57) Or c = 45 Or c = 46
     End Function
 
     ' An SVG's text t[0, n) with its references undone, as an XML parser undoes them, but in CDATA
