@@ -1095,6 +1095,102 @@ Severity: crash. The crash is in the read, so no `On Error` handler helps, and a
 
 ---
 
+## File statements and functions raise *Unspecified error* (-2147467259) in place of VB6's error numbers
+
+**Describe the bug**
+When a file statement or function fails, twinBASIC raises run-time error -2147467259 (`&H80004005`, *Unspecified error*) where VB6 raises a numbered error: 52 *Bad file name or number*, 53 *File not found*, 55 *File already open*, 58 *File already exists*, 59 *Bad record length*, 63 *Bad record number*, 75 *Path/File access error* or 76 *Path not found*. Of 42 failing file operations, 37 raise -2147467259, and the other 5 match VB6. An `On Error` handler written for VB6, which tests `Err.Number` for one of those numbers, does not recognise the error. Observed in a run of the reproducer project, in the IDE and in a built exe alike.
+
+**To Reproduce**
+Steps to reproduce the behavior:
+1. Open `file-errors-unspecified.twinproj` (attached as `file-errors-unspecified.zip`) and run it (F5). Its `Sub Main` makes a folder in `%TEMP%`, makes 42 file operations fail one at a time under `On Error Resume Next`, and prints `<case>: <Err.Number> <Err.Description>` after each. The smallest of them:
+   ```
+   On Error Resume Next
+   Kill Environ$("TEMP") & "\no-such-file.txt"
+   Debug.Print Err.Number, Err.Description
+   ```
+2. See `-2147467259 Unspecified error` in each of these 37 cases, where the same program built in VB6 (attached as `file-errors-unspecified-vb6.zip`) prints the number shown:
+
+   | operation that fails | VB6 |
+   |---|---|
+   | `Open` a file that does not exist, `For Input` | 53 |
+   | `Open` a file in a folder that does not exist, `For Output`, `Append`, `Binary` and `Random` (4 cases) | 76 |
+   | `Open` a folder `For Input` | 75 |
+   | `Open` a read-only file `For Output` | 75 |
+   | `Open` a file name that is not valid | 52 |
+   | `Open` with a file number that is in use | 55 |
+   | `GetAttr`, `FileLen`, `FileDateTime` and `SetAttr` of a file that does not exist (4 cases) | 53 |
+   | `GetAttr` of a file in a folder that does not exist | 76 |
+   | `Kill` of a file that does not exist, and of a pattern that matches no file (2 cases) | 53 |
+   | `Kill` of a read-only file | 75 |
+   | `Kill` of a file that is open | 55 |
+   | `Name` of a file that does not exist | 53 |
+   | `Name` onto a file that exists | 58 |
+   | `Name` of a file that is open | 55 |
+   | `MkDir` of a folder that exists | 75 |
+   | `MkDir` in a folder that does not exist | 76 |
+   | `RmDir` of a folder that does not exist | 76 |
+   | `RmDir` of a folder that holds a file | 75 |
+   | `ChDir` to a folder that does not exist | 76 |
+   | `EOF`, `LOF`, `Loc`, `Seek`, `FileAttr`, `Get #`, `Put #`, `Print #` and `Line Input #` with file number 99, which is not open (9 cases) | 52 |
+   | `Seek #f, 0` | 63 |
+   | `Put` of a 22-character string to a `Random` file opened with `Len = 4` | 59 |
+
+3. See the 5 cases that match VB6: `FileCopy` of a file that does not exist (53) and into a folder that does not exist (76), `Line Input #` past the end of the file (62), and `Close` of a file number that is not open and `SetAttr` of a file open `For Input`, which raise no error in either.
+
+**Expected behavior**
+The numbers in the table, with VB6's descriptions, as for the 5 cases that already match. A VB6 program that handles a missing file by testing `Err.Number = 53` takes its other branch in twinBASIC.
+
+**Desktop:**
+ - OS: Windows 10 Pro 22H2 (build 19045)
+ - twinBASIC compiler version: BETA 1005
+
+**Additional context**
+This extends #2345, which reports the first row of the table on BETA 979, and is part of #56. `FileCopy` raised -2147467259 as well up to BETA 995, and raises VB6's numbers from BETA 997, the build that fixed #2451.
+
+The same on BETA 997 and 957, apart from `FileCopy`. The same in a built exe as in the IDE, and the same with the project setting *Use Unicode Standard Library* set to No. In code compiled with LLVM the number is the same, and the description is *Application-defined or object-defined error*.
+
+What does not reproduce it: the `DirListBox` and `FileListBox` controls trap the error themselves, and raise 76 for a `Path` that does not exist, as VB6 does.
+
+Severity: moderate. An error is raised wherever VB6 raises one, so no failure goes unreported. But a handler that tests for the number does not recognise the error, a handler that shows `Err.Description` shows *Unspecified error*, and code that decides a file exists from `Err.Number <> 53` decides wrongly.
+
+<!-- Reproducer: bugs/file-errors-unspecified/ (mode run; expect lists the 37 lines that print -2147467259, so a fix of some statements and not others shows as NO LONGER REPRODUCES). verify reproduces on BETA 957, 997 and 1005; VB6 side in vb6/, built and run by bug_repro.mjs vb6; the built-exe and LLVM results and the Use Unicode Standard Library check are from probes in a local scratch folder, not in the repository. Found while testing scripts/imagestrip/, a twinBASIC console program that strips the metadata from the images in the IDE's CSS files. Stated in a NOTE naming BETA 1005 on each of these pages: docs/Reference/Core/Open.md, Name.md, Get.md, Put.md, Print.md (under "Writing to a file") and Line-Input.md; docs/Reference/Default/VBA/FileSystem/Kill.md, GetAttr.md, SetAttr.md (the NOTE, not the WARNING, which belongs to the SetAttr entry), FileLen.md, FileDateTime.md, MkDir.md, RmDir.md, ChDir.md, EOF.md, LOF.md, Loc.md, Seek.md and FileAttr.md. When a statement is fixed, its NOTE goes, and its page states the error number it raises with no mention of the defect. -->
+
+---
+
+## `SetAttr` changes the attributes of a file open for writing, where VB6 raises error 55
+
+**Describe the bug**
+`SetAttr` on a file that the program has open `For Output`, `Append`, `Binary` or `Random` sets the attributes without an error. VB6 raises run-time error 55, *File already open*, and leaves the attributes as they were. So a twinBASIC program can make a file read-only while it still has it open for writing, and a VB6 program's handler for error 55 never runs. Observed in a run of the reproducer project.
+
+**To Reproduce**
+Steps to reproduce the behavior:
+1. Open `setattr-open-file-no-error.twinproj` (attached as `setattr-open-file-no-error.zip`) and run it (F5). Its `Sub Main` opens one file in each mode in turn and, while the file is open, runs `SetAttr` on it with `vbReadOnly` under `On Error Resume Next`, then prints `Err.Number` and `GetAttr` of the file.
+2. See, beside what the same program prints when built in VB6 (attached as `setattr-open-file-no-error-vb6.zip`):
+
+   | file open `For` | twinBASIC | VB6 |
+   |---|---|---|
+   | `Input` | no error; attributes 1 (read-only) | no error; attributes 1 |
+   | `Output` | no error; attributes 1 | 55 *File already open*; attributes 32 |
+   | `Append` | no error; attributes 1 | 55 *File already open*; attributes 0 |
+   | `Binary` | no error; attributes 1 | 55 *File already open*; attributes 0 |
+   | `Random` | no error; attributes 1 | 55 *File already open*; attributes 0 |
+
+**Expected behavior**
+Error 55 for a file open `For Output`, `Append`, `Binary` or `Random`, with its attributes unchanged, as in VB6. VBA-Docs states that a run-time error occurs when setting the attributes of an open file; VB6 raises none for a file open `For Input`, and twinBASIC agrees with it there.
+
+**Desktop:**
+ - OS: Windows 10 Pro 22H2 (build 19045)
+ - twinBASIC compiler version: BETA 1005
+
+**Additional context**
+The same on BETA 997 and 957.
+
+Severity: low, but silent. No error is raised, and the file's attributes change where VB6 leaves them alone: the file stays read-only until its attributes are set back.
+
+<!-- Reproducer: bugs/setattr-open-file-no-error/ (mode run; expect lists the four lines for the write modes). verify reproduces on BETA 957, 997 and 1005; VB6 side in vb6/. Found while checking the error numbers of the file statements (the entry above). Stated in docs/Reference/Default/VBA/FileSystem/SetAttr.md: the sentence that SetAttr sets the attributes of an open file without an error, and the WARNING after it, naming BETA 1005. The VBA-Docs sentence it replaced ("A run-time error occurs when setting the attributes of an open file") was true of neither product as written. When fixed, the WARNING goes and the sentence says that SetAttr raises error 55 for a file open for Output, Append, Binary or Random, and sets the attributes of a file open for Input. -->
+
+---
+
 ## `Dim ... As New` on an `Interface` compiles, where `New` on one is refused with TB5074
 
 **Describe the bug**
