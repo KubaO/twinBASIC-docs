@@ -47,6 +47,20 @@
 			"versionMajor": 1,
 			"versionMinor": 0,
 			"versionRevision": 0
+		},
+		{
+			"id": "{9847A10D-8987-44B2-8B87-EA77DEF7F1D9}",
+			"isCompilerPackage": true,
+			"licence": "MIT",
+			"name": "[COMPILER PACKAGE] Assert",
+			"path32": "",
+			"path64": "",
+			"publisher": "TWINBASIC-COMPILER",
+			"symbolId": "Assert",
+			"versionBuild": 0,
+			"versionMajor": 0,
+			"versionMinor": 0,
+			"versionRevision": 24
 		}
 	],
 	"project.settingsVersion": 1,

@@ -2,18 +2,36 @@
 ' scripts/lib/compact-image.mjs strips them. Each level returns its edits in its own positions,
 ' and the level around it carries them through its own encoding to the file's bytes.
 Module Strip
+    ' What the last StripFile did: the images it read, those that lost something of their own, those
+    ' whose label changed, and its reports, each "<line>: <message>", in the order made.
     Public Images As Long
     Public Stripped As Long
     Public Relabelled As Long
+    Public Reports As Collection
 
-    Private mName As String
     Private mFile() As Byte
 
-    ' The file reports name: its name as given, and its bytes, which say a report's line.
-    Public Sub Begin(ByVal name As String, file() As Byte)
-        mName = name
-        If Bytes.Length(file) > 0 Then mFile = file
-    End Sub
+    ' file[0, n), a CSS file or, when isSvg, an SVG file, with every image it embeds stripped and,
+    ' for an SVG, what is only its editor's, into out; returns its length.
+    Public Function StripFile(file() As Byte, ByVal n As Long, ByVal isSvg As Boolean, out() As Byte) As Long
+        Dim edits As New EditList, t() As Long, posMap() As Long, i As Long
+        Images = 0
+        Stripped = 0
+        Relabelled = 0
+        Set Reports = New Collection
+        Erase mFile
+        If n > 0 Then mFile = file
+        If isSvg Then
+            If Not StripSvgBytes(file, n, edits, -1) Then Warn 0, "an SVG that is not UTF-8; left unchanged"
+        ElseIf n > 0 Then
+            ReDim t(0 To n - 1)
+            For i = 0 To n - 1
+                t(i) = file(i)
+            Next
+            ScanUris t, n, True, posMap, -1, edits
+        End If
+        StripFile = edits.Apply(file, n, out)
+    End Function
 
     Public Sub Warn(ByVal pos As Long, ByVal message As String)
         Dim i As Long, lineNo As Long
@@ -21,7 +39,7 @@ Module Strip
         For i = 0 To pos - 1
             If mFile(i) = 10 Then lineNo = lineNo + 1
         Next
-        MainModule.WriteErr mName & ":" & lineNo & ": " & message
+        Reports.Add lineNo & ": " & message
     End Sub
 
     ' Adds to edits the edits that strip each image embedded as a data: URI in t[0, n): the bytes

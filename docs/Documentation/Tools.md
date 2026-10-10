@@ -1814,6 +1814,10 @@ No gate builds it, so `test.bat` and CI skip the half of [`compact-image.test.mj
     set IMAGESTRIP_EXE=<path of imagestrip_win32.exe>
     node --test test/compact-image.test.mjs
 
+Its own unit tests are in twinBASIC, beside its code in `src/Sources/`: the `[TestFixture]` modules `PngTests`, `ColourTests`, `JpegGifTests`, `SvgTests`, `FileTests` and `InflateTests`, whose images `TestImages` builds byte by byte. They call the program's code directly and check it with the Assert package, case for case as the module tests of `compact-image.test.mjs` check `compactImage` and `stripFile`, and they also check that `Inflate` reads the stored, fixed and dynamic blocks zlib writes. [`tbrun.mjs`](#tbrun) runs them in the compiler's test mode, and prints PASS or FAIL for each:
+
+    node scripts/tbrun.mjs scripts/imagestrip/src --tests
+
 Exit codes: **0** the output was written, with or without reports; **1** a file that cannot be read or written: an input that does not exist or is a folder, an output whose folder does not exist or that is itself a folder, or a write that is refused; **2** a command line without exactly two arguments.
 
 ### render-book.mjs

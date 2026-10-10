@@ -391,9 +391,9 @@ object the IDE runs in, and the windows on that desktop listed and captured
 (`desktopWindows`, `captureWindow` in `tb-ide.mjs`) --- and is never run as a file, so the execution policy
 never comes into it, and `scripts/imagestrip/` is a twinBASIC program, because the
 twinBASIC developers run it in their own build, which has twinBASIC and need not have
-Node. After a change to its `src/`, pack `imagestrip.twinproj` again with `impexp`, and run
-the half of `test/compact-image.test.mjs` that tests it with `IMAGESTRIP_EXE` set to its exe:
-no gate can build it, so nothing else will.
+Node. After a change to its `src/`, pack `imagestrip.twinproj` again with `impexp`, run its own
+`[TestCase]`s with `tbrun --tests`, and run the half of `test/compact-image.test.mjs` that tests
+it with `IMAGESTRIP_EXE` set to its exe: no gate can build it, so nothing else will.
 The full accounting, and what the two ports gained, is in [WIP.Build.md](WIP.Build.md).
 
 ### The published docs assume manual work
