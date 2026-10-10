@@ -10,13 +10,35 @@
 //      annotation layer's text; and, on a canvas, where an underlined run's ink
 //      is in the band its underline skips;
 //   3. the pixels of each <canvas> in the clip, and the bytes of each web
-//      font a run was drawn with;
+//      font a run was drawn with (the @font-face rule the page's own CSS picks
+//      for the run's font, which need not be named as the font names itself);
 //   4. the annotation layer (svg#tbShotAnnotation) as XML, its text moved onto
 //      the picture's own faces.
 // The measuring layer is removed again before this returns.
+//
+// Steps 2 and 3, and the scrollbar styles, are done in each document that shows
+// in the clip: the page's, and the <iframe>s of the same process (the ones that
+// are documents of their own in the snapshot), each in a world of its own that
+// DevTools makes in the frame (Page.createIsolatedWorld), because a font name,
+// a style rule and a canvas mean what their own document says. A frame of
+// another process is not reached: it has a DevTools target of its own.
 
+import { createHash } from "node:crypto";
 import { PictureFonts, withFaces } from "./fonts.mjs";
-import { decodeSnapshot, oneLine, renderSvg, scrollbarPartList, scrollersIn, textNeeds } from "./snapshot-svg.mjs";
+import {
+  decodeSnapshot,
+  frameGeometry,
+  framesIn,
+  frameView,
+  oneLine,
+  renderSvg,
+  scrollbarPartList,
+  scrollersIn,
+  textNeeds,
+  unzoom,
+  viewportScroller,
+  viewportStyleSources,
+} from "./snapshot-svg.mjs";
 
 // The computed styles the converter reads.
 export const SNAPSHOT_STYLES = [
@@ -207,9 +229,11 @@ function measure({ keys, runs, skips, view, measureId, overlays }) {
       for (const c of root.querySelectorAll("canvas")) {
         const r = c.getBoundingClientRect();
         if (!r.width || !r.height) continue;
-        if (r.right <= view.x || r.bottom <= view.y || r.x >= view.x + view.w || r.y >= view.y + view.h) continue;
+        // The view and the layout boxes are in document coordinates, a rectangle is in the viewport's.
+        const [x, y] = [r.x + scrollX, r.y + scrollY];
+        if (x + r.width <= view.x || y + r.height <= view.y || x >= view.x + view.w || y >= view.y + view.h) continue;
         try {
-          canvases.push({ x: r.x, y: r.y, w: r.width, h: r.height, href: c.toDataURL("image/png") });
+          canvases.push({ x, y, w: r.width, h: r.height, href: c.toDataURL("image/png") });
         } catch {
           // A tainted canvas cannot be read; the converter says it has no picture.
         }
@@ -233,12 +257,28 @@ function measure({ keys, runs, skips, view, measureId, overlays }) {
 // cascades the rules and resolves their var()s. The probe is an element of an
 // unknown name, which no page rule but a `*` one matches, under a hidden
 // parent that carries what the part inherits from the element.
-function scrollbarParts({ styleNames, parts }) {
+//
+// `viewport` is set for the scrollbars of a document's viewport, whose style
+// source is the <body> or the root element (`this`): they take the standard
+// properties from the root element, wherever the rules are.
+//
+// The result also has `standard`, what the platform's own scrollbar is drawn
+// from where nothing custom styles it: {color, width, dark}, the computed
+// scrollbar-color and scrollbar-width, and whether the colour scheme in use
+// is dark.
+function scrollbarParts({ styleNames, parts, viewport = false }) {
   const el = this;
   const cs = getComputedStyle(el);
+  const source = viewport ? getComputedStyle(document.documentElement) : cs;
+  const schemes = source.getPropertyValue("color-scheme").split(/\s+/);
+  const standard = {
+    color: source.getPropertyValue("scrollbar-color"),
+    width: source.getPropertyValue("scrollbar-width"),
+    dark:
+      schemes.includes("dark") && (!schemes.includes("light") || matchMedia("(prefers-color-scheme: dark)").matches),
+  };
   // The standard properties turn the ::-webkit-scrollbar styles off.
-  if (cs.getPropertyValue("scrollbar-width") !== "auto" || cs.getPropertyValue("scrollbar-color") !== "auto")
-    return { custom: false, parts: {} };
+  if (standard.width !== "auto" || standard.color !== "auto") return { custom: false, standard, parts: {} };
   const top = (s) => {
     const out = [];
     let depth = 0;
@@ -419,23 +459,40 @@ function scrollbarParts({ styleNames, parts }) {
     document.body.append(shadowHost);
     const native = box.offsetWidth - box.clientWidth;
     shadowHost.remove();
-    return { custom, native, parts: out };
+    return { custom, standard, native, parts: out };
   } finally {
     for (const [rule, text] of restore) rule.selectorText = text;
     host.remove();
   }
 }
 
-// Runs in the page: the bytes of the web font `family` as a data: URL. Of
-// several @font-face rules for one family, the last one is the one used.
-async function webFont(family) {
-  const unq = (s) => s.replace(/^["']|["']$/g, "");
-  let found = null;
+// Runs in the page (exported for test/svgshot.test.mjs, which gives it a
+// document of its own): the file of the web font each [style, weight, size,
+// family] key was drawn with, as {key: {url, italic} | null}. The font is the @font-face
+// rule that CSS font matching picks for the first family of the key's list that
+// has any: the style asked for, else the other; then the weight, as the rules'
+// ranges hold it, else the nearest, which is the one above for a weight over 500
+// and the one below for under; of rules that match alike, the last. The name a
+// font reports for itself ("Inter Variable") need not be the name the page
+// gives it ("Inter"), so the rules are found by the page's names.
+export function webFontFiles(keys) {
+  const unq = (s) => s.trim().replace(/^["']|["']$/g, "");
+  const faces = [];
   const visit = (rules, base) => {
     for (const r of rules) {
-      if (r instanceof CSSFontFaceRule && unq(r.style.getPropertyValue("font-family")) === family) {
+      if (r instanceof CSSFontFaceRule) {
         const m = /url\(\s*["']?([^"')]+)["']?\s*\)/.exec(r.style.getPropertyValue("src"));
-        if (m) found = new URL(m[1], base).href;
+        if (!m) continue;
+        const weight = r.style.getPropertyValue("font-weight").trim() || "normal";
+        const [lo, hi = lo] = weight.split(/\s+/).map((w) => (w === "normal" ? 400 : w === "bold" ? 700 : Number(w)));
+        const style = r.style.getPropertyValue("font-style").trim() || "normal";
+        faces.push({
+          family: unq(r.style.getPropertyValue("font-family")).toLowerCase(),
+          url: new URL(m[1], base).href,
+          italic: style !== "normal",
+          lo: lo || 400,
+          hi: hi || 400,
+        });
       } else if (r.cssRules) visit(r.cssRules, base);
     }
   };
@@ -446,8 +503,35 @@ async function webFont(family) {
       // A cross-origin sheet's rules cannot be read.
     }
   }
-  if (!found) return null;
-  const blob = await (await fetch(found)).blob();
+  const out = {};
+  for (const key of keys) {
+    const [style, weightText, , list] = JSON.parse(key);
+    const weight = Number(weightText) || 400;
+    const italic = style !== "normal";
+    // Commas inside quotes are not separators.
+    const names = (list.match(/"[^"]*"|'[^']*'|[^,]+/g) ?? []).map((n) => unq(n).toLowerCase());
+    const family = names.find((n) => faces.some((f) => f.family === n));
+    // Ranked by [style missed, weight missed, the wrong side of the weight]; the lowest wins.
+    let best = null;
+    let rank = null;
+    for (const f of faces.filter((f) => f.family === family)) {
+      const miss = weight < f.lo ? f.lo - weight : weight > f.hi ? weight - f.hi : 0;
+      const wrongSide = weight > 500 ? (f.lo > weight ? 0 : 1) : f.hi < weight ? 0 : 1;
+      const candidate = [f.italic === italic ? 0 : 1, miss, wrongSide];
+      const before = candidate.findIndex((v, i) => v !== rank?.[i]);
+      if (!rank || before < 0 || candidate[before] < rank[before]) {
+        best = f;
+        rank = candidate;
+      }
+    }
+    out[key] = best && { url: best.url, italic: best.italic };
+  }
+  return out;
+}
+
+// Runs in the page: the bytes of the file at `url` as a data: URL.
+async function webFontData(url) {
+  const blob = await (await fetch(url)).blob();
   return new Promise((resolve) => {
     const fr = new FileReader();
     fr.onload = () => resolve(fr.result);
@@ -473,88 +557,181 @@ export async function svgOfPage(conn, clip, { background = true } = {}) {
     const { w, h } = await conn.evaluate("({ w: innerWidth, h: innerHeight })");
     view = { x: 0, y: 0, w, h };
   }
-  const { keys, runs, skips } = textNeeds(decoded, view);
 
-  let page;
-  const platform = new Map();
-  const scrollbars = new Map();
+  // Runs `expression` in a frame's own world, or in the page's when `context` is undefined.
+  const run = async (context, expression, awaitPromise = false) => {
+    if (context === undefined) return conn.evaluate(expression, { awaitPromise });
+    const r = await conn.send("Runtime.evaluate", {
+      expression,
+      contextId: context,
+      awaitPromise,
+      returnByValue: true,
+    });
+    if (r.exceptionDetails) throw new Error(r.exceptionDetails.exception?.description ?? r.exceptionDetails.text);
+    return r.result.value;
+  };
+
+  // The documents measured: the page's, and each frame of the same process that
+  // shows in the picture, each in its own world, with the part of it that shows.
+  const docs = [{ doc: decoded, view, context: undefined, geometry: null, inner: null }];
+  const measured = new Map();
+  conn.svgWebFonts ??= new Map();
   try {
-    const args = JSON.stringify({ keys, runs, skips, view, measureId: MEASURE_ID, overlays: OVERLAYS });
-    page = await conn.evaluate(`(${measure})(${args})`, { awaitPromise: true });
     await conn.send("DOM.enable");
     await conn.send("CSS.enable");
-    const { root } = await conn.send("DOM.getDocument", { depth: 0 });
-    const { nodeIds } = await conn.send("DOM.querySelectorAll", {
-      nodeId: root.nodeId,
-      selector: `#${MEASURE_ID} > span[data-k]`,
-    });
-    for (const [k, nodeId] of nodeIds.entries()) {
-      const { fonts: used } = await conn.send("CSS.getPlatformFontsForNode", { nodeId });
-      const [key, text] = page.allRuns[k];
-      platform.set(`${key}\u0000${text}`, used);
-    }
-    for (const { l } of scrollersIn(decoded, view)) {
-      if (!l.node.backendNodeId) continue;
-      const { object } = await conn.send("DOM.resolveNode", { backendNodeId: l.node.backendNodeId });
+    await conn.send("DOM.getDocument", { depth: 0 });
+    for (let i = 0; i < docs.length; i++) {
+      const entry = docs[i];
       try {
-        const { result } = await conn.send("Runtime.callFunctionOn", {
-          objectId: object.objectId,
-          functionDeclaration: String(scrollbarParts),
-          arguments: [{ value: { styleNames: PART_STYLES, parts: scrollbarPartList(l) } }],
-          returnByValue: true,
-        });
-        scrollbars.set(l.li, result.value);
-      } finally {
-        await conn.send("Runtime.releaseObject", { objectId: object.objectId }).catch(() => {});
+        measured.set(entry.doc, await measureDocument(entry));
+      } catch (error) {
+        // A frame that cannot be measured is left out, and renderSvg says so; the page must be.
+        if (i === 0) throw error;
+        continue;
+      }
+      for (const { l, doc } of framesIn(entry.doc, entry.view)) {
+        let context;
+        let inner;
+        try {
+          ({ executionContextId: context } = await conn.send("Page.createIsolatedWorld", {
+            frameId: doc.frameId,
+            worldName: "svgshot",
+          }));
+          inner = await run(context, "({ w: innerWidth, h: innerHeight })");
+        } catch {
+          // A frame that has gone since the snapshot is not drawn.
+          continue;
+        }
+        const geometry = frameGeometry(l, inner);
+        unzoom(doc, geometry.scale);
+        const shown = frameView(entry.view, geometry, doc);
+        if (shown) docs.push({ doc, view: shown, context, geometry, inner });
       }
     }
   } finally {
-    await conn.evaluate(`document.getElementById(${JSON.stringify(MEASURE_ID)})?.remove()`).catch(() => {});
+    for (const { context } of docs)
+      await run(context, `document.getElementById(${JSON.stringify(MEASURE_ID)})?.remove()`).catch(() => {});
     await conn.send("CSS.disable").catch(() => {});
     await conn.send("DOM.disable").catch(() => {});
   }
 
-  // The bytes of each web font a run was drawn with, read once per connection.
-  conn.svgWebFonts ??= new Map();
-  for (const used of platform.values())
-    for (const f of used)
-      if (f.isCustomFont && !conn.svgWebFonts.has(f.familyName))
-        conn.svgWebFonts.set(
-          f.familyName,
-          await conn.evaluate(`(${webFont})(${JSON.stringify(f.familyName)})`, { awaitPromise: true }),
-        );
-  const fontsFor = (key, text) =>
-    (platform.get(`${key}\u0000${text}`) ?? [])
-      .toSorted((a, b) => b.glyphCount - a.glyphCount)
-      .map((f) =>
-        f.isCustomFont ? { family: f.familyName, data: conn.svgWebFonts.get(f.familyName) } : { ps: f.postScriptName },
-      )
-      .filter((s) => s.ps || s.data);
+  // What a document's text needs, measured in the document itself: the page's
+  // own fonts, styles and canvases are what its runs are drawn with.
+  async function measureDocument({ doc, view, context, geometry, inner }) {
+    const { keys, runs, skips } = textNeeds(doc, view);
+    const overlays = context === undefined ? OVERLAYS : [];
+    const args = JSON.stringify({ keys, runs, skips, view, measureId: MEASURE_ID, overlays });
+    const page = await run(context, `(${measure})(${args})`, true);
+    // The measuring layer's runs, as DevTools nodes, for the fonts Chromium drew them with.
+    const { result: layer } = await conn.send("Runtime.evaluate", {
+      expression: `document.getElementById(${JSON.stringify(MEASURE_ID)})`,
+      contextId: context,
+    });
+    const platform = new Map();
+    try {
+      const { nodeId } = await conn.send("DOM.requestNode", { objectId: layer.objectId });
+      const { nodeIds } = await conn.send("DOM.querySelectorAll", { nodeId, selector: "span[data-k]" });
+      for (const [k, id] of nodeIds.entries()) {
+        const { fonts: used } = await conn.send("CSS.getPlatformFontsForNode", { nodeId: id });
+        const [key, text] = page.allRuns[k];
+        platform.set(`${key}\u0000${text}`, used);
+      }
+    } finally {
+      await conn.send("Runtime.releaseObject", { objectId: layer.objectId }).catch(() => {});
+    }
+
+    // The file of each web font a run was drawn with, which the document's rules pick
+    // for the run's font (by the names the document gives, and not the font's own), and
+    // its bytes, read once per connection and origin.
+    const origin = new URL(doc.url).origin;
+    const custom = new Set();
+    for (const [id, used] of platform) if (used.some((f) => f.isCustomFont)) custom.add(id.split("\u0000")[0]);
+    const files = custom.size ? await run(context, `(${webFontFiles})(${JSON.stringify([...custom])})`) : {};
+    for (const file of Object.values(files)) {
+      const cached = file && `${origin}|${file.url}`;
+      if (!file || conn.svgWebFonts.has(cached)) continue;
+      const data = await run(context, `(${webFontData})(${JSON.stringify(file.url)})`, true);
+      // Named by its bytes, so that one font the page and a frame both use is one face of the picture.
+      conn.svgWebFonts.set(cached, data && { family: createHash("sha1").update(data).digest("hex"), data });
+    }
+    const fontsFor = (key, text) => {
+      const file = files[key];
+      const web = file && conn.svgWebFonts.get(`${origin}|${file.url}`);
+      let drawn = false;
+      return (platform.get(`${key}\u0000${text}`) ?? [])
+        .toSorted((a, b) => b.glyphCount - a.glyphCount)
+        .map((f) => {
+          if (!f.isCustomFont) return { ps: f.postScriptName };
+          // One face for the web font, whichever names it reported.
+          if (drawn || !web) return null;
+          drawn = true;
+          return { ...web, weight: JSON.parse(key)[1] };
+        })
+        .filter((s) => s?.ps || s?.data);
+    };
+
+    // Each scrolling box's scrollbar styles, and the frame's viewport's.
+    const scrollbars = new Map();
+    const partsOf = async (l, nodes, viewport) => {
+      for (const node of nodes) {
+        if (!node.backendNodeId) continue;
+        const { object } = await conn.send("DOM.resolveNode", { backendNodeId: node.backendNodeId });
+        try {
+          const { result } = await conn.send("Runtime.callFunctionOn", {
+            objectId: object.objectId,
+            functionDeclaration: String(scrollbarParts),
+            arguments: [{ value: { styleNames: PART_STYLES, parts: scrollbarPartList(l), viewport } }],
+            returnByValue: true,
+          });
+          scrollbars.set(l.key, result.value);
+          if (result.value.custom) return;
+        } finally {
+          await conn.send("Runtime.releaseObject", { objectId: object.objectId }).catch(() => {});
+        }
+      }
+    };
+    for (const { l } of scrollersIn(doc, view)) await partsOf(l, [l.node], false);
+    const bars = geometry && viewportScroller(doc, geometry, inner);
+    if (bars) await partsOf(bars, viewportStyleSources(doc), true);
+
+    return { page, skips, fontsFor, scrollbars, inner };
+  }
 
   const fonts = new PictureFonts();
-  const overlays = page.overlays.map((xml) =>
+  const envOf = ({ page, skips, fontsFor, scrollbars, inner }) => {
+    const widths = new Map(page.allRuns.map(([key, text], k) => [`${key}\u0000${text}`, page.widths[k]]));
+    const gaps = new Map(skips.map((skip, k) => [skip.join("\u0000"), page.gaps[k]]));
+    return {
+      metrics: (key) => page.metrics[key] ?? { ascent: 0, height: 0, line: 0 },
+      textWidth: (key, text) => widths.get(`${key}\u0000${text}`) ?? null,
+      inkGaps: (...skip) => gaps.get(skip.join("\u0000")) ?? null,
+      placeholderColor: page.placeholderColor,
+      canvases: page.canvases,
+      fontsFor,
+      scrollbars,
+      inner,
+    };
+  };
+  const mine = measured.get(decoded);
+  const overlays = mine.page.overlays.map((xml) =>
     xml.replace(/--tbk:\s*(\d+);?/g, (_, k) => {
-      const { key, text } = page.marked[Number(k)];
+      const { key, text } = mine.page.marked[Number(k)];
       const [style, weight] = JSON.parse(key);
       // Into a style="..." attribute: the face names' quotes must not end it.
-      const css = fonts.css(text, fontsFor(key, text), weight, style)?.replace(/"/g, "'");
+      const css = fonts.css(text, mine.fontsFor(key, text), weight, style)?.replace(/"/g, "'");
       return css ? `${css};` : "";
     }),
   );
-  const widths = new Map(page.allRuns.map(([key, text], k) => [`${key}\u0000${text}`, page.widths[k]]));
-  const gaps = new Map(skips.map((skip, k) => [skip.join("\u0000"), page.gaps[k]]));
   const drawn = renderSvg(decoded, {
     clip: view,
-    metrics: (key) => page.metrics[key] ?? { ascent: 0, height: 0, line: 0 },
-    textWidth: (key, text) => widths.get(`${key}\u0000${text}`) ?? null,
-    inkGaps: (...skip) => gaps.get(skip.join("\u0000")) ?? null,
-    placeholderColor: page.placeholderColor,
-    canvases: page.canvases,
+    ...envOf(mine),
     fonts,
-    fontsFor,
     background,
     overlays,
-    scrollbars,
+    frames: (doc) => (measured.has(doc) ? envOf(measured.get(doc)) : null),
   });
-  return { svg: oneLine(await withFaces(drawn.svg, fonts)), stats: drawn.stats };
+  const svg = oneLine(await withFaces(drawn.svg, fonts));
+  const failed = fonts.failed?.length ?? 0;
+  if (failed) drawn.stats.unsupported["text in a font that could not be cut"] = failed;
+  return { svg, stats: drawn.stats };
 }

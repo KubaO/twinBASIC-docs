@@ -2,8 +2,9 @@
 // in a browser, taken as a PNG at device scale 2 as shoot_docs takes the IDE,
 // and drawn as an SVG by capture.mjs's svgOfPage; diff.mjs compares the two.
 // So a change that draws a replicated part or a text decoration wrongly -- a
-// scrollbar, a drop-down list, an underline -- shows here without an IDE, in
-// seconds.
+// scrollbar, a drop-down list, an underline, a focus ring, a frame -- shows here
+// without an IDE, in seconds. The documents of the frames page are under
+// bench/frames/, which is no page of its own.
 //
 // No page comes out exact: text is shaped by two renderers, and a replica is
 // close rather than equal. A fixed limit cannot tell that residue from a new

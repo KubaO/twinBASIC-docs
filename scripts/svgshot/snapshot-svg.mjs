@@ -33,12 +33,25 @@
 // closed <select> (paintSelect), a checkbox and a radio button
 // (paintCheckable), the text of an <input> and a <textarea> (paintTextControl),
 // scrollbars styled with ::-webkit-scrollbar (paintScrollbars, from styles the
-// page resolves). Not drawn: the platform's own scrollbars, a resize grip, a
-// number input's spin buttons, an indeterminate checkbox (the snapshot does
-// not say), conic gradients, the 2011 -webkit-radial-gradient and the filter
-// hue-rotate; an overline, a line-through, a dotted, dashed, wavy or double
-// text decoration, and an underline placed by text-underline-position
-// (decorationsOf). Drawn wrongly: a collapsed table border, doubled.
+// page resolves) and Windows' own, the Fluent ones, where nothing styles them
+// (paintNativeScrollbars), and the focus ring of outline-style: auto
+// (paintFocusRing). Not drawn: the thinner native scrollbar
+// (scrollbar-width: thin), a resize grip, a number input's spin buttons, an
+// indeterminate checkbox (the snapshot does not say), conic gradients, the 2011
+// -webkit-radial-gradient and the filter hue-rotate; an overline, a
+// line-through, a dotted, dashed, wavy or double text decoration, and an
+// underline placed by text-underline-position (decorationsOf). Drawn wrongly: a
+// collapsed table border, doubled.
+//
+// A frame: the snapshot holds the document of an <iframe> of the same process as
+// a document of its own, in its own coordinates (decodeSnapshot). It is drawn at
+// the iframe's place in paint order as a group (paintFrame): clipped to the
+// iframe's content box, which is the frame's viewport, moved by the iframe's
+// place and the frame's scroll offset, and scaled when the frame is zoomed; its
+// canvas colour under it and its viewport scrollbars over it. Not drawn: a frame
+// of another process, which has no document in the snapshot (a cross-site
+// <iframe> has a DevTools target of its own), a transformed frame, the scrollbars
+// of a zoomed frame, and the rounded corners of a frame's clip.
 //
 // An inline <svg> in the page is not converted from its layout objects, which
 // hold no path data; the caller passes the markup of the ones the picture
@@ -60,6 +73,13 @@ const SCROLLBAR_NODE = { name: "::-webkit-scrollbar", attrs: {} };
 // what Chromium draws, in WebView2 and headless alike. bench.mjs checks it
 // against the pixels.
 export const AUTO_THUMB = 17;
+
+// The colours of Windows' own scrollbar where the page gives none (scrollbar-color
+// auto), by the colour scheme in use: the thumb and the arrows, and the track.
+const NATIVE_COLOURS = {
+  light: { thumb: "rgb(139, 139, 139)", track: "rgb(252, 252, 252)" },
+  dark: { thumb: "rgb(159, 159, 159)", track: "rgb(44, 44, 44)" },
+};
 
 export { esc, num, splitTop };
 
@@ -95,7 +115,13 @@ function intersect(a, b) {
 const overlaps = (a, b) => a.x < b.x + b.w && b.x < a.x + a.w && a.y < b.y + b.h && b.y < a.y + a.h;
 
 /**
- * The snapshot as linked nodes and layout objects. Only the first document.
+ * The snapshot as linked nodes and layout objects: {nodes, layouts, ...}, the
+ * first document's. The document of each <iframe> that has one in the snapshot
+ * (a frame of the same process) is decoded the same way and hangs off the
+ * iframe's node as `frame`, with what a frame has of its own: `id` (its place in
+ * the snapshot), `url`, `frameId` (the DevTools frame it is), `scroll` (how far
+ * it is scrolled) and `content` (how large it is). Its layout boxes are in its
+ * own coordinates, whatever the iframe's place in its parent.
  *
  * A layout object's box is snapped as Chromium snaps it when it paints, each
  * edge to the nearest pixel of the grid it lays out on, so a border lands on
@@ -108,14 +134,20 @@ const overlaps = (a, b) => a.x < b.x + b.w && b.x < a.x + a.w && a.y < b.y + b.h
  * bounds (`exact`).
  */
 export function decodeSnapshot(snapshot, styleNames, { grid = 1 } = {}) {
+  return decodeDocument(snapshot, 0, styleNames, grid, new Set());
+}
+
+function decodeDocument(snapshot, di, styleNames, grid, seen) {
+  seen.add(di);
   const snap = (v) => Math.round(v * grid) / grid;
   const S = snapshot.strings;
   const str = (i) => (i >= 0 ? S[i] : undefined);
-  const doc = snapshot.documents[0];
+  const doc = snapshot.documents[di];
   const N = doc.nodes;
   const L = doc.layout;
   const T = doc.textBoxes;
   const rare = (r) => new Map((r?.index ?? []).map((n, k) => [n, r.value ? r.value[k] : true]));
+  const content = rare(N.contentDocumentIndex);
   const pseudo = rare(N.pseudoType);
   const inputValue = rare(N.inputValue);
   const textValue = rare(N.textValue);
@@ -140,6 +172,8 @@ export function decodeSnapshot(snapshot, styleNames, { grid = 1 } = {}) {
       inputValue: inputValue.has(i) ? S[inputValue.get(i)] : undefined,
       textValue: textValue.has(i) ? S[textValue.get(i)] : undefined,
       src: src.has(i) ? S[src.get(i)] : undefined,
+      // The decoded document of an <iframe> (and the like) that has one in the snapshot.
+      frame: null,
       layouts: [],
     };
   });
@@ -158,6 +192,8 @@ export function decodeSnapshot(snapshot, styleNames, { grid = 1 } = {}) {
     const s = L.scrollRects?.[li];
     return {
       li,
+      // Unique across the documents of a snapshot (a map of layout objects is keyed by it).
+      key: `${di}:${li}`,
       node: nodes[n],
       bounds: { x, y, w: snap(bx + bw) - x, h: snap(by + bh) - y },
       // Unsnapped, as the text a control draws inside it is placed.
@@ -182,7 +218,24 @@ export function decodeSnapshot(snapshot, styleNames, { grid = 1 } = {}) {
     if (l.style && l.text === undefined && !l.node.box) l.node.box = l;
   }
   for (const n of nodes) n.style = n.box?.style ?? n.layouts.find((l) => l.style)?.style ?? null;
-  return { nodes, layouts };
+  const decoded = {
+    id: di,
+    url: str(doc.documentURL),
+    frameId: str(doc.frameId),
+    // How far the document is scrolled, and how large it is (the viewport's scrollbars follow from these).
+    scroll: { x: doc.scrollOffsetX ?? 0, y: doc.scrollOffsetY ?? 0 },
+    content: { w: doc.contentWidth ?? 0, h: doc.contentHeight ?? 0 },
+    owner: null,
+    nodes,
+    layouts,
+  };
+  // The document of a frame, when the snapshot holds it: a frame of another process is no document here.
+  for (const [i, k] of content) {
+    if (seen.has(k) || !snapshot.documents[k]) continue;
+    nodes[i].frame = decodeDocument(snapshot, k, styleNames, grid, seen);
+    nodes[i].frame.owner = nodes[i];
+  }
+  return decoded;
 }
 
 /** The nearest node at or above `n` that has a computed style. */
@@ -485,10 +538,13 @@ const SCROLLS = new Set(["auto", "scroll", "overlay"]);
  * horizontal scrollbar, 0 where it has none. A scrollbar is the part of the
  * padding box that the client box leaves out; a difference of a pixel or two
  * is the two boxes rounded differently. The root's scrollbars are the
- * viewport's, which no picture shows.
+ * viewport's, which the picture of the page itself does not draw (the IDE's
+ * page has none); a frame's are drawn from viewportScroller's object, which
+ * says its own.
  */
 export function gutters(l) {
   const st = l.style;
+  if (l.viewport) return l.viewport;
   if (!st || !l.client || l.node.box !== l || l.node.name === "HTML" || l.node.name === "BODY") return { v: 0, h: 0 };
   const bw = borders(st);
   const b = l.bounds;
@@ -545,6 +601,155 @@ export function scrollbarPartList(l) {
   }
   if (corner) list.push({ key: "corner", pseudo: "-corner", states: [] });
   return list;
+}
+
+// --- frames ------------------------------------------------------------------
+
+/**
+ * The frames in `decoded` that show in `view` (page CSS px) and whose document
+ * the snapshot holds: [{l, doc}], `l` the <iframe>'s layout object. A frame of
+ * another process has no document here (renderSvg says so); one that is hidden
+ * or has no size shows nothing.
+ */
+export function framesIn(decoded, view) {
+  const out = [];
+  for (const l of decoded.layouts) {
+    const doc = l.node.frame;
+    if (!doc || !l.style || l.node.box !== l || l.style.visibility !== "visible") continue;
+    if (l.bounds.w > 0 && l.bounds.h > 0 && overlaps(l.bounds, view)) out.push({ l, doc });
+  }
+  return out;
+}
+
+/**
+ * Where an <iframe>'s document is drawn in its parent: {box, scale}. `box` is
+ * the iframe's content box, its border box less border and padding, in the
+ * parent's coordinates, and is the frame's viewport. `scale` is how large one
+ * CSS px of the frame is in the parent's: the viewport's width over `inner`'s,
+ * the frame's own innerWidth ({w, h}; null when it is not known), which is 1
+ * unless the frame is zoomed. A point (x, y) of the frame's document is drawn
+ * at box.x + (x - doc.scroll.x) * scale, and the same down the page.
+ */
+export function frameGeometry(l, inner) {
+  const st = l.style;
+  const bw = borders(st);
+  const pad = SIDES.map((s) => px(st[`padding-${s}`]));
+  const box = deflate(l.bounds, bw[0].width + pad[0], bw[1].width + pad[1], bw[2].width + pad[2], bw[3].width + pad[3]);
+  const zoomed = inner && inner.w > 0 && Math.abs(box.w - inner.w) >= 1;
+  return { box, scale: zoomed ? box.w / inner.w : 1 };
+}
+
+/**
+ * Puts the layout boxes and text boxes of a zoomed frame's document into the
+ * frame's own px. The snapshot gives them in the parent's, one CSS px of the
+ * frame being `scale` of those, while the computed styles and the scroll,
+ * offset and client sizes are in the frame's: left alone, the boxes would
+ * be scaled twice. Done once.
+ */
+export function unzoom(doc, scale) {
+  if (doc.unzoomed || scale === 1 || !(scale > 0)) return;
+  doc.unzoomed = true;
+  for (const l of doc.layouts)
+    for (const r of [l.bounds, l.exact, ...l.boxes]) {
+      r.x /= scale;
+      r.y /= scale;
+      r.w /= scale;
+      r.h /= scale;
+    }
+}
+
+/**
+ * What of `view` (the parent's coordinates) shows of a frame, in the frame's
+ * own coordinates; null where the frame is out of view.
+ */
+export function frameView(view, { box, scale }, doc) {
+  const seen = intersect(view, box);
+  if (!(seen.w > 0 && seen.h > 0)) return null;
+  return {
+    x: (seen.x - box.x) / scale + doc.scroll.x,
+    y: (seen.y - box.y) / scale + doc.scroll.y,
+    w: seen.w / scale,
+    h: seen.h / scale,
+  };
+}
+
+/** The style the viewport's scrollbars are drawn with: nothing of a box. */
+const VIEWPORT_STYLE = {
+  resize: "none",
+  "overflow-x": "scroll",
+  "overflow-y": "scroll",
+  ...Object.fromEntries(SIDES.map((s) => [`border-${s}-style`, "none"])),
+};
+
+/** The root element's layout object of a document. */
+export function rootBox(doc) {
+  return doc.nodes.find((n) => n.name === "HTML")?.box ?? null;
+}
+
+/**
+ * The elements whose ::-webkit-scrollbar rules style a frame's viewport
+ * scrollbars, in the order Chromium looks at them: the <body>, then the root
+ * element.
+ */
+export function viewportStyleSources(doc) {
+  return ["BODY", "HTML"].map((name) => doc.nodes.find((n) => n.name === name)).filter((n) => n?.backendNodeId);
+}
+
+/**
+ * The thickness of the scrollbars of a document's viewport, {v, h}, 0 for a
+ * bar it has not got; null when it has none: what the root element's client
+ * box leaves out of the viewport (`inner`, the frame's innerWidth and
+ * innerHeight in its own px), a difference of a pixel or two being rounding.
+ */
+export function viewportGutters(doc, inner) {
+  const root = rootBox(doc);
+  if (!root?.client || !inner) return null;
+  const v = Math.round(inner.w - root.client.w);
+  const h = Math.round(inner.h - root.client.h);
+  return v > 2 || h > 2 ? { v: v > 2 ? v : 0, h: h > 2 ? h : 0 } : null;
+}
+
+/**
+ * A frame's viewport scrollbars, as a stand-in for the scrolling box they would
+ * be if the viewport were one: a layout-object-like {key, bounds, client,
+ * scroll, style, viewport: {v, h}} that gutters, scrollbarPartList and
+ * paintScrollbars take as they take a scrolling box, or null where the frame
+ * shows none. The scrollbars are the part of the frame's viewport (`inner`, its
+ * innerWidth and innerHeight) that the root element's client box leaves out.
+ * `bounds` is the frame's viewport in the parent: the bars are drawn there, at
+ * the scale of the parent and not the frame's. A zoomed frame has none here:
+ * a bar is as thick in the parent's px as in a frame that is not zoomed.
+ */
+export function viewportScroller(doc, geometry, inner) {
+  const viewport = viewportGutters(doc, inner);
+  if (!viewport || geometry.scale !== 1) return null;
+  const root = rootBox(doc);
+  return {
+    key: `${doc.id}:viewport`,
+    node: { name: "#viewport", attrs: {} },
+    bounds: geometry.box,
+    client: { w: inner.w - viewport.v, h: inner.h - viewport.h },
+    scroll: {
+      x: doc.scroll.x,
+      y: doc.scroll.y,
+      w: root.scroll?.w ?? doc.content.w,
+      h: root.scroll?.h ?? doc.content.h,
+    },
+    style: VIEWPORT_STYLE,
+    viewport,
+  };
+}
+
+/**
+ * The colour a document fills its viewport with: the root element's
+ * background, else the <body>'s, which is propagated to it; null for none. A
+ * frame with none is transparent, and a page with none shows the browser's
+ * own white (renderSvg).
+ */
+export function canvasColor(doc) {
+  const root = doc.nodes.find((n) => n.name === "HTML");
+  const body = doc.nodes.find((n) => n.name === "BODY");
+  return [root, body].map((n) => n?.style?.["background-color"]).find((c) => !transparent(c)) ?? null;
 }
 
 function parseShadows(v) {
@@ -775,8 +980,15 @@ function filterPrimitives(v) {
  * @param fontsFor  (fontKey, text) => [{ps} | {family, data}]: the fonts Chromium drew that run with
  * @param background  draw the root background under everything (false for a cut-out)
  * @param overlays  markup of inline <svg>s drawn over everything
- * @param scrollbars  Map(layout index => {custom, parts}): the styles of a scrolling box's
- *                  scrollbar parts (capture.mjs scrollbarParts), by scrollbarPartList's keys
+ * @param scrollbars  Map(layout object's key => {custom, parts}): the styles of a scrolling box's
+ *                  scrollbar parts (capture.mjs scrollbarParts), by scrollbarPartList's keys; a
+ *                  frame's viewport is keyed by viewportScroller's
+ * @param frames    (document) => what was measured in that frame's own document, {metrics, textWidth,
+ *                  inkGaps, placeholderColor, canvases, fontsFor, scrollbars}, as the parameters of
+ *                  the same names (the page's own are the defaults) and {inner}, the frame's viewport
+ *                  {w, h}; null or no function: the frame is drawn with the page's own. The frame
+ *                  is measured in its own document because a font name and a style rule mean what
+ *                  that document says
  */
 export function renderSvg(
   decoded,
@@ -792,8 +1004,12 @@ export function renderSvg(
     background = true,
     overlays = [],
     scrollbars = null,
+    frames = null,
   },
 ) {
+  // What was measured in the document being painted: the page's, and in a frame its own.
+  const pageEnv = { metrics, textWidth, inkGaps, placeholderColor, canvases, fontsFor, scrollbars, inner: null };
+  let env = pageEnv;
   const defs = [];
   const ids = new Map();
   const def = (key, make) => {
@@ -804,10 +1020,19 @@ export function renderSvg(
     }
     return ids.get(key);
   };
-  const stats = { boxes: 0, texts: 0, images: 0, canvases: 0, unsupported: {} };
+  const stats = { boxes: 0, texts: 0, images: 0, canvases: 0, frames: 0, unsupported: {} };
   const note = (what) => {
     stats.unsupported[what] = (stats.unsupported[what] ?? 0) + 1;
   };
+
+  // The root element's overflow, or the <body>'s where the root's is visible, is
+  // the viewport's: it scrolls the document and clips nothing of the element.
+  const toViewport = (n) =>
+    n.name === "HTML" ||
+    (n.name === "BODY" &&
+      n.parent?.name === "HTML" &&
+      (n.parent.style?.["overflow-x"] ?? "visible") === "visible" &&
+      (n.parent.style?.["overflow-y"] ?? "visible") === "visible");
 
   // The overflow clip an element's descendants are painted under, memoised.
   const descClip = new Map();
@@ -835,7 +1060,7 @@ export function renderSvg(
     if (descClip.has(n)) return descClip.get(n);
     let c = clipOf(n);
     const st = n.style;
-    if (st && n.box && (st["overflow-x"] !== "visible" || st["overflow-y"] !== "visible")) {
+    if (st && n.box && !toViewport(n) && (st["overflow-x"] !== "visible" || st["overflow-y"] !== "visible")) {
       const b = n.box.bounds;
       const bw = borders(st);
       // The scrollbars are outside the clip: the vertical one on the right, the horizontal at the bottom.
@@ -899,19 +1124,6 @@ export function renderSvg(
     return svgMemo.get(n);
   };
 
-  const items = [];
-  for (const l of decoded.layouts) {
-    const n = l.node;
-    if (n.type === 1 && hidden(n)) continue;
-    if (inSvg(n)) continue;
-    if (n.type === 3 && hidden(n.parent)) continue;
-    if (l.text !== undefined) {
-      if (l.boxes.length) items.push({ l, kind: "text" });
-    } else if (l.style && n.box === l) items.push({ l, kind: "box" });
-  }
-  items.sort((a, b) => a.l.paint - b.l.paint || a.l.li - b.l.li);
-
-  const body = [];
   const textClasses = new Map();
   // `face` is the run's CSS in the picture's own faces (PictureFonts.css), or
   // null to name the computed font-family instead.
@@ -990,7 +1202,7 @@ export function renderSvg(
       out.push(...paintBorders(b, r, bw));
     }
     if (l.node.name === "CANVAS") {
-      const c = canvases.find(
+      const c = env.canvases.find(
         (c) => Math.abs(c.x - b.x) < 0.5 && Math.abs(c.y - b.y) < 0.5 && Math.abs(c.w - b.w) < 0.5,
       );
       if (c) {
@@ -1008,7 +1220,8 @@ export function renderSvg(
     else if (l.node.name === "INPUT" && CHECKABLE_INPUTS.has(l.node.attrs.type?.toLowerCase())) {
       if (st.appearance !== "none") out.push(...paintCheckable(l));
     } else if (l.node.name === "INPUT" || l.node.name === "TEXTAREA") out.push(...paintTextControl(l, bw));
-    if (st["outline-style"] !== "none" && px(st["outline-width"]) > 0) {
+    if (st["outline-style"] === "auto" && px(st["outline-width"]) > 0) out.push(...paintFocusRing(st, b, r, bw));
+    else if (st["outline-style"] !== "none" && px(st["outline-width"]) > 0) {
       const w = px(st["outline-width"]);
       const o = px(st["outline-offset"]) + w / 2;
       out.push(
@@ -1017,6 +1230,32 @@ export function renderSvg(
     }
     stats.boxes++;
     return out;
+  }
+
+  // The focus ring of outline-style: auto, as Chromium draws it whatever the
+  // outline's width: two bands round a path, an inner one 2px wide in the
+  // outline colour, centred on the path, and an outer one 1px wide in white
+  // against it. The path is the border box moved out by the outline offset, and
+  // in by the width of the border, up to 1px a side (so a control's own 1px border
+  // lies under the inner band, and a box with none has the ring astride its
+  // edge); a corner's radius moves with the path. Fitted against Edge by
+  // bench/outline.html.
+  function paintFocusRing(st, b, r, bw) {
+    const sides = bw.map((s) => px(st["outline-offset"]) - Math.min(1, s.width));
+    const mean = sides.reduce((sum, v) => sum + v, 0) / 4;
+    // The path moved out by `d` more: its box, and its radii (a square corner stays square).
+    const band = (d) => {
+      const [t, rt, bt, lt] = sides.map((v) => v + d);
+      const box = { x: b.x - lt, y: b.y - t, w: Math.max(0, b.w + lt + rt), h: Math.max(0, b.h + t + bt) };
+      const radii = r.map(([rx, ry]) =>
+        rx > 0 && ry > 0 ? [Math.max(0, rx + mean + d), Math.max(0, ry + mean + d)] : [0, 0],
+      );
+      return rrectPath(box, radii) ?? `M${num(box.x)} ${num(box.y)}h${num(box.w)}v${num(box.h)}h${num(-box.w)}Z`;
+    };
+    return [
+      `<path fill-rule="evenodd" fill="#fff" d="${band(2)}${band(1)}"/>`,
+      `<path fill-rule="evenodd" fill="${st["outline-color"]}" d="${band(1)}${band(-1)}"/>`,
+    ];
   }
 
   function paintBorders(b, r, bw) {
@@ -1290,13 +1529,13 @@ export function renderSvg(
     const label = selectLabel(l.node);
     if (label) {
       const key = fontKey(st);
-      const m = metrics(key);
+      const m = env.metrics(key);
       const e = l.exact ?? b;
       const x = e.x + bw[3].width + px(st["padding-left"]) + 4;
       const end = e.x + e.w - bw[1].width - px(st["padding-right"]) - arrowBox;
       const last = st["text-align-last"] ?? "auto";
       const align = last === "auto" ? (st["text-align"] ?? "start") : last;
-      const w = textWidth?.(key, label) ?? null;
+      const w = env.textWidth?.(key, label) ?? null;
       let tx = x;
       if (w !== null && align.endsWith("center")) tx = x + (end - x - w) / 2;
       else if (w !== null && (align.endsWith("right") || align === "end")) tx = end - w;
@@ -1317,23 +1556,80 @@ export function renderSvg(
     return out;
   }
 
+  const noNative = () => {
+    note("native scrollbar");
+    return [];
+  };
+
+  // The scrollbars Chromium draws where a page styles none, Windows' own (Fluent)
+  // ones: a bar 15px thick whose track is the full bar; an arrow, a triangle 9.5px
+  // wide and 4.75 high, near each end; and a thumb 9px wide with round ends, as
+  // long as the share of the content in view makes of the track (the bar less 18px
+  // at each end, and at least 17px), at the place the scroll offset gives. The
+  // arrows are the thumb's colour, and an arrow is drawn whether or not there is
+  // anything to scroll. The colours are scrollbar-color's, else those of the
+  // colour scheme in use. The far arrow is not the near one mirrored: it lies 1px
+  // nearer the middle, and the arrows of a bar along the page lie 1px nearer
+  // its end than a bar down the page's. Fitted against Edge by
+  // bench/scrollbars-native.html. The thinner scrollbar (scrollbar-width: thin)
+  // is not drawn.
+  function paintNativeScrollbars(l, g, pad, std) {
+    if (std.width !== "auto" || (g.v && g.v !== 15) || (g.h && g.h !== 15)) return noNative();
+    const scheme = NATIVE_COLOURS[std.dark ? "dark" : "light"];
+    const [thumb, track] = std.color === "auto" ? [scheme.thumb, scheme.track] : splitTop(std.color, " ");
+    const out = [];
+    for (const o of ["v", "h"]) {
+      if (!g[o]) continue;
+      const vert = o === "v";
+      const bar = vert
+        ? { x: pad.x + pad.w - g.v, y: pad.y, w: g.v, h: pad.h - g.h }
+        : { x: pad.x, y: pad.y + pad.h - g.h, w: pad.w - g.v, h: g.h };
+      const length = vert ? bar.h : bar.w;
+      out.push(`<rect ${rectAttrs(bar)} fill="${track}"/>`);
+      // A triangle on the bar's middle line: its tip and its base `along` the bar.
+      const arrow = (tip, base) => {
+        const mid = vert ? bar.x + bar.w / 2 : bar.y + bar.h / 2;
+        const at = (along, across) =>
+          vert ? `${num(mid + across)} ${num(along)}` : `${num(along)} ${num(mid + across)}`;
+        return `<path d="M${at(tip, 0)}L${at(base, -4.75)}L${at(base, 4.75)}Z" fill="${thumb}"/>`;
+      };
+      const start = vert ? bar.y : bar.x;
+      if (length >= 36) {
+        out.push(arrow(start + (vert ? 7.25 : 6.25), start + (vert ? 12 : 11)));
+        out.push(arrow(start + length - (vert ? 8.25 : 7.25), start + length - (vert ? 13 : 12)));
+      }
+      const total = l.scroll ? (vert ? l.scroll.h : l.scroll.w) : 0;
+      const visible = vert ? l.client.h : l.client.w;
+      const offset = l.scroll ? (vert ? l.scroll.y : l.scroll.x) : 0;
+      const run = length - 36;
+      if (total > visible && run > 0) {
+        const size = Math.min(run, Math.max(17, Math.round((visible / total) * run)));
+        const at = start + 18 + (Math.max(0, offset) * (run - size)) / (total - visible);
+        const rect = vert ? { x: bar.x + 3, y: at, w: 9, h: size } : { x: at, y: bar.y + 3, w: size, h: 9 };
+        out.push(`<rect ${rectAttrs(rect)} rx="4.5" fill="${thumb}"/>`);
+      }
+    }
+    if (g.v && g.h)
+      out.push(
+        `<rect ${rectAttrs({ x: pad.x + pad.w - g.v, y: pad.y + pad.h - g.h, w: g.v, h: g.h })} fill="${track}"/>`,
+      );
+    return out;
+  }
+
   // The scrollbars of a scrolling box, which Chromium draws outside the DOM. A
   // custom one (::-webkit-scrollbar) is drawn as CustomScrollbarTheme lays it
   // out: each part a box painted with its pseudo-element's style, in the order
   // background, buttons, track, track pieces, thumb; the corner between two
   // scrollbars with its own style, else white. A scrollbar without a custom
-  // style is the platform's, not drawn.
+  // style is the platform's (paintNativeScrollbars).
   function paintScrollbars(l) {
     if ((l.style.resize ?? "none") !== "none" && SCROLLS.has(l.style["overflow-x"])) note("resizer");
     const g = gutters(l);
     if (!g.v && !g.h) return [];
-    const sb = scrollbars?.get(l.li);
-    if (!sb?.custom) {
-      note("native scrollbar");
-      return [];
-    }
+    const sb = env.scrollbars?.get(l.key);
     const bw = borders(l.style);
     const pad = deflate(l.bounds, bw[0].width, bw[1].width, bw[2].width, bw[3].width);
+    if (!sb?.custom) return sb?.standard ? paintNativeScrollbars(l, g, pad, sb.standard) : noNative();
     const out = [];
     const shown = (key) => {
       const st = sb.parts[key];
@@ -1475,14 +1771,16 @@ export function renderSvg(
     const at = content(l.exact ?? b);
     if (box.w <= 0 || box.h <= 0) return [];
     const key = fontKey(st);
-    const m = metrics(key);
+    const m = env.metrics(key);
     const lh = st["line-height"]?.endsWith("px") ? px(st["line-height"]) : m.line || m.height;
     const textarea = l.node.name === "TEXTAREA";
     const shows = textarea
       ? deflate(b, bw[0].width, bw[1].width + scrollbarW, bw[2].width + scrollbarH, bw[3].width)
       : box;
     const align = BUTTON_INPUTS.has((l.node.attrs.type ?? "").toLowerCase()) ? "center" : (st["text-align"] ?? "start");
-    const shown = c.placeholder ? { ...st, color: placeholderColor, "-webkit-text-fill-color": placeholderColor } : st;
+    const shown = c.placeholder
+      ? { ...st, color: env.placeholderColor, "-webkit-text-fill-color": env.placeholderColor }
+      : st;
     const lines = controlLines(c.text, textarea, st["tab-size"]);
     // The text moves by how far the control is scrolled; only a textarea scrolls down.
     const sx = l.scroll?.x ?? 0;
@@ -1492,7 +1790,7 @@ export function renderSvg(
       if (!line.trim()) continue;
       const y = top + i * lh;
       if (y + lh < shows.y || y > shows.y + shows.h) continue;
-      const w = textWidth?.(key, line) ?? null;
+      const w = env.textWidth?.(key, line) ?? null;
       let x = at.x - sx;
       if (w !== null && align.endsWith("center")) x = at.x + (at.w - w) / 2 - sx;
       else if (w !== null && (align === "right" || align === "end")) x = at.x + at.w - w - sx;
@@ -1511,18 +1809,20 @@ export function renderSvg(
   // exact (fractional) positions of the fragment, whitespace included. The line
   // goes under the glyphs, and leaves a gap round each stretch of the fragment's
   // ink that is in its band (inkBand), as wide as the line is thick on each side.
-  function paintText(l) {
+  // Only the fragments in `view` are drawn: textNeeds measures only those.
+  function paintText(l, view) {
     const st = textStyle(l);
     if (!st || st.visibility !== "visible") return [];
     const key = fontKey(st);
-    const base = metrics(key).ascent;
+    const base = env.metrics(key).ascent;
     const { lines, undrawn } = decorationsOf(l);
     for (const what of undrawn) note(what);
     const out = [];
     for (const t of l.boxes) {
+      if (!overlaps(t, view)) continue;
       const s = l.text.substr(t.start, t.length);
       for (const u of lines) {
-        const gaps = u.skipInk && s.trim() ? (inkGaps?.(key, s, ...inkBand(u)) ?? []) : [];
+        const gaps = u.skipInk && s.trim() ? (env.inkGaps?.(key, s, ...inkBand(u)) ?? []) : [];
         const line = underline(t, Math.round(t.y + base) + u.offset, u, gaps);
         if (line) out.push(line);
       }
@@ -1556,77 +1856,147 @@ export function renderSvg(
   // laid-out width: textLength holds a viewer that shapes it differently to it.
   function textRun(st, s, x, baseline, width) {
     stats.texts++;
-    const sources = fonts && fontsFor ? fontsFor(fontKey(st), s) : null;
+    const sources = fonts && env.fontsFor ? env.fontsFor(fontKey(st), s) : null;
     const face = sources?.length ? fonts.css(s, sources, st["font-weight"], st["font-style"]) : null;
     if (!face) note("text in an unembedded font");
     const fit = width && [...s].length > 1 ? ` textLength="${num(width)}" lengthAdjust="spacing"` : "";
     return `<text class="${textClass(st, face)}" x="${num(x)}" y="${num(baseline)}"${fit}>${esc(s)}</text>`;
   }
 
-  // Emit in paint order, opening and closing the groups each item inherits.
-  const open = [];
-  const view = { x: clip.x, y: clip.y, w: clip.w, h: clip.h };
-  for (const it of items) {
-    const l = it.l;
-    const n = l.node;
-    const owner = it.kind === "text" && n.type === 3 ? styled(n.parent) : n;
-    if (!owner) continue;
-    if (it.kind === "text" && !l.boxes.some((t) => overlaps(t, view))) continue;
-    const c = it.kind === "box" ? clipOf(owner) : clipForDescendants(owner);
-    const shadowReach = parseShadows(l.style?.["box-shadow"]).reduce(
-      (m, s) => Math.max(m, s.blur * 1.5 + s.spread + Math.abs(s.x) + Math.abs(s.y)),
-      0,
-    );
-    const ext = {
-      x: l.bounds.x - shadowReach,
-      y: l.bounds.y - shadowReach,
-      w: l.bounds.w + 2 * shadowReach,
-      h: l.bounds.h + 2 * shadowReach,
-    };
-    if (!overlaps(ext, view) || !overlaps(intersect(c, ext), view)) continue;
-    const m = it.kind === "box" ? parseMatrix(l.style.transform) : null;
-    let content;
-    if (m && (m[0] !== 1 || m[1] !== 0 || m[2] !== 0 || m[3] !== 1)) {
-      // Painted at its untransformed size about its centre, then transformed.
-      const cx = l.bounds.x + l.bounds.w / 2;
-      const cy = l.bounds.y + l.bounds.h / 2;
-      const ow = l.offset?.w ?? l.bounds.w;
-      const oh = l.offset?.h ?? l.bounds.h;
-      const inner = paintBox({ ...l, bounds: { x: cx - ow / 2, y: cy - oh / 2, w: ow, h: oh } });
-      const t = `translate(${num(cx)} ${num(cy)}) matrix(${m.slice(0, 4).map(num).join(" ")} 0 0) translate(${num(-cx)} ${num(-cy)})`;
-      content = inner.length ? [`<g transform="${t}">`, ...inner, "</g>"] : [];
-    } else if (it.kind === "box") {
-      content = paintBox(l);
-      if (l.style.visibility === "visible") content.push(...paintScrollbars(l));
-    } else content = paintText(l);
-    if (!content.length) continue;
-    const want = chain(owner);
-    if (c !== INF && (c.x > view.x || c.y > view.y || c.x + c.w < view.x + view.w || c.y + c.h < view.y + view.h)) {
-      const id = def(`c${c.x}|${c.y}|${c.w}|${c.h}`, (id) => `<clipPath id="${id}"><rect ${rectAttrs(c)}/></clipPath>`);
-      want.push({ key: `c${id}`, open: `<g clip-path="url(#${id})">` });
+  // The document of an <iframe>, drawn at the iframe's place in paint order, after
+  // its own background and border, as a group of its own: the iframe's content box
+  // is the frame's viewport and clips it; the document is drawn in that box as the
+  // frame has scrolled and scaled it; its canvas colour fills the viewport (a frame
+  // with none is transparent); the viewport's scrollbars are over it. What the
+  // frame shows is measured in the frame's own document (`frames`).
+  function paintFrame(l, view) {
+    const doc = l.node.frame;
+    const st = l.style;
+    if (st.visibility !== "visible") return [];
+    // With a way to measure frames, a frame it did not measure is not drawn: its
+    // text would be set with the page's measures.
+    const measured = frames ? frames(doc) : {};
+    if (!measured) {
+      note("a frame that was not measured");
+      return [];
     }
-    let same = 0;
-    while (same < open.length && same < want.length && open[same].key === want[same].key) same++;
-    while (open.length > same) {
-      open.pop();
-      body.push("</g>");
+    const mine = { ...pageEnv, ...measured };
+    const geometry = frameGeometry(l, mine.inner);
+    const { box, scale } = geometry;
+    unzoom(doc, scale);
+    const shown = frameView(view, geometry, doc);
+    if (!shown) return [];
+    if (scale !== 1 && viewportGutters(doc, mine.inner)) note("scrollbars of a zoomed frame");
+    if (radii(st, l.bounds.w, l.bounds.h).some(([a, b]) => a > 0 || b > 0)) note("frame with rounded corners");
+    const outer = env;
+    env = mine;
+    try {
+      const parts = [];
+      const color = canvasColor(doc);
+      if (color) parts.push(`<rect ${rectAttrs(box)} fill="${color}"/>`);
+      const inside = paintDocument(doc, shown);
+      if (inside.length) {
+        const at = `translate(${num(box.x - doc.scroll.x * scale)} ${num(box.y - doc.scroll.y * scale)})`;
+        parts.push(`<g transform="${at}${scale === 1 ? "" : ` scale(${num(scale)})`}">${inside.join("")}</g>`);
+      }
+      const bars = viewportScroller(doc, geometry, mine.inner);
+      if (bars) parts.push(...paintScrollbars(bars));
+      if (!parts.length) return [];
+      stats.frames++;
+      const id = def(
+        `c${box.x}|${box.y}|${box.w}|${box.h}`,
+        (id) => `<clipPath id="${id}"><rect ${rectAttrs(box)}/></clipPath>`,
+      );
+      return [`<g clip-path="url(#${id})">${parts.join("")}</g>`];
+    } finally {
+      env = outer;
     }
-    for (const g of want.slice(same)) {
-      open.push(g);
-      body.push(g.open);
-    }
-    body.push(...content);
   }
-  while (open.pop()) body.push("</g>");
+
+  // The items of a document in paint order, as `view` (the document's own
+  // coordinates) shows them, opening and closing the groups each one inherits.
+  function paintDocument(doc, view) {
+    const items = [];
+    for (const l of doc.layouts) {
+      const n = l.node;
+      if (n.type === 1 && hidden(n)) continue;
+      if (inSvg(n)) continue;
+      if (n.type === 3 && hidden(n.parent)) continue;
+      if (l.text !== undefined) {
+        if (l.boxes.length) items.push({ l, kind: "text" });
+      } else if (l.style && n.box === l) items.push({ l, kind: "box" });
+    }
+    items.sort((a, b) => a.l.paint - b.l.paint || a.l.li - b.l.li);
+    const body = [];
+    const open = [];
+    for (const it of items) {
+      const l = it.l;
+      const n = l.node;
+      const owner = it.kind === "text" && n.type === 3 ? styled(n.parent) : n;
+      if (!owner) continue;
+      if (it.kind === "text" && !l.boxes.some((t) => overlaps(t, view))) continue;
+      const c = it.kind === "box" ? clipOf(owner) : clipForDescendants(owner);
+      const shadowReach = parseShadows(l.style?.["box-shadow"]).reduce(
+        (m, s) => Math.max(m, s.blur * 1.5 + s.spread + Math.abs(s.x) + Math.abs(s.y)),
+        0,
+      );
+      const ext = {
+        x: l.bounds.x - shadowReach,
+        y: l.bounds.y - shadowReach,
+        w: l.bounds.w + 2 * shadowReach,
+        h: l.bounds.h + 2 * shadowReach,
+      };
+      if (!overlaps(ext, view) || !overlaps(intersect(c, ext), view)) continue;
+      const m = it.kind === "box" ? parseMatrix(l.style.transform) : null;
+      let content;
+      if (m && (m[0] !== 1 || m[1] !== 0 || m[2] !== 0 || m[3] !== 1)) {
+        // Painted at its untransformed size about its centre, then transformed.
+        const cx = l.bounds.x + l.bounds.w / 2;
+        const cy = l.bounds.y + l.bounds.h / 2;
+        const ow = l.offset?.w ?? l.bounds.w;
+        const oh = l.offset?.h ?? l.bounds.h;
+        const inner = paintBox({ ...l, bounds: { x: cx - ow / 2, y: cy - oh / 2, w: ow, h: oh } });
+        const t = `translate(${num(cx)} ${num(cy)}) matrix(${m.slice(0, 4).map(num).join(" ")} 0 0) translate(${num(-cx)} ${num(-cy)})`;
+        content = inner.length ? [`<g transform="${t}">`, ...inner, "</g>"] : [];
+        if (n.frame) note("a transformed frame");
+      } else if (it.kind === "box") {
+        content = paintBox(l);
+        if (l.style.visibility === "visible") content.push(...paintScrollbars(l));
+        if (n.frame) content.push(...paintFrame(l, view));
+        else if (n.name === "IFRAME" && l.style.visibility === "visible" && l.bounds.w > 0 && l.bounds.h > 0)
+          note("a frame of another process");
+      } else content = paintText(l, view);
+      if (!content.length) continue;
+      const want = chain(owner);
+      if (c !== INF && (c.x > view.x || c.y > view.y || c.x + c.w < view.x + view.w || c.y + c.h < view.y + view.h)) {
+        const id = def(
+          `c${c.x}|${c.y}|${c.w}|${c.h}`,
+          (id) => `<clipPath id="${id}"><rect ${rectAttrs(c)}/></clipPath>`,
+        );
+        want.push({ key: `c${id}`, open: `<g clip-path="url(#${id})">` });
+      }
+      let same = 0;
+      while (same < open.length && same < want.length && open[same].key === want[same].key) same++;
+      while (open.length > same) {
+        open.pop();
+        body.push("</g>");
+      }
+      for (const g of want.slice(same)) {
+        open.push(g);
+        body.push(g.open);
+      }
+      body.push(...content);
+    }
+    while (open.pop()) body.push("</g>");
+    return body;
+  }
 
   // The canvas takes the root's background, else the body's; a page with
   // neither shows the browser's white, unless `background` is off (a cut-out,
   // whose default background is transparent).
-  const root = decoded.nodes.find((n) => n.name === "HTML");
-  const bodyEl = decoded.nodes.find((n) => n.name === "BODY");
-  const color =
-    [root, bodyEl].map((n) => n?.style?.["background-color"]).find((c) => !transparent(c)) ??
-    (background ? "white" : null);
+  const view = { x: clip.x, y: clip.y, w: clip.w, h: clip.h };
+  const body = paintDocument(decoded, view);
+  const color = canvasColor(decoded) ?? (background ? "white" : null);
   const ground = color ? `<rect ${rectAttrs(view)} fill="${color}"/>` : "";
   const css = FACES_MARK + [...textClasses.entries()].map(([css, cls]) => `.${cls}{${css}}`).join("");
   const svg =

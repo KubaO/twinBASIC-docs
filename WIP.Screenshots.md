@@ -612,11 +612,39 @@ overline, line-through, every style but solid, and `text-underline-position` oth
 **A background image is sized by its bytes** (`naturalSize`), not by the type its URL names:
 the IDE calls a JPEG and a BMP `image/png`. The About dialog's EXCALIBUR logo is such a JPEG,
 drawn with `background-size: contain`; read as a PNG, its JFIF header gave 4,718,592 by about 4.3
-billion pixels, and the logo came out 0.054 px wide. That, not the logos' resampling, is what
-kept `Menu_Help_About` a PNG.
+billion pixels, and the logo would come out 0.054 px wide.
+
+**Frames** (owner, 2026-10-10: cross-origin frames in general). A frame of the same site (the
+docked help pane: the documentation on another `localhost` port) is in the IDE's process, and
+`DOMSnapshot.captureSnapshot` returns its document beside the page's: the `<iframe>` node's
+`contentDocumentIndex` names it, and its boxes are in its own coordinates. `decodeSnapshot`
+decodes every document and hangs a frame's on its `<iframe>` node (`node.frame`); `renderSvg`
+draws it at the iframe's place in paint order, as one group moved to the iframe's content box
+less the frame's scroll, clipped to it, scaled when the frame is zoomed (its `innerWidth` against
+the box; `unzoom` puts boxes Chromium gives in the parent's px back into the frame's), over its
+canvas colour (the root's background, else the body's, else none) and under its viewport's
+scrollbars. `svgOfPage` measures each frame in an isolated world of its own
+(`Page.createIsolatedWorld`), so its `@font-face` rules and styles apply; one `PictureFonts`
+serves the whole picture. A frame of another site is a target of its own and is not in the
+snapshot: it is reported as "a frame of another process" (Help_Window's, the Webpage pane's).
+
+**Web fonts** are found by CSS font matching on the run's `font-family` list, style and weight
+(`webFontFiles`, in the page), not by the face's own name: the site's Inter calls itself "Inter
+Variable", and the last rule of a family was its italic file. A variable WOFF2 is read in
+`fonts.mjs` and cut at each weight the picture uses (`subset_font.py`'s `weight`). A font
+fontTools cannot cut gets no face and its text falls back, reported as "text in a font that
+could not be cut" (`subset_font.py` answers that job with an error instead of failing the run).
+
+**The platform's own scrollbar** (`paintNativeScrollbars`) is the Fluent one Edge and the
+IDE's WebView2 draw (on this Windows 10 machine too): 15 px, a round-ended 9 px thumb, arrows 9.5 by 4.75, `scrollbar-color` where it is set, else the
+light or dark default by `color-scheme`; the docs site's dark theme sets `scrollbar-color`, which
+turns its own `::-webkit-scrollbar` rules off. **A focus ring** (`outline-style: auto`,
+`paintFocusRing`) is a 2 px band in the outline colour and a 1 px white one outside it. Both were
+fitted in Edge on bench pages of their own.
 
 **The bench** (`node scripts/svgshot/bench.mjs`, outside every gate, needs Edge and fontTools)
-draws the pages under `scripts/svgshot/bench/` (scrollbars, drop-down lists, underlines) with the converter
+draws the pages under `scripts/svgshot/bench/` (scrollbars, native scrollbars, drop-down lists,
+underlines, focus rings, frames) with the converter
 and compares them with the browser's own picture: in Edge, whose Chromium is the IDE's WebView2's
 (Puppeteer's trails it, and draws the select's arrow otherwise), laid out at 1x and drawn at 2x
 as the IDE is, text without ClearType. Each page is held to the figures recorded in
@@ -626,14 +654,14 @@ missed a fault fixed while the bench was written (arrows a quarter too tall move
 rectangle of two pictures as letters, one per colour: how an edge, a stroke or a blend came out.
 A new replica gets a page there.
 
-**Not drawn yet:** the platform's own scrollbars, a textarea's resize grip, a number input's spin
-buttons, an indeterminate checkbox, conic gradients, the 2011 `-webkit-radial-gradient`, `filter:
-hue-rotate`, an inset shadow's blur, the help pane's cross-origin frame, and the Webpage pane's
-page (another target, which `webpage` pastes into the PNG from its own capture), so those
-pictures stay PNG. A web page's fonts from a cross-origin style sheet are not embedded: `webFont`
-reads `document.styleSheets`, whose rules such a sheet hides. Of the `web` setup's two pages,
-the WebView2 download page (`94490c87`) is kept as PNG for it, and for its icons, its drop-down
-lists and its annotation, which do not come out either (not looked into: it is Microsoft's page,
-taken once). Drawn wrongly: a collapsed table border, doubled (the IDE has none). A canvas is a
-raster (the editor's minimap is drawn with `putImageData`). The run reports each under "not
-drawn".
+**Not drawn yet:** a thin platform scrollbar (`scrollbar-width: thin`), a zoomed frame's
+scrollbars, a textarea's resize grip, a number input's spin buttons, an indeterminate checkbox,
+conic gradients, the 2011 `-webkit-radial-gradient`, `filter: hue-rotate`, an inset shadow's
+blur, an inline `<svg>` in the page other than the annotation layer (the help pane's gear, a few
+hundred pixels), and a frame of another process: Help_Window's and the Webpage pane's (which
+`webpage` pastes into the PNG from its own capture), so those pictures stay PNG. Of the `web`
+setup's two pages, the WebView2 download page (`94490c87`) is kept as PNG: its font is one
+fontTools cannot cut (`'.notdef'`), and its icons, drop-down lists and annotation do not come out
+either (not looked into: it is Microsoft's page, taken once). Drawn wrongly: a collapsed table
+border, doubled (the IDE has none). A canvas is a raster (the editor's minimap is drawn with
+`putImageData`). The run reports each under "not drawn".

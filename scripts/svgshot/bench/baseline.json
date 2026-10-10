@@ -6,10 +6,25 @@
       "pct96": 0.005,
       "tile": 0.086
     },
+    "frames": {
+      "pct32": 0.365,
+      "pct96": 0,
+      "tile": 0.138
+    },
+    "outline": {
+      "pct32": 0.071,
+      "pct96": 0.022,
+      "tile": 0.028
+    },
     "scrollbars": {
       "pct32": 0.025,
       "pct96": 0,
       "tile": 0.017
+    },
+    "scrollbars-native": {
+      "pct32": 0.001,
+      "pct96": 0,
+      "tile": 0.006
     },
     "select": {
       "pct32": 0.023,

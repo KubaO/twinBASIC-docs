@@ -11,11 +11,81 @@
 import { spawn } from "node:child_process";
 import fs from "node:fs";
 import path from "node:path";
+import zlib from "node:zlib";
 import { REPO_ROOT } from "../../lib/repo-paths.mjs";
 
 const SUBSET_SCRIPT = path.join(REPO_ROOT, "scripts", "subset_font.py");
 
 // --- reading a font's tables ----------------------------------------------------
+
+// The tags a WOFF2 table directory names by number (WOFF2 spec, 5.1); 63 says
+// the tag follows.
+const WOFF2_TAGS = (
+  "cmap head hhea hmtx maxp name OS/2 post cvt fpgm glyf loca prep CFF VORG EBDT EBLC gasp hdmx kern LTSH PCLT VDMX " +
+  "vhea vmtx BASE GDEF GPOS GSUB EBSC JSTF MATH CBDT CBLC COLR CPAL SVG sbix acnt avar bdat bloc bsln cvar fdsc feat " +
+  "fmtx fvar gvar hsty just lcar mort morx opbd prop trak Zapf Silf Glat Gloc Feat Sill"
+)
+  .split(" ")
+  .map((t) => t.padEnd(4, " "));
+
+// The tables of a WOFF2 font that the readers below use, and that WOFF2 does not transform.
+const WOFF2_READ = new Set(["cmap", "OS/2", "fvar"]);
+
+/**
+ * `buf` as something `cmapCoverage`, `faceStyle` and `isVariable` can read: a
+ * WOFF2 font is read into a minimal sfnt that holds only the tables they use
+ * (WOFF2 compresses all the tables as one brotli stream, which Node inflates;
+ * only glyf, loca and hmtx are transformed), and any other font is returned
+ * as it is.
+ */
+export function readable(buf) {
+  if (buf.toString("latin1", 0, 4) !== "wOF2") return buf;
+  const count = buf.readUInt16BE(12);
+  let p = 48;
+  const base128 = () => {
+    let v = 0;
+    for (let i = 0; i < 5; i++) {
+      const b = buf[p++];
+      v = v * 128 + (b & 0x7f);
+      if (!(b & 0x80)) break;
+    }
+    return v;
+  };
+  const list = [];
+  for (let i = 0; i < count; i++) {
+    const flags = buf[p++];
+    const index = flags & 0x3f;
+    const tag = index === 63 ? buf.toString("latin1", p, (p += 4)) : WOFF2_TAGS[index];
+    const version = flags >> 6;
+    const original = base128();
+    // glyf and loca are transformed unless their version is 3, the other tables if it is not 0.
+    const transformed = tag === "glyf" || tag === "loca" ? version !== 3 : version !== 0;
+    list.push({ tag, length: transformed ? base128() : original });
+  }
+  const data = zlib.brotliDecompressSync(buf.subarray(p, p + buf.readUInt32BE(20)));
+  const kept = [];
+  let at = 0;
+  for (const t of list) {
+    if (WOFF2_READ.has(t.tag)) kept.push({ tag: t.tag, bytes: data.subarray(at, at + t.length) });
+    at += t.length;
+  }
+  const head = Buffer.alloc(12 + 16 * kept.length);
+  head.writeUInt32BE(0x00010000, 0);
+  head.writeUInt16BE(kept.length, 4);
+  let offset = head.length;
+  for (const [i, t] of kept.entries()) {
+    head.write(t.tag, 12 + 16 * i, "latin1");
+    head.writeUInt32BE(offset, 12 + 16 * i + 8);
+    head.writeUInt32BE(t.bytes.length, 12 + 16 * i + 12);
+    offset += t.bytes.length;
+  }
+  return Buffer.concat([head, ...kept.map((t) => t.bytes)]);
+}
+
+/** Whether the font in `buf` (as `readable` gives it) has variation axes. */
+export function isVariable(buf, index = 0) {
+  return tables(buf, index).has("fvar");
+}
 
 function tables(buf, index) {
   const off = buf.toString("latin1", 0, 4) === "ttcf" ? buf.readUInt32BE(12 + 4 * index) : 0;
@@ -133,12 +203,30 @@ export class PictureFonts {
     this.hinting = hinting;
     this.system = null;
     this.loaded = new Map();
+    // What was read of each web font, by its name: {buf (readable), variable}.
+    this.web = new Map();
     this.faces = [];
   }
 
-  /** A source is {ps} for an installed font or {family, data} for a web font (a data: URL). */
+  /**
+   * A source is {ps} for an installed font or {family, data, weight} for a web
+   * font (a data: URL; `family` names it, and `weight` is the weight the run
+   * asks for). A web font with a weight axis becomes one face for each weight
+   * the picture draws it at, cut at that weight: a variable font cannot be
+   * given a weight from a face rule's own.
+   */
   load(src) {
-    const key = src.ps ? `ps:${src.ps}` : `web:${src.family}`;
+    let key = src.ps ? `ps:${src.ps}` : `web:${src.family}`;
+    const weight = Number(src.weight) || 400;
+    let web = null;
+    if (!src.ps && src.data) {
+      if (!this.web.has(src.family)) {
+        const buf = readable(Buffer.from(src.data.slice(src.data.indexOf(",") + 1), "base64"));
+        this.web.set(src.family, { buf, variable: isVariable(buf) });
+      }
+      web = this.web.get(src.family);
+      if (web.variable) key += `@${weight}`;
+    }
     if (this.loaded.has(key)) return this.loaded.get(key);
     let face = null;
     if (src.ps) {
@@ -152,10 +240,11 @@ export class PictureFonts {
           ...faceStyle(buf, hit.index),
         };
       }
-    } else if (src.data) {
+    } else if (web) {
       const data = src.data.slice(src.data.indexOf(",") + 1);
-      const buf = Buffer.from(data, "base64");
-      face = { job: { data }, covers: cmapCoverage(buf), ...faceStyle(buf) };
+      face = { job: { data }, covers: cmapCoverage(web.buf), ...faceStyle(web.buf) };
+      // Cut at the weight asked for, so the face is exactly that weight.
+      if (web.variable) Object.assign(face, { job: { data, weight }, weight });
     }
     if (face) {
       Object.assign(face, { name: `f${this.faces.length}`, used: new Set([0x20]) });
@@ -212,8 +301,15 @@ export class PictureFonts {
       child.stdin.end(JSON.stringify(jobs));
     });
     const results = JSON.parse(stdout);
+    // A font fontTools cannot cut gets no rule: its text falls back to the viewer's
+    // own font, which the comparison with the PNG then judges, and the run says why.
+    this.failed = results.filter((r) => r.error).map((r) => r.error);
     return used
-      .map((f, i) => `@font-face{font-family:"${f.name}";src:url(data:font/woff2;base64,${results[i].woff2})}`)
+      .map((f, i) =>
+        results[i].woff2
+          ? `@font-face{font-family:"${f.name}";src:url(data:font/woff2;base64,${results[i].woff2})}`
+          : "",
+      )
       .join("");
   }
 }

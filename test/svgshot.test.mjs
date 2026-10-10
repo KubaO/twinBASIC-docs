@@ -2,15 +2,38 @@
 // picture's SVG on one line, so that a CRLF checkout changes only its last line ending, and
 // underlineBand and decoratingBoxes, which place an underline as Chromium does: the figures
 // below are the ones scripts/svgshot/bench/decoration.html was fitted to in Edge; and
-// naturalSize, which sizes a background image by its bytes. What a picture's SVG keeps of an
+// naturalSize, which sizes a background image by its bytes; and the frames: decodeSnapshot's
+// documents of <iframe>s, and where a frame's document is drawn in its parent (frameGeometry,
+// frameView, unzoom, viewportScroller, canvasColor). What a picture's SVG keeps of an
 // image it embeds is compactImage's, in scripts/lib/compact-image.mjs, and
-// test/compact-image.test.mjs tests it.
+// test/compact-image.test.mjs tests it. The web fonts a frame's text is drawn in:
+// webFontFiles, which finds the @font-face rule a run's font means by the names its document
+// gives (given a document of its own here), and fonts.mjs's reading of a WOFF2 font and its
+// faces for a variable one, tested on the site's own fonts.
 //
 // Runs with a bare `node --test test/svgshot.test.mjs`: no tree, no build.
 
 import assert from "node:assert/strict";
+import fs from "node:fs";
 import { describe, test } from "node:test";
-import { decoratingBoxes, naturalSize, oneLine, underlineBand } from "../scripts/svgshot/snapshot-svg.mjs";
+import { REPO_ROOT } from "../lib/repo-paths.mjs";
+import { webFontFiles } from "../scripts/svgshot/capture.mjs";
+import { cmapCoverage, faceStyle, isVariable, PictureFonts, readable } from "../scripts/svgshot/fonts.mjs";
+import {
+  canvasColor,
+  decodeSnapshot,
+  decoratingBoxes,
+  frameGeometry,
+  framesIn,
+  frameView,
+  naturalSize,
+  oneLine,
+  underlineBand,
+  unzoom,
+  viewportGutters,
+  viewportScroller,
+  viewportStyleSources,
+} from "../scripts/svgshot/snapshot-svg.mjs";
 
 describe("naturalSize", () => {
   const png = (bytes) => `data:image/png;base64,${Buffer.from(bytes).toString("base64")}`;
@@ -95,5 +118,330 @@ describe("decoratingBoxes", () => {
       const own = { ...u, display: "inline", ...stop };
       assert.deepEqual(decoratingBoxes(chain({ ...u, display: "block" }, own)), [own]);
     }
+  });
+});
+
+describe("frames", () => {
+  // A snapshot of a page and a frame in it: the page's <iframe> is at 100, 50 and 300 by 200;
+  // the frame's document is 300 by 500, scrolled 30px down, its boxes in its own coordinates.
+  function snapshotOfFrame({ document: withDocument = true, scroll = [0, 30] } = {}) {
+    const strings = [];
+    const s = (v) => {
+      const i = strings.indexOf(v);
+      return i >= 0 ? i : strings.push(v) - 1;
+    };
+    const build = ({ url, frameId, nodes, layout, scroll, content, frames = [] }) => ({
+      documentURL: s(url),
+      baseURL: s(url),
+      frameId: s(frameId),
+      contentWidth: content[0],
+      contentHeight: content[1],
+      scrollOffsetX: scroll[0],
+      scrollOffsetY: scroll[1],
+      nodes: {
+        parentIndex: nodes.map(([, parent]) => parent),
+        nodeType: nodes.map(([name]) => (name === "#document" ? 9 : 1)),
+        nodeName: nodes.map(([name]) => s(name)),
+        nodeValue: nodes.map(() => -1),
+        backendNodeId: nodes.map((_, i) => 100 + i),
+        attributes: nodes.map(() => []),
+        contentDocumentIndex: { index: frames.map(([n]) => n), value: frames.map(([, d]) => d) },
+      },
+      layout: {
+        nodeIndex: layout.map(({ node }) => node),
+        styles: layout.map(({ background = "rgba(0, 0, 0, 0)" }) => [s("visible"), s(background)]),
+        bounds: layout.map(({ bounds }) => bounds),
+        text: layout.map(() => -1),
+        paintOrders: layout.map((_, i) => i),
+        offsetRects: layout.map(() => []),
+        clientRects: layout.map(({ client = [] }) => client),
+        scrollRects: layout.map(({ scrolls = [] }) => scrolls),
+      },
+      textBoxes: { layoutIndex: [], bounds: [], start: [], length: [] },
+    });
+    const page = build({
+      url: "http://localhost:1/main.htm",
+      frameId: "PAGE",
+      nodes: [
+        ["#document", -1],
+        ["HTML", 0],
+        ["BODY", 1],
+        ["IFRAME", 2],
+      ],
+      layout: [
+        { node: 1, bounds: [0, 0, 800, 600] },
+        { node: 2, bounds: [0, 0, 800, 600], background: "rgb(1, 2, 3)" },
+        { node: 3, bounds: [100, 50, 300, 200] },
+      ],
+      scroll: [0, 0],
+      content: [800, 600],
+      frames: withDocument ? [[3, 1]] : [],
+    });
+    const frame = build({
+      url: "http://localhost:2/page.htm",
+      frameId: "FRAME",
+      nodes: [
+        ["#document", -1],
+        ["HTML", 0],
+        ["BODY", 1],
+      ],
+      layout: [
+        { node: 1, bounds: [0, 0, 300, 500], client: [0, 0, 273, 188], scrolls: [0, 30, 300, 500] },
+        { node: 2, bounds: [0, 0, 300, 500], background: "rgb(9, 8, 7)" },
+      ],
+      scroll,
+      content: [300, 500],
+    });
+    return { strings, documents: withDocument ? [page, frame] : [page] };
+  }
+  const NAMES = ["visibility", "background-color"];
+  // An <iframe>'s layout object, with a 2px border and 4px padding.
+  const iframe = (bounds, extra = {}) => ({
+    bounds,
+    style: {
+      ...Object.fromEntries(
+        ["top", "right", "bottom", "left"].flatMap((s) => [
+          [`border-${s}-width`, "2px"],
+          [`border-${s}-style`, "solid"],
+          [`padding-${s}`, "4px"],
+        ]),
+      ),
+      ...extra,
+    },
+  });
+
+  test("the document of an iframe hangs off its node, in its own coordinates, with its scroll and size", () => {
+    const page = decodeSnapshot(snapshotOfFrame(), NAMES);
+    const owner = page.nodes.find((n) => n.name === "IFRAME");
+    const doc = owner.frame;
+    assert.equal(doc.frameId, "FRAME");
+    assert.equal(doc.url, "http://localhost:2/page.htm");
+    assert.equal(doc.owner, owner);
+    assert.deepEqual(doc.scroll, { x: 0, y: 30 });
+    assert.deepEqual(doc.content, { w: 300, h: 500 });
+    assert.deepEqual(doc.layouts[0].bounds, { x: 0, y: 0, w: 300, h: 500 });
+    // A layout object is keyed by its document too: two documents both have a layout object 0.
+    assert.notEqual(doc.layouts[0].key, page.layouts[0].key);
+    assert.equal(page.nodes.find((n) => n.name === "BODY").frame, null);
+  });
+
+  test("an iframe whose document the snapshot lacks (another process) has none", () => {
+    const page = decodeSnapshot(snapshotOfFrame({ document: false }), NAMES);
+    assert.equal(page.nodes.find((n) => n.name === "IFRAME").frame, null);
+    assert.deepEqual(framesIn(page, { x: 0, y: 0, w: 800, h: 600 }), []);
+  });
+
+  test("framesIn lists the frames that show in the view", () => {
+    const page = decodeSnapshot(snapshotOfFrame(), NAMES);
+    assert.equal(framesIn(page, { x: 0, y: 0, w: 800, h: 600 }).length, 1);
+    assert.equal(framesIn(page, { x: 0, y: 0, w: 90, h: 600 }).length, 0);
+  });
+
+  test("a frame's viewport is the iframe's border box less border and padding", () => {
+    const { box, scale } = frameGeometry(iframe({ x: 100, y: 50, w: 300, h: 200 }), { w: 288, h: 188 });
+    assert.deepEqual(box, { x: 106, y: 56, w: 288, h: 188 });
+    assert.equal(scale, 1);
+  });
+
+  test("a frame is scaled by its viewport's width over its own innerWidth, once they differ by a pixel", () => {
+    const l = iframe({ x: 100, y: 50, w: 300, h: 200 });
+    assert.equal(frameGeometry(l, { w: 288.6, h: 188 }).scale, 1);
+    assert.equal(frameGeometry(l, { w: 576, h: 376 }).scale, 0.5);
+    assert.equal(frameGeometry(l, null).scale, 1);
+  });
+
+  test("what shows of a frame is the part of the view in its viewport, as the frame's own points, scrolled", () => {
+    const geometry = { box: { x: 106, y: 56, w: 288, h: 188 }, scale: 1 };
+    const doc = { scroll: { x: 5, y: 30 } };
+    // The whole view: the viewport, from the frame's scroll offset.
+    assert.deepEqual(frameView({ x: 0, y: 0, w: 800, h: 600 }, geometry, doc), { x: 5, y: 30, w: 288, h: 188 });
+    // A view that starts inside it.
+    assert.deepEqual(frameView({ x: 116, y: 66, w: 100, h: 50 }, geometry, doc), { x: 15, y: 40, w: 100, h: 50 });
+    assert.equal(frameView({ x: 0, y: 0, w: 100, h: 600 }, geometry, doc), null);
+    // A frame at half scale shows twice what its viewport holds.
+    const half = { box: geometry.box, scale: 0.5 };
+    assert.deepEqual(frameView({ x: 106, y: 56, w: 288, h: 188 }, half, { scroll: { x: 0, y: 0 } }), {
+      x: 0,
+      y: 0,
+      w: 576,
+      h: 376,
+    });
+  });
+
+  test("unzoom puts a zoomed frame's boxes into its own px, once, and leaves its client sizes", () => {
+    const doc = {
+      layouts: [
+        {
+          bounds: { x: 0, y: 3, w: 165, h: 109.5 },
+          exact: { x: 0, y: 3, w: 165, h: 109.5 },
+          boxes: [{ x: 6, y: 9, w: 30, h: 15, start: 0, length: 4 }],
+          client: { w: 220, h: 140 },
+        },
+      ],
+    };
+    unzoom(doc, 0.75);
+    unzoom(doc, 0.75);
+    assert.deepEqual(doc.layouts[0].bounds, { x: 0, y: 4, w: 220, h: 146 });
+    assert.deepEqual(doc.layouts[0].boxes[0], { x: 8, y: 12, w: 40, h: 20, start: 0, length: 4 });
+    assert.deepEqual(doc.layouts[0].client, { w: 220, h: 140 });
+  });
+
+  test("the viewport's scrollbars are what the root's client box leaves out of the frame's viewport", () => {
+    const page = decodeSnapshot(snapshotOfFrame(), NAMES);
+    const doc = page.nodes.find((n) => n.name === "IFRAME").frame;
+    const inner = { w: 288, h: 188 };
+    const geometry = frameGeometry(iframe({ x: 100, y: 50, w: 300, h: 200 }), inner);
+    assert.deepEqual(viewportGutters(doc, inner), { v: 15, h: 0 });
+    const bars = viewportScroller(doc, geometry, inner);
+    assert.equal(bars.key, "1:viewport");
+    assert.deepEqual(bars.viewport, { v: 15, h: 0 });
+    assert.deepEqual(bars.client, { w: 273, h: 188 });
+    assert.deepEqual(bars.scroll, { x: 0, y: 30, w: 300, h: 500 });
+    assert.deepEqual(bars.bounds, geometry.box);
+    // A viewport the document fits in has none, and nor does a zoomed frame (not drawn).
+    assert.equal(viewportGutters(doc, { w: 273, h: 188 }), null);
+    assert.equal(viewportScroller(doc, { ...geometry, scale: 0.75 }, inner), null);
+    // The <body> is the first element whose scrollbar rules style the viewport, then the root element.
+    assert.deepEqual(
+      viewportStyleSources(doc).map((n) => n.name),
+      ["BODY", "HTML"],
+    );
+  });
+
+  test("a document fills its viewport with the root's background, else the body's, else nothing", () => {
+    const page = decodeSnapshot(snapshotOfFrame(), NAMES);
+    const doc = page.nodes.find((n) => n.name === "IFRAME").frame;
+    assert.equal(canvasColor(doc), "rgb(9, 8, 7)");
+    assert.equal(canvasColor(page), "rgb(1, 2, 3)");
+    page.nodes.find((n) => n.name === "HTML").style["background-color"] = "rgb(4, 4, 4)";
+    assert.equal(canvasColor(page), "rgb(4, 4, 4)");
+    for (const n of doc.nodes) if (n.style) n.style["background-color"] = "rgba(0, 0, 0, 0)";
+    assert.equal(canvasColor(doc), null);
+  });
+});
+
+describe("webFontFiles", () => {
+  // A document of its own, with the @font-face rules of one style sheet.
+  function inDocument(faces, run) {
+    class FontFace {}
+    const rule = ({ family, src, weight, style }) =>
+      Object.assign(new FontFace(), {
+        style: {
+          getPropertyValue: (name) =>
+            ({
+              "font-family": family,
+              src: `url("${src}") format("woff2")`,
+              "font-weight": weight ?? "",
+              "font-style": style ?? "",
+            })[name],
+        },
+      });
+    const before = [globalThis.document, globalThis.CSSFontFaceRule];
+    globalThis.CSSFontFaceRule = FontFace;
+    globalThis.document = {
+      baseURI: "http://localhost/page",
+      styleSheets: [{ href: "http://localhost/assets/css/site.css", cssRules: faces.map(rule) }],
+    };
+    try {
+      return run();
+    } finally {
+      [globalThis.document, globalThis.CSSFontFaceRule] = before;
+    }
+  }
+  const key = (style, weight, family) => JSON.stringify([style, String(weight), "13px", family]);
+  const SITE = [
+    { family: '"Inter"', src: "../fonts/inter.woff2", weight: "100 900" },
+    { family: '"Inter"', src: "../fonts/inter-italic.woff2", weight: "100 900", style: "italic" },
+  ];
+  const pick = (faces, ...keys) => inDocument(faces, () => webFontFiles(keys));
+
+  test("a font is found by the name the page gives it, from the first family of its list that has a rule", () => {
+    const k = key("normal", 600, 'system-ui, Inter, "Segoe UI"');
+    assert.deepEqual(pick(SITE, k)[k], { url: "http://localhost/assets/fonts/inter.woff2", italic: false });
+    const none = key("normal", 400, "Arial, sans-serif");
+    assert.equal(pick(SITE, none)[none], null);
+  });
+
+  test("an italic run takes the italic rule, and an upright one the upright, whichever is written last", () => {
+    const [up, it] = [key("normal", 400, "Inter"), key("italic", 400, "Inter")];
+    const got = pick(SITE, up, it);
+    assert.equal(got[up].url.endsWith("inter.woff2"), true);
+    assert.equal(got[it].url.endsWith("inter-italic.woff2"), true);
+  });
+
+  test("of rules for single weights, the one that holds the weight, else the nearest from the side CSS prefers", () => {
+    const faces = [
+      { family: "Foo", src: "regular.woff2", weight: "400" },
+      { family: "Foo", src: "bold.woff2", weight: "bold" },
+    ];
+    const at = (w) =>
+      pick(faces, key("normal", w, "Foo"))
+        [key("normal", w, "Foo")].url.split("/")
+        .pop();
+    assert.deepEqual([300, 400, 500, 600, 700, 900].map(at), [
+      "regular.woff2",
+      "regular.woff2",
+      "regular.woff2",
+      "bold.woff2",
+      "bold.woff2",
+      "bold.woff2",
+    ]);
+  });
+
+  test("of rules that match alike, the last one", () => {
+    const faces = [
+      { family: "Foo", src: "one.woff2", weight: "400" },
+      { family: "Foo", src: "two.woff2", weight: "400" },
+    ];
+    const k = key("normal", 400, "Foo");
+    assert.equal(pick(faces, k)[k].url.endsWith("two.woff2"), true);
+  });
+});
+
+describe("web fonts as WOFF2", () => {
+  const read = (name) => fs.readFileSync(`${REPO_ROOT}/docs/assets/fonts/${name}`);
+  const dataUrl = (name) => `data:font/woff2;base64,${read(name).toString("base64")}`;
+
+  test("the tables a face is chosen by are read from the compressed font", () => {
+    const upright = readable(read("inter-variable.woff2"));
+    assert.equal(isVariable(upright), true);
+    assert.equal(cmapCoverage(upright).has("A".codePointAt(0)), true);
+    assert.equal(cmapCoverage(upright).has(0x4e00), false);
+    assert.deepEqual(faceStyle(upright), { weight: 400, italic: false });
+    assert.equal(faceStyle(readable(read("inter-variable-italic.woff2"))).italic, true);
+    // Any other font is left as it is.
+    const plain = Buffer.from("not woff2");
+    assert.equal(readable(plain), plain);
+  });
+
+  test("a variable font is one face for each weight a picture draws it at, and a run at that weight needs no bold", () => {
+    const fonts = new PictureFonts();
+    const inter = { family: "inter", data: dataUrl("inter-variable.woff2") };
+    const css400 = fonts.css("Aa", [{ ...inter, weight: "400" }], "400", "normal");
+    const css700 = fonts.css("Aa", [{ ...inter, weight: "700" }], "700", "normal");
+    const again = fonts.css("Bb", [{ ...inter, weight: "700" }], "700", "normal");
+    assert.deepEqual(
+      fonts.faces.map((f) => [f.name, f.weight, f.job.weight]),
+      [
+        ["f0", 400, 400],
+        ["f1", 700, 700],
+      ],
+    );
+    assert.equal(css400, 'font-family:"f0";font-weight:normal;font-style:normal');
+    assert.equal(css700, 'font-family:"f1";font-weight:normal;font-style:normal');
+    assert.equal(again, css700);
+    // The characters go to the face that has them: both are Latin, and Inter has them.
+    assert.equal(fonts.faces[1].used.has("B".codePointAt(0)), true);
+  });
+
+  test("an italic file is not slanted again", () => {
+    const fonts = new PictureFonts();
+    const css = fonts.css(
+      "a",
+      [{ family: "inter-italic", data: dataUrl("inter-variable-italic.woff2"), weight: "400" }],
+      "400",
+      "italic",
+    );
+    assert.equal(css, 'font-family:"f0";font-weight:normal;font-style:normal');
   });
 });
