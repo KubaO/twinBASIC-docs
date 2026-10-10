@@ -111,6 +111,15 @@ Measured on BETA 997:
   its file is left as it is** (`nearly`: one size, no channel more than 16 levels apart, at most
   0.5% of the pixels apart), reported `unchanged but for a capture's noise`, with a `.noise`
   picture under `--diffs`. The same test decides that a light picture is the dark one.
+- **A shot may name where the page flickers of its own accord** (`unsteady` in `capture`'s
+  options): a list of `{on, pad}`, `on` an annotation anchor (see [Annotations](#annotations))
+  and `pad` how far round its box, in CSS px (1 by default, an edge's anti-aliasing). Every
+  comparison `capture` makes leaves those pixels out (`same`, and `nearly`'s `rects`), and a
+  capture that matches the file or the dark picture outside them keeps that picture's bytes,
+  so the flicker never rewrites the file. Use it for a pixel no condition settles, as small as
+  the element allows: the WebView2 download page's Architecture arrow (`#architecture
+  .px-dropdown__icon`, 8 by 9) changes a pixel by more than the noise between any two
+  captures, animations and transitions off. A shot without it compares byte for byte.
 - **Settle by condition, not by sleep.** Fixed sleeps were most of a run (a closed menu leaves a
   2x8 px empty `#contextMenu`, so a wait for it to vanish always ran out its 2 s; ~3,000 calls).
   A menu is closed when it holds no items; a dialog is still when a MutationObserver has seen no
@@ -670,9 +679,7 @@ blur, an inline `<svg>` in the page other than the annotation layer (the help pa
 hundred pixels), and a frame of another process: Help_Window's and the Webpage pane's (which
 `webpage` pastes into the PNG from its own capture), so those pictures stay PNG. Of the `web`
 setup's two pages, the WebView2 download page (`94490c87`) is kept as PNG: its icons, drop-down
-lists and annotation do not come out (not looked into: it is Microsoft's page, taken once).
-Since 2026-10-10 that live page does not settle: one pixel of a drop-down's arrow changes by
-more than a capture's noise between any two captures, CSS animations and transitions off, so
-`capture` fails it ("kept changing"); its committed PNG stands. Drawn wrongly: a collapsed table
+lists and annotation do not come out (not looked into: it is Microsoft's page, taken once); its
+Architecture arrow is an `unsteady` region. Drawn wrongly: a collapsed table
 border, doubled (the IDE has none). A canvas is a raster (the editor's minimap is drawn with
 `putImageData`). The run reports each under "not drawn".

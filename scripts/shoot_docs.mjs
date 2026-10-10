@@ -512,9 +512,10 @@ function writeDiff(name, out, before, after, { suffix = "", labels } = {}) {
 // at a rounded corner, in a scaled bitmap (34 pixels; 81 on About's Close button; the most, 563
 // along a dialog's top edge, 0.13% of it). A change the IDE draws moves text or colour by far
 // more than 16 levels.
+// The pixels inside `rects` (unsteadyRects) are left out.
 const NOISE_LEVELS = 16;
 const NOISE_SHARE = 0.005;
-function nearly(a, b) {
+function nearly(a, b, rects = []) {
   const A = decodePng(a);
   const B = decodePng(b);
   if (A.width !== B.width || A.height !== B.height) return false;
@@ -523,10 +524,55 @@ function nearly(a, b) {
   for (let i = 0; i < A.rgba.length; i += 4) {
     let d = 0;
     for (let k = 0; k < 4; k++) d = Math.max(d, Math.abs(A.rgba[i + k] - B.rgba[i + k]));
-    if (!d) continue;
+    if (!d || inRects(rects, (i / 4) % A.width, Math.floor(i / 4 / A.width))) continue;
     if (d > NOISE_LEVELS || ++apart > most) return false;
   }
   return true;
+}
+
+const inRects = (rects, x, y) => rects.some((r) => x >= r.x0 && x < r.x1 && y >= r.y0 && y < r.y1);
+
+// Whether two captures are the same picture outside `rects`: byte for byte when there are none.
+function same(a, b, rects) {
+  if (a.equals(b)) return true;
+  if (!rects.length) return false;
+  const A = decodePng(a);
+  const B = decodePng(b);
+  if (A.width !== B.width || A.height !== B.height) return false;
+  for (let i = 0; i < A.rgba.length; i += 4) {
+    if (
+      A.rgba[i] === B.rgba[i] &&
+      A.rgba[i + 1] === B.rgba[i + 1] &&
+      A.rgba[i + 2] === B.rgba[i + 2] &&
+      A.rgba[i + 3] === B.rgba[i + 3]
+    )
+      continue;
+    if (!inRects(rects, (i / 4) % A.width, Math.floor(i / 4 / A.width))) return false;
+  }
+  return true;
+}
+
+// Where in a capture of `clip` the page draws differently from frame to frame of its own accord,
+// which no comparison of captures counts: a shot's `unsteady` regions, each `{on, pad}`, an
+// annotation anchor (lib/shot-annotate.mjs) and how far round its box, in CSS pixels (1 by
+// default, an edge's anti-aliasing), as device-pixel rects of the capture. A clip is in the
+// document's coordinates; a capture of the whole window, in the window's.
+async function unsteadyRects(conn, clip, unsteady) {
+  if (!unsteady?.length) return [];
+  const boxes = await resolveAnchors(conn, Object.fromEntries(unsteady.map((u, k) => [`u${k}`, u.on])));
+  const scroll = clip ? await conn.evaluate("({ x: scrollX, y: scrollY })") : { x: 0, y: 0 };
+  const ox = (clip?.x ?? 0) - scroll.x;
+  const oy = (clip?.y ?? 0) - scroll.y;
+  return unsteady.map((u, k) => {
+    const b = boxes[`u${k}`];
+    const pad = u.pad ?? 1;
+    return {
+      x0: Math.floor((b.x - pad - ox) * SCALE),
+      y0: Math.floor((b.y - pad - oy) * SCALE),
+      x1: Math.ceil((b.x + b.width + pad - ox) * SCALE),
+      y1: Math.ceil((b.y + b.height + pad - oy) * SCALE),
+    };
+  });
 }
 
 // The pauses between the captures `capture` takes of one state, in milliseconds: the
@@ -539,8 +585,9 @@ const REST_MS = 1000;
 // when the page's visible text holds the user name. `away` first takes the mouse
 // where it touches nothing, since a control under it draws its hover look, unless
 // the picture is of what the mouse rests on. `keep` makes it a cut-out, on a ground
-// of the colour `solid` when that is given.
-async function capture(conn, name, clip, { frame, away = null, keep = null, solid = null } = {}) {
+// of the colour `solid` when that is given. `unsteady` names where the page draws
+// differently from frame to frame of its own accord (unsteadyRects).
+async function capture(conn, name, clip, { frame, away = null, keep = null, solid = null, unsteady = null } = {}) {
   const text = await textOf(conn, frame);
   const at = text.toLowerCase().indexOf(USER.toLowerCase());
   if (at >= 0) {
@@ -590,21 +637,25 @@ async function capture(conn, name, clip, { frame, away = null, keep = null, soli
       }
       return png;
     };
+    // Outside its unsteady regions a capture is compared byte for byte, as everywhere else;
+    // one that matches the file or the dark picture there keeps that picture's bytes, so a
+    // pixel that flickers does not rewrite the file on every run.
+    const masks = await unsteadyRects(conn, clip, unsteady);
     let last = null;
     let agreed = null;
     for (let i = 0; ; i++) {
       const { data } = await conn.send("Page.captureScreenshot", params);
       const png = Buffer.from(data, "base64");
-      if (want?.equals(png)) return await picked(png);
-      if (prefer && i === 0 && !nearly(prefer, png)) prefer = null;
-      if (prefer?.equals(png)) return await picked(png);
-      if (last && !last.equals(png) && conn.shot.out) {
+      if (want && same(want, png, masks)) return await picked(want);
+      if (prefer && i === 0 && !nearly(prefer, png, masks)) prefer = null;
+      if (prefer && same(prefer, png, masks)) return await picked(prefer);
+      if (last && !same(last, png, masks) && conn.shot.out) {
         writeDiff(conn.shot.name, conn.shot.out, last, png, {
           suffix: `.capture-${i}`,
           labels: { before: `CAPTURE ${i - 1}`, after: `CAPTURE ${i}` },
         });
       }
-      if (last?.equals(png)) agreed = png;
+      if (last && same(last, png, masks)) agreed = png;
       if (agreed && !want && !prefer) return await picked(agreed);
       if (i === CAPTURE_GAPS.length) break;
       last = png;
@@ -7074,7 +7125,11 @@ const webView2Shot = {
         { type: "arrow", from: { of: WV2_CARD, at: "left", dx: -44 }, to: { of: WV2_CARD, at: "left", dx: -2 } },
         { type: "ring", on: { css: "button", text: "x86" } },
       ]);
-      return await capture(c, "webview2", await pageClip(c, union(area, box), WV2_WIDTH));
+      // The Architecture list's arrow, an 8 by 9 inline SVG, changes a pixel by more than a
+      // capture's noise from frame to frame, with animations and transitions off.
+      return await capture(c, "webview2", await pageClip(c, union(area, box), WV2_WIDTH), {
+        unsteady: [{ on: { css: "#architecture .px-dropdown__icon" } }],
+      });
     } finally {
       await unannotate(c);
     }
