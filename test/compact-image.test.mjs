@@ -511,6 +511,24 @@ const SVG_REFERENCES_STRIPPED =
   '<image href="data:image/svg+xml,&lt;svg a=&quot;b&quot;&gt;&lt;/svg&gt;"/>' +
   `<style><![CDATA[ .a { cursor: url(&quot;data:image/png;base64,${GIMP_PNG.toString("base64")}&quot;) } ]]></style></svg>`;
 
+// A style sheet that embeds a PNG, and what it is with the PNG stripped, and the two in a CSS file
+// that imports it in base64 and as text, as it imports one it cannot read, and in an SVG's
+// <?xml-stylesheet?>. In the text, only the PNG's characters change: those around it stay escaped.
+const SHEET = `.a { background: url(data:image/png;base64,${GIMP_PNG.toString("base64")}) }`;
+const [SHEET_HEAD, SHEET_TAIL] = SHEET.split(GIMP_PNG.toString("base64"));
+const LEAN_PNG = compactPng(GIMP_PNG).toString("base64");
+const SHEETS_CSS =
+  `@import url("data:text/css;base64,${b64(SHEET)}");\n` +
+  `@import url("data:text/css,${encodeURIComponent(SHEET)}");\n` +
+  '@import url("data:text/css,%ZZ");\n' +
+  '@import url("data:text/css;base64,A===");\n';
+const SHEETS_CSS_STRIPPED =
+  `@import url("data:text/css;base64,${b64(SHEET_HEAD + LEAN_PNG + SHEET_TAIL)}");\n` +
+  `@import url("data:text/css,${encodeURIComponent(SHEET_HEAD)}${LEAN_PNG}${encodeURIComponent(SHEET_TAIL)}");\n` +
+  '@import url("data:text/css,%ZZ");\n' +
+  '@import url("data:text/css;base64,A===");\n';
+const SVG_SHEET = `<?xml-stylesheet type="text/css" href="data:text/css,${encodeURIComponent(SHEET)}"?><svg/>`;
+
 describe("stripFile", () => {
   test("reads base64 as a browser reads a data: URI", () => {
     const decode = (s) => decodeBase64(Buffer.from(s, "latin1"));
@@ -574,6 +592,24 @@ describe("stripFile", () => {
     assert.equal(r.output.toString(), SVG_REFERENCES_STRIPPED);
     // The SVG, the two PNGs it reads, and the SVG written with references; not the PNG in CDATA.
     assert.deepEqual([r.images, r.stripped, r.relabelled], [4, 3, 0]);
+  });
+
+  test("strips the images of a style sheet in a data: URI, in base64 and as text", () => {
+    const r = stripFile(Buffer.from(SHEETS_CSS));
+    assert.equal(r.output.toString(), SHEETS_CSS_STRIPPED);
+    // A style sheet is not an image: the two PNGs are.
+    assert.deepEqual([r.images, r.stripped, r.relabelled], [2, 2, 0]);
+    assert.deepEqual(r.reports, [
+      { line: 3, message: "a style sheet this cannot read; left unchanged" },
+      { line: 4, message: "labelled text/css, but its base64 cannot be read; left unchanged" },
+    ]);
+    assert.equal(
+      stripFile(Buffer.from(SVG_SHEET), { svg: true }).output.toString(),
+      SVG_SHEET.replace(
+        encodeURIComponent(SHEET),
+        encodeURIComponent(SHEET_HEAD) + LEAN_PNG + encodeURIComponent(SHEET_TAIL),
+      ),
+    );
   });
 });
 
@@ -703,6 +739,8 @@ function corpusCss() {
     `.b2 { background: url("data:image/png;base64,\\69 ${gimp.slice(1)}"); }`,
     '.b3 { background: url("data:image/png;base64,A==="); }',
     `.b4 { background: x data:image/png;base64,${gimp}; }`,
+    // Style sheets in base64 and as text, as @import writes them, and two that cannot be read.
+    ...SHEETS_CSS.trimEnd().split("\n"),
   );
   return Buffer.from(`${lines.join("\r\n")}\r\n`, "utf8");
 }
@@ -775,6 +813,7 @@ describe("imagestrip", { skip: toolSkip }, () => {
       /but its base64 cannot be read/,
       /an SVG this cannot read/,
       /an SVG that is not UTF-8/,
+      /a style sheet this cannot read/,
     ])
       assert.ok(
         e.reports.some((x) => kind.test(x.message)),
@@ -788,6 +827,7 @@ describe("imagestrip", { skip: toolSkip }, () => {
     await strip("latin1.svg", ascii("<svg><title>Zo\xeb</title><!-- x --></svg>"));
     await strip("stylesheet.svg", Buffer.from(`\r\n${SVG_STYLESHEET}\r\n<!-- x -->`));
     await strip("references.svg", Buffer.from(SVG_REFERENCES));
+    await strip("sheet.svg", Buffer.from(SVG_SHEET));
   });
 
   test("changes nothing when run on what it wrote", async () => {

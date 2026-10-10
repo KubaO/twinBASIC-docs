@@ -874,7 +874,8 @@ function payloadEnd(t, n, css, start, comma, ref) {
  * of a CSS file (css), or the UTF-16 units of an SVG. A URI's header runs from
  * data: to a comma, in at most 127 characters; its text, to its closer. An
  * image in base64 is known by its bytes, whatever its label, and an SVG by its
- * label. at(i) is the offset in the file a report on a URI at t[i] names; ref,
+ * label, as is a style sheet (text/css), whose images are stripped in turn.
+ * at(i) is the offset in the file a report on a URI at t[i] names; ref,
  * for an SVG, says which units were written as references (xmlDecode).
  */
 function scanUris(t, n, css, ctx, at, ref = null) {
@@ -907,20 +908,35 @@ function stripUri(t, n, css, start, comma, edits, ctx, pos, ref) {
   for (let k = start + 5; k < comma; k++) header += String.fromCharCode(t[k]);
   const label = header.split(";")[0].toLowerCase();
   const base64 = header.toLowerCase().endsWith(";base64");
-  if (!base64 && label !== "image/svg+xml") return -1;
+  // A style sheet is stripped as a CSS file is: the images it embeds.
+  const sheet = label === "text/css";
+  if (!base64 && label !== "image/svg+xml" && !sheet) return -1;
   const end = payloadEnd(t, n, css, start, comma, ref);
   if (end <= comma + 1) return -1;
   const url = css ? cssUnescape(t, comma + 1, end) : unitsUtf8(t, comma + 1, end);
   if (!base64) {
-    const svg = url.bytes.length ? percentDecode(url) : null;
-    const inner = svg && stripSvgBytes(Buffer.from(svg.bytes), ctx, () => pos);
-    if (!inner) ctx.report(pos, "an SVG this cannot read; left unchanged");
-    else for (const x of inner) edits.push({ start: svg.s[x.start], end: svg.e[x.end - 1], text: x.text });
+    const text = url.bytes.length ? percentDecode(url) : null;
+    const inner = !text
+      ? null
+      : sheet
+        ? scanUris(text.bytes, text.bytes.length, true, ctx, () => pos)
+        : stripSvgBytes(Buffer.from(text.bytes), ctx, () => pos);
+    if (!inner) ctx.report(pos, `${sheet ? "a style sheet" : "an SVG"} this cannot read; left unchanged`);
+    else for (const x of inner) edits.push({ start: text.s[x.start], end: text.e[x.end - 1], text: x.text });
     return end;
   }
   const data = decodeBase64(url.bytes);
   if (!data) {
-    if (label.startsWith("image/")) ctx.report(pos, `labelled ${label}, but its base64 cannot be read; left unchanged`);
+    if (label.startsWith("image/") || sheet)
+      ctx.report(pos, `labelled ${label}, but its base64 cannot be read; left unchanged`);
+    return end;
+  }
+  if (sheet) {
+    const out = applyEdits(
+      data,
+      scanUris(data, data.length, true, ctx, () => pos),
+    );
+    if (!out.equals(data)) edits.push({ start: comma + 1, end, text: out.toString("base64") });
     return end;
   }
   let kind = label;

@@ -96,6 +96,34 @@ Module FileTests
     End Sub
 
     [TestCase]
+    Public Sub StripsTheImagesOfAStyleSheetInADataUri()
+        Dim head As String, tail As String, gimp As String, lean As String, css As String, expected As String, svg As String
+        ' A style sheet that embeds a PNG, imported in base64 and as text, and two that cannot be
+        ' read. In the text, only the PNG's characters change: those around it stay escaped.
+        head = ".a { background: url(data:image/png;base64,"
+        tail = ") }"
+        gimp = B64(GimpPng())
+        lean = B64(CompactPngOf(GimpPng()))
+        css = "@import url(""data:text/css;base64," & B64(Utf8(head & gimp & tail)) & """);" & vbLf & _
+              "@import url(""data:text/css," & UrlText(head & gimp & tail) & """);" & vbLf & _
+              "@import url(""data:text/css,%ZZ"");" & vbLf & _
+              "@import url(""data:text/css;base64,A==="");" & vbLf
+        expected = "@import url(""data:text/css;base64," & B64(Utf8(head & lean & tail)) & """);" & vbLf & _
+                   "@import url(""data:text/css," & UrlText(head) & lean & UrlText(tail) & """);" & vbLf & _
+                   "@import url(""data:text/css,%ZZ"");" & vbLf & _
+                   "@import url(""data:text/css;base64,A==="");" & vbLf
+        Assert.Strict.AreEqual expected, StripText(css, False)
+        ' A style sheet is not an image: the two PNGs are.
+        Assert.Strict.AreEqual "2 2 0", Counts()
+        Assert.Strict.AreEqual "3: a style sheet this cannot read; left unchanged" & _
+                               " | 4: labelled text/css, but its base64 cannot be read; left unchanged", ReportsText()
+        ' And in an SVG's <?xml-stylesheet?>.
+        svg = "<?xml-stylesheet type=""text/css"" href=""data:text/css," & UrlText(head & gimp & tail) & """?><svg/>"
+        Assert.Strict.AreEqual "<?xml-stylesheet type=""text/css"" href=""data:text/css," & UrlText(head) & lean & UrlText(tail) & """?><svg/>", _
+                               StripText(svg, True)
+    End Sub
+
+    [TestCase]
     Public Sub WritesAnEmptyFileForAnEmptyOne()
         Assert.Strict.AreEqual 0&, Size(StripBytes(Cat(), False))
         Assert.Strict.AreEqual "0 0 0", Counts()

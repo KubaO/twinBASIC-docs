@@ -269,12 +269,15 @@ Module Strip
         Dim url() As Byte, us() As Long, ue() As Long, un As Long
         Dim svg() As Byte, ss() As Long, se() As Long, sn As Long, inner As EditList
         Dim data() As Byte, dataLen As Long, clean() As Byte, cleanLen As Long, kind As String, changed As Boolean
+        Dim isSheet As Boolean, readable As Boolean, sheetUnits() As Long, noMap() As Long, noRef() As Boolean
         StripUri = -1
         header = Bytes.UnitsText(t, start + 5, comma - start - 5)
         semi = InStr(header, ";")
         If semi > 0 Then label = LCase$(Left$(header, semi - 1)) Else label = LCase$(header)
         isBase64 = (LCase$(Right$(header, 7)) = ";base64")
-        If Not isBase64 And label <> "image/svg+xml" Then Exit Function
+        ' A style sheet is stripped as a CSS file is: the images it embeds.
+        isSheet = (label = "text/css")
+        If Not isBase64 And label <> "image/svg+xml" And Not isSheet Then Exit Function
         finish = PayloadEnd(t, n, css, start, comma, ref, hasRef)
         If finish <= comma + 1 Then Exit Function
         StripUri = finish
@@ -285,15 +288,26 @@ Module Strip
         End If
 
         If Not isBase64 Then
-            ' An SVG written as text keeps its encoding: what it loses is cut out of the text as the
-            ' file has it.
+            ' An SVG or a style sheet written as text keeps its encoding: what it loses is cut out of
+            ' the text as the file has it.
             sn = -1
             If un > 0 Then sn = PercentDecode(url, un, us, ue, svg, ss, se)
             Set inner = New EditList
-            If sn < 0 Then
-                Warn pos, "an SVG this cannot read; left unchanged"
-            ElseIf Not StripSvgBytes(svg, sn, inner, pos) Then
-                Warn pos, "an SVG this cannot read; left unchanged"
+            readable = (sn >= 0)
+            If readable Then
+                If isSheet Then
+                    ToLongs svg, sn, sheetUnits
+                    ScanUris sheetUnits, sn, True, noMap, pos, inner, noRef, False
+                Else
+                    readable = StripSvgBytes(svg, sn, inner, pos)
+                End If
+            End If
+            If Not readable Then
+                If isSheet Then
+                    Warn pos, "a style sheet this cannot read; left unchanged"
+                Else
+                    Warn pos, "an SVG this cannot read; left unchanged"
+                End If
             Else
                 For k = 0 To inner.Count - 1
                     edits.Add ss(inner.StartOf(k)), se(inner.EndOf(k) - 1), inner.TextOf(k)
@@ -304,7 +318,15 @@ Module Strip
 
         ' An image in base64 is known by its bytes, not by its label, and is labelled with what it is.
         If Not Bytes.Base64Decode(url, 0, un, data, dataLen) Then
-            If Left$(label, 6) = "image/" Then Warn pos, "labelled " & label & ", but its base64 cannot be read; left unchanged"
+            If Left$(label, 6) = "image/" Or isSheet Then Warn pos, "labelled " & label & ", but its base64 cannot be read; left unchanged"
+            Exit Function
+        End If
+        If isSheet Then
+            Set inner = New EditList
+            ToLongs data, dataLen, sheetUnits
+            ScanUris sheetUnits, dataLen, True, noMap, pos, inner, noRef, False
+            cleanLen = inner.Apply(data, dataLen, clean)
+            If Not SameBytes(data, dataLen, clean, cleanLen) Then edits.Add comma + 1, finish, Bytes.Base64Text(clean, cleanLen)
             Exit Function
         End If
         kind = label
@@ -570,6 +592,16 @@ Module Strip
         ReDim Preserve out(0 To k - 1)
         PercentDecode = k
     End Function
+
+    ' b[0, n) as units, which is what ScanUris reads a CSS file as.
+    Private Sub ToLongs(b() As Byte, ByVal n As Long, out() As Long)
+        Dim i As Long
+        If n <= 0 Then Exit Sub
+        ReDim out(0 To n - 1)
+        For i = 0 To n - 1
+            out(i) = b(i)
+        Next
+    End Sub
 
     Private Function SameBytes(a() As Byte, ByVal an As Long, b() As Byte, ByVal bn As Long) As Boolean
         Dim i As Long
