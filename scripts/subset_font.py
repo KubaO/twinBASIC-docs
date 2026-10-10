@@ -46,6 +46,35 @@ def subset_options():
     return options
 
 
+def patch_gvar_subset():
+    """Makes fontTools' subsetter take a gvar with glyphs missing, as the rest of fontTools does.
+
+    A glyph with no entry in gvar.variations has no variation: gvar's own
+    compile reads each glyph with variations.get(name, []), and the instancer
+    deletes the entry of every glyph a partial instance leaves without one.
+    The subsetter's gvar step (fontTools 4.65.0, subset/__init__.py,
+    subset_glyphs for gvar) looks each kept glyph up instead, so pinning the
+    weight of a font that keeps another axis (Segoe UI Variable has opsz)
+    fails with KeyError '.notdef', the glyph it always keeps.  This is that
+    step with a missing glyph read as none, which for a complete table is
+    what it already did; delete it once fontTools does the same.
+    """
+    from fontTools import subset  # noqa: F401  (registers the subsetter's methods)
+    from fontTools.ttLib import getTableClass
+
+    gvar = getTableClass("gvar")
+    if getattr(gvar.subset_glyphs, "missing_glyphs_as_none", False):
+        return
+
+    def subset_glyphs(self, s):
+        self.variations = {g: self.variations.get(g, []) for g in s.glyphs}
+        self.glyphCount = len(self.variations)
+        return bool(self.variations)
+
+    subset_glyphs.missing_glyphs_as_none = True
+    gvar.subset_glyphs = subset_glyphs
+
+
 def subset_font(raw, index, unicodes, hinting=True, weight=None):
     """The font in `raw` (face `index` of a collection) as a woff2 holding `unicodes`.
 
@@ -57,11 +86,13 @@ def subset_font(raw, index, unicodes, hinting=True, weight=None):
     side bearing left as it was moves the glyph sideways.
 
     `weight` cuts a variable font at that weight first (held to the range of
-    its weight axis), so that the subset is a static face of exactly the
-    weight a run was drawn at; a font with no weight axis is left as it is.
+    its weight axis), so that the subset draws exactly the weight a run was
+    drawn at; its other axes stay variable, as they were in the page, and a
+    font with no weight axis is left as it is.
     """
     from fontTools import subset
 
+    patch_gvar_subset()
     options = subset_options()
     options.font_number = index
     options.hinting = hinting

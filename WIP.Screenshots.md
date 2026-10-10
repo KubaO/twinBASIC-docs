@@ -631,12 +631,21 @@ snapshot: it is reported as "a frame of another process" (Help_Window's, the Web
 **Web fonts** are found by CSS font matching on the run's `font-family` list, style and weight
 (`webFontFiles`, in the page), not by the face's own name: the site's Inter calls itself "Inter
 Variable", and the last rule of a family was its italic file. A variable WOFF2 is read in
-`fonts.mjs` and cut at each weight the picture uses (`subset_font.py`'s `weight`). A font
-fontTools cannot cut gets no face and its text falls back, reported as "text in a font that
-could not be cut" (`subset_font.py` answers that job with an error instead of failing the run).
+`fonts.mjs` and cut at each weight the picture uses (`subset_font.py`'s `weight`); its other
+axes stay variable. A font fontTools cannot cut gets no face and its text falls back, reported
+as "text in a font that could not be cut" (`subset_font.py` answers that job with an error
+instead of failing the run).
+
+**fontTools is patched** for that weight cut (`patch_gvar_subset` in `subset_font.py`). Pinning
+one axis of a font that keeps another (Segoe UI Variable: `wght` and `opsz`) leaves `gvar`
+without entries for the glyphs left with no variation, which the rest of fontTools reads as
+none; the subsetter's `gvar` step (4.65.0) looks every kept glyph up and fails with `KeyError
+'.notdef'`. The patch reads a missing glyph as none; with no axis pinned it writes the same
+bytes as fontTools' own. Delete it once fontTools does the same (no issue filed upstream yet).
 
 **The platform's own scrollbar** (`paintNativeScrollbars`) is the Fluent one Edge and the
-IDE's WebView2 draw (on this Windows 10 machine too): 15 px, a round-ended 9 px thumb, arrows 9.5 by 4.75, `scrollbar-color` where it is set, else the
+IDE's WebView2 draw (on this Windows 10 machine too): 15 px, a round-ended 9 px thumb, arrows
+9.5 by 4.75, `scrollbar-color` where it is set, else the
 light or dark default by `color-scheme`; the docs site's dark theme sets `scrollbar-color`, which
 turns its own `::-webkit-scrollbar` rules off. **A focus ring** (`outline-style: auto`,
 `paintFocusRing`) is a 2 px band in the outline colour and a 1 px white one outside it. Both were
@@ -660,8 +669,10 @@ conic gradients, the 2011 `-webkit-radial-gradient`, `filter: hue-rotate`, an in
 blur, an inline `<svg>` in the page other than the annotation layer (the help pane's gear, a few
 hundred pixels), and a frame of another process: Help_Window's and the Webpage pane's (which
 `webpage` pastes into the PNG from its own capture), so those pictures stay PNG. Of the `web`
-setup's two pages, the WebView2 download page (`94490c87`) is kept as PNG: its font is one
-fontTools cannot cut (`'.notdef'`), and its icons, drop-down lists and annotation do not come out
-either (not looked into: it is Microsoft's page, taken once). Drawn wrongly: a collapsed table
+setup's two pages, the WebView2 download page (`94490c87`) is kept as PNG: its icons, drop-down
+lists and annotation do not come out (not looked into: it is Microsoft's page, taken once).
+Since 2026-10-10 that live page does not settle: one pixel of a drop-down's arrow changes by
+more than a capture's noise between any two captures, CSS animations and transitions off, so
+`capture` fails it ("kept changing"); its committed PNG stands. Drawn wrongly: a collapsed table
 border, doubled (the IDE has none). A canvas is a raster (the editor's minimap is drawn with
 `putImageData`). The run reports each under "not drawn".
