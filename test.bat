@@ -84,6 +84,12 @@ node --test test/png.test.mjs
 @rem No tree, no browser, well under a second.
 node --test test/compact-image.test.mjs
 @if errorlevel 1 goto :fail
+@rem An SVG screenshot is written on one line (scripts/svgshot/snapshot-svg.mjs's
+@rem oneLine), so that a CRLF checkout changes only its last line ending. What
+@rem it keeps of an image it embeds is compact-image.test.mjs's, above.
+@rem No tree, no browser, well under a second.
+node --test test/svgshot.test.mjs
+@if errorlevel 1 goto :fail
 @rem check_examples.mjs's probes: batching, crash isolation through a fake
 @rem lane, the canaries and the fence classifier. check_examples.mjs needs a
 @rem twinBASIC install, so it runs only by hand; its probes need none.

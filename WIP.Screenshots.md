@@ -156,7 +156,7 @@ as the IDE's own pop-up list, beside the select.
 
 ## The tool
 
-`scripts/shoot_docs.mjs [--only <regex>] [--port N] [--ide <path>] [--jobs N] [--diffs <dir>]`,
+`scripts/shoot_docs.mjs [--only <regex>] [--out <dir>] [--port N] [--ide <path>] [--jobs N] [--diffs <dir>] [--svg]`,
 with the current tool's exit codes (0, 1 a picture failed, 2 the tool could not run, 3 not put
 back).
 
@@ -607,3 +607,102 @@ Format menu; Properties and Toolbox; replicas and composites; code views).
   the file's text, so `frmCustomJson.tbform` holds `"MyField": 0` (in `frmCustom` it would
   override `= 42` in 1b). Setup `sample9` opens Sample 9, whose `WebView_Create` is unchanged.
 
+## Pictures as SVG
+
+`--svg` writes each picture a second time, as `X.svg` (and `X.light.svg`), drawn from the page
+the PNG was just captured from, and the build shows it in place of the PNG
+([WIP.Build.md, Pictures as SVG](WIP.Build.md#pictures-as-svg)).
+
+**Owner's decisions (2026-10-09 and 10):**
+
+- Text is real text, in per-picture subsets of the fonts the IDE drew it with, cut by fontTools
+  (`scripts/subset_font.py`), hinting kept. Glyph outlines were rejected (they render poorly);
+  harfbuzzjs was tried and removed ("don't mess with harfbuzz").
+- The PNG and the SVG are both committed. One SVG per theme: a single SVG switching on CSS
+  variables and a `#light` fragment was proposed and dropped.
+- Pages name `X.png` and the build substitutes; `png` in the attribute block keeps the PNG.
+- `picture_svg` in `_config.yml` per output: online and book on, offline (and so the help
+  archive) off.
+- No `<picture>` fallback for old browsers; the per-picture `png` instead.
+
+**How a picture is drawn** (`scripts/svgshot/`):
+
+- `capture.mjs`'s `svgOfPage` reads, while the page is as captured: a DOM snapshot (layout, text
+  fragments, computed styles, paint order); then, from a measuring layer added after it, each
+  font's ascent and the fonts Chromium drew each run with (`CSS.getPlatformFontsForNode`); the
+  canvases' pixels, the web fonts' bytes, the annotation layer as XML; and the styles of each
+  scrolling box's scrollbar parts.
+- `snapshot-svg.mjs`'s `renderSvg` makes one paint item per layout object, in the snapshot's
+  paint order. Boxes are snapped to whole CSS px, since the IDE lays out at 1x and is only drawn
+  at 2x; text, and the text a control draws, keeps its exact position. What the snapshot lacks is
+  drawn as replicas of what Chromium paints: a closed `<select>`, a checkbox and a radio button,
+  an input's and a textarea's text (scrolled), and scrollbars styled with `::-webkit-scrollbar`.
+- **An embedded image keeps its pixels and any notice of whose it is, and nothing else**
+  (owner, 2026-10-10). `renderSvg` passes each through `compactImage` from
+  `scripts/lib/compact-image.mjs`, which `scripts/imagestrip/` matches; what it keeps and why
+  is in [WIP.Build.md](WIP.Build.md) beside `imagestrip`, and `test/compact-image.test.mjs`
+  tests it. In the pictures: CorelDRAW's and Illustrator's comments were in 50 picture SVGs
+  before it, and GIMP's built-in sRGB profile (672 bytes) in 153, 364 KB in all. The 42
+  distinct icons that dropping the profile changed decode to the same pixels in Edge 155 and
+  Chromium 148; a `gAMA` 1.0 control does not. The 318 by 346 pixels of a 16-pixel icon such
+  as tB-Red are the IDE's own asset at its own size, and stay so (owner, 2026-10-10).
+- `fonts.mjs` gives each run's characters to the font files Chromium used for them, and
+  `subset_font.py` cuts each file to the characters drawn, as WOFF2.
+- `diff.mjs` renders the SVG as an `<img>` at 2x and compares it with the PNG by luminance and
+  alpha, a shift of one device pixel allowed, so that the PNGs' ClearType fringes mostly cancel
+  out.
+- **The SVG's size is the PNG's.** A clip half a CSS pixel past a whole one (a menu 168.5 wide)
+  is captured a device pixel short of it, 168 wide, from the same origin; an SVG of the whole
+  clip shows the half of the edge the PNG cuts off. That column alone put a small picture past
+  the bar (a 16-pixel icon at 11%, a menu at 0.5%), so `capture` gives `svgOfPage` the clip
+  with the PNG's width and height.
+- **The bar** (`SVG_FAITHFUL` in `shoot_docs.mjs`): an SVG with more than 0.25% of its pixels 96
+  grey levels or more off is not written, and an older one is removed. Anything not drawn falls
+  to it.
+- **One line** (`oneLine`). Git checks a picture's SVG out with CRLF where `core.autocrlf` says
+  so, since no `.gitattributes` rule can tell it from a diagram's SVG. An SVG icon embedded as
+  text and the annotation layer's XML hold line breaks; so each is written as the space an XML
+  parser makes of a break inside a tag, or `&#10;` in text, the same character. A checkout then
+  changes only the last line ending, which `keepSvg` ignores when it compares.
+
+**Scrollbars.** The IDE styles every scrollbar with `::-webkit-scrollbar` rules
+(`ide/styles.css`, coloured by theme variables), a second family under `.modalDialogContainer`.
+`getComputedStyle` cannot name a scrollbar part or a state such as `:vertical`, and a rule's text
+cannot be copied onto an element of the tool's own: Chromium drops a `var()` shorthand from
+`cssText` once a longhand overrides part of it, as the thumb's `background-clip` does its
+`background: var(...)`. So `scrollbarParts` gives each rule that styles this element's
+scrollbars, for a moment, one more selector, matching a probe element per part with the
+specificity of the selector it stands for; Chromium cascades and resolves the `var()`s, and the
+rules are put back. The parts are laid out as Chromium's custom scrollbar theme does: a button's
+length its `height` (vertical) or `width`, `auto` being the platform's scrollbar thickness, which
+the page measures; the thumb as long as its share of the content, never shorter than its own
+length, whose `auto` is 17 px (Windows' thumb length at 96 DPI; no page property shows it, and
+the bench checks it); its place from the snapshot's scroll offset. A corner rule left with no
+declaration (the IDE's `background-color: transaprent`) still gives the corner a style of its
+own, transparent. The buttons' arrows blend into the track with `background-blend-mode:
+hard-light`, drawn as an isolated group with `mix-blend-mode`.
+
+**Drop-down lists.** The label is set from the box's exact position: a table cell can put a
+select at x.5, where Chromium snaps the border to the pixel grid but not the text. It sits in the
+content box less 4 px at the start and the arrow's 16 px box at the end, aligned by
+`text-align-last`, else `text-align` (a select does not take it from its cell), and is cut at
+that box. The chevron is 8 by 4 px, stroked 2 px wide, centred in the 16 px box at the padding
+box's right edge whatever the padding, its top 2 px above the box's middle rounded down: fitted
+against Chromium's own arrow in Edge.
+
+**The bench** (`node scripts/svgshot/bench.mjs`, outside every gate, needs Edge and fontTools)
+draws the pages under `scripts/svgshot/bench/` (scrollbars, drop-down lists) with the converter
+and compares them with the browser's own picture: in Edge, whose Chromium is the IDE's WebView2's
+(Puppeteer's trails it, and draws the select's arrow otherwise), laid out at 1x and drawn at 2x
+as the IDE is, text without ClearType. Each page is held to the figures recorded in
+`bench/baseline.json` (`--update` records them): no page comes out exact, and a fixed limit
+missed a fault fixed while the bench was written (arrows a quarter too tall moved a page from
+0.025% to 0.064%). `node scripts/svgshot/pixels.mjs <png> x y w h --beside <png>` prints a
+rectangle of two pictures as letters, one per colour: how an edge, a stroke or a blend came out.
+A new replica gets a page there.
+
+**Not drawn yet:** the platform's own scrollbars, a textarea's resize grip, a number input's spin
+buttons, an indeterminate checkbox, conic gradients, the 2011 `-webkit-radial-gradient`, `filter:
+hue-rotate`, an inset shadow's blur, the help pane's cross-origin frame. Drawn wrongly: a
+collapsed table border, doubled (the IDE has none). A canvas is a raster (the editor's minimap is
+drawn with `putImageData`). The run reports each under "not drawn".

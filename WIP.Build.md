@@ -91,7 +91,7 @@ yet designed; the plan holds measurements and open questions for them.
 
 ## Tooling policy
 
-### Tooling is JavaScript, and the two remaining `.py` files each have a reason
+### Tooling is JavaScript, and the three remaining `.py` files each have a reason
 
 Everything under `scripts/`, `builder/`, `lib/`, `book/`, `eval/` and `wisdom/` is Node.js.
 One trap: **a tool that rewrites a file must preserve its line endings
@@ -100,7 +100,7 @@ universal-newline translation, rewriting any LF file it touches to CRLF on Windo
 --- a whole-file diff for a one-character fix. Some of the tree's markdown files
 are LF, so the trap is live.
 
-Two `.py` files stay, and neither is an oversight:
+Three `.py` files stay, and none is an oversight:
 
 - **`scripts/impexp.py`** is not tooling. It is a published download, declared in
   `_config.yml`'s `bundle_extra` beside `impexp.mjs` and offered to readers on
@@ -110,6 +110,14 @@ Two `.py` files stay, and neither is an oversight:
   use produces wrong CFF2 metrics --- a one-line build-configuration defect in harfbuzzjs,
   documented with the evidence in [WIP.Fonts.md](WIP.Fonts.md), which also holds the full
   account of the blocked JavaScript port.
+- **`scripts/subset_font.py`** cuts each font an SVG screenshot embeds down to the
+  characters it draws (`shoot_docs --svg`, [WIP.Screenshots.md](WIP.Screenshots.md)). It is
+  fontTools, the subsetter `build_fonts.py` already relies on. harfbuzzjs was tried first and
+  removed (owner: "don't mess with harfbuzz"); it is the library whose CFF2 defect keeps
+  `build_fonts.py` in Python. It loads a font without recalculating glyph bounds, because the
+  IDE's icon font stores loose glyph boxes and recalculating them moved icons a pixel, and it
+  keeps the hinting (owner's decision) and the font's timestamp, so a picture's SVG is the same
+  bytes from one run to the next.
 
 One `.ps1` exists for a third kind of reason. **`scripts/lib/tb-launch.ps1`** is Win32
 calls --- `CreateDesktop`, `CreateProcess` with `STARTUPINFO.lpDesktop`, and the job object
@@ -143,9 +151,9 @@ over a corpus of CSS and SVG files and the newest install's stylesheets, and com
 output, summary line and reports with `stripFile`'s byte for byte; the negative control (a
 build without one rule) fails it. The two are kept in step by hand: a change to what one
 strips is a change to both. `compactImage` in the same module is what the SVG screenshots
-(branch `svg-screenshots`, `scripts/svgshot/`) embed their images through; that branch has
-its own copy and, once merged, imports this module instead. What both strip was decided by
-the owner, 2026-10-10:
+(`scripts/svgshot/snapshot-svg.mjs`, [Pictures as SVG](#pictures-as-svg)) embed their images
+through, so a change to what it strips reaches their SVGs on the next `shoot_docs --svg` run.
+What both strip was decided by the owner, 2026-10-10:
 
 - **An embedded image keeps its pixels and any notice of whose it is, and nothing else.**
   The IDE's icons carry GIMP's EXIF, IPTC and XMP profiles (12 KB around a 28-pixel icon),

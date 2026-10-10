@@ -120,6 +120,13 @@ runs:
     - name: Unit-test what an embedded image keeps (test/compact-image.test.mjs)
       shell: bash
       run: node --test test/compact-image.test.mjs
+    # An SVG screenshot is written on one line (scripts/svgshot/snapshot-svg.mjs's
+    # oneLine), so that a CRLF checkout changes only its last line ending. What
+    # it keeps of an image it embeds is test/compact-image.test.mjs's, above.
+    # No browser, no built tree, well under a second.
+    - name: Unit-test that SVG screenshots are one line (test/svgshot.test.mjs)
+      shell: bash
+      run: node --test test/svgshot.test.mjs
     # check_examples.mjs's probes: batching, crash isolation through a fake
     # lane, the canaries and the fence classifier. check_examples.mjs needs a
     # twinBASIC install, which CI has not; its probes need none.

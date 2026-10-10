@@ -71,7 +71,7 @@ One of the four does not mean the same thing locally as it does in CI, on any pl
 
     test.bat
 
-The tests the toolchain has to pass. Twenty-three steps, each stopping the run if it fails:
+The tests the toolchain has to pass. Twenty-four steps, each stopping the run if it fails:
 
 1. [`scripts/check_publish_policy.mjs`](#check-publish-policy) --- verifies the publish allowlist still refuses the types it is meant to. Needs neither a browser nor a built tree, so it goes first.
 2. [`scripts/check_gate_lists.mjs`](#check-gate-lists) --- verifies the two gate lists on this page still match the wrappers that run them.
@@ -82,20 +82,21 @@ The tests the toolchain has to pass. Twenty-three steps, each stopping the run i
 7. [`test/strftime.test.mjs`](#strftime-test) --- unit tests for the footer's date formatter, which no build calls.
 8. [`test/png.test.mjs`](#png-test) --- unit tests for the pictures of a bug reproducer: PNG decoding, comparing and the side-by-side image, the files behind `images` and `expect.imagesDiffer`, and the refusals of `bug_repro.mjs` over fixtures.
 9. [`test/compact-image.test.mjs`](#compact-image-test) --- unit tests for what an embedded image keeps: an editor's metadata goes, and a notice of whose the picture is and on what terms stays. The half that runs [`imagestrip`](#imagestrip) is skipped unless its exe is named.
-10. [`test/example-batches.test.mjs`](#example-batches-test) --- runs `check_examples.mjs`'s probes, which test how samples are batched and how a crashed batch is cut down, without an IDE.
-11. [`test/ports.test.mjs`](#ports-test) --- unit tests for how the harness claims the DevTools ports its IDEs use, without an IDE.
-12. [`test/addin-project.test.mjs`](#addin-project-test) --- unit tests for how the build packs the help add-in's project file: exactly the files git tracks in `add-in/`, never `Resources/HELP/`, the same bytes from any checkout.
-13. [`scripts/check_regex_safety.mjs`](#check-regex-safety) --- refuses a regex that can backtrack exponentially, written as a literal or built from constants.
-14. [`scripts/check_code_regions.mjs`](#check-code-regions) --- verifies no pre-render rewrite alters the contents of a code fence or code span, that the rewrites over rendered HTML leave a raw `<pre>` or `<code>` alone, and that `lib/markdown.mjs` and `lib/frontmatter.mjs` pass their probes.
-15. [`scripts/check_page_baseline.mjs`](#check-page-baseline) --- verifies the page-count drift guard still refuses a fall.
-16. [`scripts/check_book_coverage.mjs`](#check-book-coverage) --- verifies the build still warns about a page `docs/_book.yml` does not mention.
-17. [`scripts/check_symbol_index.mjs`](#check-symbol-index) --- verifies the symbol index still places each kind of symbol, and its drift guard still refuses a lost URL.
-18. [`scripts/check_twin_parsers.mjs`](#check-twin-parsers) --- verifies the scanners of twinBASIC source and of the attribute reference still read the shapes each once misread.
-19. [`scripts/check_attribute_sweep.mjs`](#check-attribute-sweep) --- verifies the logic of the attribute sweep: its site skeletons, how it reads a probe's diagnostics, how it batches probes, and how it compares the answers with `Attributes.md`.
-20. [`scripts/check_cli.mjs`](#check-cli) --- verifies `lib/cli.mjs`, the command-line parser, and each tool's recorded command-line errors.
-21. [`scripts/check_pdf_shims_equiv.mjs`](#check-pdf-shims-equiv) --- verifies the book's pdf-lib shims write what stock pdf-lib writes, patch the members of pdf-lib it lists, have each of them in their shim's table of targets, and run.
-22. [`scripts/check_impexp_parity.mjs`](#check-impexp-parity) --- verifies the two editions of the impexp tool pass the same built-in tests, and exit, print and write the same for one sequence of commands. Without Python it reports itself skipped and passes, except in CI.
-23. [`scripts/check_axe_patch_equiv.mjs`](#check-axe-patch-equiv) --- verifies the vendored axe source patch still produces identical colour values.
+10. [`test/svgshot.test.mjs`](#svgshot-test) --- unit tests that an SVG screenshot is written on one line.
+11. [`test/example-batches.test.mjs`](#example-batches-test) --- runs `check_examples.mjs`'s probes, which test how samples are batched and how a crashed batch is cut down, without an IDE.
+12. [`test/ports.test.mjs`](#ports-test) --- unit tests for how the harness claims the DevTools ports its IDEs use, without an IDE.
+13. [`test/addin-project.test.mjs`](#addin-project-test) --- unit tests for how the build packs the help add-in's project file: exactly the files git tracks in `add-in/`, never `Resources/HELP/`, the same bytes from any checkout.
+14. [`scripts/check_regex_safety.mjs`](#check-regex-safety) --- refuses a regex that can backtrack exponentially, written as a literal or built from constants.
+15. [`scripts/check_code_regions.mjs`](#check-code-regions) --- verifies no pre-render rewrite alters the contents of a code fence or code span, that the rewrites over rendered HTML leave a raw `<pre>` or `<code>` alone, and that `lib/markdown.mjs` and `lib/frontmatter.mjs` pass their probes.
+16. [`scripts/check_page_baseline.mjs`](#check-page-baseline) --- verifies the page-count drift guard still refuses a fall.
+17. [`scripts/check_book_coverage.mjs`](#check-book-coverage) --- verifies the build still warns about a page `docs/_book.yml` does not mention.
+18. [`scripts/check_symbol_index.mjs`](#check-symbol-index) --- verifies the symbol index still places each kind of symbol, and its drift guard still refuses a lost URL.
+19. [`scripts/check_twin_parsers.mjs`](#check-twin-parsers) --- verifies the scanners of twinBASIC source and of the attribute reference still read the shapes each once misread.
+20. [`scripts/check_attribute_sweep.mjs`](#check-attribute-sweep) --- verifies the logic of the attribute sweep: its site skeletons, how it reads a probe's diagnostics, how it batches probes, and how it compares the answers with `Attributes.md`.
+21. [`scripts/check_cli.mjs`](#check-cli) --- verifies `lib/cli.mjs`, the command-line parser, and each tool's recorded command-line errors.
+22. [`scripts/check_pdf_shims_equiv.mjs`](#check-pdf-shims-equiv) --- verifies the book's pdf-lib shims write what stock pdf-lib writes, patch the members of pdf-lib it lists, have each of them in their shim's table of targets, and run.
+23. [`scripts/check_impexp_parity.mjs`](#check-impexp-parity) --- verifies the two editions of the impexp tool pass the same built-in tests, and exit, print and write the same for one sequence of commands. Without Python it reports itself skipped and passes, except in CI.
+24. [`scripts/check_axe_patch_equiv.mjs`](#check-axe-patch-equiv) --- verifies the vendored axe source patch still produces identical colour values.
 
 POSIX:
 
@@ -108,6 +109,7 @@ POSIX:
       && node --test test/strftime.test.mjs \
       && node --test test/png.test.mjs \
       && node --test test/compact-image.test.mjs \
+      && node --test test/svgshot.test.mjs \
       && node --test test/example-batches.test.mjs \
       && node --test test/ports.test.mjs \
       && node --test test/addin-project.test.mjs \
@@ -125,7 +127,7 @@ POSIX:
 
 Exit codes: **0** every step passed; otherwise the code of the step that stopped the run, as that step's entry gives it.
 
-**Twenty of the twenty-three cannot be affected by an edit confined to `docs/`**, which is why they are separate from `check.bat`. Run this one when the change touches `builder/`, `scripts/`, `lib/`, `book/`, `eval/`, `wisdom/` or `test/`, the site's scripts in `docs/assets/js/`, the help add-in's source in `add-in/`, a wrapper, or a workflow. Both CI workflows run all twenty-three unconditionally, so skipping it locally cannot let a tooling regression reach `staging`.
+**Twenty of the twenty-three cannot be affected by an edit confined to `docs/`**, which is why they are separate from `check.bat`. Run this one when the change touches `builder/`, `scripts/`, `lib/`, `book/`, `eval/`, `wisdom/` or `test/`, the site's scripts in `docs/assets/js/`, the help add-in's source in `add-in/`, a wrapper, or a workflow. Both CI workflows run all twenty-four unconditionally, so skipping it locally cannot let a tooling regression reach `staging`.
 
 The three exceptions are [`check_code_regions.mjs`](#check-code-regions), [`check_gate_lists.mjs`](#check-gate-lists), which reads this page, and [`check_lint.mjs`](#check-lint), which lints the site's scripts in `docs/assets/js/`. The first is worth knowing in detail. Its corpus sweep tokenises every markdown file under `docs/`, so a page that provokes a rewrite into altering a code region fails it. Its fixed probes are a different matter: they run against their own sources whatever the tree holds, and they cover the *mirror* fault, where a rewrite silently stops firing. The sweep cannot see that one --- text the rewrite skipped is stashed and restored unchanged, so every region still matches. Add a page with an unusual code construct and run `test.bat`, but read the built page too.
 
@@ -658,6 +660,15 @@ Exit codes: **0** every test passed, **1** a test failed.
 Unit tests for what an embedded image keeps: `compactImage`, `stripFile` and the functions behind them in `scripts/lib/compact-image.mjs`, and [`imagestrip`](#imagestrip), which does to a CSS or SVG file in twinBASIC what `stripFile` does. The IDE's icons contain an editor's metadata --- EXIF, IPTC and XMP profiles, "Created with GIMP", CorelDRAW's and Illustrator's comments --- that is dropped, and one has a licence's attribution that must stay with it. The tests build PNG, JPEG, GIF and SVG images with both kinds and check what comes out: the metadata gone; the pixels, an animated PNG's frames and any colour space but sRGB kept; a JPEG or a GIF labelled by its bytes; and a title, author, source, copyright or licence kept whole, in a text chunk, a comment, or an EXIF, IPTC or XMP profile of its own. They check `stripFile` too: an image inside an SVG inside a CSS file is stripped and keeps its encoding, base64 is read as a browser reads it, a `data:` URI is read only where it follows a quote or `url(`, an SVG's references are undone in a URI and kept in what stays, a style sheet in a `data:` URI is stripped as a CSS file is, an SVG's style elements and style attributes are read as CSS, and an SVG file loses its own metadata and that of the images inside it. No browser, no built tree, well under a second.
 
 The tests of `imagestrip` run only on Windows, and only when `IMAGESTRIP_EXE` names its built exe; otherwise they are skipped, as they are in `test.bat` and CI. They write every image the other tests build into one CSS file, with what a stylesheet can hold around them: CRLF line ends, UTF-8 outside the images, wrong and upper-case labels, a PNG cut short, a BMP, a font, SVGs in base64 and as text with CSS and percent escapes and images inside them, base64 with white space and an escape inside it, and URIs that cannot be read. They run the program on that file and on SVG files on a private desktop, and check that it writes, prints and reports what `stripFile` says, byte for byte. They also check that a second run changes nothing, that the output may be the input, that the program strips the stylesheets of the newest twinBASIC install as `stripFile` does, and its exit codes and messages for empty files, a wrong command line and a file it cannot read or write. About ten seconds.
+
+Exit codes: **0** every test passed, **1** a test failed.
+
+### svgshot.test.mjs
+{: #svgshot-test }
+
+    node --test test/svgshot.test.mjs
+
+Unit tests for `oneLine` in `scripts/svgshot/snapshot-svg.mjs`, which writes a picture's SVG on one line (see [A picture as SVG](Authoring#a-picture-as-svg)). A line break inside a tag becomes a space, and one in text becomes a character reference, so the picture looks the same. Git may check an SVG out with Windows line endings, and on one line only its last line ending changes. What the SVG keeps of an image it embeds is `compactImage`'s, from `scripts/lib/compact-image.mjs`, which [`compact-image.test.mjs`](#compact-image-test) tests. No browser, no built tree, well under a second.
 
 Exit codes: **0** every test passed, **1** a test failed.
 

@@ -142,6 +142,7 @@ import {
 import { REPO_ROOT } from "../lib/repo-paths.mjs";
 import { hoverText, mouseAway, pointOf, restMouse } from "../test/addin/hover.mjs";
 import { frameEval, frameOf, serveLoopback } from "../test/addin/pages.mjs";
+import { launchBrowser } from "./lib/browser.mjs";
 import { annotate as annotateOver, LAYER_ID, resolveAnchors, unannotate } from "./lib/shot-annotate.mjs";
 import { composite, uncomposite } from "./lib/shot-composite.mjs";
 import { decodePng, encodePng } from "./lib/png.mjs";
@@ -163,6 +164,8 @@ import {
   sleep,
   waitForCompile,
 } from "./lib/tb-ide.mjs";
+import { svgOfPage } from "./svgshot/capture.mjs";
+import { diffSvg, svgClip } from "./svgshot/diff.mjs";
 import { unpackProject } from "./lib/tb-project.mjs";
 import { findIde } from "./lib/tb-install.mjs";
 import { Lane } from "./lib/tb-lane.mjs";
@@ -208,7 +211,7 @@ const SCALE = 2;
 // Every IDE lays its page out at 100% whatever the display's scaling.
 const BROWSER_ARGS = "--force-device-scale-factor=1";
 
-const USAGE = `usage: node scripts/shoot_docs.mjs [--only <regex>] [--out <dir>] [--diffs <dir>] [--jobs N] [--port N] [--ide <twinBASIC.exe>] [-h, --help]
+const USAGE = `usage: node scripts/shoot_docs.mjs [--only <regex>] [--out <dir>] [--diffs <dir>] [--jobs N] [--port N] [--ide <twinBASIC.exe>] [--svg] [-h, --help]
 
 Takes the pictures of the IDE that the documentation shows, from IDEs on a
 private desktop, at 2x, each in the IDE's dark theme (X.png) and then in its Light
@@ -276,6 +279,17 @@ name.
                    its own
   --ide <path>     the twinBASIC.exe to copy (default: $TB_IDE, else the
                    newest twinBASIC_IDE_BETA_* on the Desktop)
+  --svg            also write each picture as SVG beside its PNG (X.svg),
+                   drawn from the page's DOM at the moment of the capture, its
+                   text in subsets of the fonts the IDE drew it with (needs
+                   Python with fontTools: scripts/subset_font.py); each is
+                   reported with how much of it differs from the PNG, and with
+                   --diffs its difference map goes there as <name>.svg-diff.png.
+                   An SVG with more than 0.25% of its pixels far off the PNG's
+                   is not written, and one written before is removed, so that
+                   the page shows the PNG; with --diffs it goes there instead,
+                   as <name>.svg. An SVG that holds the Windows user name fails
+                   the picture
   -h, --help       print this text and exit
 
 Exit codes:
@@ -297,6 +311,7 @@ const { values } = withUsageError(() =>
       jobs: { type: "string" },
       port: { type: "string" },
       ide: { type: "string" },
+      svg: { type: "boolean", default: false },
       help: { type: "boolean", short: "h", default: false },
     },
     stopAt: ["help"],
@@ -468,8 +483,8 @@ async function cutoutOff(conn) {
 // file the running shot writes, when there is one, which `capture` prefers the version of a
 // picture that equals; `editedOriginal` the module of the sample that a shot has replaced in
 // the page, to put back; for a light picture, `prefer` the dark picture when no light file is
-// there yet.
-const newShotState = (name) => ({ name, out: null, reference: null, prefer: null, editedOriginal: null });
+// there yet; with --svg, `svg` the SVG of the picture `capture` returned last.
+const newShotState = (name) => ({ name, out: null, reference: null, prefer: null, editedOriginal: null, svg: null });
 
 // A line of output, prefixed with the setup it is from (they run at once).
 const say = (name, text) => console.log(`[${name}] ${text}`);
@@ -563,14 +578,26 @@ async function capture(conn, name, clip, { frame, away = null, keep = null, soli
     // comes out with the dark one's pixels. Else it is taken as a new picture.
     const want = conn.shot.reference;
     let prefer = want ? null : conn.shot.prefer;
+    // With --svg, the SVG of the same clip, read while the page is still as captured
+    // (the cut-out on, the menu open, the overlay drawn); a cut-out has no background.
+    // Its size is the PNG's: a clip half a pixel past a whole CSS pixel (a menu 168.5
+    // wide) is captured a device pixel short of it (168), and an SVG of the whole clip
+    // would show the half of an edge the PNG cuts off.
+    const picked = async (png) => {
+      if (values.svg) {
+        const size = { width: png.readUInt32BE(16) / SCALE, height: png.readUInt32BE(20) / SCALE };
+        conn.shot.svg = await svgOfPage(conn, clip && { ...clip, ...size }, { background: !keep });
+      }
+      return png;
+    };
     let last = null;
     let agreed = null;
     for (let i = 0; ; i++) {
       const { data } = await conn.send("Page.captureScreenshot", params);
       const png = Buffer.from(data, "base64");
-      if (want?.equals(png)) return png;
+      if (want?.equals(png)) return await picked(png);
       if (prefer && i === 0 && !nearly(prefer, png)) prefer = null;
-      if (prefer?.equals(png)) return png;
+      if (prefer?.equals(png)) return await picked(png);
       if (last && !last.equals(png) && conn.shot.out) {
         writeDiff(conn.shot.name, conn.shot.out, last, png, {
           suffix: `.capture-${i}`,
@@ -578,12 +605,12 @@ async function capture(conn, name, clip, { frame, away = null, keep = null, soli
         });
       }
       if (last?.equals(png)) agreed = png;
-      if (agreed && !want && !prefer) return agreed;
+      if (agreed && !want && !prefer) return await picked(agreed);
       if (i === CAPTURE_GAPS.length) break;
       last = png;
       await sleep(CAPTURE_GAPS[i]);
     }
-    if (agreed) return agreed;
+    if (agreed) return await picked(agreed);
     throw new Error(`the page for ${name} kept changing: no two captures in a row were equal`);
   } finally {
     if (keep) await cutoutOff(conn);
@@ -7764,7 +7791,7 @@ function keep(name, out, png, theme, dark, scale = SCALE) {
         name,
         `${themedOut(out, theme)}: the dark picture's pixels, but for a capture's noise: ${had ? "removed" : "not written"}`,
       );
-      return;
+      return false;
     }
   }
   mkdirSync(path.dirname(file), { recursive: true });
@@ -7794,12 +7821,91 @@ function keep(name, out, png, theme, dark, scale = SCALE) {
   );
 }
 
-// A `once` picture has no light file: one left from before is removed.
+// A `once` picture has no light file: one left from before is removed, and its SVG.
 function dropLight(name, out) {
+  const svg = path.join(outRoot, themedOut(out, "light").replace(/\.png$/i, ".svg"));
+  if (existsSync(svg)) rmSync(svg);
   const file = path.join(outRoot, themedOut(out, "light"));
   if (!existsSync(file)) return;
   rmSync(file);
   say(name, `${themedOut(out, "light")}: removed (the picture is taken once, in no theme)`);
+}
+
+// With --svg: one headless browser for the whole run, which renders each SVG to
+// compare it with its PNG; and a line per picture for the summary.
+let svgBrowser = null;
+const svgResults = [];
+
+// The most an SVG may differ from its PNG and still be written: the share of
+// its pixels (percent) more than 96 grey levels off the PNG's, a shift of one
+// pixel allowed. Past it something is drawn wrongly or not at all -- a part
+// the converter does not draw, the help pane's page from another origin --
+// and the page goes on showing the PNG.
+const SVG_FAITHFUL = 0.25;
+
+// Writes a picture's SVG beside its PNG when it is faithful to the PNG it was
+// taken with and its bytes differ from the file's, refused when it holds the
+// user name; an SVG that is not faithful is not written, and one written
+// before is removed. Says how much of it differs from the PNG. The search
+// skips base64 payloads (fonts, images), in which four given letters turn up
+// by chance often enough to fail runs.
+async function keepSvg(name, out, png, picture) {
+  const svgOut = out.replace(/\.png$/i, ".svg");
+  const file = path.join(outRoot, svgOut);
+  const drop = (why) => {
+    const had = existsSync(file);
+    if (had) rmSync(file);
+    say(name, `${svgOut}: ${had ? "removed" : "not written"}, the PNG is kept (${why})`);
+  };
+  if (!picture) {
+    drop("the picture is not a single capture");
+    return;
+  }
+  const { svg, stats } = picture;
+  const at = svg
+    .replace(/;base64,[A-Za-z0-9+/=]+/g, ";base64,")
+    .toLowerCase()
+    .indexOf(USER.toLowerCase());
+  if (at >= 0) throw new Error(`the SVG of ${out} holds the Windows user name`);
+  svgBrowser ??= launchBrowser();
+  const page = await (await svgBrowser).newPage();
+  let diff;
+  try {
+    const clip = svgClip(svg);
+    diff = await diffSvg(page, svg, png, { refOrigin: { x: clip.x, y: clip.y } });
+  } finally {
+    await page.close();
+  }
+  if (diffsRoot) {
+    mkdirSync(diffsRoot, { recursive: true });
+    writeFileSync(
+      path.join(diffsRoot, `${out.replace(/[\\/]/g, "__").replace(/\.png$/i, "")}.svg-diff.png`),
+      diff.diff,
+    );
+  }
+  const unsupported = Object.entries(stats.unsupported).map(([k, n]) => `${k} x${n}`);
+  const bytes = Buffer.byteLength(svg);
+  const faithful = diff.stats.pct96 < SVG_FAITHFUL;
+  svgResults.push({ out: svgOut, bytes, png: png.length, faithful, ...diff.stats });
+  const measures =
+    `${diff.stats.pct32}% of pixels differ, ${diff.stats.pct96}% strongly` +
+    `${unsupported.length ? `; not drawn: ${unsupported.join(", ")}` : ""}`;
+  if (!faithful) {
+    drop(measures);
+    // To see what went wrong, the SVG goes beside its difference map.
+    if (diffsRoot)
+      writeFileSync(path.join(diffsRoot, `${out.replace(/[\\/]/g, "__").replace(/\.png$/i, "")}.svg`), svg);
+    return;
+  }
+  // The file may have been checked out with CRLF line endings, on its last line alone
+  // (the SVG is on one line, oneLine in snapshot-svg.mjs).
+  let state = "new";
+  if (existsSync(file)) state = readFileSync(file, "utf8").replace(/\r\n/g, "\n") === svg ? "unchanged" : "updated";
+  if (state !== "unchanged") writeFileSync(file, svg);
+  say(
+    name,
+    `${svgOut}: ${state} (${(bytes / 1024).toFixed(0)} KB against the PNG's ${(png.length / 1024).toFixed(0)} KB; ${measures})`,
+  );
 }
 
 // Ends a job's IDE and what it served.
@@ -7901,13 +8007,18 @@ async function runJob(job) {
         state.reference = existsSync(file) ? readFileSync(file) : null;
         state.prefer = dark;
         state.out = out;
+        state.svg = null;
         try {
           // a take returns the PNG's bytes, or { png, scale } for a picture not at SCALE
           const taken = await shot.take(ctx);
           const png = Buffer.isBuffer(taken) ? taken : taken.png;
           if (theme === "dark") darks.set(shot.out, png);
-          keep(job.name, shot.out, png, theme, dark, Buffer.isBuffer(taken) ? SCALE : taken.scale);
+          const kept = keep(job.name, shot.out, png, theme, dark, Buffer.isBuffer(taken) ? SCALE : taken.scale);
           if (shot.once) dropLight(job.name, shot.out);
+          // A light picture that is the dark one is not kept, and neither is its SVG.
+          const svgFile = path.join(outRoot, out.replace(/\.png$/i, ".svg"));
+          if (values.svg && kept !== false) await keepSvg(job.name, out, png, state.svg);
+          else if (values.svg && existsSync(svgFile)) rmSync(svgFile);
         } catch (e) {
           complain(job.name, `${out}: FAILED: ${e.message}`);
           count(theme, "failed");
@@ -7945,6 +8056,19 @@ console.log(`${((Date.now() - t0) / 1000).toFixed(1)} s`);
 for (const theme of THEMES) {
   const states = Object.entries(tally[theme]).map(([state, n]) => `${n} ${state}`);
   console.log(`${THEME_NAME[theme]}: ${states.join(", ") || "none taken"}`);
+}
+if (svgBrowser) {
+  await (await svgBrowser).close();
+  const kept = svgResults.filter((r) => r.faithful);
+  const sum = (k) => kept.reduce((n, r) => n + r[k], 0);
+  console.log(
+    `SVG: ${kept.length} pictures, ${(sum("bytes") / 1048576).toFixed(1)} MB against their PNGs' ${(sum("png") / 1048576).toFixed(1)} MB; ` +
+      `${svgResults.length - kept.length} left as PNG, more than ${SVG_FAITHFUL}% of their pixels strongly off. The furthest from their PNGs:`,
+  );
+  for (const r of svgResults.toSorted((a, b) => b.pct96 - a.pct96 || b.pct32 - a.pct32).slice(0, 15))
+    console.log(
+      `  ${r.pct32.toFixed(2).padStart(6)}% ${r.pct96.toFixed(2).padStart(6)}%  ${r.out}${r.faithful ? "" : "  (PNG kept)"}`,
+    );
 }
 
 const problems = [];
