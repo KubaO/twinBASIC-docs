@@ -132,10 +132,11 @@ both are checked out byte for byte so that the two agree; nothing checks that th
 a change to `src/` is packed again by hand. See [Tools and
 Scripts](docs/Documentation/Tools.md#imagestrip).
 
-**Its own unit tests are twinBASIC `[TestFixture]` modules in `src/Sources/`**, beside its
-code, run by `tbrun --tests` (owner, 2026-10-10). They belong in `src/Sources/Tests/`, and
-can move there: `tbrun --tests` finds the cases in the subfolders of `Sources/` as well. `TestImages.Cat` copies each `ParamArray` element through a `Variant`
-before assigning it to an array, around a twinBASIC defect queued in BUGS-TO-REPORT.md.
+**Its own unit tests are twinBASIC `[TestFixture]` modules in `src/Sources/Tests/`**, with
+the images they build in `TestImages`, run by `tbrun --tests` (owner, 2026-10-10), which reads
+every `.twin` under `Sources/`. `TestImages.Cat` copies each `ParamArray` element through a
+`Variant` before assigning it to an array, around a twinBASIC defect queued in
+BUGS-TO-REPORT.md.
 
 **Its reference is `stripFile` in `scripts/lib/compact-image.mjs`.** The test runs the program
 over a corpus of CSS and SVG files and the newest install's stylesheets, and compares its
