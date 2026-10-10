@@ -15,6 +15,12 @@
 // - a non-translation transform is applied to the element's own painting only:
 //   in the IDE they sit on leaf icons;
 // - group opacity and filters split when paint order interleaves two subtrees;
+// - a filter of colour functions (brightness, invert...) is baked into the
+//   colours its group paints rather than drawn as a <filter>
+//   (colour-filter.mjs): the same picture to the rounding of a channel, and one
+//   a PDF keeps as vector paths and text; a drop-shadow last in such a filter is
+//   a copy of the element's group under a filter that draws the shadow alone,
+//   with the group itself over it unfiltered (closeGroup);
 // - a dotted border of a width other than 1 px lays out its dots a pixel or
 //   two differently from Chromium, which no pattern found in the corpus
 //   explains; a dashed one, and a dotted one 1 px wide, are exact;
@@ -38,7 +44,7 @@
 // (paintFocusRing). Not drawn: the thinner native scrollbar
 // (scrollbar-width: thin), a resize grip, a number input's spin buttons, an
 // indeterminate checkbox (the snapshot does not say), conic gradients, the 2011
-// -webkit-radial-gradient and the filter hue-rotate; an overline, a
+// -webkit-radial-gradient and the filter blur(); an overline, a
 // line-through, a dotted, dashed, wavy or double text decoration, and an
 // underline placed by text-underline-position (decorationsOf). Drawn wrongly: a
 // collapsed table border, doubled.
@@ -58,6 +64,7 @@
 // needs (the annotation layer) as `overlays`, painted last.
 
 import { compactImage } from "../lib/compact-image.mjs";
+import { bakeable, bakeMarkup, colourSteps, filterSteps, stepPrimitive, stepsOpacity } from "./colour-filter.mjs";
 import { FACES_MARK } from "./fonts.mjs";
 import { gradientSvg, parseGradient } from "./gradient.mjs";
 import { esc, num, px, rgba, splitTop } from "./util.mjs";
@@ -914,51 +921,25 @@ export function naturalSize(url) {
   return null;
 }
 
-// One CSS filter function list as SVG primitives, in the sRGB space CSS uses.
-function filterPrimitives(v) {
+// A CSS filter's steps (colour-filter.mjs filterSteps) as SVG primitives, in the
+// sRGB space CSS uses; null for a blur(), which is not drawn.
+function filterPrimitives(steps) {
   const prims = [];
   let input = "SourceGraphic";
   let n = 0;
-  const push = (body) => {
-    const out = `r${n++}`;
-    prims.push(body(input, out));
-    input = out;
-  };
-  const transfer = (inp, out, fn) =>
-    `<feComponentTransfer in="${inp}" result="${out}"><feFuncR ${fn}/><feFuncG ${fn}/><feFuncB ${fn}/></feComponentTransfer>`;
-  for (const m of v.matchAll(/([a-z-]+)\(((?:[^()]|\([^()]*\))*)\)/g)) {
-    const [, fn, arg] = m;
-    const a = arg.endsWith("%") ? px(arg) / 100 : px(arg);
-    if (fn === "invert") push((i, o) => transfer(i, o, `type="table" tableValues="${num(a)} ${num(1 - a)}"`));
-    else if (fn === "brightness") push((i, o) => transfer(i, o, `type="linear" slope="${num(a)}"`));
-    else if (fn === "contrast")
-      push((i, o) => transfer(i, o, `type="linear" slope="${num(a)}" intercept="${num(0.5 - 0.5 * a)}"`));
-    else if (fn === "opacity")
-      push(
-        (i, o) =>
-          `<feComponentTransfer in="${i}" result="${o}"><feFuncA type="table" tableValues="0 ${num(a)}"/></feComponentTransfer>`,
-      );
-    else if (fn === "saturate")
-      push((i, o) => `<feColorMatrix in="${i}" result="${o}" type="saturate" values="${num(a)}"/>`);
-    else if (fn === "grayscale") {
-      const g = 1 - Math.min(1, a);
-      const m3 = [
-        [0.2126 + 0.7874 * g, 0.7152 - 0.7152 * g, 0.0722 - 0.0722 * g],
-        [0.2126 - 0.2126 * g, 0.7152 + 0.2848 * g, 0.0722 - 0.0722 * g],
-        [0.2126 - 0.2126 * g, 0.7152 - 0.7152 * g, 0.0722 + 0.9278 * g],
-      ];
-      const values = m3.map((row) => `${row.map(num).join(" ")} 0 0`).join(" ");
-      push((i, o) => `<feColorMatrix in="${i}" result="${o}" type="matrix" values="${values} 0 0 0 1 0"/>`);
-    } else if (fn === "drop-shadow") {
-      const [sh] = parseShadows(arg);
-      push(
-        (i, o) =>
-          `<feGaussianBlur in="${i}" stdDeviation="${num(sh.blur / 2)}" result="${o}b"/>` +
+  for (const s of steps) {
+    const o = `r${n++}`;
+    if (s.fn === "blur") return null;
+    if (s.fn === "drop-shadow") {
+      const [sh] = parseShadows(s.arg);
+      prims.push(
+        `<feGaussianBlur in="${input}" stdDeviation="${num(sh.blur / 2)}" result="${o}b"/>` +
           `<feOffset in="${o}b" dx="${num(sh.x)}" dy="${num(sh.y)}" result="${o}c"/>` +
           `<feFlood flood-color="${sh.color}" result="${o}d"/><feComposite in="${o}d" in2="${o}c" operator="in" result="${o}e"/>` +
-          `<feMerge result="${o}"><feMergeNode in="${o}e"/><feMergeNode in="${i}"/></feMerge>`,
+          `<feMerge result="${o}"><feMergeNode in="${o}e"/><feMergeNode in="${input}"/></feMerge>`,
       );
-    } else return null;
+    } else prims.push(stepPrimitive(s, input, o));
+    input = o;
   }
   return prims;
 }
@@ -1090,7 +1071,21 @@ export function renderSvg(
     return h;
   }
 
+  // A real <filter> of a CSS filter's steps, keyed by what they are.
+  const filterDef = (steps) => {
+    const prims = filterPrimitives(steps);
+    const drop = steps.some((s) => s.fn === "drop-shadow");
+    const region = drop ? 'x="-30%" y="-30%" width="160%" height="160%"' : "";
+    return def(
+      `f${steps.map((s) => `${s.fn}(${s.arg})`).join(" ")}`,
+      (id) => `<filter id="${id}" color-interpolation-filters="sRGB" ${region}>${prims.join("")}</filter>`,
+    );
+  };
+
   // The effects an element passes to everything it paints: opacity and filter.
+  // A filter of colour functions alone carries `bake` ({key, steps, opacity}):
+  // the paint loop maps the colours of what it paints instead, where it can
+  // (colour-filter.mjs), and opens `open()` where it cannot.
   function chain(n) {
     const out = [];
     for (let a = n; a; a = a.parent) {
@@ -1099,21 +1094,96 @@ export function renderSvg(
       if (st.opacity !== undefined && px(st.opacity) < 1)
         out.push({ key: `o${a.i}`, open: `<g opacity="${num(px(st.opacity))}">` });
       if (st.filter && st.filter !== "none") {
-        const prims = filterPrimitives(st.filter);
-        if (!prims) {
+        const steps = filterSteps(st.filter);
+        if (!steps || steps.some((s) => s.fn === "blur")) {
           note(`filter ${st.filter}`);
           continue;
         }
-        const drop = st.filter.includes("drop-shadow");
-        const region = drop ? 'x="-30%" y="-30%" width="160%" height="160%"' : "";
-        const id = def(
-          `f${st.filter}`,
-          (id) => `<filter id="${id}" color-interpolation-filters="sRGB" ${region}>${prims.join("")}</filter>`,
+        const open = () => `<g filter="url(#${filterDef(steps)})">`;
+        // A drop-shadow last, after colour functions alone: its shadow under the group, drawn
+        // from a copy of it, and the group itself over the shadow with no filter.
+        const last = steps.at(-1);
+        const shadow =
+          last?.fn === "drop-shadow" && bakeable(steps.slice(0, -1)) && stepsOpacity(steps) === 1 ? last : null;
+        const colours = shadow ? steps.slice(0, -1) : steps;
+        out.push(
+          bakeable(colours)
+            ? {
+                key: `f${a.i}`,
+                i: a.i,
+                open,
+                bake: { key: st.filter, steps: colourSteps(colours), opacity: stepsOpacity(colours), shadow },
+              }
+            : { key: `f${a.i}`, open: open() },
         );
-        out.push({ key: `f${a.i}`, open: `<g filter="url(#${id})">` });
       }
     }
     return out.reverse();
+  }
+
+  // A drop-shadow's shadow alone: the group's alpha blurred, moved and filled with
+  // its colour. An outer colour filter maps that colour (bakeMarkup bakes the def).
+  const shadowDef = (step) => {
+    const [sh] = parseShadows(step.arg);
+    return def(
+      `s${step.arg}`,
+      (id) =>
+        `<filter id="${id}" color-interpolation-filters="sRGB" x="-30%" y="-30%" width="160%" height="160%">` +
+        `<feGaussianBlur in="SourceAlpha" stdDeviation="${num(sh.blur / 2)}" result="b"/>` +
+        `<feOffset in="b" dx="${num(sh.x)}" dy="${num(sh.y)}" result="o"/>` +
+        `<feFlood flood-color="${sh.color}"/><feComposite in2="o" operator="in"/></filter>`,
+    );
+  };
+
+  // What bakeMarkup needs of the converter.
+  const defIndex = (id) => (/^d\d+$/.test(id) ? Number(id.slice(1)) : -1);
+  const bakeCtx = {
+    defOf: (id) => defs[defIndex(id)],
+    def,
+    cssOf: (cls) => [...textClasses].find(([, c]) => c === cls)?.[0],
+    classFor: (css) => {
+      if (!textClasses.has(css)) textClasses.set(css, `t${textClasses.size}`);
+      return textClasses.get(css);
+    },
+    filterFor: (steps) => filterDef(steps),
+    wrappers: new Set(),
+    note,
+  };
+
+  // An item's groups, with its filters of colour functions baked into `content`
+  // (innermost first, as they apply) and their opacity() as group opacity. A
+  // group that blends, or holds a real filter group, keeps its filters real:
+  // neither commutes with a colour map.
+  function applyChain(want, content) {
+    if (!want.some((g) => g.bake)) return { want, content };
+    const real = content.some((s) => s.includes("blend-mode") || s.includes("<g filter="));
+    if (real) return { want: want.map((g) => (g.bake ? { key: g.key, open: g.open() } : g)), content };
+    let baked = content;
+    for (const g of [...want].reverse()) if (g.bake) baked = baked.map((s) => bakeMarkup(s, g.bake, bakeCtx));
+    // A drop-shadow stays a group, a plain one: closeGroup draws its shadow under what it holds,
+    // in the colour the filters outside it map the shadow's colour to.
+    const groups = want.flatMap((g, k) => {
+      if (!g.bake) return [g];
+      if (g.bake.shadow) {
+        const outer = want.slice(0, k).flatMap((o) => (o.bake ? [o.bake] : []));
+        return [{ key: g.key, open: "<g>", shadow: g.bake.shadow, outer: outer.reverse() }];
+      }
+      return g.bake.opacity < 1 ? [{ key: `p${g.i}`, open: `<g opacity="${num(g.bake.opacity)}">` }] : [];
+    });
+    return { want: groups, content: baked };
+  }
+
+  // The end of a group in `body`. A drop-shadow's group gets, under what it holds, a copy of
+  // it drawn through a filter that paints the shadow alone: the union of what the element
+  // paints is shadowed once, as the filter's own merge does.
+  function closeGroup(body, g) {
+    if (g.shadow) {
+      const inner = body.splice(g.start);
+      let open = `<g filter="url(#${shadowDef(g.shadow)})">`;
+      for (const b of g.outer) open = bakeMarkup(open, b, bakeCtx);
+      body.push(open, ...inner, "</g>", ...inner);
+    }
+    body.push("</g>");
   }
 
   // Inside an inline <svg>: its elements' names are lower case, HTML's upper.
@@ -1967,7 +2037,9 @@ export function renderSvg(
           note("a frame of another process");
       } else content = paintText(l, view);
       if (!content.length) continue;
-      const want = chain(owner);
+      const chained = applyChain(chain(owner), content);
+      const want = chained.want;
+      content = chained.content;
       if (c !== INF && (c.x > view.x || c.y > view.y || c.x + c.w < view.x + view.w || c.y + c.h < view.y + view.h)) {
         const id = def(
           `c${c.x}|${c.y}|${c.w}|${c.h}`,
@@ -1977,17 +2049,15 @@ export function renderSvg(
       }
       let same = 0;
       while (same < open.length && same < want.length && open[same].key === want[same].key) same++;
-      while (open.length > same) {
-        open.pop();
-        body.push("</g>");
-      }
+      while (open.length > same) closeGroup(body, open.pop());
       for (const g of want.slice(same)) {
         open.push(g);
         body.push(g.open);
+        g.start = body.length;
       }
       body.push(...content);
     }
-    while (open.pop()) body.push("</g>");
+    while (open.length) closeGroup(body, open.pop());
     return body;
   }
 

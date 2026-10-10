@@ -9,7 +9,8 @@
 // test/compact-image.test.mjs tests it. The web fonts a frame's text is drawn in:
 // webFontFiles, which finds the @font-face rule a run's font means by the names its document
 // gives (given a document of its own here), and fonts.mjs's reading of a WOFF2 font and its
-// faces for a variable one, tested on the site's own fonts.
+// faces for a variable one, tested on the site's own fonts. And colour-filter.mjs, which bakes
+// a filter of colour functions into the colours its group paints.
 //
 // Runs with a bare `node --test test/svgshot.test.mjs`: no tree, no build.
 
@@ -18,6 +19,15 @@ import fs from "node:fs";
 import { describe, test } from "node:test";
 import { REPO_ROOT } from "../lib/repo-paths.mjs";
 import { webFontFiles } from "../scripts/svgshot/capture.mjs";
+import {
+  bakeable,
+  bakeColour,
+  bakeMarkup,
+  colourSteps,
+  filterSteps,
+  mapColour,
+  stepsOpacity,
+} from "../scripts/svgshot/colour-filter.mjs";
 import { cmapCoverage, faceStyle, isVariable, PictureFonts, readable } from "../scripts/svgshot/fonts.mjs";
 import {
   canvasColor,
@@ -55,6 +65,98 @@ describe("naturalSize", () => {
     assert.deepEqual(naturalSize(png([...ihdr, 0, 0, 0, 16, 0, 0, 0, 9, 8, 6, 0, 0, 0])), { w: 16, h: 9 });
     const gif = [0x47, 0x49, 0x46, 0x38, 0x39, 0x61, 20, 0, 10, 0, 0, 0, 0];
     assert.deepEqual(naturalSize(png(gif)), { w: 20, h: 10 });
+  });
+});
+
+describe("colour filters", () => {
+  const steps = (v) => colourSteps(filterSteps(v));
+
+  test("map a colour as the filter primitives do, each step clamped", () => {
+    const c = { r: 236, g: 236, b: 236 };
+    assert.deepEqual(mapColour(steps("brightness(0.95)"), c), { r: 224, g: 224, b: 224 });
+    assert.deepEqual(mapColour(steps("invert(1)"), { r: 0, g: 120, b: 215 }), { r: 255, g: 135, b: 40 });
+    assert.deepEqual(mapColour(steps("contrast(3)"), { r: 50, g: 100, b: 200 }), { r: 0, g: 45, b: 255 });
+    // In order: inverted, then darkened; the other way round gives another colour.
+    assert.deepEqual(mapColour(steps("invert(1) brightness(0.4)"), c), { r: 8, g: 8, b: 8 });
+    assert.deepEqual(mapColour(steps("brightness(0.4) invert(1)"), c), { r: 161, g: 161, b: 161 });
+    const hue = (v) => mapColour(steps(`hue-rotate(${v})`), { r: 200, g: 40, b: 90 });
+    assert.deepEqual(hue("0.5turn"), hue("180deg"));
+    assert.deepEqual(hue("200grad"), hue("180deg"));
+    assert.deepEqual(hue("0deg"), { r: 200, g: 40, b: 90 });
+    assert.equal(bakeColour(steps("invert(100%)"), "#fff"), "rgb(0, 0, 0)");
+    assert.equal(bakeColour(steps("invert(1)"), "rgba(255, 0, 0, 0.5)"), "rgba(0, 255, 255, 0.5)");
+    assert.equal(bakeColour(steps("invert(1)"), "currentColor"), null);
+  });
+
+  test("bake colour functions, keep opacity apart, and refuse a blur, a drop-shadow and a url()", () => {
+    const all = filterSteps("opacity(0.5) grayscale(1) opacity(50%)");
+    assert.ok(bakeable(all));
+    assert.equal(stepsOpacity(all), 0.25);
+    assert.deepEqual(
+      colourSteps(all).map((s) => s.fn),
+      ["grayscale"],
+    );
+    assert.ok(!bakeable(filterSteps("drop-shadow(rgb(0, 0, 0) 1px 1px 2px) invert(1)")));
+    assert.ok(!bakeable(filterSteps("blur(2px)")));
+    assert.equal(filterSteps("url(#x) invert(1)"), null);
+  });
+
+  // The converter's side of a bake, in miniature: defs by id, text classes by rule.
+  function converter(defs, classes) {
+    const ids = new Map();
+    const notes = [];
+    const ctx = {
+      defOf: (id) => defs[Number(id.slice(1))],
+      def: (key, make) => {
+        if (!ids.has(key)) {
+          ids.set(key, `d${defs.length}`);
+          defs.push(make(`d${defs.length}`));
+        }
+        return ids.get(key);
+      },
+      cssOf: (cls) => [...classes].find(([, c]) => c === cls)?.[0],
+      classFor: (css) => {
+        if (!classes.has(css)) classes.set(css, `t${classes.size}`);
+        return classes.get(css);
+      },
+      filterFor: () => "dF",
+      wrappers: new Set(),
+      note: (what) => notes.push(what),
+    };
+    return { ctx, notes };
+  }
+
+  test("bakeMarkup maps fills, strokes, text classes and gradient stops, and wraps a picture in a real filter", () => {
+    const defs = [
+      '<clipPath id="d0"><rect x="0" y="0" width="5" height="5"/></clipPath>',
+      '<linearGradient id="d1"><stop offset="0" stop-color="rgb(255,255,255)"/></linearGradient>',
+      '<image id="d2" width="1" height="1" href="data:image/png;base64,AA=="/>',
+    ];
+    const classes = new Map([["font-size:12px;fill:rgb(0, 0, 0)", "t0"]]);
+    const { ctx, notes } = converter(defs, classes);
+    const bake = { key: "invert(1)", steps: steps("invert(1)") };
+    const out = bakeMarkup(
+      '<g clip-path="url(#d0)"><rect fill="rgb(236, 236, 236)" stroke="#0078d7"/><rect fill="url(#d1)"/>' +
+        '<text class="t0">Left</text><use href="#d2"/><rect fill="none" stroke="currentColor"/></g>',
+      bake,
+      ctx,
+    );
+    // A clip path has no colour: the same def. The gradient and the picture: new ones.
+    assert.equal(
+      out,
+      '<g clip-path="url(#d0)"><rect fill="rgb(19, 19, 19)" stroke="rgb(255, 135, 40)"/><rect fill="url(#d3)"/>' +
+        '<text class="t1">Left</text><use href="#d4"/><rect fill="none" stroke="currentColor"/></g>',
+    );
+    assert.equal(defs[3], '<linearGradient id="d3"><stop offset="0" stop-color="rgb(0, 0, 0)"/></linearGradient>');
+    assert.equal(defs[4], '<g id="d4" filter="url(#dF)"><use href="#d2"/></g>');
+    assert.equal(ctx.cssOf("t1"), "font-size:12px;fill:rgb(255, 255, 255)");
+    assert.deepEqual(notes, ["colour currentColor under a filter"]);
+    // Baked a second time, by an outer filter: the wrapper is wrapped again, outside it.
+    assert.equal(
+      bakeMarkup('<use href="#d4"/>', { key: "brightness(0.5)", steps: steps("brightness(0.5)") }, ctx),
+      '<use href="#d5"/>',
+    );
+    assert.equal(defs[5], '<g id="d5" filter="url(#dF)"><use href="#d4"/></g>');
   });
 });
 

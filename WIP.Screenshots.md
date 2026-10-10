@@ -570,6 +570,19 @@ the PNG was just captured from, and the build shows it in place of the PNG
   clip shows the half of the edge the PNG cuts off. That column alone put a small picture past
   the bar (a 16-pixel icon at 11%, a menu at 0.5%), so `capture` gives `svgOfPage` the clip
   with the PNG's width and height.
+- **A filter of colour functions is baked, not drawn** (`colour-filter.mjs`; owner, 2026-10-10).
+  Chromium's PDF backend cannot express an SVG `<filter>` and draws the whole filtered group as a
+  300 dpi bitmap, text included: the book lost the text of 44 of its 110 SVGs that way. Every CSS
+  filter function but `blur()` and `drop-shadow()` is an affine colour map, which commutes with
+  antialiasing, so mapping each fill, stroke, gradient stop and text class under the group paints
+  the same picture on screen, to a channel's rounding; `opacity()` becomes the group's opacity.
+  A real filter stays only round an embedded image (a `<g filter>` def wrapping it) and over a
+  group that blends or already holds a real filter group. A `drop-shadow()` last in the list
+  (the IDE's toolbar codicons glow with one) is split the same way: the shadow alone, from a
+  copy of the group under a filter that blurs its alpha, then the group over it unfiltered,
+  which is what the filter's own merge paints. One SVG for screen and book; two
+  variants were considered and dropped, since the bake is exact. Blurred shadows stay bitmaps in
+  the PDF, which loses nothing.
 - **The bar** (`SVG_FAITHFUL` in `shoot_docs.mjs`): an SVG with more than 0.25% of its pixels 96
   grey levels or more off is not written, and an older one is removed. Anything not drawn falls
   to it.
