@@ -23,7 +23,9 @@ import { REPO_ROOT } from "../lib/repo-paths.mjs";
 import {
   BUNDLE_VERSION,
   bundleFile,
+  dropBundle,
   drawBundle,
+  listBundles,
   pngHash,
   readBundle,
   renderBundle,
@@ -278,10 +280,20 @@ describe("bundles", () => {
     try {
       const png = Buffer.from("not a real picture");
       writeBundle(root, "Images/x.light.png", bundle, png, live.misses);
-      const back = readBundle(bundleFile(root, "Images/x.light.png"));
+      const back = readBundle(root, "Images/x.light.png");
       assert.equal(back.png, pngHash(png));
       assert.deepEqual(back.misses, live.misses);
       assert.equal((await renderBundle(back)).svg, live.svg);
+      // Both themes of a picture are one file, each slot written and dropped on its own.
+      assert.equal(readBundle(root, "Images/x.png"), null);
+      writeBundle(root, "Images/x.png", bundle, Buffer.from("dark"), []);
+      assert.equal(bundleFile(root, "Images/x.png"), bundleFile(root, "Images/x.light.png"));
+      assert.deepEqual(listBundles(root), ["Images/x.light.png", "Images/x.png"]);
+      assert.equal(readBundle(root, "Images/x.light.png").png, pngHash(png));
+      dropBundle(root, "Images/x.light.png");
+      assert.deepEqual(listBundles(root), ["Images/x.png"]);
+      dropBundle(root, "Images/x.png");
+      assert.equal(fs.existsSync(bundleFile(root, "Images/x.png")), false);
     } finally {
       fs.rmSync(root, { recursive: true, force: true });
     }

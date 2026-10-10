@@ -11,13 +11,13 @@
 // shoot_docs.mjs command that takes them again.
 
 import { spawn } from "node:child_process";
-import { existsSync, mkdirSync, readdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { availableParallelism, userInfo } from "node:os";
 import path from "node:path";
 import { exitOnCrash, numberOption, parseCli, printHelpAndExit, regexOption, withUsageError } from "../../lib/cli.mjs";
 import { REPO_ROOT } from "../../lib/repo-paths.mjs";
 import { LAUNCH_ARGS, launchBrowser } from "../lib/browser.mjs";
-import { pngHash, readBundle, renderBundle } from "./bundle.mjs";
+import { listBundles, pngHash, readBundle, renderBundle } from "./bundle.mjs";
 import { SNAPSHOT_STYLES } from "./capture.mjs";
 import { useSubsetCache } from "./fonts.mjs";
 import { holdsUserName, judgeSvg, SVG_FAITHFUL, writeSvg } from "./keep.mjs";
@@ -101,21 +101,15 @@ const SHARD = (() => {
 const RESULT = "@@replay-result ";
 const IN_FLIGHT = 2;
 
-// Every bundle under the cache, as the picture's path under docs with forward slashes.
-const SUFFIX = ".bundle.json.gz";
-const outs = readdirSync(bundlesRoot, { recursive: true })
-  .map((f) => String(f).replace(/\\/g, "/"))
-  .filter((f) => f.endsWith(SUFFIX))
-  .map((f) => `${f.slice(0, -SUFFIX.length)}.png`)
-  .filter((out) => !only || only.test(out))
-  .sort();
+// Every picture with a bundle under the cache, as its path under docs with forward slashes.
+const outs = listBundles(bundlesRoot).filter((out) => !only || only.test(out));
 
 const counts = {};
 const retakes = [];
 let failed = 0;
 const say = (out, line) => console.log(`${out.replace(/\.png$/i, ".svg")}: ${line}`);
 async function replay(out, browser) {
-  const bundle = readBundle(path.join(bundlesRoot, out.replace(/\.png$/i, SUFFIX)));
+  const bundle = readBundle(bundlesRoot, out);
   const pngFile = path.join(outRoot, out);
   const svgFile = pngFile.replace(/\.png$/i, ".svg");
   const retake = (why) => {

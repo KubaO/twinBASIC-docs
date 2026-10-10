@@ -577,8 +577,12 @@ the PNG was just captured from, and the build shows it in place of the PNG
   the scrollbar styles and a frame's viewport and zoom. `bundle.mjs`'s `renderBundle` draws the
   SVG from it alone, and `svgOfPage` is the one then the other, so a replay with the converter
   unchanged gives the same bytes. `--svg` saves every picture's bundle, faithful or not, in
-  `.svgshot-bundles/` (gitignored, never under `docs/`: a bundle holds the user name), about
-  160 KB gzipped each: `trimSnapshot` cuts the snapshot to the clip (the layout objects near
+  `.svgshot-bundles/` (gitignored, never under `docs/`: a bundle holds the user name), **one
+  file per picture holding both themes** (`X.bundle.json.br`, `{dark, light}`, the dark one's
+  text first), **Brotli** at quality 9 with a 16 MB window: the light bundle is mostly the dark
+  one, which a long window finds and gzip's 32 KB does not, so the 370 bundles went from 57.7
+  MB gzipped to 21.8 MB in 189 files, about 115 KB a picture. A light picture not kept (the
+  same as the dark) has its slot dropped (`dropBundle`). `trimSnapshot` cuts the snapshot to the clip (the layout objects near
   it, every ancestor's, a frame's document only when its `<iframe>` is kept, `<style>` and
   `<script>` text emptied, unused strings dropped; every DOM node kept), 97 MB to 58 MB for
   the 370, and all 370 draw the same SVG trimmed as whole. A trimmed layout object keeps its

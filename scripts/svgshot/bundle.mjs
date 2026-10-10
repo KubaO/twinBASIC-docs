@@ -23,9 +23,9 @@
 // that is never committed or published.
 
 import { createHash } from "node:crypto";
-import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, readdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import path from "node:path";
-import { gunzipSync, gzipSync } from "node:zlib";
+import { brotliCompressSync, brotliDecompressSync, constants } from "node:zlib";
 import { PictureFonts, withFaces } from "./fonts.mjs";
 import { decodeSnapshot, oneLine, parseShadows, renderSvg, unzoom } from "./snapshot-svg.mjs";
 
@@ -281,18 +281,80 @@ function compactStrings(snapshot) {
   return { ...snapshot, strings, documents };
 }
 
-/** The bundle file of a picture `out` (its path under docs/, theme included) under `root`. */
-export const bundleFile = (root, out) => path.join(root, out.replace(/\.png$/i, ".bundle.json.gz"));
+// --- the bundle files ----------------------------------------------------------------
+//
+// One file per picture holds both its themes, {dark, light} (either null), the dark one's
+// text first: the two are mostly the same page, and Brotli with a 16 MB window finds the
+// light one's repeats in the dark one, which gzip's 32 KB window cannot. Measured on three
+// pictures, the pair takes 30% of what two gzipped files took.
+
+const SUFFIX = ".bundle.json.br";
+const LIGHT = /\.light\.png$/i;
+
+// A picture's theme, and the path of the dark picture, which names its file.
+const themeOf = (out) =>
+  LIGHT.test(out) ? { theme: "light", base: out.replace(LIGHT, ".png") } : { theme: "dark", base: out };
+
+/** The bundle file of a picture `out` (its path under docs/, ".light" for a light one) under `root`. */
+export const bundleFile = (root, out) => path.join(root, themeOf(out).base.replace(/\.png$/i, SUFFIX));
 
 /** The SHA-1 of a picture's bytes, which a bundle records to tell when it no longer matches. */
 export const pngHash = (png) => createHash("sha1").update(png).digest("hex");
 
+function readPair(file) {
+  if (!existsSync(file)) return { dark: null, light: null };
+  return JSON.parse(brotliDecompressSync(readFileSync(file)).toString("utf8"));
+}
+
+function writePair(file, pair) {
+  if (!pair.dark && !pair.light) {
+    rmSync(file, { force: true });
+    return;
+  }
+  const text = Buffer.from(JSON.stringify({ dark: pair.dark, light: pair.light }));
+  mkdirSync(path.dirname(file), { recursive: true });
+  writeFileSync(
+    file,
+    brotliCompressSync(text, {
+      params: {
+        [constants.BROTLI_PARAM_QUALITY]: 9,
+        [constants.BROTLI_PARAM_LGWIN]: 24,
+        [constants.BROTLI_PARAM_SIZE_HINT]: text.length,
+      },
+    }),
+  );
+}
+
 /** Writes `bundle` for the picture `out`, with the hash of the PNG it was taken with and its misses. */
 export function writeBundle(root, out, bundle, png, misses) {
   const file = bundleFile(root, out);
-  mkdirSync(path.dirname(file), { recursive: true });
-  writeFileSync(file, gzipSync(JSON.stringify({ ...bundle, out, png: pngHash(png), misses })));
+  const pair = readPair(file);
+  pair[themeOf(out).theme] = { ...bundle, out, png: pngHash(png), misses };
+  writePair(file, pair);
   return file;
 }
 
-export const readBundle = (file) => JSON.parse(gunzipSync(readFileSync(file)).toString("utf8"));
+/** Removes the bundle of the picture `out`, as when the picture is no longer kept. */
+export function dropBundle(root, out) {
+  const file = bundleFile(root, out);
+  if (!existsSync(file)) return;
+  const pair = readPair(file);
+  pair[themeOf(out).theme] = null;
+  writePair(file, pair);
+}
+
+/** The bundle of the picture `out`, or null. */
+export const readBundle = (root, out) => readPair(bundleFile(root, out))[themeOf(out).theme];
+
+/** Every picture with a bundle under `root`, as its path under docs/ with forward slashes. */
+export function listBundles(root) {
+  const outs = [];
+  for (const f of readdirSync(root, { recursive: true }).map((p) => String(p).replace(/\\/g, "/"))) {
+    if (!f.endsWith(SUFFIX)) continue;
+    const pair = readPair(path.join(root, f));
+    const base = f.slice(0, -SUFFIX.length);
+    if (pair.dark) outs.push(`${base}.png`);
+    if (pair.light) outs.push(`${base}.light.png`);
+  }
+  return outs.sort();
+}

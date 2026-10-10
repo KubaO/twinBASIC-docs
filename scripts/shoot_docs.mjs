@@ -164,7 +164,7 @@ import {
   sleep,
   waitForCompile,
 } from "./lib/tb-ide.mjs";
-import { writeBundle } from "./svgshot/bundle.mjs";
+import { dropBundle, writeBundle } from "./svgshot/bundle.mjs";
 import { svgOfPage } from "./svgshot/capture.mjs";
 import { useSubsetCache } from "./svgshot/fonts.mjs";
 import { holdsUserName, judgeSvg, SVG_FAITHFUL, writeSvg } from "./svgshot/keep.mjs";
@@ -7894,6 +7894,7 @@ function keep(name, out, png, theme, dark, scale = SCALE) {
 function dropLight(name, out) {
   const svg = path.join(outRoot, themedOut(out, "light").replace(/\.png$/i, ".svg"));
   if (existsSync(svg)) rmSync(svg);
+  if (bundlesRoot) dropBundle(bundlesRoot, themedOut(out, "light"));
   const file = path.join(outRoot, themedOut(out, "light"));
   if (!existsSync(file)) return;
   rmSync(file);
@@ -8061,10 +8062,13 @@ async function runJob(job) {
           if (theme === "dark") darks.set(shot.out, png);
           const kept = keep(job.name, shot.out, png, theme, dark, Buffer.isBuffer(taken) ? SCALE : taken.scale);
           if (shot.once) dropLight(job.name, shot.out);
-          // A light picture that is the dark one is not kept, and neither is its SVG.
+          // A light picture that is the dark one is not kept, and neither is its SVG or bundle.
           const svgFile = path.join(outRoot, out.replace(/\.png$/i, ".svg"));
           if (values.svg && kept !== false) await keepSvg(job.name, out, png, state.svg);
-          else if (values.svg && existsSync(svgFile)) rmSync(svgFile);
+          else if (values.svg) {
+            if (existsSync(svgFile)) rmSync(svgFile);
+            dropBundle(bundlesRoot, out);
+          }
         } catch (e) {
           complain(job.name, `${out}: FAILED: ${e.message}`);
           count(theme, "failed");
