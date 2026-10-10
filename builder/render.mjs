@@ -2308,6 +2308,18 @@ function tallAttr(width, height, groups) {
   return h * Math.min(1, FIGURE_COLUMN / w) >= barHeight(groups) ? " data-tall" : "";
 }
 
+// Whether a diagram's figure is tall (tallAttr), by its SVG. A diagram's bar has both
+// format groups and Zoom. Exported for the Gantt chart, whose SVG replaces a placeholder
+// only after the page is written (tbdocs.mjs, injectGanttChart).
+export function diagramIsTall(svgContent) {
+  const groups = [
+    { sign: true, buttons: 2 },
+    { sign: true, buttons: 2 },
+    { sign: false, buttons: 1 },
+  ];
+  return tallAttr(...svgPixelSize(svgContent), groups) !== "";
+}
+
 // A diagram's size, from its root <svg>'s width and height: Graphviz writes them in pt.
 function svgPixelSize(svgContent) {
   const root = /<svg\b[^>]*>/.exec(svgContent)?.[0] ?? "";
@@ -2337,11 +2349,7 @@ function diagramFigureOpen(svgContent, alt, stem, srcRel) {
   }
   const imgRole = labelled ? ` role="img" aria-label="${esc(alt)}"` : "";
   const name = ` data-filename="${esc(stem)}"`;
-  const tall = tallAttr(...svgPixelSize(svgContent), [
-    { sign: true, buttons: 2 },
-    { sign: true, buttons: 2 },
-    { sign: false, buttons: 1 },
-  ]);
+  const tall = diagramIsTall(svgContent) ? " data-tall" : "";
 
   return (
     `<div class="fig-wrap" data-kind="diagram"${tall}>` +

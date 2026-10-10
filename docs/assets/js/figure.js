@@ -268,7 +268,9 @@
     container.scrollTop = 0;
     if (el && rect && rect.width) {
       // Measured on the page first, sized once the overlay is up and its
-      // size is known.
+      // size is known. The element's own inline style is kept to be put back
+      // as it was: an SVG may carry its size there.
+      el._pageStyle = el.getAttribute("style");
       el.style.width = zoomWidth(el, rect.width, rect.height / rect.width, container) + "px";
       el.style.height = "auto";
       el.style.maxWidth = "none";
@@ -296,10 +298,10 @@
     container.style.backgroundColor = "";
     delete container.dataset.zoomed;
     var el = zoomed(container);
-    if (el) {
-      el.style.width = "";
-      el.style.height = "";
-      el.style.maxWidth = "";
+    if (el && el._pageStyle !== undefined) {
+      if (el._pageStyle === null) el.removeAttribute("style");
+      else el.setAttribute("style", el._pageStyle);
+      delete el._pageStyle;
     }
     unlockPage();
 

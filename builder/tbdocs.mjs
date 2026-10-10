@@ -70,7 +70,7 @@ import { vendorAssets } from "./vendor-assets.mjs";
 import { computeSiteSeo } from "./seo.mjs";
 import { resolveBookChapters } from "./book.mjs";
 import { loadData } from "./data.mjs";
-import { createMarkdownIt, buildLinkTables, serializeLinkTables } from "./render.mjs";
+import { createMarkdownIt, buildLinkTables, diagramIsTall, serializeLinkTables } from "./render.mjs";
 import { isPictureSvg, pairSizes, pictureSvgOutputs, unpairedLightPictures } from "./theme-pictures.mjs";
 import { loadHighlightTheme } from "./highlight-theme.mjs";
 import { NAV_SCRIPT_REL, buildInitConfig, renderSidebar } from "./template.mjs";
@@ -1366,7 +1366,16 @@ async function injectGanttChart(pages, destRoot, svgContent) {
     const svgStart = html.indexOf("<svg", idx);
     const svgEnd = html.indexOf("</svg>", svgStart);
     if (svgStart < 0 || svgEnd < 0) continue;
-    const patched = html.slice(0, svgStart) + svgContent + html.slice(svgEnd + 6);
+    // The figure around it was written for the placeholder, a pixel tall, so it says the
+    // figure is short; the chart decides that now (render.mjs, diagramIsTall).
+    let head = html.slice(0, svgStart);
+    const wrapStart = head.lastIndexOf('<div class="fig-wrap"', idx);
+    const wrapEnd = wrapStart < 0 ? -1 : head.indexOf(">", wrapStart);
+    if (wrapEnd >= 0 && wrapEnd < idx) {
+      const tag = head.slice(wrapStart, wrapEnd).replace(/ data-tall\b/, "");
+      head = head.slice(0, wrapStart) + tag + (diagramIsTall(svgContent) ? " data-tall" : "") + head.slice(wrapEnd);
+    }
+    const patched = head + svgContent + html.slice(svgEnd + 6);
     await fs.writeFile(htmlPath, patched, "utf8");
     await fs.writeFile(path.join(root, ...GANTT_SVG_REL.split("/")), svgContent, "utf8");
     injected.push({
