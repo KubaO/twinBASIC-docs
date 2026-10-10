@@ -70,6 +70,15 @@ How the four duties above fit it:
 - **Additional context** gives what did not reproduce it, the severity, and the builds it
   was checked on besides the one above.
 
+**A follow-up to a closed issue** --- one whose fix left part of the defect, or a case its
+report named only in passing --- opens its **Describe the bug** with "Follow-up to #NNNN,
+which is fixed in BETA <n> for <what it fixed>; this is <what is left>." Its **To Reproduce**
+ends with regression tests the twinBASIC developers can adapt (owner, 2026-10-10): a
+`[TestFixture]` module, introduced by one sentence, with one `[TestCase]` per behaviour that
+asserts the correct result, covering what the old issue described (these pass) and what is
+left (these fail), or compile cases for a diagnostic, or a scripted check where no unit test
+reaches. Its reproducer is a `test` reproducer that holds that module (see below).
+
 **An entry's paragraphs and list items are not wrapped**, one line each, unlike the rest of
 this file. A GitHub issue renders a single newline as a line break, so a wrapped paragraph
 pastes with a break in mid-sentence. Entries are separated by a `---` line.
@@ -126,7 +135,8 @@ node scripts/impexp.mjs import bugs/<slug>/<slug>.twinproj bugs/<slug>/src --ove
 ```
 
 `bugs/<slug>/repro.json` says how to ask the compiler about the entry, and is committed with
-the reproducer: a `mode` of `compile`, `build`, `run`, `cli` (the compiler executable's own
+the reproducer: a `mode` of `compile`, `build`, `run`, `test` (its `[TestCase]` Subs and
+compile cases, run by `tbrun --tests`), `cli` (the compiler executable's own
 command line), `lane` (a lane of `ide-test.bat` or `addin-test.bat` and the tests in it that
 assert the bug), `probe` (a script under `scripts/`) or `manual`, and what a reproduction
 looks like in `expect`, such as the exit code of `tbbuild`, the diagnostic codes, or a
@@ -808,39 +818,66 @@ What was tried: `GetIDsOfNames` and `Invoke` with zero arguments, and `GetTypeIn
 ## A module-level `Single` array `Const` whose element overflows holds infinity, and a later array `Const` that calls `Sqr`, `Timer` or `Rnd` is refused with TB5001
 
 **Describe the bug**
-At module level, an array `Const` of `Single` whose element is too large for a `Single` compiles without a diagnostic, and the element reads as infinity. An array `Const` declared after it, whose element calls `Sqr`, `Timer` or `Rnd`, is then refused with TB5001, *Type mismatch*, although it is correct and compiles on its own. An element too large for any other element type is refused with TB5001 on its own line, as it should be. Observed in the IDE's diagnostics and in a run.
+Follow-up to #2475, which is fixed in BETA 1005 for the element types it reported: an element too large for a `Long`, `Integer`, `Byte` or `LongLong` array `Const` is now TB5001 on its own line, where BETA 997 crashed the compiler. This is the `Single` case, which #2475 gave as a second crash under Additional context: it no longer crashes, but it is still wrong. At module level, an array `Const` of `Single` whose element is too large for a `Single` compiles without a diagnostic, and the element reads as infinity. An array `Const` declared after it, whose element calls `Sqr`, `Timer` or `Rnd`, is then refused with TB5001, *Type mismatch*, although it is correct and compiles on its own. Observed in the IDE's diagnostics and in a run.
 
 **To Reproduce**
 Steps to reproduce the behavior:
-1. Open `single-array-const-overflow.twinproj` (attached as `single-array-const-overflow.zip`). Its one module:
+1. Open `single-array-const-overflow.twinproj` (attached as `single-array-const-overflow.zip`). Its module `Startup` begins:
    ```
-   Module Startup
-       Const Big() As Single = Array(1E+39)
-       Const Root() As Double = Array(Sqr(4))
+   Const Big() As Single = Array(1E+39)
+   Const Root() As Double = Array(Sqr(4))
+   ```
+2. Compile it. See TB5001 *Type mismatch* on the declaration of `Root`, and nothing on the declaration of `Big`.
+3. Delete the declaration of `Root` and print `Big(0)` in `Main`: the project compiles, and `Big(0)` prints `1.#INF`.
 
-       Public Sub Main()
-           Debug.Print Root(0)
-       End Sub
-   End Module
-   ```
-2. See TB5001 *Type mismatch* reported on line 3, the declaration of `Root`, and nothing on line 2. (The use of `Root` in `Main` is then TB5078.)
-3. Delete line 3 and print `Big(0)` in its place: the project compiles, and `Big(0)` prints `1.#INF`.
+The module below is the reproducer's, and is meant to be adapted as a regression test. Because what it tests is a diagnostic, each case is a line of source that ends in the comment `' CASE <Name>: <expected>`: the diagnostic code the line must get, `error` for any error, or `none`. On BETA 1005 the nine cases from #2475 and the scalar control pass, and `SingleElementOverflow` and `SqrAfterSingleOverflow` fail.
+```vb
+' Regression tests for #2475 and its follow-up, as compile cases: each line that
+' ends in a  ' CASE <Name>: <expected>  comment must give that diagnostic on that
+' line (a code, "error" for any error, or "none"). tbrun --tests checks them.
+' Big overflows a Single and is accepted; Root, correct, is then refused with
+' TB5001. Declared alone, Root compiles, and Big(0) reads 1.#INF.
+Module Startup
+    ' Left in BETA 1005: a Single element that overflows is accepted, and the
+    ' array constant after it, which calls Sqr, is refused.
+    Const Big() As Single = Array(1E+39)  ' CASE SingleElementOverflow: error
+    Const Root() As Double = Array(Sqr(4))  ' CASE SqrAfterSingleOverflow: none
+
+    ' Fixed in #2475 (BETA 1005): an element too large for its type is TB5001,
+    ' where BETA 997 crashed the compiler.
+    Const L1() As Long = Array(2147483648)  ' CASE LongElementOverflow: TB5001
+    Const L2() As Long = Array(1, 2147483648)  ' CASE LongSecondElementOverflow: TB5001
+    Const L3() As Long = Array(3000000000.5)  ' CASE LongFractionOverflow: TB5001
+    Const I1() As Integer = Array(40000.5)  ' CASE IntegerElementOverflow: TB5001
+    Const Y1() As Byte = Array(300.5)  ' CASE ByteElementOverflow: TB5001
+    Const Y2() As Byte = Array(-1.5)  ' CASE ByteNegativeElement: TB5001
+    Const Q1() As LongLong = Array(9223372036854775808#)  ' CASE LongLongElementOverflow: TB5001
+    Const D1() As Double = Array(1E+300 * 1E+300)  ' CASE DoubleElementOverflow: TB5001
+
+    ' Control: a scalar Single constant that overflows is refused where it is used.
+    Const S As Single = 1E+39
+
+    Public Sub Main()
+        Debug.Print S  ' CASE ScalarSingleOverflowUse: TB5002
+    End Sub
+End Module
+```
 
 **Expected behavior**
-TB5001 on line 2, as for every other element type: `Const L() As Long = Array(2147483648)` and `Const D() As Double = Array(1E+300 * 1E+300)` are refused on their own line. Line 3 compiles, as it does without line 2, and `Root(0)` is 2. A scalar `Const S As Single = 1E+39` is refused too, with TB5002.
+An error on the declaration of `Big`, TB5001 as for every other element type: the `Long`, `Integer`, `Byte`, `LongLong` and `Double` arrays above are each refused on their own line. The declaration of `Root` compiles, as it does without `Big`, and `Root(0)` is 2. A scalar `Const S As Single = 1E+39` is refused too, with TB5002 where it is used.
 
 **Desktop:**
  - OS: Windows 10 Pro 22H2 (build 19045)
  - twinBASIC compiler version: BETA 1005
 
 **Additional context**
-On BETA 997 the same project crashes the compiler (reported in #2475, whose other cases BETA 1005 refuses with TB5001). VB6 has no array constants, so there is no VB6 project.
+VB6 has no array constants, so there is no VB6 project.
 
-What reproduces it: `Array(3.5E+38)` in place of `Array(1E+39)`; `Timer` or `Rnd` in place of `Sqr(4)`. What does not: `Root` declared before `Big`; an element of `Abs(-4)` or a literal after `Big`; the same `Single` constant declared inside a procedure, which is not accepted silently (the run ends with an error when the procedure is reached). The order and the three functions suggest an overflow flag left set while `Big` is evaluated, which the next constant's call then reads as an error; that is an inference.
+What reproduces it: `Array(3.5E+38)` in place of `Array(1E+39)`; `Timer` or `Rnd` in place of `Sqr(4)`, when that constant is the first array `Const` after `Big` (a second one after it compiles). What does not: `Root` declared before `Big`; an element of `Abs(-4)` or a literal after `Big`; the same `Single` constant declared inside a procedure, which is not accepted silently (the run ends with an error when the procedure is reached). The order and the three functions suggest an overflow flag left set while `Big` is evaluated, which the next constant's call then reads as an error; that is an inference.
 
 Severity: a silent wrong value, an element that holds infinity where a compile error belongs, and a compile error on a correct constant that names neither the cause nor the line that has it.
 
-<!-- Reproducer: bugs/single-array-const-overflow/ (mode run: the project does not compile, so tbrun exits 1; expects TB5001 on line 3 and nothing on line 2); verified on BETA 1005 by `bug_repro.mjs verify`, and on BETA 997 `bug_repro.mjs compile` reports that the compiler crashed 3x. The variants (3.5E+38, Timer, Rnd, the reverse order, Abs, a literal, a Double overflow, the local constant, the scalar constant) were checked with tbrun on 1005 in scratch trees that are not kept. It is the case that the report of #2475 ("A module-level array Const with an element that does not fit its type crashes the compiler") gave as a second crash under Additional context; #2475's own reproducer no longer crashes on 1005. Stated in docs/Reference/Core/Const.md, "Array constants", in a WARNING naming BETA 1005: when fixed, the WARNING goes, and the list above it says that an element too large for a Single is TB5001 as well. -->
+<!-- Reproducer: bugs/single-array-const-overflow/ (mode test: `tbrun --tests` judges the compile cases, PASS or FAIL each; expect lists the nine PASS and two FAIL lines); verified on BETA 1005 by `bug_repro.mjs verify`; on BETA 997 the first form of the reproducer crashed the compiler 3x. The Timer-after-Big, scalar-at-its-use and scalar-unused (no diagnostic) variants were checked with tbrun on 1005 in scratch trees that are not kept, and so were 3.5E+38, Rnd, the reverse order, Abs, a literal and the local constant. Follow-up to #2475 ("A module-level array Const with an element that does not fit its type crashes the compiler"), closed as fixed in BETA 1005; its own reproducer no longer crashes, and was deleted. Stated in docs/Reference/Core/Const.md, "Array constants", in a WARNING naming BETA 1005: when fixed, the WARNING goes, and the paragraph above it says that an element too large for a Single is TB5001 as well. -->
 
 ---
 
@@ -1055,3 +1092,1261 @@ What did not reproduce it: `Host.CurrentProject.RootFolder.Parent`, the parent o
 Severity: crash. The crash is in the read, so no `On Error` handler helps, and an add-in that walks up the tree with `Parent` until `Is Nothing` crashes the compiler on every start, until its DLL is removed. The workaround is to stop at the folder whose `Path` is `twinbasic:/` without reading its `Parent`.
 
 <!-- Reproducer: bugs/rootfolder-parent-crash/ (mode lane: an add-in has to be built into an IDE's add-in folder, which nothing here may do outside a lane, so `verify` runs the lane). Asserted by `addin-test.bat --only parent` (test/addin/parent.test.mjs, cases a to e; case f is the control that does not crash; the ParentProbe add-in is test/addin/probes/parent), which passes on BETA 983, 995 and 997 while the bug is there. The reproducer is a cut-down copy of that add-in, compiled clean on 997 by `bug_repro.mjs compile`, and not itself run in a lane. Stated in docs/Reference/Built-In/tbIDE/FileSystemItem.md, the WARNING under "Parent" (names BETA 997), and in WIP.HelpAddin.md (P21): when fixed, the WARNING goes and the page states what Parent of the root is, with no mention of the defect; update the lane's tests (parent.test.mjs, which then assert the fixed behaviour) and P21. -->
+
+---
+
+## `Dim ... As New` on an `Interface` compiles, where `New` on one is refused with TB5074
+
+**Describe the bug**
+Follow-up to #2486, which is fixed in BETA 1005 for the `New` expression: `New IParent`, on an `Interface` declared in a project or a package, is now refused with TB5074, *Cannot construct 'IParent': expected a class type.*, as `New stdole.IUnknown` is. This is the declaration form, which is still accepted: `Dim p As New IParent` compiles without a diagnostic, in a procedure, at module level and as a field of a class. At run time it builds the object #2486 described, with nothing behind its members: a call on a member the interface declares returns 0, and a call on a member it inherits from another `Interface` ends the run with an access violation. Observed in the IDE's diagnostics, and in a run.
+
+**To Reproduce**
+Steps to reproduce the behavior:
+1. Open `dim-as-new-interface.twinproj` (attached as `dim-as-new-interface.zip`). Its module `NewOnInterfaceTests`, below, declares `Interface IParent`, `Interface IChild Extends IParent`, a class that implements `IParent`, and each way of constructing one of them.
+2. Compile it. Each of the four `New` lines on an interface gets TB5074. The five lines below get no diagnostic:
+   ```
+   Public Item As New IParent              ' a field of a class
+   Private ModuleLevel As New IParent      ' at module level
+   Dim p As New IParent                    ' in a procedure
+   Dim q As New IChild
+   Dim r As New ErrorContext               ' an interface of the VBRUN package
+   ```
+3. To see what such an object does, run this in a project of its own, with the two interfaces above:
+   ```
+   Dim p As New IParent
+   Debug.Print (p Is Nothing), p.F()     ' False 0
+   Dim c As New IChild
+   Debug.Print c.G()                     ' 0
+   Debug.Print c.F()                     ' NATIVE EXCEPTION: ACCESS_VIOLATION, and the run ends
+   ```
+
+The module below is the reproducer's, and is meant to be adapted as a regression test. Because what it tests is a diagnostic, each case is a line of source that ends in the comment `' CASE <Name>: <expected>`: the diagnostic code the line must get, `error` for any error, or `none`. On BETA 1005 the four `New_` cases from #2486 and the two controls that construct a class pass, and the five `AsNew_` cases on an interface fail.
+```vb
+' Regression tests for #2486 and its follow-up, as compile cases: each line that
+' ends in a  ' CASE <Name>: <expected>  comment must give that diagnostic on that
+' line (a code, "error" for any error, or "none"). tbrun --tests checks them.
+' New needs a class; an Interface has none, so every way of constructing one is
+' a compile error, as New stdole.IUnknown is.
+
+[InterfaceId("E5B8C0A1-0000-4000-8000-0000000000D1")]
+Interface IParent
+    Function F() As Long
+End Interface
+
+[InterfaceId("E5B8C0A1-0000-4000-8000-0000000000D2")]
+Interface IChild Extends IParent
+    Function G() As Long
+End Interface
+
+Class Implementer
+    Implements IParent
+    Private Function IParent_F() As Long Implements IParent.F
+        Return 1
+    End Function
+End Class
+
+Class Holder
+    Public Item As New IParent  ' CASE AsNew_ClassField: error
+End Class
+
+Module NewOnInterfaceTests
+
+    Private ModuleLevel As New IParent  ' CASE AsNew_ModuleVariable: error
+
+    ' Fixed in #2486 (BETA 1005): New on an Interface is refused with TB5074.
+    Private Sub NewExpressions()
+        Dim a As IParent = New IParent  ' CASE New_ProjectInterface: TB5074
+        Dim b As IChild = New IChild  ' CASE New_DerivedInterface: TB5074
+        Dim c As ErrorContext = New ErrorContext  ' CASE New_PackageInterface: TB5074
+        Dim d As stdole.IUnknown = New stdole.IUnknown  ' CASE New_TypeLibraryInterface: TB5074
+        Dim e As IParent = New Implementer  ' CASE New_ClassThatImplements: none
+    End Sub
+
+    ' Left in BETA 1005: Dim ... As New on an Interface compiles.
+    Private Sub AsNewDeclarations()
+        Dim p As New IParent  ' CASE AsNew_ProjectInterface: error
+        Dim q As New IChild  ' CASE AsNew_DerivedInterface: error
+        Dim r As New ErrorContext  ' CASE AsNew_PackageInterface: error
+        Dim s As New Implementer  ' CASE AsNew_Class: none
+    End Sub
+
+End Module
+```
+
+**Expected behavior**
+A compile error on each `As New` of an `Interface`, TB5074 as for `New` on one: `As New` constructs the object when it is first used, and an interface has no class to construct. `As New` on a class that implements the interface compiles, as it does now.
+
+**Desktop:**
+ - OS: Windows 10 Pro 22H2 (build 19045)
+ - twinBASIC compiler version: BETA 1005
+
+**Additional context**
+VB6 has no comparison: a VB6 project cannot declare an `Interface`, and the interfaces of the type libraries it references are hidden from it, as #2486 said.
+
+The object `As New` builds is the one #2486 described: `TypeName` gives the interface's name, `ObjPtr` is not 0, `ErrorContext.Number` reads 0, and an inherited member ends the run with `NATIVE EXCEPTION: ACCESS_VIOLATION` (step 3, checked in a run on BETA 1005).
+
+Severity: low in practice, since few programs write `As New` on an interface, but the compile-time check #2486 added does not cover it, and the result is a silent wrong value or a crash.
+
+<!-- Reproducer: bugs/dim-as-new-interface/ (mode test: `tbrun --tests` judges the compile cases; expect lists the six PASS and five FAIL lines); verified on BETA 1005 by `bug_repro.mjs verify`. Step 3 was run with tbrun on 1005 in a scratch tree that is not kept (local, module-level and class-field As New, and the access violation on the inherited member). Follow-up to #2486 ("New on an Interface compiles, and a call on the object returns a default value, or ends in an access violation for an inherited member"), closed as fixed in BETA 1003. No documentation page states it: docs/Reference/Core/New.md describes As New on classes only. -->
+
+---
+
+## A twinBASIC class's connection point and its container end in an access violation when given a null pointer
+
+**Describe the bug**
+Follow-up to #2488, which is fixed in BETA 1005 for `Advise`: given `Nothing` as the sink, or an unassigned `IUnknown` variable, it now fails with `E_POINTER`. This is the other methods of the same two objects that take a pointer: given a null one, each still ends the run with an access violation, which the DEBUG CONSOLE reports as `NATIVE EXCEPTION: ACCESS_VIOLATION`. They are `IConnectionPoint::GetConnectionInterface` (a null *pIID*), `IConnectionPoint::GetConnectionPointContainer` (a null *ppCPC*), `IConnectionPointContainer::FindConnectionPoint` (a null *riid*, or a null *ppCP*) and `IConnectionPointContainer::EnumConnectionPoints` (a null *ppEnum*), on the connectable object of a class that declares an `Event`. Observed by running the reproducer's test cases.
+
+**To Reproduce**
+Steps to reproduce the behavior:
+1. Open `connection-point-null-pointer-crash.twinproj` (attached as `connection-point-null-pointer-crash.zip`). Its module `ConnectionPointTests`, below, declares the project's own copies of `IConnectionPointContainer`, `IEnumConnectionPoints` and `IConnectionPoint`, with every out parameter `ByVal LongPtr` so that a null one can be passed, a class `EventSource` with one `Event`, and one `[TestCase]` Sub for each call.
+2. Call one of the null-pointer cases from `Sub Main`, such as `ConnectionPointTests.GetConnectionInterface_NullIid_ReturnsEPointer`, and press F5.
+3. See a line beginning `NATIVE EXCEPTION: ACCESS_VIOLATION` in the DEBUG CONSOLE: the run ends at the call, although it is made under `On Error Resume Next`.
+
+The module below is the reproducer's, and is meant to be adapted as a regression test. On BETA 1005 the three `Advise_` cases from #2488 pass, and the five null-pointer cases fail with the access violation.
+```vb
+' Regression tests for #2488 and its follow-up. A class with an Event is a
+' connectable object; these call its IConnectionPointContainer and its
+' IConnectionPoint with a null pointer, where the COM contract (the Windows SDK
+' pages for each method) says the method returns E_POINTER. Every out parameter
+' is declared ByVal LongPtr, so that a null one can be passed.
+
+[InterfaceId("B196B284-BAB4-101A-B69C-00AA00341D07")]
+Interface IConnectionPointContainerRaw Extends stdole.IUnknown
+    Sub EnumConnectionPoints(ByVal ppEnum As LongPtr)
+    Sub FindConnectionPoint(ByVal riid As LongPtr, ByVal ppCP As LongPtr)
+End Interface
+
+[InterfaceId("B196B285-BAB4-101A-B69C-00AA00341D07")]
+Interface IEnumConnectionPointsRaw Extends stdole.IUnknown
+    Sub Next(ByVal cConnections As Long, ByRef ppCP As IConnectionPointRaw, ByRef pcFetched As Long)
+End Interface
+
+[InterfaceId("B196B286-BAB4-101A-B69C-00AA00341D07")]
+Interface IConnectionPointRaw Extends stdole.IUnknown
+    Sub GetConnectionInterface(ByVal piid As LongPtr)
+    Sub GetConnectionPointContainer(ByVal ppCPC As LongPtr)
+    Function Advise(ByVal pUnkSink As stdole.IUnknown) As Long
+    Sub Unadvise(ByVal dwCookie As Long)
+End Interface
+
+Class EventSource
+    Public Event Ping()
+End Class
+
+Class NotASink
+    Public Value As Long
+End Class
+
+[TestFixture]
+Module ConnectionPointTests
+
+    Private Const E_POINTER As Long = &H80004003      ' the Windows SDK, for a null pointer argument
+    Private Const E_NOINTERFACE As Long = &H80004002
+
+    Private Declare PtrSafe Sub CopyMemory Lib "kernel32" Alias "RtlMoveMemory" ( _
+        ByVal Destination As LongPtr, ByVal Source As LongPtr, ByVal Length As LongPtr)
+
+    ' The connection point of a new EventSource, through EnumConnectionPoints and Next.
+    Private Function PointOf(ByVal container As IConnectionPointContainerRaw) As IConnectionPointRaw
+        Dim pEnum As LongPtr
+        container.EnumConnectionPoints VarPtr(pEnum)
+        Dim points As IEnumConnectionPointsRaw
+        CopyMemory VarPtr(points), VarPtr(pEnum), LenB(pEnum)   ' takes over the reference
+        Dim fetched As Long
+        points.Next 1, PointOf, fetched
+    End Function
+
+    ' Fixed in #2488 (BETA 1005): Advise with a null sink returns E_POINTER.
+
+    [TestCase]
+    Public Sub Advise_Nothing_ReturnsEPointer()
+        Dim point As IConnectionPointRaw = PointOf(New EventSource)
+        On Error Resume Next
+        point.Advise Nothing
+        Assert.Strict.AreEqual E_POINTER, Err.Number
+    End Sub
+
+    [TestCase]
+    Public Sub Advise_UnassignedIUnknown_ReturnsEPointer()
+        Dim point As IConnectionPointRaw = PointOf(New EventSource)
+        Dim sink As stdole.IUnknown
+        On Error Resume Next
+        point.Advise sink
+        Assert.Strict.AreEqual E_POINTER, Err.Number
+    End Sub
+
+    [TestCase]
+    Public Sub Advise_NotASink_ReturnsENoInterface()
+        Dim point As IConnectionPointRaw = PointOf(New EventSource)
+        On Error Resume Next
+        point.Advise New NotASink
+        Assert.Strict.AreEqual E_NOINTERFACE, Err.Number   ' as VB6 returns, too
+    End Sub
+
+    ' Left in BETA 1005: every other null pointer ends in an access violation.
+
+    [TestCase]
+    Public Sub GetConnectionInterface_NullIid_ReturnsEPointer()
+        Dim point As IConnectionPointRaw = PointOf(New EventSource)
+        On Error Resume Next
+        point.GetConnectionInterface 0
+        Assert.Strict.AreEqual E_POINTER, Err.Number
+    End Sub
+
+    [TestCase]
+    Public Sub GetConnectionPointContainer_NullOut_ReturnsEPointer()
+        Dim point As IConnectionPointRaw = PointOf(New EventSource)
+        On Error Resume Next
+        point.GetConnectionPointContainer 0
+        Assert.Strict.AreEqual E_POINTER, Err.Number
+    End Sub
+
+    [TestCase]
+    Public Sub FindConnectionPoint_NullIid_ReturnsEPointer()
+        Dim container As IConnectionPointContainerRaw = New EventSource
+        Dim p As LongPtr
+        On Error Resume Next
+        container.FindConnectionPoint 0, VarPtr(p)
+        Assert.Strict.AreEqual E_POINTER, Err.Number
+    End Sub
+
+    [TestCase]
+    Public Sub FindConnectionPoint_NullOut_ReturnsEPointer()
+        Dim container As IConnectionPointContainerRaw = New EventSource
+        Dim point As IConnectionPointRaw = PointOf(container)
+        Dim iid(15) As Byte
+        point.GetConnectionInterface VarPtr(iid(0))
+        On Error Resume Next
+        container.FindConnectionPoint VarPtr(iid(0)), 0
+        Assert.Strict.AreEqual E_POINTER, Err.Number
+    End Sub
+
+    [TestCase]
+    Public Sub EnumConnectionPoints_NullOut_ReturnsEPointer()
+        Dim container As IConnectionPointContainerRaw = New EventSource
+        On Error Resume Next
+        container.EnumConnectionPoints 0
+        Assert.Strict.AreEqual E_POINTER, Err.Number
+    End Sub
+
+End Module
+```
+
+**Expected behavior**
+Each call fails with `E_POINTER` (`&H80004003`), which twinBASIC raises as a run-time error that `On Error` can handle, as `Advise` now does for a null sink. The Windows SDK documentation of each of these methods lists `E_POINTER` for a pointer argument that is not valid.
+
+**Desktop:**
+ - OS: Windows 10 Pro 22H2 (build 19045)
+ - twinBASIC compiler version: BETA 1005
+
+**Additional context**
+VB6 crashes too. The same calls on the connection point of a VB6 class with an event, made through `DispCallFunc` (the VB6 project is attached as `connection-point-null-pointer-crash-vb6.zip`; the environment variable `CASE`, 1 to 8, picks the call, and 2 is `GetConnectionInterface` with a null pointer), each end the exe with an access violation, `0xC0000005` in `MSVBVM60.DLL`. As for #2488, a fix costs no compatibility: no program depends on the crash.
+
+What does not crash: each call given a valid pointer. `FindConnectionPoint` with the point's own interface identifier returns it, and with `GUID_NULL` it fails with `CONNECT_E_NOCONNECTION` (`&H80040200`), as the contract says (VB6 returns `E_NOINTERFACE` there).
+
+Severity: low in practice, since a program rarely passes a null pointer, but a COM client written in any language can, and the object crashes the process that hosts the class instead of refusing the call.
+
+<!-- Reproducer: bugs/connection-point-null-pointer-crash/ (mode test: `tbrun --tests` runs each [TestCase] in the compiler's test mode, where the access violation ends the case and not the run; expect lists the three PASS and five FAIL lines); verified on BETA 1005 by `bug_repro.mjs verify`. The same five calls end a run with the access violation in an IDE run as well (tbrun probes on 1005, scratch, not kept). VB6 side in vb6/ (VB6 6.0): `bug_repro.mjs vb6` runs case 2, and each of cases 2 and 5 to 8 was run with CASE set, all crashing in MSVBVM60.DLL; cases 1, 3 and 4 are the controls. Follow-up to #2488 ("IConnectionPoint.Advise(Nothing) on a twinBASIC class's connection point ends in an access violation"), closed as fixed. No documentation page states it; docs/Reference/COM-Interfaces/IConnectionPoint.md describes Advise with Nothing only. -->
+
+---
+
+## A failure code from a late-bound call is raised as the HRESULT, where VB6 raises its own error number, such as 450 for DISP_E_BADPARAMCOUNT
+
+**Describe the bug**
+Follow-up to #2490, which is fixed in BETA 1005 for a name the object does not have: a late-bound statement and `CallByName` now raise error 438, as VB6 does. This is the rest of the conversion VB6 makes when `IDispatch::Invoke` fails. For ten failure codes VB6 raises one of its own error numbers, and twinBASIC raises the `HRESULT` itself, so a handler written for VB6 or VBA does not recognise the error. The common one is a call with the wrong number of arguments to an object such as a `Collection`, a `Scripting.Dictionary` or a `Scripting.FileSystemObject`: VB6 raises 450, *Wrong number of arguments or invalid property assignment*, and twinBASIC raises `&H8002000E` (`DISP_E_BADPARAMCOUNT`), *Invalid number of parameters.* Observed by running the reproducer's test cases.
+
+**To Reproduce**
+Steps to reproduce the behavior:
+1. Open `latebound-hresult-mapping.twinproj` (attached as `latebound-hresult-mapping.zip`). Its module, below, holds `HResultObject`, a `NotDispatchable` class that implements the project's own copy of `IDispatch`: a member name of the form `Hr<hex>` fails with that `HRESULT`, so `o.Hr8002000E` is a late-bound call whose `Invoke` returns `DISP_E_BADPARAMCOUNT`.
+2. Run, with `On Error Resume Next`, `x = c.Item(1, 2)` where `c` is an `Object` holding a `Collection`. See `Err.Number` -2147352562 (`&H8002000E`); VB6 gives 450.
+3. Run each case of the module below. Each prints the number twinBASIC raises; the VB6 project (attached as `latebound-hresult-mapping-vb6.zip`) prints VB6's:
+
+   | `Invoke` returns | VB6 | twinBASIC |
+   |---|---|---|
+   | `DISP_E_BADPARAMCOUNT` `&H8002000E` | 450 | -2147352562 |
+   | `DISP_E_PARAMNOTOPTIONAL` `&H8002000F` | 449 | -2147352561 |
+   | `E_NOTIMPL` `&H80004001` | 445 | -2147467263 |
+   | `E_OUTOFMEMORY` `&H8007000E` | 7 | -2147024882 |
+   | `DISP_E_BADINDEX` `&H8002000B` | 9 | -2147352565 |
+   | `DISP_E_NONAMEDARGS` `&H80020007` | 446 | -2147352569 |
+   | `DISP_E_ARRAYISLOCKED` `&H8002000D` | 10 | -2147352563 |
+   | `E_NOINTERFACE` `&H80004002` | 430 | -2147467262 |
+   | `E_ACCESSDENIED` `&H80070005` | 70 | -2147024891 |
+   | `E_ABORT` `&H80004004` | 287 | -2147467260 |
+
+The module below is the reproducer's, and is meant to be adapted as a regression test. Each expected number is VB6's, from the VB6 project. On BETA 1005 the three cases from #2490 and the three codes twinBASIC already converts pass, and the ten codes of the table and the `Collection` call of step 2 fail.
+```vb
+' Regression tests for #2490 and its follow-up: the error number a late-bound
+' call raises when the object fails it. The expected numbers are what VB6 6.0
+' raises for the same failure (the VB6 project beside this one prints them).
+'
+' HResultObject answers any name of the form Hr<hex> and fails the call with that
+' HRESULT, so o.Hr8002000E is a late-bound call whose Invoke returns
+' DISP_E_BADPARAMCOUNT.
+
+Module DispatchTypes
+    Public Type GUID
+        Data1 As Long
+        Data2 As Integer
+        Data3 As Integer
+        Data4(0 To 7) As Byte
+    End Type
+
+    Public Type DISPPARAMS
+        rgvarg As LongPtr
+        rgdispidNamedArgs As LongPtr
+        cArgs As Long
+        cNamedArgs As Long
+    End Type
+
+    Public Type EXCEPINFO
+        wCode As Integer
+        wReserved As Integer
+        bstrSource As LongPtr
+        bstrDescription As LongPtr
+        bstrHelpFile As LongPtr
+        dwHelpContext As Long
+        pvReserved As LongPtr
+        pfnDeferredFillIn As LongPtr
+        scode As Long
+    End Type
+
+    Private Declare PtrSafe Sub CopyMemory Lib "kernel32" Alias "RtlMoveMemory" ( _
+        ByVal Destination As LongPtr, ByVal Source As LongPtr, ByVal Length As LongPtr)
+    Private Declare PtrSafe Function lstrlenW Lib "kernel32" (ByVal lpString As LongPtr) As Long
+
+    Public Function PtrToString(ByVal p As LongPtr) As String
+        Dim n As Long = lstrlenW(p)
+        Dim s As String = Space$(n)
+        If n > 0 Then CopyMemory StrPtr(s), p, n * 2
+        Return s
+    End Function
+End Module
+
+[InterfaceId("00020400-0000-0000-C000-000000000046")]
+Interface IDispatchOwn Extends stdole.IUnknown
+    Sub GetTypeInfoCount(ByRef pctinfo As Long)
+    Sub GetTypeInfo(ByVal iTInfo As Long, ByVal lcid As Long, ByRef ppTInfo As LongPtr)
+    Sub GetIDsOfNames(ByRef riid As GUID, ByRef rgszNames As LongPtr, ByVal cNames As Long, ByVal lcid As Long, ByRef rgDispId As Long)
+    Sub Invoke(ByVal dispIdMember As Long, ByRef riid As GUID, ByVal lcid As Long, ByVal wFlags As Integer, ByRef pDispParams As DISPPARAMS, ByRef pVarResult As Variant, ByRef pExcepInfo As EXCEPINFO, ByRef puArgErr As Long)
+End Interface
+
+' Dispatched through its own IDispatchOwn methods, since it is NotDispatchable.
+NotDispatchable Class HResultObject
+    Implements IDispatchOwn
+
+    Private Sub GetTypeInfoCount(ByRef pctinfo As Long) Implements IDispatchOwn.GetTypeInfoCount
+        pctinfo = 0
+    End Sub
+
+    Private Sub GetTypeInfo(ByVal iTInfo As Long, ByVal lcid As Long, ByRef ppTInfo As LongPtr) Implements IDispatchOwn.GetTypeInfo
+        Err.ReturnHResult = &H80004001                   ' E_NOTIMPL
+    End Sub
+
+    ' "Hr8002000E" gets the DISPID &H8002000E.
+    Private Sub GetIDsOfNames(ByRef riid As GUID, ByRef rgszNames As LongPtr, ByVal cNames As Long, ByVal lcid As Long, ByRef rgDispId As Long) Implements IDispatchOwn.GetIDsOfNames
+        rgDispId = CLng("&H" & Mid$(PtrToString(rgszNames), 3))
+    End Sub
+
+    ' Fails with the HRESULT that is the DISPID.
+    Private Sub Invoke(ByVal dispIdMember As Long, ByRef riid As GUID, ByVal lcid As Long, ByVal wFlags As Integer, ByRef pDispParams As DISPPARAMS, ByRef pVarResult As Variant, ByRef pExcepInfo As EXCEPINFO, ByRef puArgErr As Long) Implements IDispatchOwn.Invoke
+        Err.ReturnHResult = dispIdMember
+    End Sub
+End Class
+
+Class Widget
+    Public Sub Hello()
+    End Sub
+End Class
+
+[TestFixture]
+Module LateBoundErrorTests
+
+    ' Fixed in #2490 (BETA 1005): a name the object does not have is error 438.
+
+    [TestCase]
+    Public Sub UnknownMember_Class_Raises438()
+        Dim o As Object = New Widget
+        On Error Resume Next
+        o.Nope
+        Assert.Strict.AreEqual 438, Err.Number        ' VB6: 438
+    End Sub
+
+    [TestCase]
+    Public Sub UnknownMember_Collection_Raises438()
+        Dim o As Object = New Collection
+        On Error Resume Next
+        o.Nope
+        Assert.Strict.AreEqual 438, Err.Number        ' VB6: 438
+    End Sub
+
+    [TestCase]
+    Public Sub UnknownMember_CallByName_Raises438()
+        Dim o As Object = New Widget
+        On Error Resume Next
+        CallByName o, "Nope", VbMethod
+        Assert.Strict.AreEqual 438, Err.Number        ' VB6: 438
+    End Sub
+
+    ' Already as in VB6 in BETA 1005: these failure codes are raised as VB6 raises them.
+
+    [TestCase]
+    Public Sub MemberNotFound_Raises438()
+        Dim o As Object = New HResultObject
+        On Error Resume Next
+        o.Hr80020003                                    ' DISP_E_MEMBERNOTFOUND
+        Assert.Strict.AreEqual 438, Err.Number        ' VB6: 438
+    End Sub
+
+    [TestCase]
+    Public Sub TypeMismatch_Raises13()
+        Dim o As Object = New HResultObject
+        On Error Resume Next
+        o.Hr80020005                                    ' DISP_E_TYPEMISMATCH
+        Assert.Strict.AreEqual 13, Err.Number         ' VB6: 13
+    End Sub
+
+    [TestCase]
+    Public Sub InvalidArg_Raises5()
+        Dim o As Object = New HResultObject
+        On Error Resume Next
+        o.Hr80070057                                    ' E_INVALIDARG
+        Assert.Strict.AreEqual 5, Err.Number          ' VB6: 5
+    End Sub
+
+    ' Left in BETA 1005: these are raised as the HRESULT itself.
+
+    [TestCase]
+    Public Sub BadParamCount_Collection_Raises450()
+        Dim o As Object = New Collection
+        Dim x As Variant
+        On Error Resume Next
+        x = o.Item(1, 2)                                ' Item takes one argument
+        Assert.Strict.AreEqual 450, Err.Number        ' VB6: 450, Wrong number of arguments or invalid property assignment
+    End Sub
+
+    [TestCase]
+    Public Sub BadParamCount_Raises450()
+        Dim o As Object = New HResultObject
+        On Error Resume Next
+        o.Hr8002000E                                    ' DISP_E_BADPARAMCOUNT
+        Assert.Strict.AreEqual 450, Err.Number        ' VB6: 450, Wrong number of arguments or invalid property assignment
+    End Sub
+
+    [TestCase]
+    Public Sub ParamNotOptional_Raises449()
+        Dim o As Object = New HResultObject
+        On Error Resume Next
+        o.Hr8002000F                                    ' DISP_E_PARAMNOTOPTIONAL
+        Assert.Strict.AreEqual 449, Err.Number        ' VB6: 449, Argument not optional
+    End Sub
+
+    [TestCase]
+    Public Sub NotImpl_Raises445()
+        Dim o As Object = New HResultObject
+        On Error Resume Next
+        o.Hr80004001                                    ' E_NOTIMPL
+        Assert.Strict.AreEqual 445, Err.Number        ' VB6: 445, Object doesn't support this action
+    End Sub
+
+    [TestCase]
+    Public Sub OutOfMemory_Raises7()
+        Dim o As Object = New HResultObject
+        On Error Resume Next
+        o.Hr8007000E                                    ' E_OUTOFMEMORY
+        Assert.Strict.AreEqual 7, Err.Number          ' VB6: 7, Out of memory
+    End Sub
+
+    [TestCase]
+    Public Sub BadIndex_Raises9()
+        Dim o As Object = New HResultObject
+        On Error Resume Next
+        o.Hr8002000B                                    ' DISP_E_BADINDEX
+        Assert.Strict.AreEqual 9, Err.Number          ' VB6: 9, Subscript out of range
+    End Sub
+
+    [TestCase]
+    Public Sub NoNamedArgs_Raises446()
+        Dim o As Object = New HResultObject
+        On Error Resume Next
+        o.Hr80020007                                    ' DISP_E_NONAMEDARGS
+        Assert.Strict.AreEqual 446, Err.Number        ' VB6: 446, Object doesn't support named arguments
+    End Sub
+
+    [TestCase]
+    Public Sub ArrayIsLocked_Raises10()
+        Dim o As Object = New HResultObject
+        On Error Resume Next
+        o.Hr8002000D                                    ' DISP_E_ARRAYISLOCKED
+        Assert.Strict.AreEqual 10, Err.Number         ' VB6: 10, This array is fixed or temporarily locked
+    End Sub
+
+    [TestCase]
+    Public Sub NoInterface_Raises430()
+        Dim o As Object = New HResultObject
+        On Error Resume Next
+        o.Hr80004002                                    ' E_NOINTERFACE
+        Assert.Strict.AreEqual 430, Err.Number        ' VB6: 430, Class does not support Automation or does not support expected interface
+    End Sub
+
+    [TestCase]
+    Public Sub AccessDenied_Raises70()
+        Dim o As Object = New HResultObject
+        On Error Resume Next
+        o.Hr80070005                                    ' E_ACCESSDENIED
+        Assert.Strict.AreEqual 70, Err.Number         ' VB6: 70, Permission denied
+    End Sub
+
+    [TestCase]
+    Public Sub Abort_Raises287()
+        Dim o As Object = New HResultObject
+        On Error Resume Next
+        o.Hr80004004                                    ' E_ABORT
+        Assert.Strict.AreEqual 287, Err.Number        ' VB6: 287, Application-defined or object-defined error
+    End Sub
+
+End Module
+```
+
+**Expected behavior**
+The error number VB6 raises for each code in the table, with VB6's description, as twinBASIC already does for `DISP_E_MEMBERNOTFOUND` (438), `DISP_E_TYPEMISMATCH` (13) and the others listed below.
+
+**Desktop:**
+ - OS: Windows 10 Pro 22H2 (build 19045)
+ - twinBASIC compiler version: BETA 1005
+
+**Additional context**
+twinBASIC already raises VB6's number for `DISP_E_MEMBERNOTFOUND` (438), `DISP_E_TYPEMISMATCH` (13), `E_INVALIDARG` (5), `DISP_E_OVERFLOW` (6), `DISP_E_DIVBYZERO` (11), `DISP_E_BADVARTYPE` (458), `DISP_E_PARAMNOTFOUND` (448) and an `HRESULT` of the form `&H800A....` (its low word, 424 for `&H800A01A8`). `E_POINTER`, `E_FAIL`, `E_UNEXPECTED` and `&H8007000D` are raised as themselves by both, from a statement.
+
+The wrong number of arguments, on objects that are not twinBASIC's: `Dictionary.Add "k"` (one argument of two), `Dictionary.Add "k", 1, 2`, `Dictionary.Count = 5`, `x = Dictionary.Exists()`, `x = FileSystemObject.GetFileName()`, `x = FileSystemObject.BuildPath("a")` and `x = Collection.Item(1, 2)` each raise -2147352562 in twinBASIC and 450 in VB6.
+
+Not part of this report: VB6's `CallByName` raises 440, *Automation error*, for the four codes that a statement leaves as they are, where twinBASIC's raises the code itself. The numbers in the table are the same for a statement, for `x = o.Name` and for `CallByName` in VB6.
+
+Severity: code ported from VB6 that tests `Err.Number` for 450, 449 or 9 after a late-bound call does not recognise the error, and the description is the system's text for a COM code instead of VB's.
+
+<!-- Reproducer: bugs/latebound-hresult-mapping/ (mode test: `tbrun --tests`; expect lists the six PASS and eleven FAIL lines, each with the number BETA 1005 raises); verified on BETA 1005 by `bug_repro.mjs verify`. VB6 side in vb6/ (VB6 6.0; a lightweight IDispatch object whose Invoke returns the code, and the ordinary objects): `bug_repro.mjs vb6` prints the table's VB6 column. The Dictionary and FileSystemObject cases and VB6's CallByName column were run in scratch projects (twinBASIC with tbrun, VB6 through scripts/lib/vb6.mjs) that are not kept. Follow-up to #2490 ("A late-bound call to a member that does not exist raises &H80020006, and CallByName raises &H80004005, where VB6 raises 438"), closed as fixed in BETA 1003. Stated in docs/Reference/COM-Interfaces/IDispatch.md, the table under "Errors from a late-bound call" (its row "Invoke returns any other failure code: that code as the error number"); when fixed, that row lists VB6's numbers instead. -->
+
+---
+
+## An error raised with a constant number, in a member called late-bound, reaches the caller as &H80020009, *Exception occurred.*
+
+**Describe the bug**
+Follow-up to #2490, which is fixed in BETA 1005 for a name the object does not have, now error 438 as in VB6. This is another late-bound error number that is not VB6's: when the member called raises an error itself, with `Err.Raise` and a constant number (`Err.Raise 380`, with or without a source and a description) or with the `Error` statement, the late-bound caller gets error -2147352567 (`&H80020009`, `DISP_E_EXCEPTION`), *Exception occurred.*, instead of 380. Called early-bound, the same member raises 380. `Err.Raise` with a number held in a variable reaches a late-bound caller correctly. The VB package's own properties are affected: a colour property set late-bound, or with `CallByName`, to a value that is not a colour raises `&H80020009`, where the same assignment early-bound raises 380 (see #2484). Observed by running the reproducer's test cases, in an IDE run and in the built exe alike.
+
+**To Reproduce**
+Steps to reproduce the behavior:
+1. Open `latebound-constant-raise-exception.twinproj` (attached as `latebound-constant-raise-exception.zip`). Its class `Thing`, in the module below, raises error 380 each way.
+2. Run, with `On Error Resume Next`:
+   ```
+   Dim o As Object = New Thing
+   o.RaiseConstant                ' Err.Raise 380
+   Debug.Print Err.Number, Err.Description
+   ```
+3. See `-2147352567 Exception occurred.` Through `Dim t As Thing`, `t.RaiseConstant` gives `380 Invalid property value`.
+
+The module below is the reproducer's, and is meant to be adapted as a regression test. Each expected number is VB6's, from the VB6 project attached as `latebound-constant-raise-exception-vb6.zip`, which raises 380 for each of `Thing`'s members; the last case's is the early-bound result. On BETA 1005 the case from #2490 and the two that already raise 380 pass, and the seven others fail with -2147352567.
+```vb
+' Regression tests for #2490 and its follow-up: the error a late-bound caller
+' sees when the member it calls raises one. Thing's members each raise error 380
+' (Invalid property value) a different way. Called early-bound, every one raises
+' 380; called late-bound, VB6 6.0 raises 380 for every one (the VB6 project beside
+' this one prints them). In BETA 1005 a member that raises with a constant number
+' and nothing else reaches the late-bound caller as &H80020009 (DISP_E_EXCEPTION,
+' "Exception occurred.").
+
+Class Thing
+    Private mValue As Long
+
+    Public Sub RaiseConstant()
+        Err.Raise 380
+    End Sub
+
+    Public Sub RaiseVariable(ByVal Number As Long)
+        Err.Raise Number
+    End Sub
+
+    Public Sub RaiseConstantWithSource()
+        Err.Raise 380, "Thing"
+    End Sub
+
+    Public Sub RaiseConstantWithDescription()
+        Err.Raise 380, "Thing", "the value is out of range"
+    End Sub
+
+    Public Sub ErrorStatement()
+        Error 380
+    End Sub
+
+    Public Property Get Value() As Long
+        Return mValue
+    End Property
+
+    Public Property Let Value(ByVal NewValue As Long)
+        If NewValue < 0 Then Err.Raise 380
+        mValue = NewValue
+    End Property
+End Class
+
+[TestFixture]
+Module RaiseThroughLateBindingTests
+
+    ' Fixed in #2490 (BETA 1005): a name the object does not have is error 438.
+
+    [TestCase]
+    Public Sub UnknownMember_Raises438()
+        Dim o As Object = New Thing
+        On Error Resume Next
+        o.Nope
+        Assert.Strict.AreEqual 438, Err.Number                ' VB6: 438
+    End Sub
+
+    ' Already as in VB6 in BETA 1005.
+
+    [TestCase]
+    Public Sub EarlyBound_RaiseConstant_Raises380()
+        Dim t As Thing = New Thing
+        On Error Resume Next
+        t.RaiseConstant
+        Assert.Strict.AreEqual 380, Err.Number                ' VB6: 380
+    End Sub
+
+    [TestCase]
+    Public Sub LateBound_RaiseVariable_Raises380()
+        Dim o As Object = New Thing
+        On Error Resume Next
+        o.RaiseVariable 380
+        Assert.Strict.AreEqual 380, Err.Number                ' VB6: 380
+    End Sub
+
+    ' Left in BETA 1005: &H80020009 in place of 380.
+
+    [TestCase]
+    Public Sub LateBound_RaiseConstantWithSource_Raises380()
+        Dim o As Object = New Thing
+        On Error Resume Next
+        o.RaiseConstantWithSource
+        Assert.Strict.AreEqual 380, Err.Number                ' VB6: 380
+    End Sub
+
+    [TestCase]
+    Public Sub LateBound_RaiseConstantWithDescription_Raises380()
+        Dim o As Object = New Thing
+        On Error Resume Next
+        o.RaiseConstantWithDescription
+        Assert.Strict.AreEqual 380, Err.Number                ' VB6: 380
+    End Sub
+
+    [TestCase]
+    Public Sub LateBound_RaiseConstant_Raises380()
+        Dim o As Object = New Thing
+        On Error Resume Next
+        o.RaiseConstant
+        Assert.Strict.AreEqual 380, Err.Number                ' VB6: 380
+    End Sub
+
+    [TestCase]
+    Public Sub LateBound_ErrorStatement_Raises380()
+        Dim o As Object = New Thing
+        On Error Resume Next
+        o.ErrorStatement
+        Assert.Strict.AreEqual 380, Err.Number                ' VB6: 380
+    End Sub
+
+    [TestCase]
+    Public Sub LateBound_PropertyLet_Raises380()
+        Dim o As Object = New Thing
+        On Error Resume Next
+        o.Value = -1
+        Assert.Strict.AreEqual 380, Err.Number                ' VB6: 380
+    End Sub
+
+    [TestCase]
+    Public Sub CallByName_RaiseConstant_Raises380()
+        Dim o As Object = New Thing
+        On Error Resume Next
+        CallByName o, "RaiseConstant", VbMethod
+        Assert.Strict.AreEqual 380, Err.Number                ' VB6: 380
+    End Sub
+
+    [TestCase]
+    Public Sub LateBound_FormColour_Raises380()
+        ' The VB package's own colour properties raise 380 the same way (#2484).
+        Dim o As Object = New PictureBox
+        On Error Resume Next
+        o.BackColor = -1
+        Assert.Strict.AreEqual 380, Err.Number                ' early-bound: 380
+    End Sub
+
+End Module
+```
+
+**Expected behavior**
+380, *Invalid property value*, in every case, as the same member raises early-bound, as `Err.Raise` with a variable number gives late-bound, and as VB6 raises: the VB6 project prints `380` for each of the late-bound calls, `CallByName` included, and 380 with the description given where one is given.
+
+**Desktop:**
+ - OS: Windows 10 Pro 22H2 (build 19045)
+ - twinBASIC compiler version: BETA 1005
+
+**Additional context**
+Also on BETA 997.
+
+What does not reproduce it: `Err.Raise Number` with the number in a variable or a parameter, with or without a source and a description; a run-time error the member does not raise itself, such as a division by zero (11) or `Collection.Item` with an index past its end (9), which arrive as themselves; any early-bound call. What does: `Err.Raise` with a constant number, with or without a constant source and description (`Err.Raise 5`, `Err.Raise 1234` as well as 380); the `Error` statement; a `Property Let`; a late-bound statement and `CallByName` alike; the built exe as well as an IDE run. The `&H80020009` is what `IDispatch::Invoke` returns when the member raised an error, with the error in the `EXCEPINFO`; so the constant-number form seems to leave the `EXCEPINFO` without the number the caller reads, which is an inference.
+
+Severity: moderate. Code that uses an `Object` variable or `CallByName`, as code ported from VB6 or written for scripting often does, cannot tell one error from another when the member raises with a constant number, which is the usual way to write `Err.Raise`, and the description it gets is *Exception occurred.*
+
+<!-- Reproducer: bugs/latebound-constant-raise-exception/ (mode test: `tbrun --tests`; expect lists the three PASS and seven FAIL lines with -2147352567); verified on BETA 1005 by `bug_repro.mjs verify`. VB6 side in vb6/ (VB6 6.0): `bug_repro.mjs vb6` prints 438 for Nope and 380 for each other call. The variable-number, run-time-error, Err.Raise 5 and 1234, built-exe (tbrun --exe) and BETA 997 results come from scratch tbrun trees on 1005 and 997 that are not kept. Found while writing the tests of colour-validation-data-ole-multiframe, whose first draft set the properties with CallByName and got &H80020009 for every control. Follow-up to #2490 ("A late-bound call to a member that does not exist raises &H80020006, and CallByName raises &H80004005, where VB6 raises 438"), closed as fixed in BETA 1003. No documentation page states it; docs/Reference/COM-Interfaces/IDispatch.md, "Errors from a late-bound call", could carry it, and does not yet. -->
+
+---
+
+## `Data.ForeColor`, `Data.BackColor`, `OLE.BackColor` and `MultiFrame.BackColor` store a value that is not a colour, where VB6 raises error 380
+
+**Describe the bug**
+Follow-up to #2484, which is fixed in BETA 1005 for every colour property of Form, PictureBox, UserControl, Printer, MDIForm, Label, TextBox, CommandButton and the other controls it named: each now raises error 380, *Invalid property value*, and keeps its colour, as VB6 does. This is the four properties that still store the value: `ForeColor` and `BackColor` of the Data control, `BackColor` of the OLE control and `BackColor` of the MultiFrame. Assigning `-1` to any of them raises no error, and the property then reads `FFFFFFFF`. Observed by running the reproducer's test cases.
+
+**To Reproduce**
+Steps to reproduce the behavior:
+1. Open `colour-validation-data-ole-multiframe.twinproj` (attached as `colour-validation-data-ole-multiframe.zip`). Its `Form1` holds a PictureBox, a Label, a TextBox, a CommandButton, a user control (`UC1`), a Data control, an OLE control and a MultiFrame; `MyMDIForm` is an MDIForm.
+2. Run, with `On Error Resume Next`:
+   ```
+   Load Form1
+   Form1.Data1.ForeColor = vbGreen
+   Form1.Data1.ForeColor = -1
+   Debug.Print Err.Number, Hex$(Form1.Data1.ForeColor)
+   ```
+3. See `0 FFFFFFFF`. The same with `Form1.Label1.ForeColor` prints `380 FF00`.
+
+The module below is the reproducer's, and is meant to be adapted as a regression test. It loads the forms and never shows them. On BETA 1005 the seventeen cases from #2484 pass, and the four cases for the Data control, the OLE control and the MultiFrame fail with `Expected: 380, Actual: 0`.
+```vb
+' Regression tests for #2484 and its follow-up. Assigning a value that is not a
+' colour to a colour property raises error 380, Invalid property value, and
+' leaves the colour it had: VB6 6.0 does this for each property it has (the VB6
+' project beside this one prints them), and twinBASIC does it for the other
+' controls. Form1 holds one control of each class; it is loaded, never shown.
+' Each case sets the colour to vbGreen, assigns the bad value early-bound under
+' On Error Resume Next, and checks the error and the colour read back.
+[TestFixture]
+Module ColourPropertyTests
+
+    Private Const NotAColour As Long = -1
+    Private Const SystemColourOutOfRange As Long = &H8000001F
+
+    Private Sub Expect380(ByVal Number As Long, ByVal After As Long)
+        Assert.Strict.AreEqual 380, Number, "the error"                   ' VB6: 380, Invalid property value
+        Assert.Strict.AreEqual CLng(vbGreen), After, "the colour it had"  ' VB6: the old colour is kept
+    End Sub
+
+    ' Fixed in #2484 (BETA 1005).
+
+    [TestCase]
+    Public Sub Form_ForeColor()
+        Dim number As Long, after As Long
+        Load Form1: Form1.ForeColor = vbGreen
+        On Error Resume Next: Form1.ForeColor = NotAColour: number = Err.Number: On Error GoTo 0
+        after = Form1.ForeColor: Unload Form1
+        Expect380 number, after
+    End Sub
+
+    [TestCase]
+    Public Sub Form_ForeColor_SystemColourOutOfRange()
+        Dim number As Long, after As Long
+        Load Form1: Form1.ForeColor = vbGreen
+        On Error Resume Next: Form1.ForeColor = SystemColourOutOfRange: number = Err.Number: On Error GoTo 0
+        after = Form1.ForeColor: Unload Form1
+        Expect380 number, after
+    End Sub
+
+    [TestCase]
+    Public Sub Form_BackColor()
+        Dim number As Long, after As Long
+        Load Form1: Form1.BackColor = vbGreen
+        On Error Resume Next: Form1.BackColor = NotAColour: number = Err.Number: On Error GoTo 0
+        after = Form1.BackColor: Unload Form1
+        Expect380 number, after
+    End Sub
+
+    [TestCase]
+    Public Sub Form_FillColor()
+        Dim number As Long, after As Long
+        Load Form1: Form1.FillColor = vbGreen
+        On Error Resume Next: Form1.FillColor = NotAColour: number = Err.Number: On Error GoTo 0
+        after = Form1.FillColor: Unload Form1
+        Expect380 number, after
+    End Sub
+
+    [TestCase]
+    Public Sub PictureBox_ForeColor()
+        Dim number As Long, after As Long
+        Load Form1: Form1.PictureBox1.ForeColor = vbGreen
+        On Error Resume Next: Form1.PictureBox1.ForeColor = NotAColour: number = Err.Number: On Error GoTo 0
+        after = Form1.PictureBox1.ForeColor: Unload Form1
+        Expect380 number, after
+    End Sub
+
+    [TestCase]
+    Public Sub PictureBox_BackColor()
+        Dim number As Long, after As Long
+        Load Form1: Form1.PictureBox1.BackColor = vbGreen
+        On Error Resume Next: Form1.PictureBox1.BackColor = NotAColour: number = Err.Number: On Error GoTo 0
+        after = Form1.PictureBox1.BackColor: Unload Form1
+        Expect380 number, after
+    End Sub
+
+    [TestCase]
+    Public Sub PictureBox_FillColor()
+        Dim number As Long, after As Long
+        Load Form1: Form1.PictureBox1.FillColor = vbGreen
+        On Error Resume Next: Form1.PictureBox1.FillColor = NotAColour: number = Err.Number: On Error GoTo 0
+        after = Form1.PictureBox1.FillColor: Unload Form1
+        Expect380 number, after
+    End Sub
+
+    [TestCase]
+    Public Sub Label_ForeColor()
+        Dim number As Long, after As Long
+        Load Form1: Form1.Label1.ForeColor = vbGreen
+        On Error Resume Next: Form1.Label1.ForeColor = NotAColour: number = Err.Number: On Error GoTo 0
+        after = Form1.Label1.ForeColor: Unload Form1
+        Expect380 number, after
+    End Sub
+
+    [TestCase]
+    Public Sub Label_BackColor()
+        Dim number As Long, after As Long
+        Load Form1: Form1.Label1.BackColor = vbGreen
+        On Error Resume Next: Form1.Label1.BackColor = NotAColour: number = Err.Number: On Error GoTo 0
+        after = Form1.Label1.BackColor: Unload Form1
+        Expect380 number, after
+    End Sub
+
+    [TestCase]
+    Public Sub TextBox_ForeColor()
+        Dim number As Long, after As Long
+        Load Form1: Form1.TextBox1.ForeColor = vbGreen
+        On Error Resume Next: Form1.TextBox1.ForeColor = NotAColour: number = Err.Number: On Error GoTo 0
+        after = Form1.TextBox1.ForeColor: Unload Form1
+        Expect380 number, after
+    End Sub
+
+    [TestCase]
+    Public Sub TextBox_BackColor()
+        Dim number As Long, after As Long
+        Load Form1: Form1.TextBox1.BackColor = vbGreen
+        On Error Resume Next: Form1.TextBox1.BackColor = NotAColour: number = Err.Number: On Error GoTo 0
+        after = Form1.TextBox1.BackColor: Unload Form1
+        Expect380 number, after
+    End Sub
+
+    [TestCase]
+    Public Sub CommandButton_BackColor()
+        Dim number As Long, after As Long
+        Load Form1: Form1.CommandButton1.BackColor = vbGreen
+        On Error Resume Next: Form1.CommandButton1.BackColor = NotAColour: number = Err.Number: On Error GoTo 0
+        after = Form1.CommandButton1.BackColor: Unload Form1
+        Expect380 number, after
+    End Sub
+
+    [TestCase]
+    Public Sub UserControl_ForeColor()
+        Dim number As Long, after As Long
+        Load Form1: Form1.UC1.TrySet "ForeColor", NotAColour, number, after: Unload Form1
+        Expect380 number, after
+    End Sub
+
+    [TestCase]
+    Public Sub UserControl_BackColor()
+        Dim number As Long, after As Long
+        Load Form1: Form1.UC1.TrySet "BackColor", NotAColour, number, after: Unload Form1
+        Expect380 number, after
+    End Sub
+
+    [TestCase]
+    Public Sub UserControl_FillColor()
+        Dim number As Long, after As Long
+        Load Form1: Form1.UC1.TrySet "FillColor", NotAColour, number, after: Unload Form1
+        Expect380 number, after
+    End Sub
+
+    [TestCase]
+    Public Sub MDIForm_BackColor()
+        Dim number As Long, after As Long
+        Load MyMDIForm: MyMDIForm.BackColor = vbGreen
+        On Error Resume Next: MyMDIForm.BackColor = NotAColour: number = Err.Number: On Error GoTo 0
+        after = MyMDIForm.BackColor: Unload MyMDIForm
+        Expect380 number, after
+    End Sub
+
+    [TestCase]
+    Public Sub MDIForm_BackColor_SystemColourOutOfRange()
+        Dim number As Long, after As Long
+        Load MyMDIForm: MyMDIForm.BackColor = vbGreen
+        On Error Resume Next: MyMDIForm.BackColor = SystemColourOutOfRange: number = Err.Number: On Error GoTo 0
+        after = MyMDIForm.BackColor: Unload MyMDIForm
+        Expect380 number, after
+    End Sub
+
+    ' Left in BETA 1005: these store the value and raise no error.
+
+    [TestCase]
+    Public Sub Data_ForeColor()
+        Dim number As Long, after As Long
+        Load Form1: Form1.Data1.ForeColor = vbGreen
+        On Error Resume Next: Form1.Data1.ForeColor = NotAColour: number = Err.Number: On Error GoTo 0
+        after = Form1.Data1.ForeColor: Unload Form1
+        Expect380 number, after
+    End Sub
+
+    [TestCase]
+    Public Sub Data_BackColor()
+        Dim number As Long, after As Long
+        Load Form1: Form1.Data1.BackColor = vbGreen
+        On Error Resume Next: Form1.Data1.BackColor = NotAColour: number = Err.Number: On Error GoTo 0
+        after = Form1.Data1.BackColor: Unload Form1
+        Expect380 number, after
+    End Sub
+
+    [TestCase]
+    Public Sub OLE_BackColor()
+        Dim number As Long, after As Long
+        Load Form1: Form1.OLE1.BackColor = vbGreen
+        On Error Resume Next: Form1.OLE1.BackColor = NotAColour: number = Err.Number: On Error GoTo 0
+        after = Form1.OLE1.BackColor: Unload Form1
+        Expect380 number, after
+    End Sub
+
+    [TestCase]
+    Public Sub MultiFrame_BackColor()
+        Dim number As Long, after As Long
+        Load Form1: Form1.MultiFrame1.BackColor = vbGreen
+        On Error Resume Next: Form1.MultiFrame1.BackColor = NotAColour: number = Err.Number: On Error GoTo 0
+        after = Form1.MultiFrame1.BackColor: Unload Form1
+        Expect380 number, after
+    End Sub
+
+End Module
+```
+`UC1`, the user control on `Form1`, sets its own colour properties for the three `UserControl_` cases:
+```vb
+    ' Sets one of the user control's own colour properties to vbGreen, then to
+    ' Value; returns the error the second assignment raised, and the colour after it.
+    Public Sub TrySet(ByVal Prop As String, ByVal Value As Long, ByRef Number As Long, ByRef After As Long)
+        Select Case Prop
+            Case "ForeColor": ForeColor = vbGreen
+            Case "BackColor": BackColor = vbGreen
+            Case "FillColor": FillColor = vbGreen
+        End Select
+        On Error Resume Next
+        Select Case Prop
+            Case "ForeColor": ForeColor = Value
+            Case "BackColor": BackColor = Value
+            Case "FillColor": FillColor = Value
+        End Select
+        Number = Err.Number
+        On Error GoTo 0
+        Select Case Prop
+            Case "ForeColor": After = ForeColor
+            Case "BackColor": After = BackColor
+            Case "FillColor": After = FillColor
+        End Select
+    End Sub
+```
+
+**Expected behavior**
+Error 380 for each assignment, and the old colour kept, as twinBASIC now does for the other controls, and as VB6 does for `OLE.BackColor`. The VB6 project, attached as `colour-validation-data-ole-multiframe-vb6.zip`, prints `OLE.BackColor = -1: Err 380, reads FF00`, and 380 for each of the other properties of the test. It has no Data control (none could be loaded in VB6 on the machine), and VB6 has no MultiFrame.
+
+**Desktop:**
+ - OS: Windows 10 Pro 22H2 (build 19045)
+ - twinBASIC compiler version: BETA 1005
+
+**Additional context**
+`&H8000001F` and `&HFF0000FF`, which are not colours either, are stored by the same four properties with no error. In the BETA 1005 package source, the Data control, the OLE control and the MultiFrame declare these as plain `Public ... As OLE_COLOR` fields, with no `OnPropertyLet` handler that calls `CommonValidateColorOrRevert`, unlike the other controls. `OLE.BackColor` also gets the compile warning TB0009, *[BackColor] has not yet been implemented*, wherever it is used, and stores the value all the same.
+
+Not tested here: `Printer.ForeColor` and `Printer.FillColor`, which #2484 named, need a default printer; on BETA 1005 they raise 380 and keep the colour when there is one (#2484's reproducer prints them).
+
+Severity: low. The stored value is what the control then paints with, and no error tells the program that the colour it was given is not one.
+
+<!-- Reproducer: bugs/colour-validation-data-ole-multiframe/ (mode test: `tbrun --tests`; expect lists the seventeen PASS and four FAIL lines); verified on BETA 1005 by `bug_repro.mjs verify`. VB6 side in vb6/ (VB6 6.0, the same project as #2484's): `bug_repro.mjs vb6` prints 380 for every property it has, OLE.BackColor included. The tests assign early-bound: set late-bound or through CallByName, every one of these properties raises &H80020009 instead of 380 (the entry "An error raised with a constant number, in a member called late-bound, reaches the caller as &H80020009, *Exception occurred.*"). Follow-up to #2484 ("Setting a colour property to a value that is not a colour stores it, and raises error 5 or nothing, where VB6 raises error 380 and keeps the old value"), closed as fixed in BETA 1004; its reproducer, bugs/filed/forecolor-invalid-value-stored/, still reproduces these four lines and stays until a fix is released. Stated in a WARNING naming BETA 1005 on docs/Reference/Default/VB/Data/index.md (under ForeColor and under BackColor), OLE/index.md (under BackColor) and MultiFrame/index.md (under BackColor): when fixed, each WARNING goes, and the property says that a value that is not a colour raises error 380, as the other controls' pages do. -->
+
+---
+
+## After `Reset`, `Clone` of the WebView2 response headers enumerator skips the headers read before the `Reset`
+
+**Describe the bug**
+Follow-up to #2496, which is fixed in BETA 1005 for `Clone` after `Next` and after `Skip`, on the enumerators of the request headers and the response headers alike, and after `Reset` on the request headers'. This is the response headers' enumerator after a `Reset`: after two `Next` calls and a `Reset`, the enumerator's `Next` returns the first header, `Ha`, and its clone's `Next` returns the third, `Hc`. Observed by running the reproducer's test cases.
+
+**To Reproduce**
+Steps to reproduce the behavior:
+1. Open `webview2-response-headers-reset-clone.twinproj` (attached as `webview2-response-headers-reset-clone.zip`). Its `Form1` holds one WebView2 control, which navigates to `https://example.com/page` and answers that request itself in `WebResourceRequested`, so nothing goes to the network. The handler appends four headers, `Ha` to `Hd`, to the response, and records what three fresh enumerators of `Request.Headers`, then three of `Response.Headers`, return (module `HeaderEnumeration`, below).
+2. Call `HeaderEnumerationTests.Response_CloneAfterReset` from `Sub Main` and press F5. The form shows until its request is answered, and closes.
+3. See the assertion fail with `Expected: "Ha|Ha" Actual: "Ha|Hc"`: the enumerator's `Next`, then the clone's.
+
+The module below is the reproducer's, and is meant to be adapted as a regression test. It shows `Form1` while the control answers its request, and unloads it. On BETA 1005 the five cases from #2496 pass, and `Response_CloneAfterReset` fails.
+```vb
+' Regression tests for #2496 and its follow-up. IEnumVARIANT::Clone returns an
+' enumerator with the same state as the one it is called on (the COM
+' documentation of IEnumVARIANT::Clone), so the clone's Next returns what the
+' enumerator's own Next returns next. Each case compares the two after one Next,
+' after Skip 2, and after two Next and a Reset, for the request headers and for
+' the response headers, which hold Ha, Hb, Hc and Hd.
+
+' IEnumVARIANT, declared here because the package's own declaration is private.
+[InterfaceId("00020404-0000-0000-C000-000000000046")]
+Interface IEnumVARIANTOwn Extends stdole.IUnknown
+    Type CArrayOfVariants
+        Elements(1) As Variant
+    End Type
+
+    Sub Next(ByVal celt As Long, ByRef rgVar As CArrayOfVariants, ByRef pCeltFetched As Long)
+    Sub Skip(ByVal celt As Long)
+    Sub Reset()
+    Function Clone() As stdole.IUnknown
+End Interface
+
+' What the enumerators returned, recorded by Form1 while it answers its request.
+Module HeaderEnumeration
+
+    Public Recorded As Boolean
+    Public Results As New Collection      ' "<side> <case>" -> "<enumerator's Next>|<clone's Next>"
+
+    Private Function NextName(ByVal e As IEnumVARIANTOwn) As String
+        Dim arr As IEnumVARIANTOwn.CArrayOfVariants
+        Dim fetched As Long
+        e.Next 1, arr, fetched
+        If fetched = 0 Then Return "(end)"
+        Dim hd As WebView2Header = arr.Elements(0)
+        Return hd.Name
+    End Function
+
+    ' Three fresh enumerators of one collection.
+    Public Sub Record(ByVal Side As String, ByVal u0 As stdole.IUnknown, ByVal u1 As stdole.IUnknown, ByVal u2 As stdole.IUnknown)
+        Dim e As IEnumVARIANTOwn, c As IEnumVARIANTOwn, first As String
+
+        Set e = u0
+        first = NextName(e)
+        Set c = e.Clone()
+        Results.Add NextName(e) & "|" & NextName(c), Side & " after one Next"
+
+        Set e = u1
+        NextName e
+        NextName e
+        e.Reset
+        Set c = e.Clone()
+        Results.Add NextName(e) & "|" & NextName(c), Side & " after Reset"
+
+        Set e = u2
+        e.Skip 2
+        Set c = e.Clone()
+        Results.Add NextName(e) & "|" & NextName(c), Side & " after Skip 2"
+    End Sub
+
+End Module
+
+[TestFixture]
+Module HeaderEnumerationTests
+
+    Private Declare PtrSafe Function SetEnvironmentVariableW Lib "kernel32" (ByVal lpName As LongPtr, ByVal lpValue As LongPtr) As Long
+
+    ' Shows Form1 until its request has been answered, once.
+    Private Sub Collect()
+        If HeaderEnumeration.Recorded Then Exit Sub
+        ' Only for an IDE that was started with these variables, as this repository's
+        ' test harness starts it: WebView2 would read them, and the control would fail.
+        Dim folder As String = Environ$("WEBVIEW2_USER_DATA_FOLDER")
+        Dim args As String = Environ$("WEBVIEW2_ADDITIONAL_BROWSER_ARGUMENTS")
+        SetEnvironmentVariableW StrPtr("WEBVIEW2_USER_DATA_FOLDER"), 0
+        SetEnvironmentVariableW StrPtr("WEBVIEW2_ADDITIONAL_BROWSER_ARGUMENTS"), 0
+        Form1.Show
+        Dim started As Double = Timer
+        Do Until HeaderEnumeration.Recorded Or Timer - started > 30
+            DoEvents
+        Loop
+        Unload Form1
+        If Len(folder) Then SetEnvironmentVariableW StrPtr("WEBVIEW2_USER_DATA_FOLDER"), StrPtr(folder)
+        If Len(args) Then SetEnvironmentVariableW StrPtr("WEBVIEW2_ADDITIONAL_BROWSER_ARGUMENTS"), StrPtr(args)
+    End Sub
+
+    ' "<enumerator's Next>|<clone's Next>"
+    Private Function Pair(ByVal Key As String) As String
+        Collect
+        Assert.Strict.IsTrue HeaderEnumeration.Recorded, "the request was answered"
+        Return HeaderEnumeration.Results(Key)
+    End Function
+
+    ' Fixed in #2496 (BETA 1005): the clone continues from the enumerator's position.
+
+    [TestCase]
+    Public Sub Request_CloneAfterNext()
+        Assert.Strict.AreEqual "Upgrade-Insecure-Requests|Upgrade-Insecure-Requests", Pair("request after one Next")
+    End Sub
+
+    [TestCase]
+    Public Sub Request_CloneAfterSkip()
+        Assert.Strict.AreEqual "User-Agent|User-Agent", Pair("request after Skip 2")
+    End Sub
+
+    [TestCase]
+    Public Sub Request_CloneAfterReset()
+        Assert.Strict.AreEqual "Accept|Accept", Pair("request after Reset")
+    End Sub
+
+    [TestCase]
+    Public Sub Response_CloneAfterNext()
+        Assert.Strict.AreEqual "Hb|Hb", Pair("response after one Next")
+    End Sub
+
+    [TestCase]
+    Public Sub Response_CloneAfterSkip()
+        Assert.Strict.AreEqual "Hc|Hc", Pair("response after Skip 2")
+    End Sub
+
+    ' Left in BETA 1005: Reset does not rewind the position Clone copies.
+
+    [TestCase]
+    Public Sub Response_CloneAfterReset()
+        Assert.Strict.AreEqual "Ha|Ha", Pair("response after Reset")
+    End Sub
+
+End Module
+```
+`Form1`'s handlers, which call `Record`:
+```vb
+    Private Sub WebView21_Ready() Handles WebView21.Ready
+        WebView21.AddWebResourceRequestedFilter "*", wv2All
+        WebView21.Navigate "https://example.com/page"
+    End Sub
+
+    Private Sub WebView21_WebResourceRequested(ByVal Request As WebView2Request, ByVal Response As WebView2Response) _
+            Handles WebView21.WebResourceRequested
+        Response.Headers.AppendHeader "Ha", "1"
+        Response.Headers.AppendHeader "Hb", "2"
+        Response.Headers.AppendHeader "Hc", "3"
+        Response.Headers.AppendHeader "Hd", "4"
+        If Not HeaderEnumeration.Recorded Then
+            Dim rq As WebView2RequestHeaders = Request.Headers
+            HeaderEnumeration.Record "request", rq._NewEnum(), rq._NewEnum(), rq._NewEnum()
+            Dim rs As WebView2ResponseHeaders = Response.Headers
+            HeaderEnumeration.Record "response", rs._NewEnum(), rs._NewEnum(), rs._NewEnum()
+            HeaderEnumeration.Recorded = True
+        End If
+        Response.StatusCode = 200
+        Response.ReasonPhrase = "OK"
+        Response.ContentUTF8 = "<html><body>probe</body></html>"
+    End Sub
+```
+
+**Expected behavior**
+`Ha|Ha`: `IEnumVARIANT::Clone` creates an enumerator with the same state as the current one, so after a `Reset` the clone starts at the first header, as the request headers' clone does.
+
+**Desktop:**
+ - OS: Windows 10 Pro 22H2 (build 19045)
+ - twinBASIC compiler version: BETA 1005
+
+**Additional context**
+In BETA 1005's package source, `WebView2HeadersCollection.twin`, `Next` and `Skip` advance `IterationIdx`, which `Clone` passes to the new enumerator. The two request headers classes set `IterationIdx = 0` in their `Reset`; the two response headers classes in `WebView2ResponseHeaders.twin`, `WebView2HeadersCollection_ResponseGetHeaders` and `WebView2HeadersCollection_ResponseEnumerator`, do not, so after a `Reset` their clone skips as many headers as were read before it. Setting `IterationIdx = 0` in those two `Reset`s, as the request side does, would fix it. Only `_NewEnum` (the `ResponseEnumerator` class) was run; `GetHeaders` (the other class) has the same `Reset`.
+
+Severity: low. `For Each` does not call `Clone`, so only a COM client that clones the enumerator after resetting it gets the wrong headers.
+
+<!-- Reproducer: bugs/webview2-response-headers-reset-clone/ (mode test: `tbrun --tests`, which runs the cases in the IDE, so the form shows on the harness's private desktop; expect lists the five PASS lines and the FAIL line with "Ha|Hc"); verified on BETA 1005 by `bug_repro.mjs verify`. No VB6 side: VB6 has no WebView2 control. Follow-up to #2496 ("The WebView2 headers enumerator's Clone starts at the first header, not at the enumerator's position"), closed as fixed in BETA 1000; its reproducer, bugs/filed/webview2-headers-clone-restarts/, still reproduces the Reset line and stays until a fix is released. Stated in a `> [!WARNING]` naming BETA 1005 on docs/Reference/Built-In/WebView2/WebView2HeadersCollection.md, after the paragraph on the enumerator operations; remove it once a fixed build is released. -->
+
+---
+
+## `import` and `export` exit with code 0 when they end `... FAILED`
+
+**Describe the bug**
+Follow-up to #2493, which is fixed in BETA 1005 for the message: `import` of a folder with no `Settings` file now prints `ERROR: missing Settings file` before `... FAILED`. #2493's Expected behavior also said that a failure should not exit with 0, and that is left: `import` and `export` exit with code 0 after every failure they report, so a script that tests the exit code takes a failed run for a successful one. Observed with the compiler executable run from a script, its output and exit code captured.
+
+**To Reproduce**
+Steps to reproduce the behavior:
+1. Unzip `import-export-exit-zero.zip` (it holds `import-export-exit-zero.twinproj`, an ordinary console project), and export it once: `twinBASIC_win32.exe export C:\p\import-export-exit-zero.twinproj C:\p\src\`.
+2. Run each of these, and look at the exit code (`echo %ERRORLEVEL%` in a Command Prompt):
+   ```
+   twinBASIC_win32.exe import C:\p\x.twinproj C:\p\src\Sources\
+   twinBASIC_win32.exe import C:\p\y.twinproj C:\p\no-such-folder\
+   twinBASIC_win32.exe export C:\p\no-such-project.twinproj C:\p\out\
+   twinBASIC_win32.exe export C:\p\import-export-exit-zero.twinproj C:\p\src\
+   twinBASIC_win32.exe import C:\p\import-export-exit-zero.twinproj C:\p\src\
+   ```
+3. See each end `... FAILED`, after `ERROR: missing Settings file`, `ERROR: input folder does not exist`, `ERROR: input twinproj file does not exist`, `[EXPORT]  ERROR: output file already exists and --overwrite not set: ...Settings` and `ERROR: failed to create output file: ...import-export-exit-zero.twinproj (already exists and --overwrite not set)` in turn, and each exit with code 0.
+
+The script below is meant to be adapted as a regression test. A unit test cannot run the compiler's command line, so it is a Command Prompt script: each case runs one command and asserts the exit code, `PASS` for not 0. On BETA 1005 every case prints `FAIL`. It expects the export of step 1 in `%P%\src\` and the project in `%P%\`.
+```bat
+@echo off
+rem Regression tests for #2493 and its follow-up: a run of import or export that
+rem ends "... FAILED" exits with a code other than 0. Set TB to the compiler
+rem executable and P to a folder holding the project and its export in src\.
+call :expect_failure ImportNoSettings     import "%P%\x.twinproj" "%P%\src\Sources\"
+call :expect_failure ImportNoFolder       import "%P%\y.twinproj" "%P%\no-such-folder\"
+call :expect_failure ExportNoProject      export "%P%\no-such-project.twinproj" "%P%\out\"
+call :expect_failure ExportNoOverwrite    export "%P%\import-export-exit-zero.twinproj" "%P%\src\"
+call :expect_failure ImportNoOverwrite    import "%P%\import-export-exit-zero.twinproj" "%P%\src\"
+exit /b
+
+:expect_failure
+set NAME=%1
+shift
+"%TB%" %1 %2 %3 > nul 2>&1 < nul
+if errorlevel 1 (echo PASS %NAME%) else (echo FAIL %NAME%: exit code 0)
+exit /b
+```
+
+**Expected behavior**
+A code other than 0 from every run that ends `... FAILED`, as the last line of #2493's Expected behavior asked, so that a script or a build step can tell a failure without reading the output. Each run keeps its `ERROR:` line, as BETA 1005 prints it.
+
+**Desktop:**
+ - OS: Windows 10 Pro 22H2 (build 19045)
+ - twinBASIC compiler version: BETA 1005
+
+**Additional context**
+The same exit code on BETA 995 and 997 for each of these failures (there, the first prints no `ERROR:` line, which is what #2493 reported). A successful `export` and `import` end `... DONE` and exit 0, as they should.
+
+Severity: minor in an interactive session, where the `ERROR:` line is read; in a build script that checks the exit code, a project that was never written, or a tree that was never exported, passes for a success.
+
+<!-- Reproducer: bugs/import-export-exit-zero/ (mode cli: the five commands above on copies of the packed project and its src/, expecting exit 0 from each, each ERROR line, ... FAILED, and no ... DONE); verified on BETA 1005 by `bug_repro.mjs verify`. The batch script was not run here, since this repository starts the compiler executable only on a private desktop (launchOnDesktop): the same five commands were, by bug_repro's cli mode on 1005, and by a scratch script over launchOnDesktop on 995 and 997 (exit 0 each). Follow-up to #2493 ("import of a folder with no Settings file fails without saying why"), closed as fixed in BETA 1000. Stated in WIP.md ("Both verbs exit 0 after the failures they report") and WIP.Harness.md: when fixed, those can say since which build the exit code is reliable; scripts/impexp.mjs, which the tooling uses instead, is not affected. -->
+
+---
+
+## `? p` in the Debug Console, where `p` is a user-defined type, fails with a codegen error and a linker error
+
+**Describe the bug**
+Follow-up to #2485, which is fixed in BETA 1005 for the watch: a watch on a variable of a user-defined type now shows `{user defined type, 8 bytes}`, of its type, at this stop and the next, with no linker error. This is the same expression typed in the Debug Console: `? p` still fails with `(compile error: codegen error; check for compilation errors)`, and the Debug Console prints `[LINKER] compilation (codegen) error detected in 'Startup.{temp_procedure}' at line #1`. Observed in the IDE, stopped at a breakpoint.
+
+**To Reproduce**
+Steps to reproduce the behavior:
+1. Open `console-print-udt-linker-error.twinproj` (attached as `console-print-udt-linker-error.zip`). `Startup.twin` declares a type, and `Main` passes the line marked `BREAK` twice:
+   ```
+   Private Type Point
+       X As Long
+       Y As Long
+   End Type
+
+   Public Sub Main()
+       Dim p As Point
+       Dim i As Long
+       p.X = 7
+       For i = 1 To 2
+           Debug.Print "pass " & i ' BREAK
+       Next
+   End Sub
+   ```
+2. Put a breakpoint on the line marked `BREAK` (F9) and press F5. The run stops there.
+3. Type `? p` in the Debug Console and press Enter.
+4. See `(compile error: codegen error; check for compilation errors)`, and `[LINKER] compilation (codegen) error detected in 'Startup.{temp_procedure}' at line #1` in the Debug Console.
+
+A unit test cannot reach the Debug Console, so the check below is a scripted one, meant to be adapted as a regression test; the documentation's IDE test harness runs it by driving the IDE (its `watches` scenario). At the stop of step 2, with the Debug Console's output marked:
+- **Fixed in #2485 (BETA 1005), passes:** a watch on `p` shows the value `{user defined type, 8 bytes}` and the type `Point`; a watch on `p.X` shows `7` and `Long`; after F5 to the second stop, both watches show the same again; and no `[LINKER]` line has been printed since the mark.
+- **Left in BETA 1005, fails:** after `? p` and Enter, the Debug Console holds no `[LINKER]` line, and no `codegen error`; it holds an error about the expression, such as that `p` has no single value to print.
+
+**Expected behavior**
+An expression that cannot be shown, such as `? p`, which has no single value to print, is refused with a message about the expression, and no `[LINKER]` line, as the watch on the same expression now shows it without one. A linker error about generated code reads as though the project had failed to build, which it has not.
+
+**Desktop:**
+ - OS: Windows 10 Pro 22H2 (build 19045)
+ - twinBASIC compiler version: BETA 1005
+
+**Additional context**
+Also on BETA 987, 995 and 997, where the watch on `p` failed in the same way.
+
+What does not reproduce it, on BETA 1005: a watch on `p`, a watch on `p.X`, and **Variables**, which shows `p` and its fields. Seen with a `Private Type` declared in the module; other declarations of the type were not tried.
+
+Severity: low. The console reports a failed build for a line that only asks to print a structure.
+
+<!-- Reproducer: bugs/console-print-udt-linker-error/ (mode lane: `ide-test.bat --only watches`, test/ide/watches.test.mjs, whose first three tests assert the fixed watch and whose last asserts the ? p defect; the lane passes while the bug is there); its Startup.twin is test/ide/probes/watches/Sources/Startup.twin with a different header comment. Verified on BETA 1005 by `bug_repro.mjs verify` through the lane. Follow-up to #2485 ("A watch on a variable of a user-defined type fails with a codegen error, and the Debug Console reports a linker error at every stop"), closed as fixed in BETA 1003; its reproducer, bugs/filed/udt-watch-codegen-error/, names the same lane test and stays until a fix is released. No documentation page states it. When fixed: update the last test of test/ide/watches.test.mjs to assert the new message, and retire both reproducers. -->

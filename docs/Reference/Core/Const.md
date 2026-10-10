@@ -66,6 +66,8 @@ The elements are read as those of any array --- `Primes(2)`, with [**LBound**](.
 - The array cannot be assigned to an array variable or a **Variant**, or passed as an array argument. A module-level array constant passed to a **ParamArray** parameter is compile error **TB5028**, *Cannot convert unsupported type to a Variant*. To copy it, copy it element by element.
 - An element cannot be used in another constant expression: `Const First As Long = Primes(0)` is compile error **TB5002**. At module level, `Const Second() As Long = Array(Primes(0))` is compile error **TB5078**, *Unable to bind to global constant here*.
 
+In a class, an array constant is private to the class, as a scalar one is: declaring it **Public** is compile error **TB5250**, *Constants in a class cannot be Public*.
+
 ```tb check_run
 Const Primes() As Long = Array(2, 3, 5, 7, 11)
 Dim i As Long, Total As Long
@@ -80,10 +82,7 @@ Debug.Print Total               ' 28
 > In twinBASIC BETA 1005, a module-level **Single** array constant whose element is too large for a **Single**, such as `Const Big() As Single = Array(1E+39)`, compiles without an error, and the element holds infinity. An array constant declared after it whose element calls **Sqr**, **Timer** or **Rnd** is then compile error **TB5001**, although it is correct.
 
 > [!NOTE]
-> In twinBASIC BETA 1005, array constants also have these defects, each reported as an error:
->
-> - In a module, an array constant declared after a procedure is compile error **TB5079**, *Unrecognized symbol*, in the procedures that follow it. The procedures before it see an empty array: reading an element raises error 9. Declare array constants above the module's first procedure.
-> - A **Public** array constant in a class compiles, but code outside the class cannot reach it: the use is compile error **TB5027**. A **Public** scalar constant in a class is compile error **TB5250**.
+> In twinBASIC BETA 1005, in a module, an array constant declared after a procedure is compile error **TB5079**, *Unrecognized symbol*, in the procedures that follow it. The procedures before it see an empty array: reading an element raises error 9. Declare array constants above the module's first procedure.
 
 > [!NOTE]
 > Array constants are a twinBASIC extension. In VBA and VB6, `Const Primes() As Long = Array(2, 3)` is a syntax error.

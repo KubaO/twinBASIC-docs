@@ -1,12 +1,19 @@
 {
-  "mode": "run",
+  "mode": "test",
   "expect": {
-    "exit": 1,
+    "exit": 7,
     "output": [
-      "Startup\\.twin \\[3,\\d+\\]: TB5001 Type mismatch"
-    ],
-    "absent": [
-      "Startup\\.twin \\[2,\\d+\\]:"
+      "^PASS LongElementOverflow$",
+      "^PASS LongSecondElementOverflow$",
+      "^PASS LongFractionOverflow$",
+      "^PASS IntegerElementOverflow$",
+      "^PASS ByteElementOverflow$",
+      "^PASS ByteNegativeElement$",
+      "^PASS LongLongElementOverflow$",
+      "^PASS DoubleElementOverflow$",
+      "^PASS ScalarSingleOverflowUse$",
+      "^FAIL SingleElementOverflow: ",
+      "^FAIL SqrAfterSingleOverflow: "
     ]
   }
 }

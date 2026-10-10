@@ -9,7 +9,9 @@
 // Each test states what BETA 1005 does. If one fails after an IDE update, the IDE
 // has changed: for ? p, update the report "A watch on a variable of a user-defined
 // type fails with a codegen error, and the Debug Console reports a linker error at
-// every stop" in bugs/filed/udt-watch-codegen-error/, and then this file.
+// every stop" in bugs/filed/udt-watch-codegen-error/ and its follow-up, "`? p` in
+// the Debug Console, where `p` is a user-defined type, fails with a codegen error
+// and a linker error" (bugs/console-print-udt-linker-error/), and then this file.
 //
 // Run it with ide-test.bat, which gives it a lane; on its own it is skipped.
 
