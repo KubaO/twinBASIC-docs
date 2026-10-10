@@ -12,8 +12,10 @@
 // What is deliberately approximate, and the reason it is good enough here:
 // - an overflow clip is a rectangle (its radius is dropped): the IDE rounds few
 //   scrolling boxes;
-// - a non-translation transform is applied to the element's own painting only:
-//   in the IDE they sit on leaf icons;
+// - a transform: the snapshot gives every box, text included, as the box it
+//   covers after the transforms of its element and its ancestors; it is put back
+//   to where it is before them (untransformBox: exact for a quarter turn, a flip
+//   and a scale, the IDE's uses) and painted under them;
 // - group opacity and filters split when paint order interleaves two subtrees;
 // - a filter of colour functions (brightness, invert...) is baked into the
 //   colours its group paints rather than drawn as a <filter>
@@ -272,12 +274,16 @@ export function selectLabel(select) {
     return null;
   })(select);
   if (!option) return "";
-  return option.children
-    .filter((c) => c.type === 3)
-    .map((c) => c.value)
-    .join("")
-    .replace(/\s+/g, " ")
-    .trim();
+  // As HTMLOptionElement's display label: the label attribute when it has more than
+  // whitespace, else the text of every descendant but a <script>'s (the IDE puts the name
+  // in a <b>, which a closed select draws in its own font); HTML whitespace collapsed and
+  // trimmed, and no other: the IDE spaces the name from the type with no-break spaces.
+  const html = (s) => s.replace(/[ \t\n\f\r]+/g, " ").replace(/^ | $/g, "");
+  const label = html(option.attrs?.label ?? "");
+  if (label) return label;
+  const text = (n) =>
+    n.type === 3 ? (n.value ?? "") : n.name === "SCRIPT" ? "" : (n.children ?? []).map(text).join("");
+  return html(text(option));
 }
 
 const TEXT_INPUTS = new Set(["text", "search", "email", "url", "tel", "number", "password"]);
@@ -775,6 +781,58 @@ function parseMatrix(v) {
   return m ? m[1].split(",").map(Number) : null;
 }
 
+/**
+ * The transform of an element, from what the snapshot gives: `bounds` its box after the
+ * transform (every layout object's bounds are), `size` its own size before it (offsetRects),
+ * `m` its computed matrix and `origin` its computed transform-origin in px from the box's
+ * corner (null: the centre, the initial value). Returns {box, svg}: the box before the
+ * transform, and the SVG matrix taking a point before it to the point after it.
+ */
+export function elementTransform(bounds, size, m, origin) {
+  const [a, b, c, d, e, f] = m;
+  const [ox, oy] = origin ?? [size.w / 2, size.h / 2];
+  const corners = [
+    [0, 0],
+    [size.w, 0],
+    [0, size.h],
+    [size.w, size.h],
+  ].map(([u, v]) => [a * (u - ox) + c * (v - oy), b * (u - ox) + d * (v - oy)]);
+  const x = bounds.x - ox - e - Math.min(...corners.map((p) => p[0]));
+  const y = bounds.y - oy - f - Math.min(...corners.map((p) => p[1]));
+  const O = [x + ox, y + oy];
+  const tx = O[0] + e - (a * O[0] + c * O[1]);
+  const ty = O[1] + f - (b * O[0] + d * O[1]);
+  return {
+    box: { x, y, w: size.w, h: size.h },
+    m: [a, b, c, d, tx, ty],
+    svg: `matrix(${[a, b, c, d, tx, ty].map(num).join(" ")})`,
+  };
+}
+
+/**
+ * A box after a transform (elementTransform's `m`) put back to where it is before it: its
+ * centre mapped back, and its size the one whose box the transform turns into one of this
+ * size (exact for a quarter turn, a flip and a scale); the size as it is where no single
+ * size does (a turn of 45 degrees).
+ */
+export function untransformBox(r, [a, b, c, d, tx, ty]) {
+  const det = a * d - b * c;
+  const X = r.x + r.w / 2 - tx;
+  const Y = r.y + r.h / 2 - ty;
+  const cx = (d * X - c * Y) / det;
+  const cy = (-b * X + a * Y) / det;
+  const [pa, pb, pc, pd] = [a, b, c, d].map(Math.abs);
+  const k = pa * pd - pb * pc;
+  let w = r.w;
+  let h = r.h;
+  if (Math.abs(k) > 1e-6) {
+    const sw = (pd * r.w - pc * r.h) / k;
+    const sh = (pa * r.h - pb * r.w) / k;
+    if (sw >= 0 && sh >= 0) [w, h] = [sw, sh];
+  }
+  return { ...r, x: cx - w / 2, y: cy - h / 2, w, h };
+}
+
 function rrectPath({ x, y, w, h }, r) {
   if (r.every(([a, b]) => a === 0 && b === 0)) return null;
   const [tl, tr, br, bl] = r;
@@ -1134,6 +1192,37 @@ export function renderSvg(
         `<feFlood flood-color="${sh.color}"/><feComposite in2="o" operator="in"/></filter>`,
     );
   };
+
+  // The transforms an element and its ancestors paint it under, outermost first: those whose
+  // linear part is not the identity (a translation is in the snapshot's boxes already). Each
+  // ancestor's own box is put back through the transforms outside it before its own is read.
+  const transformMemo = new Map();
+  function transformsOf(n) {
+    if (!n) return [];
+    if (transformMemo.has(n)) return transformMemo.get(n);
+    const outer = transformsOf(n.parent);
+    const m = n.box ? parseMatrix(n.style?.transform) : null;
+    let ts = outer;
+    if (m && (m[0] !== 1 || m[1] !== 0 || m[2] !== 0 || m[3] !== 1)) {
+      const bounds = outer.reduceRight((r, t) => untransformBox(r, t.m), n.box.bounds);
+      const size = n.box.offset ?? { w: bounds.w, h: bounds.h };
+      const origin = /^(-?[\d.]+)px (-?[\d.]+)px/.exec(n.style["transform-origin"] ?? "");
+      const t = elementTransform(bounds, size, m, origin ? [Number(origin[1]), Number(origin[2])] : null);
+      ts = [...outer, { node: n, ...t }];
+    }
+    transformMemo.set(n, ts);
+    return ts;
+  }
+
+  // A layout object's boxes put back through `ts`, innermost first; the box of the element
+  // whose transform is the innermost (`own`) is that transform's own box.
+  function untransformLayout(l, ts, own) {
+    const back = (r) => (r ? ts.reduceRight((q, t) => untransformBox(q, t.m), r) : r);
+    const last = ts.at(-1);
+    const bounds = own && last.node === own ? last.box : back(l.bounds);
+    const exact = own && last.node === own ? last.box : back(l.exact);
+    return { ...l, bounds, exact, boxes: l.boxes?.map(back) };
+  }
 
   // What bakeMarkup needs of the converter.
   const defIndex = (id) => (/^d\d+$/.test(id) ? Number(id.slice(1)) : -1);
@@ -2017,17 +2106,17 @@ export function renderSvg(
         h: l.bounds.h + 2 * shadowReach,
       };
       if (!overlaps(ext, view) || !overlaps(intersect(c, ext), view)) continue;
-      const m = it.kind === "box" ? parseMatrix(l.style.transform) : null;
+      const ts = transformsOf(owner);
       let content;
-      if (m && (m[0] !== 1 || m[1] !== 0 || m[2] !== 0 || m[3] !== 1)) {
-        // Painted at its untransformed size about its centre, then transformed.
-        const cx = l.bounds.x + l.bounds.w / 2;
-        const cy = l.bounds.y + l.bounds.h / 2;
-        const ow = l.offset?.w ?? l.bounds.w;
-        const oh = l.offset?.h ?? l.bounds.h;
-        const inner = paintBox({ ...l, bounds: { x: cx - ow / 2, y: cy - oh / 2, w: ow, h: oh } });
-        const t = `translate(${num(cx)} ${num(cy)}) matrix(${m.slice(0, 4).map(num).join(" ")} 0 0) translate(${num(-cx)} ${num(-cy)})`;
-        content = inner.length ? [`<g transform="${t}">`, ...inner, "</g>"] : [];
+      if (ts.length) {
+        // Painted where it is before the transforms of its element and its ancestors, then
+        // transformed: the snapshot's boxes, the text's included, are where they are after.
+        const lu = untransformLayout(l, ts, it.kind === "box" ? n : null);
+        const inner =
+          it.kind === "box"
+            ? [...paintBox(lu), ...(l.style.visibility === "visible" ? paintScrollbars(lu) : [])]
+            : paintText(lu, INF);
+        content = inner.length ? [...ts.map((t) => `<g transform="${t.svg}">`), ...inner, ...ts.map(() => "</g>")] : [];
         if (n.frame) note("a transformed frame");
       } else if (it.kind === "box") {
         content = paintBox(l);

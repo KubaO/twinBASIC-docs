@@ -33,12 +33,15 @@ import {
   canvasColor,
   decodeSnapshot,
   decoratingBoxes,
+  elementTransform,
   frameGeometry,
   framesIn,
   frameView,
   naturalSize,
   oneLine,
+  selectLabel,
   underlineBand,
+  untransformBox,
   unzoom,
   viewportGutters,
   viewportScroller,
@@ -157,6 +160,61 @@ describe("colour filters", () => {
       '<use href="#d5"/>',
     );
     assert.equal(defs[5], '<g id="d5" filter="url(#dF)"><use href="#d4"/></g>');
+  });
+});
+
+describe("selectLabel", () => {
+  const text = (value) => ({ type: 3, value, children: [] });
+  const el = (name, children, attrs = {}) => ({ type: 1, name, attrs, children });
+  const select = (option) => el("SELECT", [el("OPTION", [text("other")]), { ...option, selected: true }]);
+
+  test("is the selected option's whole text, an element's included, with its no-break spaces", () => {
+    // The IDE's Properties panel: "<b>" + Name + "</b> &nbsp;&nbsp;&nbsp;" + _className.
+    const option = el("OPTION", [el("B", [text("Text1")]), text(" \u{A0}\u{A0}\u{A0}TextBox")]);
+    assert.equal(selectLabel(select(option)), "Text1 \u{A0}\u{A0}\u{A0}TextBox");
+  });
+
+  test("collapses and trims HTML whitespace only, and prefers a label attribute", () => {
+    assert.equal(selectLabel(select(el("OPTION", [text("\n  a \t b  ")]))), "a b");
+    assert.equal(selectLabel(select(el("OPTION", [text("text")], { label: " shown " }))), "shown");
+    assert.equal(selectLabel(select(el("OPTION", [text("text")], { label: "  " }))), "text");
+    assert.equal(selectLabel(el("SELECT", [el("OPTION", [text("x")])])), "");
+  });
+});
+
+describe("transforms", () => {
+  // What Chromium's DOMSnapshot gives for a 12 by 18 inline-block at 100, 50 with transform:
+  // rotate(90deg): its box and its text's box after the turn, its own size before it.
+  const quarter = [0, 1, -1, 0, 0, 0];
+  const t = elementTransform({ x: 97, y: 53, w: 18, h: 12 }, { w: 12, h: 18 }, quarter, [6, 9]);
+
+  test("an element's box before its transform, and the matrix taking it to after", () => {
+    assert.deepEqual(t.box, { x: 100, y: 50, w: 12, h: 18 });
+    // Its top-left corner turns to the top-right of the box after.
+    const [a, b, c, d, tx, ty] = t.m;
+    assert.deepEqual([a * 100 + c * 50 + tx, b * 100 + d * 50 + ty], [115, 53]);
+    assert.equal(t.svg, "matrix(0 1 -1 0 165 -47)");
+    // With no transform-origin given, the centre: the same here.
+    assert.deepEqual(elementTransform({ x: 97, y: 53, w: 18, h: 12 }, { w: 12, h: 18 }, quarter, null).box, t.box);
+  });
+
+  test("a text box after the transform is put back where an unturned twin has it", () => {
+    const back = untransformBox({ x: 98, y: 53, w: 17, h: 21.34375, start: 0, length: 2 }, t.m);
+    assert.deepEqual(Object.fromEntries(Object.entries(back).map(([k, v]) => [k, Math.round(v * 1000) / 1000])), {
+      x: 100,
+      y: 50,
+      w: 21.344,
+      h: 17,
+      start: 0,
+      length: 2,
+    });
+  });
+
+  test("a box turned 45 degrees keeps its size, as no single size gives the one after", () => {
+    const s = Math.SQRT1_2;
+    const back = untransformBox({ x: 0, y: 0, w: 10, h: 10 }, [s, s, -s, s, 0, 0]);
+    assert.equal(back.w, 10);
+    assert.equal(back.h, 10);
   });
 });
 

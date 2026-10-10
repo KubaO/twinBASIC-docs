@@ -86,6 +86,7 @@ export const SNAPSHOT_STYLES = [
   "resize",
   "border-collapse",
   "transform",
+  "transform-origin",
   "filter",
   "clip-path",
   "position",
