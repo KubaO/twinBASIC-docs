@@ -28,8 +28,9 @@
 //                         the fault the event log records for it, and the boxes
 //                         it opens, each closed with OK
 //       --allow-name-clash  run a probe whose module holds a procedure named
-//                         like the module; twinBASIC does not run its
-//                         [RunAfterBuild] Sub, so tbrun refuses it otherwise
+//                         like the module on a build before 1005, which does
+//                         not run its [RunAfterBuild] Sub, so tbrun refuses
+//                         it there otherwise
 //       --tests           do not build: judge the project's compile cases and
 //                         run its [TestCase] Subs, printing PASS or FAIL for
 //                         each (lib/tb-tests.mjs)
@@ -38,8 +39,8 @@
 // could not run (a refused command line included), a compile never settled, or
 // it crashed -- a build that fails after a clean compile included, and a
 // [RunAfterBuild] Sub that fails code generation, since the probe never runs,
-// and a probe whose module holds a procedure named like the module, which
-// does not run either (unless --allow-name-clash),
+// and, before BETA 1005, a probe whose module holds a procedure named like the
+// module, which does not run either (unless --allow-name-clash),
 // and a procedure the probe calls that fails it, since the probe stops at the
 // call -- 3 no output: the build produced none in the console before the
 // timeout, or the probe ran and printed none after its last Debug.Cls -- 4 the
@@ -143,7 +144,7 @@ import {
   refuseTogether,
   withUsageError,
 } from "../lib/cli.mjs";
-import { findIde } from "./lib/tb-install.mjs";
+import { buildNumber, findIde } from "./lib/tb-install.mjs";
 import {
   COMPILE_TIMEOUT,
   TARGETS,
@@ -200,8 +201,8 @@ project's own test cases instead.
                       the event log records for it, and the boxes it opens,
                       each closed with OK
   --allow-name-clash  run a probe whose module holds a procedure named like the
-                      module, which twinBASIC does not run (it is refused
-                      without this option)
+                      module on a build before 1005, which does not run it (it
+                      is refused there without this option)
   --tests             compile the project and do not build it: print PASS or
                       FAIL for each compile case (a line ending in the comment
                       ' CASE <Name>: <codes>, ' CASE <Name>: error or
@@ -218,7 +219,8 @@ Exit codes:
      included), no IDE, an IDE that did not start, a compile that never
      settled, a build that failed after a clean compile, a probe that never ran or
      stopped at a procedure that failed code generation, a probe whose module holds
-     a procedure named like the module (unless --allow-name-clash), an --llvm run on a
+     a procedure named like the module on a build before 1005 (unless
+     --allow-name-clash), an --llvm run on a
      Community or Personal licence, an --exe run with no exe built, --tests on a
      project with no case or with a [TestCase] it cannot call, or a crash
   3  no output: the console held none before the timeout, or the probe printed none
@@ -423,15 +425,18 @@ if (hasHook && !wrap.wrapped && !values.tests) {
     `warning: ${wrap.why} -- so a probe that ends before it returns cannot be told from one that finished.`,
   );
 }
-// Refused before an IDE starts, which is the first thing after this that costs anything.
-if (wrap.wrapped?.clash && !values.allowNameClash && !values.tests) {
+// Refused before an IDE starts, which is the first thing after this that costs anything. Only
+// on a build before 1005, which fixed it (twinbasic/twinbasic#2481, #2494); an install whose
+// folder names no build is taken to be a newer one.
+const clashBuild = buildNumber(ide);
+if (wrap.wrapped?.clash && clashBuild !== null && clashBuild < 1005 && !values.allowNameClash && !values.tests) {
   die(
     2,
     `tbrun: module ${wrap.wrapped.module} holds the [RunAfterBuild] Sub ${wrap.wrapped.sub} and also a procedure named ` +
-      `${wrap.wrapped.clash}, like the module. In twinBASIC (BETA 997) a [RunAfterBuild] Sub does not run, and ` +
-      `nothing says so, when its module holds a procedure named like the module (BUGS-TO-REPORT.md, "A [RunAfterBuild] ` +
-      `Sub does not run, and nothing says so, when its module holds a procedure named like the module"). ` +
-      `Rename one of them, or pass --allow-name-clash to run it anyway.`,
+      `${wrap.wrapped.clash}, like the module. In twinBASIC before BETA 1005 (this is BETA ${clashBuild}) a ` +
+      `[RunAfterBuild] Sub does not run, and nothing says so, when its module holds a procedure named like the ` +
+      `module (twinbasic/twinbasic#2481, #2494). Rename one of them, use BETA 1005 or later, or pass ` +
+      `--allow-name-clash to run it anyway.`,
   );
 }
 
