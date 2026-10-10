@@ -19,7 +19,13 @@ import path from "node:path";
 import { describe, test } from "node:test";
 import { isWebsiteOnlyLink, rewriteHtml, websiteOf } from "../builder/offline-rewrite.mjs";
 import { createMarkdownIt } from "../builder/render.mjs";
-import { lightOnly, pairSizes, unpairedLightPictures } from "../builder/theme-pictures.mjs";
+import {
+  lightOnly,
+  pairSizes,
+  pictureSvgOutputs,
+  pngPictures,
+  unpairedLightPictures,
+} from "../builder/theme-pictures.mjs";
 import { encodePng } from "../scripts/lib/png.mjs";
 
 const md = createMarkdownIt({
@@ -262,5 +268,105 @@ describe("themePairPlugin and lightOnly", () => {
       "a/Z.light.png",
       "b/Y.light.png",
     ]);
+  });
+});
+
+// A picture also drawn as SVG (shoot_docs.mjs --svg): each theme shows its SVG where there is
+// one, unless the attribute block says png; a picture's SVG is an image, never inlined the
+// way a diagram's SVG is.
+describe("themePairPlugin with pictures drawn as SVG", () => {
+  const md = createMarkdownIt({
+    highlighter: null,
+    linkTables: { byPath: new Map(), byUrl: new Map(), byRedirect: new Map() },
+    baseurl: "",
+    staticFiles: new Set([
+      "IDE/Images/A.png",
+      "IDE/Images/A.light.png",
+      "IDE/Images/A.svg",
+      "IDE/Images/A.light.svg",
+      "IDE/Images/B.png",
+      "IDE/Images/B.svg",
+      "IDE/Images/C.png",
+      "IDE/Images/C.light.png",
+      "IDE/Images/C.svg",
+      "IDE/Images/D.svg",
+    ]),
+    pictureSizes: { "IDE/Images/A.light.png": [12, 6, 20, 10] },
+    svgContents: new Map([
+      ["IDE/Images/B.svg", "<svg/>"],
+      ["IDE/Images/D.svg", "<svg/>"],
+    ]),
+  });
+  const render = (src) => md.render(src, { page: { srcRel: "IDE/Page.md" } }).trim();
+
+  test("each theme's SVG takes its PNG's place, the light one still sized by the PNGs", () => {
+    assert.equal(
+      render('![x](Images/A.png){:width="10" height="5"}'),
+      '<p><img src="/IDE/Images/A.light.svg" alt="x" width="6" height="3" class="pic-light" loading="lazy" />' +
+        '<img src="/IDE/Images/A.svg" alt="x" width="10" height="5" class="pic-dark" loading="lazy" /></p>',
+    );
+  });
+
+  test("a theme with no SVG keeps its PNG", () => {
+    assert.equal(
+      render("![x](Images/C.png)"),
+      '<p><img src="/IDE/Images/C.light.png" alt="x" class="pic-light" loading="lazy" />' +
+        '<img src="/IDE/Images/C.svg" alt="x" class="pic-dark" loading="lazy" /></p>',
+    );
+  });
+
+  test("a picture with no light sibling gets its SVG, as an image rather than inlined", () => {
+    assert.equal(
+      render('![x](Images/B.png){:width="10"}'),
+      '<p><img src="/IDE/Images/B.svg" alt="x" width="10" /></p>',
+    );
+  });
+
+  test("png in the attribute block keeps the PNGs, and is not written out", () => {
+    assert.equal(
+      render('![x](Images/A.png){:width="10" height="5" png}'),
+      '<p><img src="/IDE/Images/A.light.png" alt="x" width="6" height="3" class="pic-light" loading="lazy" />' +
+        '<img src="/IDE/Images/A.png" alt="x" width="10" height="5" class="pic-dark" loading="lazy" /></p>',
+    );
+    assert.equal(render("![x](Images/B.png){: png}"), '<p><img src="/IDE/Images/B.png" alt="x" /></p>');
+  });
+
+  test("a link to the picture opens each theme's SVG", () => {
+    assert.equal(
+      render("[Full size](Images/A.png)"),
+      '<p><a href="/IDE/Images/A.light.svg" class="pic-light">Full size</a>' +
+        '<a href="/IDE/Images/A.svg" class="pic-dark">Full size</a></p>',
+    );
+  });
+
+  test("an SVG with no PNG beside it is a diagram, and is still inlined", () => {
+    assert.match(render("![d](Images/D.svg)"), /svg-inline-wrap/);
+  });
+
+  test("a page that names a light SVG itself is refused", () => {
+    assert.throws(() => render("![x](Images/A.light.svg)"), /names a light picture directly/);
+  });
+
+  test("an output that shows PNGs gets each picture's SVG named back as its PNG, and nothing else", () => {
+    const files = new Set(["IDE/Images/A.png", "IDE/Images/A.light.png", "IDE/Images/A.svg", "IDE/Images/D.svg"]);
+    const html =
+      '<p><img src="/b/IDE/Images/A.light.svg" class="pic-light" /><img src="/b/IDE/Images/A.svg" class="pic-dark" />' +
+      '<a href="/b/IDE/Images/A.svg#top">Full size</a><img src="/b/IDE/Images/D.svg" /></p>' +
+      '<pre><code>src="/b/IDE/Images/A.svg"</code></pre>';
+    assert.equal(
+      pngPictures(html, files, "/b"),
+      '<p><img src="/b/IDE/Images/A.light.png" class="pic-light" /><img src="/b/IDE/Images/A.png" class="pic-dark" />' +
+        '<a href="/b/IDE/Images/A.png#top">Full size</a><img src="/b/IDE/Images/D.svg" /></p>' +
+        '<pre><code>src="/b/IDE/Images/A.svg"</code></pre>',
+    );
+  });
+
+  test("picture_svg says which outputs show the SVGs, each on unless set false", () => {
+    assert.deepEqual(pictureSvgOutputs({}), { online: true, offline: true, book: true });
+    assert.deepEqual(pictureSvgOutputs({ picture_svg: { offline: false } }), {
+      online: true,
+      offline: false,
+      book: true,
+    });
   });
 });

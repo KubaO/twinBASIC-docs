@@ -5,6 +5,10 @@
 // browser fetches only the one it shows; the light one's width and height are the page's
 // scaled by the two files' sizes (pairSizes). The book keeps the light one alone (lightOnly,
 // from book.mjs). WIP.Build.md says why it is done this way.
+//
+// A picture may also have been drawn as SVG (shoot_docs.mjs --svg): `X.svg` beside `X.png`,
+// `X.light.svg` beside `X.light.png`. The renderer shows each theme's SVG where it exists,
+// unless the page's attribute block says `png`; the PNGs stay, as the SVGs' reference.
 
 import { open } from "node:fs/promises";
 import { replaceOutsideCode } from "./code-guard.mjs";
@@ -15,8 +19,42 @@ export const PIC_DARK = "pic-dark";
 const LIGHT_RE = /\.light\.png$/;
 const DARK_RE = /\.png$/;
 
-// Whether a path (a source path, or a URL's path) names a light picture.
-export const isLightPicture = (p) => LIGHT_RE.test(p);
+// Whether a path (a source path, or a URL's path) names a light picture, PNG or SVG.
+export const isLightPicture = (p) => /\.light\.(?:png|svg)$/.test(p);
+
+// The SVG of a picture's source path (X.svg for X.png), or null when it is no PNG.
+export const svgOf = (rel) => (DARK_RE.test(rel) ? rel.replace(DARK_RE, ".svg") : null);
+
+// Whether a static .svg is a picture's SVG rather than a diagram: it has its PNG beside it.
+export const isPictureSvg = (rel, staticFiles) =>
+  rel.endsWith(".svg") && staticFiles.has(rel.replace(/\.svg$/, ".png"));
+
+// Which outputs show a picture's SVG in place of its PNG (_config.yml `picture_svg`): online,
+// offline (which is also the help add-in's archive) and book, each true unless set false.
+export function pictureSvgOutputs(config) {
+  const c = config?.picture_svg ?? {};
+  return { online: c.online !== false, offline: c.offline !== false, book: c.book !== false };
+}
+
+const SVG_URL = /\b(src|href)="([^"?#]+)\.svg((?:[?#][^"]*)?)"/;
+
+// Rendered HTML with each picture's SVG named back as its PNG, for an output that shows the
+// PNGs. The renderer shows the SVG wherever one exists and the page did not ask for `png`,
+// and only then, so a src or href naming a picture's SVG (isPictureSvg) is one it swapped;
+// a diagram's SVG has no PNG and is left as it is, and so is code. URLs are root-absolute
+// under `baseurl`, as the renderer writes them.
+export function pngPictures(html, staticFiles, baseurl = "") {
+  if (!html.includes(".svg")) return html;
+  const prefix = `${baseurl}/`;
+  return replaceOutsideCode(html, SVG_URL, (m, attr, stem, tail) => {
+    if (!stem.startsWith(prefix)) return m;
+    let rel = `${stem.slice(prefix.length)}.svg`;
+    try {
+      rel = decodeURIComponent(rel);
+    } catch {}
+    return isPictureSvg(rel, staticFiles) ? `${attr}="${stem}.png${tail}"` : m;
+  });
+}
 
 // The light sibling of a picture's source path, or null when it cannot have one.
 export const lightSiblingOf = (rel) =>

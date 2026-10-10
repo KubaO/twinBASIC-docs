@@ -75,6 +75,7 @@ Formatting conventions:
 - Code blocks use ` ```tb ` (highlighted via Shiki using the vendored `builder/twinbasic.tmLanguage.json` grammar).
 - Parameter lists use the deflist `term` + `: definition` indentation pattern (NOT the MS-style markdown table).
 - Set `vba_attribution: true` in the frontmatter on any page derived from VBA-Docs; omit it on fully original content (e.g. VB package pages). The flag drives an extra line in the site footer.
+- An image names the dark `X.png` only, never `X.light.png`, `X.svg` or `X.light.svg`: the build pairs the two themes and shows each theme's SVG where `shoot_docs --svg` wrote one. `png` in the attribute block (`{:width="190" height="337" png}`) keeps that picture's PNG in every output. The rules are in [Authoring, A picture in both themes](docs/Documentation/Authoring.md#a-picture-in-both-themes) and the section after it.
 
 ### Attribution policy
 

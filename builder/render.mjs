@@ -21,7 +21,15 @@ import { countPlugin, findSurvivingPlaceholder } from "./counts.mjs";
 import { replaceOutsideCode } from "./code-guard.mjs";
 import { splitFragment } from "./url.mjs";
 import { escapeMarkup, escapeMarkupAndQuotes, escapeRegExp } from "./escape.mjs";
-import { isLightPicture, lightDimension, lightSiblingOf, PIC_DARK, PIC_LIGHT } from "./theme-pictures.mjs";
+import {
+  isLightPicture,
+  isPictureSvg,
+  lightDimension,
+  lightSiblingOf,
+  PIC_DARK,
+  PIC_LIGHT,
+  svgOf,
+} from "./theme-pictures.mjs";
 
 export async function renderPhase(pages, site, staticFiles = []) {
   // Allow the orchestrator to pre-build the markdown-it instance (so
@@ -1616,7 +1624,13 @@ function walkTokens(tokens, fn) {
 // A page never names a light picture itself: one that does, in markdown or raw HTML, fails
 // the build, since a light picture shown in both themes is the mistake this exists to stop.
 // The book keeps the light picture alone (book.mjs, lightOnly).
-const RAW_LIGHT_REF_RE = /\b(?:src|href)\s*=\s*["']?[^"'\s>]*\.light\.png(?:[?#][^"'\s>]*)?(?:["'\s>]|$)/i;
+//
+// Each of the two is then shown as its SVG (X.svg, X.light.svg; theme-pictures.mjs) when
+// that is among the static files, an image and a link to the picture alike, unless the
+// attribute block names `png` -- `![alt](X.png){:width="190" height="337" png}` -- which
+// keeps the PNGs and is removed from the output. A picture with no light sibling gets its
+// SVG all the same. The light one's sizes still come from the PNG pair.
+const RAW_LIGHT_REF_RE = /\b(?:src|href)\s*=\s*["']?[^"'\s>]*\.light\.(?:png|svg)(?:[?#][^"'\s>]*)?(?:["'\s>]|$)/i;
 
 function themePairPlugin(md, ctx) {
   const urlPath = (value) => {
@@ -1661,17 +1675,28 @@ function themePairPlugin(md, ctx) {
         if (t.type === "html_inline") checkRaw(t.content);
         const attr = t.type === "image" ? "src" : t.type === "link_open" ? "href" : null;
         if (!attr || t.meta?.themePaired) continue;
+        const keepPng = t.attrGet("png") !== null;
+        if (keepPng) t.attrs = t.attrs.filter(([name]) => name !== "png");
         const value = t.attrGet(attr);
         if (!value) continue;
         const target = urlPath(value);
         if (isLightPicture(target)) refuse(`the ${t.type === "image" ? "image" : "link"} ${value}`);
         if (!ctx.staticFiles || !target.startsWith(prefix)) continue;
-        const light = lightSiblingOf(target.slice(prefix.length));
-        if (!light || !ctx.staticFiles.has(light)) continue;
-        const lightValue = value.replace(/\.png(?=[?#]|$)/, ".light.png");
+        const rel = target.slice(prefix.length);
+        // `v`, a URL naming the picture `pngRel`, as the URL of its SVG when there is one.
+        const asSvg = (v, pngRel) =>
+          !keepPng && ctx.staticFiles.has(svgOf(pngRel) ?? "") ? v.replace(/\.png(?=[?#]|$)/, ".svg") : v;
+        const light = lightSiblingOf(rel);
+        if (!light || !ctx.staticFiles.has(light)) {
+          t.attrSet(attr, asSvg(value, rel));
+          continue;
+        }
+        const lightValue = asSvg(value.replace(/\.png(?=[?#]|$)/, ".light.png"), light);
+        const darkValue = asSvg(value, rel);
         if (t.type === "image") {
           const copy = clone(t);
           copy.attrSet("src", lightValue);
+          t.attrSet("src", darkValue);
           const size = ctx.pictureSizes?.[light];
           if (size) {
             for (const [attr, i] of [
@@ -1694,6 +1719,7 @@ function themePairPlugin(md, ctx) {
         // both link_open tokens are marked, so neither is taken for a link to pair again.
         const copies = kids.slice(i, close + 1).map(clone);
         copies[0].attrSet("href", lightValue);
+        t.attrSet("href", darkValue);
         mark(copies[0], PIC_LIGHT);
         mark(t, PIC_DARK);
         kids.splice(i, 0, ...copies);
@@ -2192,6 +2218,9 @@ function svgInlinePlugin(md, ctx) {
     const prefix = (ctx.baseurl || "") + "/";
     if (!src.startsWith(prefix)) return null;
     const srcRel = src.slice(prefix.length);
+    // A picture's SVG (it has its PNG beside it) is an image like the PNG, never inlined:
+    // the diagrams are what this is for.
+    if (ctx.staticFiles && isPictureSvg(srcRel, ctx.staticFiles)) return null;
     return ctx.svgContents?.get(srcRel) ? srcRel : null;
   }
 

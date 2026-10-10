@@ -1093,3 +1093,35 @@ light one alone, a plain `<img>` (`lightOnly` in
   a few pixels off the dark one's size. Forcing the dark size on it instead either pulls
   neighbouring UI into the frame (a line of the blue title bar over every light toolbar) or
   crops the subject.
+
+### Pictures as SVG
+
+**The rule:** `X.svg` beside `X.png`, and `X.light.svg` beside `X.light.png`, is the picture
+drawn as SVG by `shoot_docs --svg` ([WIP.Screenshots.md](WIP.Screenshots.md#pictures-as-svg)).
+A page still names `X.png`. `themePairPlugin` names each theme's SVG in its place when that is
+among the static files, an image and a link alike, unless the attribute block holds `png`,
+which it takes out of the output. `picture_svg` in `_config.yml` says which outputs show the
+SVGs: online and book do, offline (and so the help archive) does not. Why:
+
+- **The page names the PNG.** The PNG stays as the picture the SVG was checked against, and as
+  the picture of an output that shows PNGs; and `shoot_docs` does not write an SVG that falls
+  short of its PNG, so a page cannot count on one existing.
+- **The renderer always writes the SVG, and an output that shows PNGs takes it back after.**
+  `pngPictures` ([builder/theme-pictures.mjs](builder/theme-pictures.mjs)) names each picture's
+  SVG back as its PNG in the rendered HTML: a `src` or `href` naming an `.svg` with its `.png`
+  beside it can only be one the renderer swapped, since a diagram's SVG has no PNG; it rewrites
+  outside code only (`replaceOutsideCode`). `cpu-worker.mjs` makes the offline page from the
+  SVG HTML and swaps it when offline shows PNGs, and the online page the same way;
+  `book.mjs` swaps before `pdf.mjs` collects the book's images. One rendering, three outputs.
+- **An offline tree that shows PNGs holds no picture SVG.** `tbdocs.mjs` adds each one's path
+  to `offline_exclude` in memory, so the offline copy, the help archive, the offline link check
+  and the index audit agree without knowing about pictures. That adds a few hundred literal
+  patterns, so `offlineExcluded` (and its copy in `check-tree.mjs`) compares a pattern with no
+  wildcard as a string instead of compiling it. The archive is a stored zip, 37 MB without
+  the SVGs, and the 310 of them (2026-10-10) would add 18 MB.
+- **A picture's SVG is never inlined.** `svgInlinePlugin` inlines a diagram's SVG with its zoom
+  and export controls; a picture's (`isPictureSvg`: an `.svg` with its `.png` beside it) stays
+  an `<img>`, and `tbdocs.mjs` does not put it in the `svgContentsMap` the workers receive.
+- **No `<picture>` with a PNG fallback** (owner): every browser the site supports shows an SVG
+  in an `<img>`. The fallback a page needs is the per-picture `png`.
+- **A page that names `X.light.svg` fails the build**, as one that names `X.light.png` does.

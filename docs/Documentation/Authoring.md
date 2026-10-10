@@ -881,6 +881,23 @@ Three things to get right:
 
 The IDE's own screenshots come from `scripts/shoot_docs.mjs`, which takes each one in both themes and writes both files; it keeps no light picture that looks exactly like the dark one. Describe a picture in words that are true in both themes: its alt text and the prose around it are the same for both. "The Run button" is true of both, while "the white Run button" is not.
 
+### A picture as SVG
+
+Most of the IDE's screenshots are also kept as SVG, beside their PNGs under the same name:
+
+```text
+docs/IDE/Images/Watches.png         <-- the page names this one
+docs/IDE/Images/Watches.svg         <-- shown in its place
+docs/IDE/Images/Watches.light.png
+docs/IDE/Images/Watches.light.svg   <-- shown in the light theme
+```
+
+`scripts/shoot_docs.mjs --svg` draws each SVG from the IDE's page at the moment it takes the PNG. Its text is real text, in the fonts the IDE drew it with, so the picture stays sharp at any zoom, and in the PDF book its text can be selected and searched. The page still names `Watches.png`: the build shows the SVG in its place wherever there is one, in each theme.
+
+- **Name the PNG, never the SVG.** The PNG stays in the repository. The SVG is checked against it when it is made, and an output that shows PNGs uses it. Which outputs show the SVGs is set by `picture_svg` in `docs/_config.yml`: the website and the PDF book do, and the offline copy and the IDE help add-in's archive show the PNGs. The SVGs would make that archive half as large again.
+- **To keep one picture's PNG everywhere**, put `png` in its attribute block: `![The Watches panel](Images/Watches.png){:width="190" height="337" png}`. The build takes the word out of the page.
+- **Do not edit a picture's SVG.** Take the picture again. `shoot_docs` writes an SVG only when it matches its PNG closely. One that has more than 0.25% of its pixels far from the PNG's is not written, and an older one is removed, so the page shows the PNG instead.
+
 ### Videos
 
 Link the video and mark it `.video`:

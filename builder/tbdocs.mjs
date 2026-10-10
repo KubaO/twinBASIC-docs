@@ -71,7 +71,7 @@ import { computeSiteSeo } from "./seo.mjs";
 import { resolveBookChapters } from "./book.mjs";
 import { loadData } from "./data.mjs";
 import { createMarkdownIt, buildLinkTables, serializeLinkTables } from "./render.mjs";
-import { pairSizes, unpairedLightPictures } from "./theme-pictures.mjs";
+import { isPictureSvg, pairSizes, pictureSvgOutputs, unpairedLightPictures } from "./theme-pictures.mjs";
 import { loadHighlightTheme } from "./highlight-theme.mjs";
 import { NAV_SCRIPT_REL, buildInitConfig, renderSidebar } from "./template.mjs";
 import {
@@ -648,6 +648,18 @@ const TASKS = {
       void _dotSignal; // dependency signal only -- static files already appended in dot.submit
       void _markdownInitSignal; // dependency signal only -- markdown + linkTablesSerialized + seoSiteTitle/seoLogoUrl already on state.site
       const chunks = chunkPages(state.pages, ctx.workerCount);
+      // An offline tree that shows the pictures' PNGs (picture_svg.offline false) holds no
+      // picture SVG either: each is added to offline_exclude, on the config every consumer of
+      // that list reads -- the trees' inventories, the offline copy, the workers' payload --
+      // so they all leave the same files out.
+      const staticSrcRels = new Set(state.staticFiles.map((f) => f.srcRel));
+      if (!pictureSvgOutputs(state.site.config).offline) {
+        const pictureSvgs = state.staticFiles.filter((f) => isPictureSvg(f.srcRel, staticSrcRels));
+        state.site.config.offline_exclude = [
+          ...(Array.isArray(state.site.config.offline_exclude) ? state.site.config.offline_exclude : []),
+          ...pictureSvgs.map((f) => f.destRel.replaceAll("\\", "/")),
+        ];
+      }
       const excludePatterns = Array.isArray(state.site.config?.offline_exclude)
         ? state.site.config.offline_exclude.map(String)
         : [];
@@ -728,9 +740,11 @@ const TASKS = {
         }
         state.checkTrees = checkTrees;
       }
+      // The SVGs the renderer may inline: not the pictures' (isPictureSvg), which are images
+      // like their PNGs and would otherwise travel to every worker, a few hundred KB each.
       const svgContentsMap = Object.create(null);
       for (const f of state.staticFiles) {
-        if (f.srcRel.endsWith(".svg")) {
+        if (f.srcRel.endsWith(".svg") && !isPictureSvg(f.srcRel, staticSrcRels)) {
           try {
             svgContentsMap[f.srcRel] = await fs.readFile(path.join(ctx.srcRoot, f.srcRel), "utf8");
           } catch {}
