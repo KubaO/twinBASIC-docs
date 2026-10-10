@@ -55,7 +55,7 @@ Building with LLVM does not currently work on Windows 7; Windows 10 or 11 is rec
 
 ### Language support
 
-The main feature not yet supported is passing an error up to the calling procedure. If an error occurs in a procedure that has no error handler, its caller does not receive the error when either of the two procedures is compiled with LLVM: the caller's own `On Error` statement does not catch it. Instead, a built program stops as it does for an unhandled error, and a run in the IDE ends without a message. A fix is planned.
+The main feature not yet supported is passing an error up to the calling procedure. If an error occurs in a procedure that has no error handler, its caller does not receive the error when either of the two procedures is compiled with LLVM: the caller's own `On Error` statement does not catch it. Instead, a run in the IDE ends without a message. A built program stops as it does for an unhandled error when only the caller is compiled with LLVM. When the procedure that has no handler is compiled with LLVM, the program shows a box that names the procedure but no error, and then ends with an access violation. A fix is planned.
 
 > [!NOTE]
 > In twinBASIC BETA 1005, an error handler in a procedure compiled with LLVM cannot read an error raised with [**Err.Raise**](../tB/Modules/ErrObject/Raise) in that procedure: **Err.Number** returns -353703423 (`&HEAEAEA01`), **Err.Source** is empty, and **Err.Description** is the generic "Application-defined or object-defined error". An error that a statement causes, such as a division by zero, is read correctly.

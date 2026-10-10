@@ -1260,6 +1260,23 @@ The output has these parts, in order: the two sizes, and whether the section tab
 
 Exit codes: **0** the compared bytes are equal, the two decompressed blocks or, with `--vb6`, the two files outside the time stamp and the checksum; **1** they differ, so the defect is there; **2** a refused command line, no IDE or no VB6, no free port, an IDE that did not start, a project that did not compile or build, a block that does not inflate to its stated size or is not there, or a crash.
 
+### probe_ide_image_labels.mjs
+{: #probe-ide-image-labels }
+
+    node scripts/probe_ide_image_labels.mjs [--ide <twinBASIC.exe>]
+
+Lists the images that the style sheets of the twinBASIC IDE label with a media type their bytes do not have. It is the check behind the entry of `BUGS-TO-REPORT.md` whose reproducer is `bugs/ide-stylesheet-image-labels/`: the IDE's `styles.css` embeds images as `data:` URIs, and some are labelled `image/png` while their bytes are a GIF or a JPEG, or labelled `/png`, which has no `image` before the slash, while their bytes are a PNG. It starts no IDE and writes nothing, but it needs an unpacked twinBASIC install, and it is outside every gate and outside CI.
+
+It reads every `.css` file under the `ide` folder of the install and passes each to `stripFile` of `scripts/lib/compact-image.mjs`, the function [`imagestrip`](#imagestrip) is tested against. `stripFile` names each embedded image by its bytes, whatever the style sheet called it, and reports each label it would change. The probe prints those reports and discards the stripped output.
+
+| Flag | Effect |
+|---|---|
+| `--ide <path>` | Path to `twinBASIC.exe`, found as for `tbbuild`. The `.css` files read are those under the `ide` folder beside it. |
+
+The output is one line for each mislabelled image, `<file> line <n>: labelled <label>, the bytes are <kind>`, with the file relative to the install, and a summary line, `<n> of <total> images in the IDE's stylesheets are mislabelled (BETA <build>)`, or `none of the <total> images in the IDE's stylesheets is mislabelled (BETA <build>)`. Any other report of `stripFile`, such as a `data:` URI labelled as an image whose base64 cannot be read, is printed as a `note:` line and does not count.
+
+Exit codes: **0** every embedded image is labelled with the type its bytes have; **1** at least one is not, so the defect is there; **2** a refused command line, no IDE, no `ide` folder, no style sheet or no embedded image in it to check, or a crash.
+
 ### vb6run.mjs
 {: #vb6run }
 

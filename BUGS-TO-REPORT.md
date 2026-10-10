@@ -2495,3 +2495,87 @@ What does not reproduce it: an argument that is an array variable, or an express
 Severity: moderate. An error is always raised, so nothing goes wrong silently, but VB6 code that forwards a `Variant` array through a `ParamArray`, such as a `Max` or `Concat` helper or the unpacking routine of #1660, fails, and *Unspecified error* gives no hint why. Reading the element into a `Variant` first avoids it.
 
 <!-- Reproducer: bugs/paramarray-variant-array/ (mode test: `tbrun --tests` runs the 28 [TestCase]s of ParamArrayTests; expect lists the ten PASS and eighteen FAIL lines, each FAIL with what BETA 1005 gives). verify reproduces on BETA 957, 997 and 1005; VB6 side in vb6/ (VB6 6.0): `bug_repro.mjs vb6` prints the table's VB6 column, which the test cases assert. The built-exe and LLVM results are from `tbrun --exe` and `tbrun --exe --llvm` on a scratch copy whose Startup prints with TbRun.Out, not kept. Found while writing scripts/imagestrip/'s twinBASIC tests: TestImages.Cat in scripts/imagestrip/src/Sources/Tests/TestImages.twin copies each ParamArray element through a Variant to work around it, and its comment names this entry. Stated in a NOTE naming BETA 1005 in docs/Reference/Core/ParamArray.md. When fixed, the NOTE goes, ParamArray.md states nothing about it, and Cat's workaround and comment go. Filing it new, or commenting on #1660 with this narrowed form and marking it CAPTURED IN EXISTING #1660, is the owner's call. -->
+
+---
+
+## The IDE's `styles.css` labels a GIF and a JPEG `image/png`, and two PNGs `/png`
+
+**Describe the bug**
+Four of the images that the IDE's `ide\styles.css` embeds as base64 `data:` URIs are labelled with a media type their bytes do not have: two PNGs are labelled `/png`, which is not a media type, and a GIF and a JPEG are labelled `image/png`. The other 171 images embedded in the `.css` files under `ide\` are labelled with the type they have.
+
+**To Reproduce**
+Steps to reproduce the behavior:
+1. Open `ide\styles.css`, in the folder of the twinBASIC installation, in a text editor. There is no project to attach: the defect is in the installation's own file.
+2. Line 2947, in the rule of `.treeExpanded` and `.sectionExpanderIcon`, reads `background-image: url('data:/png;base64,iVBORw0KGgo...')`. Decode the base64: its first eight bytes are `89 50 4E 47 0D 0A 1A 0A`, the signature of a PNG. Line 2952, in the rule of `.treeExpanded1`, is labelled `/png` in the same way, and is also a PNG.
+3. Line 3917, in the rule of `#progressSpinner` and `.progressSpinnerIcon`, reads `url('data:image/png;base64,R0lGODlh...')`. Decode the base64: it starts with `GIF89a`, the signature of a GIF.
+4. Line 7412, in the rule of `.vipGold1_autoWeighingSystemsLogo`, reads `url('data:image/png;base64,/9j/4AAQ...')`. Decode the base64: it starts with `FF D8 FF E0`, the start of a JPEG.
+
+**Expected behavior**
+Each `data:` URI names the type of its bytes, as the other 171 do: `image/png` for the two PNGs, `image/gif` for the GIF and `image/jpeg` for the JPEG. A media type is `type/subtype`, so `/png` is not one.
+
+**Desktop:**
+ - OS: Windows 10 Pro 22H2 (build 19045)
+ - twinBASIC compiler version: BETA 1005
+
+**Additional context**
+BETA 997 and 957 have the same four images, at lines 2947, 2952, 3917 and 7389 in BETA 997, and at lines 2935, 2940, 3905 and 7323 in BETA 957. No other `.css` file under `ide\` has a mislabelled image, the Monaco editor's `editor.main.css` included. Images embedded in the IDE's `.js` and `.htm` files were not checked.
+
+Severity: low. Chromium identifies an image by its bytes, so all four pictures show: in headless Chrome 148, each of the four URIs loads as an `<img>` at its own size, and as a `background-image` draws the same pixels as the URI with the correct label. The IDE's own WebView2 was not tested.
+
+<!-- Reproducer: bugs/ide-stylesheet-image-labels/ (mode probe: scripts/probe_ide_image_labels.mjs reads every .css file under the install's ide folder through stripFile in scripts/lib/compact-image.mjs and prints one line for each image whose label differs from its bytes; exit 1 while the defect is there). No project and no zip, as for the filed "The IDE has written the same name twice into project files it ships". `verify` reproduces on BETA 1005; the probe prints the same four on 997 and 957. The Chrome check is not scripted (headless Chrome from scripts/lib/browser.mjs, 2026-10-10: each URI loaded as an Image, and an element screenshot of a box with it as background compared byte for byte with the same box under the correct label). Found by imagestrip, which relabels each image by its bytes and reports it. Stated in docs/Documentation/Tools.md's imagestrip section ("In BETA 1005, the IDE's `styles.css` has a GIF and a JPEG labelled `image/png`, and two PNGs labelled `/png`...") and in WIP.Build.md's bullet "An image is named by its bytes"; when fixed, update both and the comments in scripts/lib/compact-image.mjs that name the IDE's labels. Tools.md's probe_ide_image_labels.mjs section goes with the reproducer when it is deleted. -->
+
+---
+
+## An error is not passed to the caller's `On Error` handler when the caller or the procedure that raised it is compiled with LLVM
+
+**Describe the bug**
+An error raised in a procedure that has no error handler goes to the `On Error` handler of its caller. When either of the two procedures is compiled with LLVM, by `[CompilerOptions("+llvm")]` or with LLVM turned on for the whole project, the caller's handler does not run. Run in the IDE (F5), the program ends at the call without a message. In a built exe, a caller compiled with LLVM shows the unhandled-error box and ends; a callee compiled with LLVM shows a box titled `_TB_ERROR_HANDLER` that names the procedure but no error, and the program then ends with an access violation (0xC0000005 at address 0). With neither procedure compiled with LLVM, the caller's handler catches the error, in the IDE and in an exe, as it does in VB6.
+
+**To Reproduce**
+Steps to reproduce the behavior:
+1. Open `llvm-error-not-passed-to-caller.twinproj` (attached as `llvm-error-not-passed-to-caller.zip`). It needs an LLVM licence (Ultimate): its procedures are compiled with LLVM by their `[CompilerOptions("+llvm")]` attribute. Its module `Cases` holds 12 cases. Each calls a procedure that raises an error and has no error handler, from a procedure with `On Error GoTo` (cases 10 and 11: `On Error Resume Next`), and returns what the handler caught. The error is `Err.Raise 5000` or a division by zero. Case 4 is:
+   ```
+   [CompilerOptions("+llvm")]
+   Private Sub ErrRaise_Llvm()
+       Err.Raise 5000, "Callee", "raised by Err.Raise"
+   End Sub
+
+   Public Function CallerPlain_CalleeLlvm_ErrRaise() As String
+       On Error GoTo Handler
+       ErrRaise_Llvm
+       CallerPlain_CalleeLlvm_ErrRaise = "no error"
+       Exit Function
+   Handler:
+       CallerPlain_CalleeLlvm_ErrRaise = "caught " & Err.Number
+   End Function
+   ```
+2. Run the project in the IDE (F5). `Sub Main` runs the cases in order, and writes each case's name to the DEBUG CONSOLE, then what its handler caught.
+3. See `caught 5000`, `caught 11` and `caught 11` for the first three cases. Then see the name `CallerPlain_CalleeLlvm_ErrRaise` and nothing after it: the run has ended without a message, and `end of Main` is not written.
+4. Set `FirstCase` in the module `Startup` to 5, 6 and so on to run the cases after the first one that ends the run. Each of them ends the run in the same way. What each case does in the IDE, in an exe built from the project (which shows only its box and how it ends, since `Debug.Print` writes nothing in an exe), and in VB6 (the same procedures without the attributes, attached as `llvm-error-not-passed-to-caller-vb6.zip`, which writes each case's result to `out.txt`):
+
+   | cases | the caller, which has the handler | the callee, which raises the error | twinBASIC, run in the IDE | twinBASIC, built exe | VB6 |
+   |---|---|---|---|---|---|
+   | 1, 2 | ordinary | ordinary | `caught 5000`, `caught 11` | the same | the same |
+   | 3 | LLVM, which also raises the error (a division by zero) | the same procedure | `caught 11` | `caught 11` | `caught 11` |
+   | 4, 7 | ordinary | LLVM | the run ends | the box `_TB_ERROR_HANDLER` (`unhandled error in Cases.ErrRaise_Llvm`; case 7: `Cases.Divide_Llvm`), then an access violation | `caught 5000`, `caught 11` |
+   | 5, 8 | LLVM | ordinary | the run ends | the unhandled-error box (`Run-time error '5000' raised by Err.Raise`; case 8: `Run-time error '11' Division by zero`), then the program ends | `caught 5000`, `caught 11` |
+   | 6, 9 | LLVM | LLVM | the run ends | as 4 and 7 | `caught 5000`, `caught 11` |
+   | 10 | ordinary, with `On Error Resume Next` | LLVM | the run ends | as 4 | `continued, Err.Number 5000` |
+   | 11 | LLVM, with `On Error Resume Next` | ordinary | the run ends | as 5 | `continued, Err.Number 5000` |
+   | 12 | ordinary, with an ordinary procedure between it and the callee | LLVM | the run ends | as 4 | `caught 5000` |
+
+**Expected behavior**
+The error is passed to the caller's handler whichever of the two procedures is compiled with LLVM, as it is without LLVM and in VB6: an `On Error GoTo` handler runs with `Err.Number` set to 5000 (or 11), and under `On Error Resume Next` the caller continues with the statement after the call, with the same `Err.Number`. With no handler in any caller, the error is unhandled, and the box shows its number and description.
+
+**Desktop:**
+ - OS: Windows 10 Pro 22H2 (build 19045)
+ - twinBASIC compiler version: BETA 1005
+
+**Additional context**
+On BETA 1005 every case of the table was run on its own, in the IDE and in a 32-bit exe. The run ends at case 4 in the IDE on BETA 997, 995 and 987 as well. A 64-bit exe of cases 4 and 5 on BETA 1005 does what the 32-bit one does, and so does a BETA 997 exe, but for the box of case 5, which is titled `shutdown` there. BETA 957 refuses the project's LLVM procedures ("a feature used in your code is not yet supported with the LLVM compiler").
+
+What does not reproduce it: neither procedure compiled with LLVM (cases 1 and 2), and an LLVM-compiled procedure that handles an error its own statement causes (case 3). An error raised by `Err.Raise` and one caused by a division by zero behave the same; so do `On Error GoTo` and `On Error Resume Next`, and a callee reached through an ordinary procedure (case 12). With LLVM turned on for the whole project, every procedure is compiled with LLVM, so cases 1 and 2 end the run as well, in the IDE and in an exe; case 3 still works.
+
+Severity: high for a program compiled with LLVM. An error that the caller handles ends the program, and with a callee compiled with LLVM it ends with an access violation. In the IDE the run ends without a message, so the cause is hard to find. No wrong result is produced. Compiling both procedures without LLVM avoids it.
+
+<!-- Reproducer: bugs/llvm-error-not-passed-to-caller/ (mode run: `Sub Main` runs the 12 cases in order and the run ends silently at case 4; expect is tbrun exit 5, the output of cases 1 to 3 and the name of case 4, and absent the result line of case 4 and `end of Main`; verify reproduces on BETA 1005, 997, 995 and 987). expect judges case 4 only: when verify says NO LONGER REPRODUCES, set FirstCase in Startup.twin to 5 and run again, because a fix of the callee case alone leaves the caller cases. Test mode was tried and is not used: `tbrun --tests` honours the per-procedure attribute, but the first LLVM case waits 120 s (`no answer from the compiler after 120 s`) and every case after it fails with `main thread is busy`, so one run cannot tell the cases apart. VB6 side in vb6/ (VB6 6.0): `bug_repro.mjs vb6` prints the table's VB6 column. The exe results are from `tbrun --exe` (and `--arch win64`) on scratch copies of src/ whose Startup prints with TbRun.Out, one case per run, not kept; the project-wide LLVM results are from `tbrun --llvm --exe` on the same. Stated in docs/LLVM/Getting-Started.md, "Language support", first paragraph ("The main feature not yet supported is passing an error up to the calling procedure..."), with the access violation of an LLVM-compiled callee added 2026-10-10: when fixed, that paragraph goes. The entry "A `ParamArray` element that is a `Variant` variable holding an array..." mentions the LLVM-exe case in its Additional context ("a separate defect of LLVM-compiled code"): name this entry's issue there once it is filed, and drop the sentence when this is fixed. Not narrowed, so not in the entry: an LLVM-compiled procedure whose handler re-raises the error with `Err.Raise Err.Number`, called from an ordinary procedure with a handler, left the BETA 1005 exe running until it was ended. -->
