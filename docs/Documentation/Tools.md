@@ -1422,6 +1422,14 @@ started only when one of its pictures is selected:
 - **sample**, **settings** and **glyphs** open `test/shots/sample`, a small Standard EXE made
   for the pictures: the panels and the editor with a project, Project Settings (with the
   settings files of `test/shots/settings`), and the icons the pages show inline.
+- Further setups each bring the IDE to one state that the pictures above do not need: the
+  Community Edition and LIMITED badges and the splash screen; the programs under
+  `test/shots/programs`, run so that their windows can be taken, and the CodeLens, TWINPACK build
+  and Fusion pictures; the package server's dialogs, which need the network and never publish
+  anything; the Import from twinproj dialog for a VB6 project made for the picture
+  (`test/shots/vbp`); and the Webpage pane showing this documentation's home page.
+- **web** is not an IDE: it is a Chrome that the tool starts on a private desktop, for the two
+  pages of Microsoft's and GitHub's sites that the FAQ shows. It needs the network.
 
 Every IDE is set up as a lane of [`addin_test.mjs`](#addin-test) is, with a private `APPDATA`
 and `TB_ADDIN_TEST` set to `1`, and it never appears on your desktop.
@@ -1431,7 +1439,9 @@ the page is given a fixed size of 1280 by 880 CSS pixels at 2x, and animations a
 are switched off. The IDE's settings --- its options, panel layouts and
 keyboard shortcut groups --- are set to their defaults in the page only, and the recent-project
 lists are replaced there, so no picture shows your own choices or projects; nothing is saved.
-No picture shows the Debug Console, whose lines carry the time they were written. Menus are
+The Debug Console's lines carry the time they were written, so a picture that shows it has those
+times set to fixed values in the page, once the real lines have appeared. A running program's
+window is taken once, not in two themes, at the display's scaling. Menus are
 cut out, transparent around the menu; dialogs are taken whole. A picture that needs arrows, rings
 or numbered badges has them drawn by the tool in one style, anchored to the element they point at
 (`scripts/lib/shot-annotate.mjs`), so that a retake after a new BETA puts them where the element
