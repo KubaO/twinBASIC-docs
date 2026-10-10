@@ -168,7 +168,8 @@ back).
   page's `currentDPI` to the 2x ratio, or the IDE's 5 s DPI check covers every designer with
   RESYNC), and `forms` (the same without the add-in), `community` (the demo, its compiler
   restarted on an empty licence key in the page) and `splash` (the demo, for the splash
-  alone), and group B's `programs`, `codelens`, `package` and `fusion` (below). A setup is
+  alone), group B's `programs`, `codelens`, `package` and `fusion`, and group C's
+  `package-server`, `settings-linked` and `package-check` (below). A setup is
   `{name, start, prepare}`.
   Every add-in a setup loads has its `SaveSetting` key snapshotted, emptied and restored
   (`tbDocsHelp`, `GlobalSearchAddIn`).
@@ -259,7 +260,7 @@ disposition, group by group:
 - **Package server** (the other Features/Packages pictures: Importing from TWINSERV, Importing from
   a TWINPACK file, Linked Packages, Updating a package, packPublishPackage1): **network access is
   fine. Never actually publish a package**; everything short of that is allowed. The
-  byte-identical pair d9f1e4d9 / e749e10f is still the open question below.
+  byte-identical pair d9f1e4d9 / e749e10f was merged by group C (below).
 - **Not of the IDE**: retake what can be reproduced. A `.vbp` import uses a **synthetic `.vbp`
   project**, and the path is **scrubbed** from the picture (16833fae). The others in the group
   (`Documentation/Building.md`'s GitHub and Affinity screenshots, `IDE/Webpage.md`'s `Webpage`,
@@ -401,6 +402,60 @@ the result of a real publish). **33 images under `docs/` are now outside the too
   Fusion is documented for controls; a failure message that names no cause may be worth an
   issue (the main session's call).
 
+### Group C, package server (2026-10-10)
+
+Twelve retaken on BETA 1005, in both themes where the theme shows; the three byte-identical pairs
+merged into `e749e10f`, `f2fd8374` and `e2a65dfe` (`d9f1e4d9`, `4e4b8e4d` and `e9a3fd21`
+deleted, each page keeping its own alt text); `packPublishPackage1` keeps its old file.
+**18 images under `docs/` are now outside the tool.**
+
+- **Setup `package-server`**: the sample with `test/shots/packages` (Greeting, a class to type
+  `fmt.` into), signed out, TWINSERV's live list. Its APPDATA is `PACKAGE_ROOT\AppData\Roaming`,
+  a neutral root for the path the two linked-package questions name (`f48a7254`, `8cf72685`);
+  removed at the end. Every shot ticks what it shows and unticks it again before it leaves the
+  dialog (the IDE deletes the project's copy of an embedded package at once, BETA 1005 asks
+  nothing), and `packagesClean` empties the local packages folder (never the folder itself: the
+  IDE writes into it and does not make it, and an export fails with an alert) and fails a shot
+  when an earlier one left a package. Only `e2a65dfe` applies (the completion list needs the
+  compiler to have the package).
+- **The linked-package sequence is one project**, not two: the IDE asks "Local Package exists"
+  whenever a package with a local copy is ticked (`g_UserPackagesInfo`), so tick, untick
+  Embedded (the IDE writes the copy), untick, tick again gives `f48a7254`, and Download it from
+  TWINSERV (EMBED) then Embedded unticked gives `8cf72685`. One IDE per setup could not run two
+  projects in order anyway.
+- **`f66fb240`** (setup `settings-linked`): the sample with `test/shots/settings/linked.json`,
+  linking OLEGuids, and an APPDATA with no copy: as a project opened on a machine without the
+  package. Opening reaches it; Restart the compiler (from MEMORY) with the copy deleted hangs at
+  5% then UNAVAILABLE for good, Apply Changes (from FILE) does not: an IDE defect, drafted in
+  `.claude/tooling-review-scratch/inc6/C/BUG-linked-restart.md`.
+- **`db4636f6`** (setup `package-check`): the IDE downloads only the newest build, and a package
+  imported from a file has no publisher, which the check needs. The tool downloads OLEGuids
+  1.0.0.9 from TWINSERV by the IDE's own address, unpacks it into the staged project's
+  `Packages\OLEGuids` and adds the reference the IDE writes for a TWINSERV package: the check
+  on load says 1.0.0.10 is available. OLEGuids replaces WinDevLib in the page (WinDevLib
+  publishes weekly, so its line would change every run, and it is 23 MB).
+- **`a1331a0e`** showed a question BETA 1005 no longer asks ("Also remove the imported package
+  ..."): retaken as the Enabled Libraries tab with the embedded package's tick ringed, and
+  `Updating a package.md` says the copy is deleted at once.
+- **`packPublishPackage1`** kept: `packagePublisherPublish` opens the sign-in form when no
+  publisher is signed in, before the confirmation box.
+- **`e749e10f`**: the gear is the Project Explorer's (the old picture's toolbar gear is gone);
+  the dialog is shown whole with the gear beside it (2324 px wide; a smaller page does not make
+  the dialog narrower, it covers the gear). The full dialog fills Available COM References
+  (hidden, its text in the page), whose paths name the user: the shot waits for that list and
+  then renames the user in the page.
+- **`f48a7254`** starts at the question's left edge: the row being ticked shows an animated
+  spinner no two captures hold alike. **`e2a65dfe`**: the completion list is the IDE's own
+  (`.debugConsoleEntryIntellisenseBox`), shows types as `...` until the compiler gives them
+  (now and then never: the dot is retyped), and is placed by the list the name before the dot
+  opened unless that is closed first.
+- **Compiler crash, not narrowed**: about 3 runs in 10 of the setup, an Apply that embeds or
+  removes CSharpishStringFormater meets `NATIVE EXCEPTION: ACCESS_VIOLATION {no-basic-code}
+  [twinBASIC_win32.dll+0010BD3F]`; ten probe cycles of the same steps did not reproduce it. Not
+  queued. `applyChanges` clears the DEBUG CONSOLE first, so one crash does not fail every later
+  Apply, and prints the crash lines.
+- All pictures are page captures, so the page-text check for the user name covers them.
+
 ## Machine state in the pictures (owner, 2026-10-08)
 
 - **The IDE's settings** (View's ticks, IDE Options' values, the debugger options, user panel
@@ -489,7 +544,3 @@ Format menu; Properties and Toolbox; replicas and composites; code views).
   the file's text, so `frmCustomJson.tbform` holds `"MyField": 0` (in `frmCustom` it would
   override `= 42` in 1b). Setup `sample9` opens Sample 9, whose `WebView_Create` is unchanged.
 
-## Open questions
-
-1. **The byte-identical pair** `d9f1e4d9` / `e749e10f` (Features/Packages/Images): merge into one
-   file when it is retaken (recommendation).

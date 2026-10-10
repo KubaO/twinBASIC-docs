@@ -70,6 +70,12 @@
 //   package     the sample built as a TWINPACK package, and fusion test/shots/fusion, whose
 //               Fusion host the compiler builds as it loads: the DEBUG CONSOLE's lines,
 //               the paths they name on a folder of the tool's own (PACKAGE_ROOT)
+//   package-server  the sample with test/shots/packages, signed out, with the network to
+//               TWINSERV and an APPDATA of the tool's own on PACKAGE_ROOT: Project Settings'
+//               list of packages, packages downloaded, embedded and linked, and the questions
+//               the IDE asks about a linked copy; settings-linked the sample linking a package
+//               it has no copy of, and package-check the sample with an older build of a
+//               package from TWINSERV embedded, for the check the IDE makes as it loads it
 //
 // What makes the pictures repeatable, so that a second run changes no byte:
 //
@@ -136,13 +142,17 @@ import { attach } from "./lib/tb-cdp.mjs";
 import { consoleMark, linesSince } from "./lib/tb-ide-console.mjs";
 import { removeTree } from "./lib/tb-ide-copy.mjs";
 import {
+  awaitNewCompiler,
   buildProject,
+  COMPILE_TIMEOUT,
   captureWindow,
+  compilerPid,
   desktopWindows,
   killTree,
   launchOnDesktop,
   shutdownIde,
   sleep,
+  waitForCompile,
 } from "./lib/tb-ide.mjs";
 import { unpackProject } from "./lib/tb-project.mjs";
 import { findIde } from "./lib/tb-install.mjs";
@@ -208,6 +218,8 @@ the build select's greying, inline hints, a hover, a form's JSON (setups code,
 customcontrols and sample9), the whole window with its features named (setup
 featuremap), a procedure run by its CodeLens bar (setup codelens), the DEBUG
 CONSOLE after a package build and a Fusion host build (setups package and fusion),
+Project Settings' packages from TWINSERV, signed out, downloaded, embedded and linked
+(setups package-server, settings-linked and package-check; they need the network),
 and the windows of a running program, the fixture test/shots/programs (setup
 programs): those are taken once, as the program draws them, at the display's
 DPI, and shown at their size at 96 DPI.
@@ -1219,6 +1231,9 @@ const SETUPS = {
   codelens: { ports: 1, start: startCodeLens, prepare: prepareSample },
   package: { ports: 1, start: startPackage, prepare: prepareSample },
   fusion: { ports: 1, start: startFusion, prepare: prepareSample },
+  "package-server": { ports: 1, start: startPackageServer, prepare: preparePackageServer },
+  "settings-linked": { ports: 1, start: startSettings("linked"), prepare: prepareSample },
+  "package-check": { ports: 1, start: startPackageCheck, prepare: prepareSample },
 };
 
 // ---------------------------------------------------------------- the shots of the no-project setup
@@ -5870,6 +5885,707 @@ const packageBuildShot = {
   },
 };
 
+// ---- package-server: the sample with test/shots/packages staged onto it (Greeting, a class to
+// type a package's name into), signed out, with the network to TWINSERV: Project Settings' list
+// of the packages TWINSERV serves, packages downloaded from it and embedded, and a package linked
+// and the two questions the IDE then asks. The list is TWINSERV's live list, so the rows a
+// picture shows change as packages are published. Every picture brings the project to its state
+// itself and puts it back: what it ticks it unticks again before it leaves the dialog (the IDE
+// deletes the project's copy of an embedded package at once), and the local packages folder is
+// emptied, so each starts from the project as staged. packagesClean says when one did not.
+// The IDE's APPDATA is a folder of the tool's own on PACKAGE_ROOT, PACKAGES_APPDATA: the
+// questions about a linked copy name its path, and the lane's own APPDATA is under the user's
+// profile. Publishing needs a publisher signed in (packagePublisherPublish opens the sign-in
+// form first), so the confirmation box of a publish is not reachable and has no shot.
+//
+// settings-linked is the sample with a Settings file that links OLEGuids and an APPDATA with no
+// copy of it, as a project opened on a machine that lacks the package; package-check is the
+// sample with an older OLEGuids embedded, as the IDE embedded it when that was TWINSERV's newest:
+// the tool downloads it from TWINSERV, by the address the IDE downloads from, and writes the
+// reference the IDE writes for a package from TWINSERV. The IDE downloads only the newest build,
+// and a package imported from a file has no publisher, which the check needs.
+
+const PACKAGES = path.join(REPO_ROOT, "test", "shots", "packages");
+const PACKAGES_APPDATA = path.join(PACKAGE_ROOT, "AppData", "Roaming");
+const LOCAL_PACKAGES = path.join(PACKAGES_APPDATA, "twinBASIC", "packages");
+const TWINSERV = "https://www.everythingaccess.com/twinbasic/packages";
+// The package of the linked pictures and of the check, and the older build the check finds.
+const OLEGUIDS = "OLE Guid and interface definitions";
+const OLEGUIDS_ID = "{7E880520-9F56-45E1-9772-DF9FFE246715}";
+const OUTDATED_VERSION = "1.0.0.9";
+// The two packages of the import pictures, as the list names them.
+const FORMATTER = "CSharpishStringFormater";
+const FILE_PROPS = "FilePropertyExplorer";
+
+async function startPackageServer(run) {
+  run.step = "open";
+  say(run.name, `opening ${path.relative(REPO_ROOT, SAMPLE)} with ${path.relative(REPO_ROOT, PACKAGES)}`);
+  rmSync(PACKAGES_APPDATA, { recursive: true, force: true });
+  mkdirSync(PACKAGES_APPDATA, { recursive: true });
+  const src = stageSample(run);
+  cpSync(PACKAGES, src, { recursive: true });
+  return run.lane.open(src, { env: { APPDATA: PACKAGES_APPDATA } });
+}
+
+// The project's packages folder as staged, which every picture leaves as it found it.
+const projectPackages = (c) =>
+  c.evaluate(
+    `Object.keys(fs.tree.resolvePath("twinbasic:${SAMPLE_FILE("Packages")}")?.entries ?? {}).sort().join(",")`,
+  );
+
+async function preparePackageServer(run) {
+  const ctx = await prepareSample(run);
+  return { ...ctx, lane: run.lane, packages: await projectPackages(run.c) };
+}
+
+// Throws when an earlier picture left a package in the project (its folder, or a reference that
+// was applied), and empties the local packages folder (the IDE writes into it, and does not make it).
+async function packagesClean({ c, packages }) {
+  if (existsSync(LOCAL_PACKAGES)) {
+    for (const f of readdirSync(LOCAL_PACKAGES)) rmSync(path.join(LOCAL_PACKAGES, f), { recursive: true, force: true });
+  }
+  const now = await projectPackages(c);
+  const refs = await c.evaluate(
+    `new Promise((done) => getProjectSettings((s) => done((s["project.references"] ?? []).filter((r) => !r.isCompilerPackage && String(r.path32).startsWith("/Packages/")).map((r) => r.name))))`,
+    { awaitPromise: true },
+  );
+  if (now !== packages || refs.length) {
+    throw new Error(
+      `the project still holds a package from an earlier picture: its Packages folder holds ${now}, where ${packages} was staged${refs.length ? `, and it references ${refs.join(", ")}` : ""}`,
+    );
+  }
+}
+
+// Project > References, Cancel to close it.
+const inReferences = (c, run) =>
+  inDialog(c, { command: LIBRARY_REFERENCES, title: "Project Settings", close: "Cancel", still: 500 }, run);
+
+const PE_SETTINGS = { css: '.panelHeaderIcon[title="Project Settings"]' };
+// The IDE's completion list, its own box rather than Monaco's suggest widget.
+const COMPLETIONS = ".debugConsoleEntryIntellisenseBox";
+const REFERENCES_TAB = (name) => ({ css: ".referencesListChoiceOption", text: name });
+// The list of the tab shown: the dialog holds one for each tab, the others hidden, and the
+// list of Available COM References has the class of Available Packages' too.
+const SHOWN_LIST = ".referencesListNewOuter:not(.referenceListHidden)";
+const AVAILABLE_ROW = `${SHOWN_LIST} .referencesListNewAvailable .referencesListRow`;
+const ENABLED_ROW = `${SHOWN_LIST} .referencesListNew .referencesListRow`;
+const VERSION_HEADER = `${SHOWN_LIST} .referencesListRowHeader .referencesListColVersion`;
+const IMPORT_BUTTON = { css: ".loadFromFile" };
+const LOGIN_TIP = { css: ".warningNotLoggedIn" };
+// The rows of a package in the list of Available Packages, by the start of the name the list
+// shows, and the Enabled Libraries row of a reference, by a part of its name.
+const AVAILABLE_ROW_OF = (name) => `${AVAILABLE_ROW}:has(.referencesListColName2[title^="${name}"])`;
+const ENABLED_ROW_OF = (name) => `${ENABLED_ROW}:has(.referencesListColName[title*="${name}"])`;
+
+// The tab of the dialog `name`, a real click, once it shows; for Available Packages, once the list
+// holds TWINSERV's packages.
+async function referencesTab(c, name) {
+  await clickInModal(c, name);
+  if (name === "Available Packages") {
+    const listed = await waitFor(
+      c,
+      () => c.evaluate(`!!document.querySelector(${JSON.stringify(AVAILABLE_ROW_OF(OLEGUIDS))})`),
+      { timeout: 30000, interval: 200 },
+    );
+    if (!listed) throw new Error("the Available Packages list never showed TWINSERV's packages");
+  }
+  await dialogStill(c, { ms: 500 });
+}
+
+// The visible box of the references list (the tab shown).
+const referencesList = (c) => shownRect(c, SHOWN_LIST);
+
+// The tick of each row of package `name` in Available Packages: `enabled`, `embedded`, each
+// tickIcon2, tickIcon2empty or tickIconInProgress.
+const packageRows = (c, name) =>
+  c.evaluate(`[...document.querySelectorAll(${JSON.stringify(AVAILABLE_ROW_OF(name))})].map((r) => {
+  const t = (e) => e?.innerHTML.match(/tickIcon\\w*/)?.[0] ?? null;
+  return { enabled: t(r.querySelector(".referencesListColEnabled")), embedded: t(r.querySelector(".referencesListIsLocalPackage")) };
+})`);
+
+// A real click on `cell` (a class) of the first row of package `name` whose tick is `ticked`,
+// the list scrolled first so that the row is `below` pixels under its header.
+async function clickPackage(c, name, cell, { ticked, below = 56 }) {
+  const row = `[...document.querySelectorAll(${JSON.stringify(AVAILABLE_ROW_OF(name))})].find((r) => r.querySelector(${JSON.stringify(`.referencesListColEnabled ${ticked ? ".tickIcon2" : ".tickIcon2empty"}`)}))`;
+  const found = await c.evaluate(`(() => {
+  const r = ${row};
+  if (!r) return false;
+  const list = r.closest(".referencesListNewOuter");
+  const head = list.querySelector(".referencesListRowHeader").getBoundingClientRect();
+  list.scrollTop += r.getBoundingClientRect().top - head.bottom - ${below};
+  return true;
+})()`);
+  if (!found) throw new Error(`Available Packages has no ${ticked ? "ticked" : "unticked"} row of ${name}`);
+  await frames(c);
+  const p = await c.evaluate(`(() => {
+  const b = ${row}.querySelector(${JSON.stringify(cell)}).getBoundingClientRect();
+  return { x: b.x + b.width / 2, y: b.y + b.height / 2 };
+})()`);
+  await clickAt(c, p.x, p.y);
+}
+
+// Ticks package `name` in Available Packages and waits for the IDE to download and embed it.
+async function tickPackage(c, name) {
+  await clickPackage(c, name, ".referencesListColEnabled", { ticked: false });
+  const embedded = await waitFor(
+    c,
+    async () => (await packageRows(c, name)).some((r) => r.enabled === "tickIcon2" && r.embedded === "tickIcon2"),
+    { timeout: 60000, interval: 200 },
+  );
+  if (!embedded)
+    throw new Error(`${name} was not downloaded and embedded: ${JSON.stringify(await packageRows(c, name))}`);
+  await dialogStill(c, { ms: 500 });
+}
+
+// Unticks package `name` in Available Packages, once no row of it is ticked; the IDE deletes the
+// project's copy of it at once.
+async function untickPackage(c, name) {
+  await clickPackage(c, name, ".referencesListColEnabled", { ticked: true });
+  const gone = await waitFor(c, async () => (await packageRows(c, name)).every((r) => r.enabled === "tickIcon2empty"), {
+    timeout: 30000,
+    interval: 200,
+  });
+  if (!gone) throw new Error(`${name} stayed ticked`);
+  await dialogStill(c, { ms: 500 });
+}
+
+// Unticks a reference in Enabled Libraries, a real click, once its row has gone.
+async function untickReference(c, name) {
+  const t = await shownRect(c, `${ENABLED_ROW_OF(name)} .referencesListColEnabled`);
+  if (!t) throw new Error(`Enabled Libraries has no row of ${name}`);
+  await clickAt(c, t.x + t.width / 2, t.y + t.height / 2);
+  if (!(await waitFor(c, async () => !(await shownRect(c, ENABLED_ROW_OF(name))), { timeout: 30000, interval: 200 }))) {
+    throw new Error(`${name} stayed in Enabled Libraries`);
+  }
+  await dialogStill(c, { ms: 500 });
+}
+
+// Apply Changes, a real click; waits for the compiler the IDE restarts to compile the project.
+async function applyChanges({ c, lane }) {
+  const before = await compilerPid(c);
+  // The IDE's own Clear, as its button does (the dialog covers the button): the crash count
+  // checkCompile reads is the DEBUG CONSOLE's, so a crash an earlier Apply met is not counted
+  // against this one. One does now and then: an ACCESS_VIOLATION in the compiler, BETA 1005.
+  await c.evaluate("clearDebugConsole()");
+  await clickInModal(c, "Apply Changes");
+  await awaitNewCompiler(c, before, { why: "Apply Changes" });
+  try {
+    lane.checkCompile(await waitForCompile(c, { project: lane.project, timeout: COMPILE_TIMEOUT }), "the sample");
+  } catch (e) {
+    // the DEBUG CONSOLE's lines about a crash, which the message only counts
+    const lines = await c.evaluate(
+      `(debugConsoleContent.dataNodes ?? []).filter((l) => /NATIVE EXCEPTION|ParsingFileStart|crash/i.test(l)).map((l) => l.replace(/<[^>]*>/g, " ").slice(0, 300))`,
+    );
+    throw new Error(`${e.message}${lines.length ? `\n${lines.join("\n")}` : ""}`);
+  }
+  await parkMouse(c);
+}
+
+// Waits for the top dialog to be the IDE's question that starts with `text`, and to be still.
+async function question(c, text) {
+  const asked = await waitFor(
+    c,
+    () => c.evaluate(`(${TOP_MODAL})?.innerText.includes(${JSON.stringify(text)}) ?? false`),
+    { timeout: 30000, interval: 200 },
+  );
+  if (!asked) throw new Error(`the IDE did not ask "${text}"`);
+  await dialogStill(c, { ms: 500 });
+}
+
+// OLEGuids downloaded, embedded and then linked: the IDE writes the local copy into the packages
+// folder and drops the project's own. Then unticked, which leaves the local copy, and ticked
+// again: the IDE asks whether to use the local copy or download it again.
+async function linkedThenTicked(c) {
+  await tickPackage(c, OLEGUIDS);
+  await clickPackage(c, OLEGUIDS, ".referencesListIsLocalPackage", { ticked: true });
+  const linked = await waitFor(
+    c,
+    async () =>
+      existsSync(path.join(LOCAL_PACKAGES, "OLEGuids.twinpack")) &&
+      (await packageRows(c, OLEGUIDS)).some((r) => r.enabled === "tickIcon2" && r.embedded === "tickIcon2empty"),
+    { timeout: 30000, interval: 200 },
+  );
+  if (!linked) throw new Error("OLEGuids was not linked: the packages folder holds no OLEGuids.twinpack");
+  await untickPackage(c, OLEGUIDS);
+  await clickPackage(c, OLEGUIDS, ".referencesListColEnabled", { ticked: false });
+  await question(c, "Local Package exists");
+}
+
+const PACKAGE_IMAGE = (name) => `Features/Packages/Images/${name}.png`;
+
+// A settingsShot taken once the compiler has said which references it could not load: the
+// dialog marks them as it opens, and the compiler says so a little after the project has
+// compiled.
+function missingLinkedShot(out, options) {
+  const shot = settingsShot(out, options);
+  return {
+    ...shot,
+    async take(ctx) {
+      const said = await waitFor(ctx.c, () => ctx.c.evaluate("problemReferences.length > 0"), {
+        timeout: 30000,
+        interval: 200,
+      });
+      if (!said) throw new Error("the compiler reported no reference it could not load");
+      return shot.take(ctx);
+    },
+  };
+}
+// A rectangle from the left and top of `a` to the right and bottom of `b`.
+const span = (a, b) => ({ x: a.x, y: a.y, width: b.x + b.width - a.x, height: b.y + b.height - a.y });
+
+// Project Settings opened by the Project Explorer's gear, a real click, scrolled to Library
+// References, on Available Packages; the gear, the heading and the tab ringed and numbered. The
+// dialog is shown whole, from its title, with the gear beside it, which a smaller page does
+// not make narrower: the dialog then covers the gear.
+async function takeE749(c) {
+  const gear = await rectOf(c, PE_SETTINGS.css);
+  if (!gear) throw new Error("the Project Explorer has no Project Settings button");
+  await clickAt(c, gear.x + gear.width / 2, gear.y + gear.height / 2);
+  if (!(await waitModal(c, "Project Settings"))) throw new Error("Project Settings did not open");
+  try {
+    await dialogStill(c, { ms: 500 });
+    await scrollToSetting(c, "project.references", 10);
+    await referencesTab(c, "Available Packages");
+    // The build path the lane stages the project with names the user's folder, and so do
+    // libraries registered under it, in the list of Available COM References that the whole
+    // dialog fills (hidden, its text still in the page's): once that list is filled.
+    await waitFor(
+      c,
+      () =>
+        c.evaluate(
+          `[...document.querySelectorAll(".referencesListNewOuter.referenceListHidden .referencesListNewAvailable")].some((l) => l.children.length > 3)`,
+        ),
+      { timeout: 20000, interval: 250 },
+    );
+    await nameUserAsUser(c);
+    const dialog = (await modals(c)).pop();
+    const list = await referencesList(c);
+    const x = dialog.x - 10;
+    const y = dialog.y - 10;
+    const area = { x, y, width: gear.x + gear.width + 30 - x, height: list.y + list.height + 12 - y };
+    const heading = { css: settingPart("project.references", "HEADER"), own: true };
+    const tab = REFERENCES_TAB("Available Packages");
+    const png = await annotatedClip(c, "e749e10f", area, [
+      { type: "ring", on: PE_SETTINGS },
+      { type: "badge", n: 1, on: PE_SETTINGS, side: "below" },
+      { type: "ring", on: heading },
+      { type: "badge", n: 2, on: heading, side: "below" },
+      { type: "ring", on: tab },
+      { type: "badge", n: 3, on: tab, side: "right" },
+    ]);
+    return png;
+  } finally {
+    await closeModal(c, "Cancel");
+  }
+}
+
+const packageServerShots = [
+  {
+    // the dialog opened by the Project Explorer's gear, on Available Packages: the gear, the
+    // Library References heading and the tab numbered in the order they are used
+    out: PACKAGE_IMAGE("e749e10f-e361-4f15-a977-d756fcb3b5dd"),
+    setup: "package-server",
+    async take(ctx) {
+      const { c } = ctx;
+      await packagesClean(ctx);
+      await resetUi(c);
+      return takeE749(c);
+    },
+  },
+  {
+    // the foot of the list, the Import from file... button numbered 4 and the TIP to sign in
+    out: PACKAGE_IMAGE("e35d5955-9e70-4d6e-abd7-748558da75ba"),
+    setup: "package-server",
+    async take(ctx) {
+      const { c } = ctx;
+      await packagesClean(ctx);
+      return inReferences(c, async () => {
+        await referencesTab(c, "Available Packages");
+        await c.evaluate(
+          `(() => { const l = document.querySelector(${JSON.stringify(SHOWN_LIST)}); l.scrollTop = l.scrollHeight; })()`,
+        );
+        await frames(c);
+        const list = await referencesList(c);
+        const button = await shownRect(c, IMPORT_BUTTON.css);
+        const tip = await shownRect(c, LOGIN_TIP.css);
+        const area = {
+          x: list.x - 6,
+          y: list.y + list.height - 74,
+          width: list.width + 12,
+          height: Math.max(button.y + button.height, tip.y + tip.height) + 14 - (list.y + list.height - 74),
+        };
+        return annotatedClip(c, "e35d5955", area, [
+          { type: "ring", on: IMPORT_BUTTON },
+          { type: "badge", n: 4, on: IMPORT_BUTTON, side: "right" },
+        ]);
+      });
+    },
+  },
+  {
+    // the TIP to sign in, below the list's lower right corner
+    out: PACKAGE_IMAGE("0fa1272d-41d6-4d0f-b19c-f47f24a47c4d"),
+    setup: "package-server",
+    async take(ctx) {
+      const { c } = ctx;
+      await packagesClean(ctx);
+      return inReferences(c, async () => {
+        await referencesTab(c, "Available Packages");
+        const list = await referencesList(c);
+        const tip = await shownRect(c, LOGIN_TIP.css);
+        const x = tip.x - 280;
+        const y = list.y + list.height - 80;
+        return annotatedClip(c, "0fa1272d", {
+          x,
+          y,
+          width: list.x + list.width + 6 - x,
+          height: tip.y + tip.height + 14 - y,
+        });
+      });
+    },
+  },
+  {
+    // Project > References on Available Packages, the built-in packages first, an arrow at the tab
+    out: "Features/Images/5951dab6-738e-4b63-83c4-3331ec6d36b9.png",
+    setup: "package-server",
+    async take(ctx) {
+      const { c } = ctx;
+      await packagesClean(ctx);
+      return inReferences(c, async () => {
+        await referencesTab(c, "Available Packages");
+        const heading = await shownRect(c, settingPart("project.references", "HEADER"));
+        const list = await referencesList(c);
+        const tip = await shownRect(c, LOGIN_TIP.css);
+        const x = heading.x + heading.width - 130;
+        const y = heading.y - 12;
+        const tab = REFERENCES_TAB("Available Packages");
+        return annotatedClip(
+          c,
+          "5951dab6",
+          { x, y, width: list.x + list.width + 12 - x, height: tip.y + tip.height + 14 - y },
+          [{ type: "arrow", from: { of: tab, at: "right", dx: 110 }, to: tab }],
+        );
+      });
+    },
+  },
+  {
+    // a package ticked for the first time on this machine: Embedded, the column and the row's tick
+    out: PACKAGE_IMAGE("1f7e3574-f3c8-4aee-972a-ff161c0e51ac"),
+    setup: "package-server",
+    async take(ctx) {
+      const { c } = ctx;
+      await packagesClean(ctx);
+      return inReferences(c, async () => {
+        await referencesTab(c, "Available Packages");
+        await tickPackage(c, OLEGUIDS);
+        try {
+          const tabs = await shownRect(c, ".referencesListChoice");
+          const list = await referencesList(c);
+          const row = await shownRect(c, AVAILABLE_ROW_OF(OLEGUIDS));
+          const symbol = await shownRect(c, `${AVAILABLE_ROW_OF(OLEGUIDS)} .referencesListColSymbol`);
+          const header = { css: ".referencesListRowHeader .referencesListColLocation", text: "Embedded" };
+          const tick = { css: `${AVAILABLE_ROW_OF(OLEGUIDS)} .referencesListIsLocalPackage .tickIcon2` };
+          const area = span(
+            { x: list.x - 4, y: tabs.y - 8 },
+            { x: symbol.x + symbol.width, y: row.y, width: 0, height: row.height * 2 + 4 },
+          );
+          return await annotatedClip(c, "1f7e3574", area, [
+            { type: "arrow", from: { of: header, at: "left", dx: -150 }, to: header },
+            { type: "arrow", from: { of: header, at: "bottom", dy: 2 }, to: tick },
+          ]);
+        } finally {
+          await untickPackage(c, OLEGUIDS);
+        }
+      });
+    },
+  },
+  {
+    // two packages downloaded and embedded: Enabled Libraries lists them
+    out: PACKAGE_IMAGE("f2fd8374-fe46-40b0-8c66-2443df4dc5b3"),
+    setup: "package-server",
+    async take(ctx) {
+      const { c } = ctx;
+      await packagesClean(ctx);
+      return inReferences(c, async () => {
+        await referencesTab(c, "Available Packages");
+        await tickPackage(c, FORMATTER);
+        await tickPackage(c, FILE_PROPS);
+        try {
+          await referencesTab(c, "Enabled Libraries");
+          const heading = await shownRect(c, settingPart("project.references", "HEADER"));
+          const last = await shownRect(c, ENABLED_ROW_OF(FILE_PROPS));
+          const version = await shownRect(c, VERSION_HEADER);
+          const x = heading.x + heading.width - 130;
+          const y = heading.y - 12;
+          return await annotatedClip(c, "f2fd8374", {
+            x,
+            y,
+            width: version.x + version.width + 4 - x,
+            height: last.y + last.height + 14 - y,
+          });
+        } finally {
+          await untickReference(c, FORMATTER);
+          await untickReference(c, FILE_PROPS);
+        }
+      });
+    },
+  },
+  {
+    // CSharpishStringFormater referenced and applied, and "fmt." typed in a method: the
+    // completion list offers the package's members
+    out: PACKAGE_IMAGE("e2a65dfe-4a9d-4524-b6d6-7a6d1bc35cdb"),
+    setup: "package-server",
+    async take(ctx) {
+      const { c } = ctx;
+      await packagesClean(ctx);
+      await inReferences(c, async () => {
+        await referencesTab(c, "Available Packages");
+        await tickPackage(c, FORMATTER);
+        await applyChanges(ctx);
+      });
+      let was = null;
+      try {
+        await openFile(c, SAMPLE_FILE("Sources/Greeting.twin"), { line: 4, column: 1 });
+        was = { text: await editorText(c), counts: await diagCounts(c) };
+        await setCursor(c, 4, 1);
+        await typeText(c, "        fmt");
+        // The list shows each member's type as "..." until the compiler has given it, which it
+        // now and then never does for a list: the dot is typed again then.
+        const listed = (resolved) =>
+          c.evaluate(`(() => {
+  const b = [...document.querySelectorAll(${JSON.stringify(COMPLETIONS)})].find((b) => b.getBoundingClientRect().width);
+  const rows = b ? [...b.querySelectorAll(".listitem")] : [];
+  if (!rows.some((r) => r.innerText.includes("AsciiEscapeBase"))) return false;
+  return !${resolved} || rows.every((r) => [...(r.querySelector(".isenseType")?.childNodes ?? [])].every((n) => n.nodeType !== 3 || n.nodeValue !== "..."));
+})()`);
+        // A list opened by the name typed before the dot is placed where that name starts, and
+        // the dot's list then opens where that one was: closed first, the dot's list opens at
+        // the dot, the same in every run.
+        const boxShown = () =>
+          c.evaluate(
+            `[...document.querySelectorAll(${JSON.stringify(COMPLETIONS)})].some((b) => b.getBoundingClientRect().width)`,
+          );
+        const noList = async () => {
+          await sleep(400);
+          for (let k = 0; k < 3 && (await boxShown()); k++) {
+            await pressKey(c, "Escape");
+            await waitFor(c, async () => !(await boxShown()), { timeout: 2000, interval: 100 });
+          }
+        };
+        let shown = false;
+        for (let i = 0; i < 3 && !shown; i++) {
+          if (i) {
+            await pressKey(c, "Escape");
+            await pressKey(c, "Backspace");
+          }
+          await noList();
+          await typeText(c, ".");
+          if (!(await waitFor(c, () => listed(false), { timeout: 30000, interval: 200 }))) {
+            throw new Error("typing fmt. opened no completion list of the package's members");
+          }
+          shown = await waitFor(c, () => listed(true), { timeout: 10000, interval: 200 });
+        }
+        if (!shown) throw new Error("the completion list never showed its members' types");
+        await sleep(500);
+        const area = await c.evaluate(`(() => {
+  const ed = editor.getDomNode().getBoundingClientRect();
+  const left = ed.x + editor.getLayoutInfo().contentLeft;
+  const top = ed.y + editor.getScrolledVisiblePosition({ lineNumber: 3, column: 1 }).top;
+  const w = [...document.querySelectorAll(${JSON.stringify(COMPLETIONS)})].find((b) => b.getBoundingClientRect().width).getBoundingClientRect();
+  return { x: left - 6, y: top - 6, width: w.right + 8 - (left - 6), height: w.bottom + 8 - (top - 6) };
+})()`);
+        return await capture(c, "e2a65dfe", snapOut(area));
+      } finally {
+        await pressKey(c, "Escape");
+        if (was) {
+          await c.evaluate(`editor.getModel().setValue(${JSON.stringify(was.text)})`);
+          await waitCounts(c, was.counts);
+        }
+        await closeTabs(c, [], { discard: true });
+        await inReferences(c, async () => {
+          await untickReference(c, FORMATTER);
+          await applyChanges(ctx);
+        });
+      }
+    },
+  },
+  {
+    // OLEGuids ticked again once a linked copy is on the machine: use it, or download it again
+    out: PACKAGE_IMAGE("f48a7254-e5c9-48c5-8099-725c0951ae5f"),
+    setup: "package-server",
+    async take(ctx) {
+      const { c } = ctx;
+      await packagesClean(ctx);
+      return inReferences(c, async () => {
+        await referencesTab(c, "Available Packages");
+        await linkedThenTicked(c);
+        try {
+          const box = (await modals(c)).pop();
+          const list = await referencesList(c);
+          const tabs = await shownRect(c, ".referencesListChoice");
+          // from the question's left edge: the row being ticked shows a spinning icon in the
+          // list's tick column, an animated picture that no two captures hold alike
+          const x = box.x - 2;
+          const y = tabs.y - 8;
+          return await annotatedClip(c, "f48a7254", {
+            x,
+            y,
+            width: box.x + box.width + 16 - x,
+            height: Math.max(list.y + list.height, box.y + box.height) + 4 - y,
+          });
+        } finally {
+          await closeModal(c, "Cancel");
+        }
+      });
+    },
+  },
+  {
+    // the same package downloaded again and its Embedded unticked: the IDE asks before it
+    // replaces the linked copy
+    out: PACKAGE_IMAGE("8cf72685-1188-4607-a55a-df16d4280474"),
+    setup: "package-server",
+    async take(ctx) {
+      const { c } = ctx;
+      await packagesClean(ctx);
+      return inReferences(c, async () => {
+        await referencesTab(c, "Available Packages");
+        await linkedThenTicked(c);
+        await closeModal(c, "Download it from TWINSERV (EMBED)");
+        const embedded = await waitFor(
+          c,
+          async () =>
+            (await packageRows(c, OLEGUIDS)).some((r) => r.enabled === "tickIcon2" && r.embedded === "tickIcon2"),
+          { timeout: 60000, interval: 200 },
+        );
+        if (!embedded) throw new Error("OLEGuids was not downloaded again");
+        await dialogStill(c, { ms: 500 });
+        await clickPackage(c, OLEGUIDS, ".referencesListIsLocalPackage", { ticked: true });
+        await question(c, "Local Package already exists");
+        try {
+          return await dialogShot(c, "8cf72685");
+        } finally {
+          await closeModal(c, "Cancel");
+          await untickPackage(c, OLEGUIDS);
+        }
+      });
+    },
+  },
+  {
+    // an embedded package in Enabled Libraries, its tick ringed: unticking it deletes the
+    // project's copy at once
+    out: PACKAGE_IMAGE("a1331a0e-3ba3-45cf-8dc3-2e24f0fa1fe6"),
+    setup: "package-server",
+    async take(ctx) {
+      const { c } = ctx;
+      await packagesClean(ctx);
+      return inReferences(c, async () => {
+        await referencesTab(c, "Available Packages");
+        await tickPackage(c, OLEGUIDS);
+        try {
+          await referencesTab(c, "Enabled Libraries");
+          const tabs = await shownRect(c, ".referencesListChoice");
+          const list = await referencesList(c);
+          const row = await shownRect(c, ENABLED_ROW_OF(OLEGUIDS));
+          const version = await shownRect(c, VERSION_HEADER);
+          return await annotatedClip(
+            c,
+            "a1331a0e",
+            span(
+              { x: list.x - 4, y: tabs.y - 8 },
+              { x: version.x + version.width + 4, y: row.y, width: 0, height: row.height + 30 },
+            ),
+            [{ type: "ring", on: { css: `${ENABLED_ROW_OF(OLEGUIDS)} .referencesListColEnabled .tickIcon2` } }],
+          );
+        } finally {
+          await untickReference(c, OLEGUIDS);
+        }
+      });
+    },
+  },
+  // a project that links OLEGuids, opened where there is no copy of it: the reference's error
+  missingLinkedShot(PACKAGE_IMAGE("f66fb240-dcb7-46ee-896d-78c3789a7876"), {
+    setup: "settings-linked",
+    command: LIBRARY_REFERENCES,
+    clipOf: async (_m, c) => {
+      const error = await waitFor(c, () => shownRect(c, `${ENABLED_ROW_OF(OLEGUIDS)} .referencesListError`), {
+        timeout: 10000,
+        interval: 200,
+      });
+      if (!error) throw new Error("the linked package's row shows no error");
+      await dialogStill(c, { ms: 500 });
+      const row = await shownRect(c, ENABLED_ROW_OF(OLEGUIDS));
+      return { x: row.x, y: row.y, width: error.x + error.width + 12 - row.x, height: row.height };
+    },
+  }),
+  {
+    // the DEBUG CONSOLE as the project's load leaves it: the check of its packages against TWINSERV
+    out: PACKAGE_IMAGE("db4636f6-d988-4e31-94a2-c4c170418e81"),
+    setup: "package-check",
+    async take({ c }) {
+      await resetUi(c);
+      try {
+        const box = await floatPanel(c, "DEBUG CONSOLE", { width: 640, height: 72 });
+        const line = `[PACKAGE CHECK] OLEGuids ${OUTDATED_VERSION}`;
+        const text = await waitFor(
+          c,
+          async () => {
+            const t = await consoleText(c);
+            return /is available/.test(t) && t;
+          },
+          { timeout: 60000, interval: 200 },
+        );
+        if (!text?.includes(line)) throw new Error(`the DEBUG CONSOLE holds no "${line}": ${JSON.stringify(text)}`);
+        await fixConsoleTimes(c);
+        return await capture(c, "db4636f6", snapOut(box), { away: () => parkMouse(c) });
+      } finally {
+        await unfloatPanel(c, "DEBUG CONSOLE");
+      }
+    },
+  },
+];
+
+// The sample with OLEGuids OUTDATED_VERSION embedded: downloaded from TWINSERV, unpacked into the
+// project's Packages folder and referenced as the IDE references a package from TWINSERV.
+async function startPackageCheck(run) {
+  run.step = "open";
+  const list = await fetch(`${TWINSERV}/query?auth=`, { signal: AbortSignal.timeout(30000) });
+  if (!list.ok) throw new Error(`TWINSERV's list of packages answered ${list.status}`);
+  const pkg = (await list.json()).public.find((p) => p.projectId === OLEGUIDS_ID);
+  const v = pkg?.versions.find(
+    (x) => [x.versionMajor, x.versionMinor, x.versionBuild, x.versionRevision].join(".") === OUTDATED_VERSION,
+  );
+  if (!v) throw new Error(`TWINSERV no longer serves OLEGuids ${OUTDATED_VERSION}: keep the old picture`);
+  const query = ["Major", "Minor", "Revision", "Build"].map((k) => `&version${k}=${v[`version${k}`]}`).join("");
+  const res = await fetch(`${TWINSERV}/download?auth=&id=${OLEGUIDS_ID}${query}`, {
+    signal: AbortSignal.timeout(60000),
+  });
+  if (!res.ok) throw new Error(`TWINSERV answered ${res.status} for OLEGuids ${OUTDATED_VERSION}`);
+  const file = path.join(run.work, "OLEGuids.twinpack");
+  writeFileSync(file, Buffer.from(await res.arrayBuffer()));
+  say(run.name, `opening ${path.relative(REPO_ROOT, SAMPLE)} with OLEGuids ${OUTDATED_VERSION} from TWINSERV embedded`);
+  const src = stageSample(run);
+  unpackProject(file, path.join(src, "Packages", v.symbol));
+  const settingsFile = path.join(src, "Settings");
+  const settings = JSON.parse(readFileSync(settingsFile, "utf8"));
+  settings["project.references"].push({
+    autoCtlExt: true,
+    id: OLEGUIDS_ID,
+    licence: v.licence,
+    name: `[IMPORTED] ${v.description}`,
+    path32: `/Packages/${v.symbol}`,
+    path64: `/Packages/${v.symbol}`,
+    publishedDate: v.publishedDate,
+    publishedTime: v.publishedTime,
+    publisher: pkg.publisher,
+    symbolId: v.symbol,
+    versionBuild: v.versionBuild,
+    versionMajor: v.versionMajor,
+    versionMinor: v.versionMinor,
+    versionRevision: v.versionRevision,
+  });
+  writeFileSync(settingsFile, JSON.stringify(settings, null, "\t"));
+  return run.lane.open(src);
+}
+
 // ---------------------------------------------------------------- the shots of the help setup
 
 function helpTakes(ctx) {
@@ -6337,6 +7053,7 @@ const SHOTS = [
   ...codeLensShots,
   packageBuildShot,
   fusionShot,
+  ...packageServerShots,
 ];
 
 // ---------------------------------------------------------------- the jobs
@@ -6394,6 +7111,9 @@ const JOB_SECONDS = {
   codelens: 35,
   package: 25,
   fusion: 20,
+  "package-server": 150,
+  "settings-linked": 12,
+  "package-check": 15,
 };
 
 // ---------------------------------------------------------------- run
@@ -6471,11 +7191,14 @@ const savedApps = [...new Set(wanted.filter((name) => ADDIN_SETTINGS[name]).map(
 const settingsBefore = savedApps.length ? snapshotKeys(savedApps.map(settingsKey)) : null;
 if (settingsBefore) deleteSettings(savedApps);
 
-// The build folder the package and fusion setups write into, removed at the end unless it was
-// there before the run.
+// The build folder the package and fusion setups write into, and the APPDATA of the
+// package-server setup, removed at the end unless it was there before the run; the APPDATA,
+// the tool's own, is removed either way.
 const removePackageRoot = !existsSync(PACKAGE_ROOT)
   ? () => rmSync(PACKAGE_ROOT, { recursive: true, force: true })
-  : () => {};
+  : () => {
+      if (wanted.includes("package-server")) rmSync(PACKAGES_APPDATA, { recursive: true, force: true });
+    };
 
 const running = new Set(); // the jobs with an IDE open: { lane, server }
 
