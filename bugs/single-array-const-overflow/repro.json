@@ -1,0 +1,12 @@
+{
+  "mode": "run",
+  "expect": {
+    "exit": 1,
+    "output": [
+      "Startup\\.twin \\[3,\\d+\\]: TB5001 Type mismatch"
+    ],
+    "absent": [
+      "Startup\\.twin \\[2,\\d+\\]:"
+    ]
+  }
+}

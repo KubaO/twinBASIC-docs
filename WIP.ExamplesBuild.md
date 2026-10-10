@@ -453,8 +453,8 @@ All are forced by putting unrelated samples in one compilation unit:
   `project.name = "ProbeWS"`, a `Module ProbeWS` or a `Module probews` stops the
   `[RunAfterBuild]` Sub from running, even when it is empty and the Sub is in another module.
   Nothing reports it: the build is green, and the DEBUG CONSOLE ends at `[BUILD] Executing
-  '<project>.<module>.<Sub>'...` (BETA 995 and 997; the BUGS-TO-REPORT.md entry with the
-  reproducer `bugs/module-named-like-project/`). The tool names each project `DocSamples<n>`
+  '<project>.<module>.<Sub>'...` (BETA 995 and 997, twinbasic/twinbasic#2494). BETA 1005 runs
+  the Sub, so the rule matters only to an older build. The tool names each project `DocSamples<n>`
   and every module it generates `tbx...`, so the two cannot meet; a sample that declared
   `Module DocSamples3` would.
 

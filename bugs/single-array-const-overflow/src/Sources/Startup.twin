@@ -1,0 +1,10 @@
+Module Startup
+    Const Big() As Single = Array(1E+39)
+    Const Root() As Double = Array(Sqr(4))
+
+    Public Sub Main()
+        Debug.Print Root(0)
+    End Sub
+End Module
+' Line 2 overflows a Single and is accepted; line 3 is correct and is refused with TB5001.
+' Without line 3, Big(0) reads 1.#INF.

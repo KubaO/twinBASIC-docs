@@ -755,10 +755,10 @@ What was tried:
 
 ---
 
-## Calling a method of `stdole.IDispatch` is a late-bound call by name and fails with &H80020006
+## Calling a method of `stdole.IDispatch` is a late-bound call by name and fails with error 438
 
 **Describe the bug**
-A variable declared `As stdole.IDispatch` does not call the four `IDispatch` methods through the interface. `d.GetTypeInfoCount count` is compiled as a late-bound call: the compiler accepts any arguments, whatever their number and type, and at run time the call looks `GetTypeInfoCount` up by name in the object, which does not have it, and raises `&H80020006` (*Unknown name.*). With no error handler the error ends the run (in the IDE's run, with no message). A call of `GetTypeInfo`, `GetIDsOfNames` or `Invoke` ends the run the same way when unhandled. Members of the object itself can be called through the variable, as through an `Object`.
+A variable declared `As stdole.IDispatch` does not call the four `IDispatch` methods through the interface. `d.GetTypeInfoCount count` is compiled as a late-bound call: the compiler accepts any arguments, whatever their number and type, and at run time the call looks `GetTypeInfoCount` up by name in the object, which does not have it, and raises error 438 (*Object doesn't support this property or method*). With no error handler the error ends the run (in the IDE's run, with no message). A call of `GetTypeInfo`, `GetIDsOfNames` or `Invoke` ends the run the same way when unhandled. Members of the object itself can be called through the variable, as through an `Object`.
 
 **To Reproduce**
 Steps to reproduce the behavior:
@@ -775,9 +775,9 @@ Steps to reproduce the behavior:
 2. See no compile error, and this output (each line prints `Err.Number` after the statement):
    ```
    d.Hello: error 0, Hello ran 1 time(s)
-   d.GetTypeInfoCount: error -2147352570 (80020006) Unknown name.
-   d.GetTypeInfoCount "a", "b", "c": error -2147352570
-   d.NoSuchMethod: error -2147352570
+   d.GetTypeInfoCount: error 438 (1B6) Object doesn't support this property or method
+   d.GetTypeInfoCount "a", "b", "c": error 438
+   d.NoSuchMethod: error 438
    ```
 3. Remove the `On Error Resume Next` line and run again: the output stops at the first `d.GetTypeInfoCount`, and the run ends with no message.
 
@@ -788,18 +788,59 @@ VB6 refuses the declaration itself. The same program in VB6 (attached as `stdole
 ```
 Compile Error in File '...\Module1.bas', Line 16 : Function or interface marked as restricted, or the function uses an Automation type not supported in Visual Basic
 ```
-`Dim d As IDispatch` is refused the same way. With `Dim d As Object` in its place, VB6 runs `d.Hello` and raises 438 for the other three statements, so twinBASIC's `stdole.IDispatch` behaves as VB6's `Object` does, apart from the error number (see the entry about `&H80020006` and 438).
+`Dim d As IDispatch` is refused the same way. With `Dim d As Object` in its place, VB6 runs `d.Hello` and raises 438 for the other three statements, so twinBASIC's `stdole.IDispatch` behaves as VB6's `Object` does.
 
 **Desktop:**
  - OS: Windows 10 Pro 22H2 (build 19045)
- - twinBASIC compiler version: BETA 995
+ - twinBASIC compiler version: BETA 1005
 
 **Additional context**
 Severity: low, since a project can declare its own copy of the interface, but the failure is silent without a handler and the compiler gives no sign that the call is not what it appears to be.
 
+On BETA 995 and 997 the error was `&H80020006` (*Unknown name.*), the number every late-bound call to a member an object does not have raised then (#2490); BETA 1005 raises 438 for those calls, as VB6 does, and so for these.
+
 What was tried: `GetIDsOfNames` and `Invoke` with zero arguments, and `GetTypeInfo` with a null pointer, each end the run the same way; calls with arguments of the wrong type compile (`d.GetTypeInfoCount "a"`, `d.GetTypeInfo "a", "b", "c"`, `d.Invoke "a", "b", "c", "d", "e", "f", "g", "h"` all compile). An unhandled `Err.Raise 5` in the same harness ends the run the same way, so the silent end is how an unhandled error shows there, not a separate fault. Running the built exe with `--exe` was not possible on this machine (the harness could not start it).
 
-<!-- Reproducer: bugs/stdole-idispatch-late-bound/ (mode run, expects the Hello and GetTypeInfoCount lines above); verified on 995. VB6 side in bugs/stdole-idispatch-late-bound/vb6/ (VB6 6.0): the build is refused, so `vb6` exits 1 with the compile error above; that refusal is the result. The `As Object` variant was run in a scratch copy, not kept. Stated in docs/Reference/COM-Interfaces/IDispatch.md, "The stdole declaration". That paragraph says calling GetTypeInfoCount "ends the run" and that the arguments are not checked because twinBASIC has no type for them; the cause is that the call is late-bound, and the run ends only for lack of an error handler, so reword it now whether or not this is fixed. When fixed, say that stdole.IDispatch can be called, and drop the advice to declare a copy (the Declaration section's "The declaration in stdole is no use" sentence too). -->
+<!-- Reproducer: bugs/stdole-idispatch-late-bound/ (mode run, expects the Hello and GetTypeInfoCount lines above); verified on 995, and on 1005 with the number 438. VB6 side in bugs/stdole-idispatch-late-bound/vb6/ (VB6 6.0): the build is refused, so `vb6` exits 1 with the compile error above; that refusal is the result. The `As Object` variant was run in a scratch copy, not kept. Stated in docs/Reference/COM-Interfaces/IDispatch.md, "The stdole declaration". That paragraph says calling GetTypeInfoCount "ends the run" and that the arguments are not checked because twinBASIC has no type for them; the cause is that the call is late-bound, and the run ends only for lack of an error handler, so reword it now whether or not this is fixed. When fixed, say that stdole.IDispatch can be called, and drop the advice to declare a copy (the Declaration section's "The declaration in stdole is no use" sentence too). -->
+
+---
+
+## A module-level `Single` array `Const` whose element overflows holds infinity, and a later array `Const` that calls `Sqr`, `Timer` or `Rnd` is refused with TB5001
+
+**Describe the bug**
+At module level, an array `Const` of `Single` whose element is too large for a `Single` compiles without a diagnostic, and the element reads as infinity. An array `Const` declared after it, whose element calls `Sqr`, `Timer` or `Rnd`, is then refused with TB5001, *Type mismatch*, although it is correct and compiles on its own. An element too large for any other element type is refused with TB5001 on its own line, as it should be. Observed in the IDE's diagnostics and in a run.
+
+**To Reproduce**
+Steps to reproduce the behavior:
+1. Open `single-array-const-overflow.twinproj` (attached as `single-array-const-overflow.zip`). Its one module:
+   ```
+   Module Startup
+       Const Big() As Single = Array(1E+39)
+       Const Root() As Double = Array(Sqr(4))
+
+       Public Sub Main()
+           Debug.Print Root(0)
+       End Sub
+   End Module
+   ```
+2. See TB5001 *Type mismatch* reported on line 3, the declaration of `Root`, and nothing on line 2. (The use of `Root` in `Main` is then TB5078.)
+3. Delete line 3 and print `Big(0)` in its place: the project compiles, and `Big(0)` prints `1.#INF`.
+
+**Expected behavior**
+TB5001 on line 2, as for every other element type: `Const L() As Long = Array(2147483648)` and `Const D() As Double = Array(1E+300 * 1E+300)` are refused on their own line. Line 3 compiles, as it does without line 2, and `Root(0)` is 2. A scalar `Const S As Single = 1E+39` is refused too, with TB5002.
+
+**Desktop:**
+ - OS: Windows 10 Pro 22H2 (build 19045)
+ - twinBASIC compiler version: BETA 1005
+
+**Additional context**
+On BETA 997 the same project crashes the compiler (reported in #2475, whose other cases BETA 1005 refuses with TB5001). VB6 has no array constants, so there is no VB6 project.
+
+What reproduces it: `Array(3.5E+38)` in place of `Array(1E+39)`; `Timer` or `Rnd` in place of `Sqr(4)`. What does not: `Root` declared before `Big`; an element of `Abs(-4)` or a literal after `Big`; the same `Single` constant declared inside a procedure, which is not accepted silently (the run ends with an error when the procedure is reached). The order and the three functions suggest an overflow flag left set while `Big` is evaluated, which the next constant's call then reads as an error; that is an inference.
+
+Severity: a silent wrong value, an element that holds infinity where a compile error belongs, and a compile error on a correct constant that names neither the cause nor the line that has it.
+
+<!-- Reproducer: bugs/single-array-const-overflow/ (mode run: the project does not compile, so tbrun exits 1; expects TB5001 on line 3 and nothing on line 2); verified on BETA 1005 by `bug_repro.mjs verify`, and on BETA 997 `bug_repro.mjs compile` reports that the compiler crashed 3x. The variants (3.5E+38, Timer, Rnd, the reverse order, Abs, a literal, a Double overflow, the local constant, the scalar constant) were checked with tbrun on 1005 in scratch trees that are not kept. It is the case that the report of #2475 ("A module-level array Const with an element that does not fit its type crashes the compiler") gave as a second crash under Additional context; #2475's own reproducer no longer crashes on 1005. Stated in docs/Reference/Core/Const.md, "Array constants", in a WARNING naming BETA 1005: when fixed, the WARNING goes, and the list above it says that an element too large for a Single is TB5001 as well. -->
 
 ---
 
