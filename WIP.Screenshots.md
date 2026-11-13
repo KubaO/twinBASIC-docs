@@ -866,6 +866,28 @@ line the page quotes. Its 8 pictures are under `docs/IDE/Troubleshooting/Images/
   ColorDepth32Bit (icons) and one of ColorDepth24Bit (bitmaps on silver, the default
   MaskColor): an icon added to a 24-bit list draws on black (not narrowed: the stock icon's own
   mask, or the package's `RuntimeCreateScaledPicture`).
+- **Setup `waynes`**: `test/shots/waynes`, WaynesShots, the 13 pictures of the CustomControls
+  section, taken by `sceneShot`, or by `waynesRuns` for a picture of several runs in rows (the
+  button's states, the six border styles). A form of the package is a window of class `tbForm`
+  (in `FORM_CLASS`), has no default instance and is shown modally only, so `Sub Main` makes the
+  scene's form with `New` and each form does its work on the ticks of its WaynesTimer
+  `tmrScene` (`Shots.Tick`: SetUp on the first, "shown" after six more, then "end"). **A
+  control's place and size must be in the `.tbform`**: one moved at run time is not drawn where
+  it moves to, and the form's size and BorderStyle are fixed there too, so there is one form per
+  scene. The forms are written by a kit script (geometry, names and texts only), and each form's
+  code sets the styles. **A control read from a `.tbform` takes no defaults of its own**
+  (`InitializeDefaultValues` runs only when there is nothing to read), so `Shots.Defaults` calls
+  the public default routines of each state (`InitializeDefaults`, `InitializeDefaultValues`,
+  `InitializeDefaultValues_Focused`) to give the look a control has when it is put on a form; a
+  colour in a `.tbform` is ABGR, its alpha in the top byte (`&HFFD0D0D0`, the form's grey;
+  without the alpha the form is black). `Controls` is Nothing at run time, so a control is
+  reached by name with `CallByName`. A WaynesFrame keeps no ControlContext, so a fill set at run
+  time is never drawn: the overview's frame has its fill in the `.tbform`. A form's Caption set
+  at run time does not retitle its window. Hover and focus are shown by mouse messages the
+  program sends itself (with the thread's key state set to match); **PressedState and a text
+  selection cannot be shown**: the controls read the mouse button and Shift from the hardware,
+  so a button is told the button is up as soon as it is down. FontWeight was left out: with the
+  renderer's one font, 100 to 500 draw alike and 600 to 900 alike (no FontStyle names a font).
 - **85f25aa2** (Opacity 75, TransparencyKey red): `PW_RENDERFULLCONTENT` draws the key colour
   black and every pixel opaque, so the tool reads the key's pixels from a client-only capture
   (flags 1) and gives the picture the window's own alpha (191) and alpha 0 there: the page is

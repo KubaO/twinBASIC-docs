@@ -41,6 +41,10 @@ The button paints in one of four states, chosen at each repaint:
 
 Each state is a [**WaynesButtonState**](WaynesButtonState) --- a small bundle of [**Corners**](../Styles/Corners), [**BackgroundFill**](../Styles/Fill), [**Borders**](../Styles/Borders), and [**TextRendering**](../Styles/TextRendering).
 
+A button in its default look in its normal state, and with its **HoverState** given a lighter fill and its **FocusedState** an orange border:
+
+![The same blue button three times: in the normal state; in the hover state, lighter blue; and in the focused state, with an orange border](Images/WaynesButton_States.png){:width="816" height="195"}
+
 ## Properties
 
 ### Anchors

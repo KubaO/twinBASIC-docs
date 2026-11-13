@@ -44,6 +44,10 @@ Private Sub Timer1_Timer()
 End Sub
 ```
 
+Sliders in their default look, from 0 to 100 with a **Value** of 40, with each [**DisplayFormat**](#displayformat), and one whose [**Direction**](#direction) is **Vertical**:
+
+![Three horizontal sliders with a black outline and a blue block at 40 per cent of the track: the block shows 40, 40.0% and nothing; and a vertical slider whose block shows 40](Images/WaynesSlider.png){:width="641" height="245"}
+
 * TOC
 {:toc}
 

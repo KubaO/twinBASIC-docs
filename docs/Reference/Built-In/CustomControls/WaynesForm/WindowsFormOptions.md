@@ -41,12 +41,12 @@ Whether the form's title bar shows the system control box (the icon at the far l
 ### MaximizeButton
 {: .no_toc }
 
-Whether the title bar shows a **Maximize** button. **Boolean**. Default: **True**. Effective only when [**BorderStyle**](#borderstyle) is one of the resizable styles.
+Whether the title bar shows a **Maximize** button. **Boolean**. Default: **True**. Shown when [**BorderStyle**](#borderstyle) is **tbFixedSingle**, **tbFixedSizable** or **tbFixedDialog**; see [**BorderStyle**](../Enumerations/BorderStyle).
 
 ### MinimizeButton
 {: .no_toc }
 
-Whether the title bar shows a **Minimize** button. **Boolean**. Default: **True**. Effective only when [**BorderStyle**](#borderstyle) is one of the styles that supports minimizing.
+Whether the title bar shows a **Minimize** button. **Boolean**. Default: **True**. Shown when [**BorderStyle**](#borderstyle) is **tbFixedSingle**, **tbFixedSizable** or **tbFixedDialog**; see [**BorderStyle**](../Enumerations/BorderStyle).
 
 ### ShowInTaskbar
 {: .no_toc }

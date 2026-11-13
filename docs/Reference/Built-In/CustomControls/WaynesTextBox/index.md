@@ -44,6 +44,10 @@ Private Sub Form_Load()
 End Sub
 ```
 
+A box in its default look showing the three decorators, and a box styled as in the sample above, with the focus and its caret at the end of its text:
+
+![Two text boxes: the first reads An ERROR, a WARNING and some INFO, with a red squiggle under ERROR, a dark blue line under WARNING and an amber highlight behind INFO; the second, with a blue border two pixels wide, has the focus and its caret after the last letter](Images/WaynesTextBox.png){:width="561" height="195"}
+
 * TOC
 {:toc}
 
@@ -53,7 +57,7 @@ As the user types, the control automatically marks any occurrence of three liter
 
 - `ERROR` --- a red squiggle underline (colour from [**WaynesTextBoxState.DecorationERROR**](WaynesTextBoxState#decorationerror)).
 - `WARNING` --- a dark-blue 2-pixel straight underline (from [**DecorationWARNING**](WaynesTextBoxState#decorationwarning)).
-- `INFO` --- a light-blue background highlight (from [**DecorationINFO**](WaynesTextBoxState#decorationinfo)).
+- `INFO` --- an amber background highlight (from [**DecorationINFO**](WaynesTextBoxState#decorationinfo)).
 
 The colours are configurable per visual state. The substrings themselves are hard-coded into the control's paint logic in the current release.
 

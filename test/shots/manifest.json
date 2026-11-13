@@ -665,6 +665,58 @@
     "Miscellaneous/Images/ac019c1a-dcef-4964-a730-bc5b86c644ba.png": {
       "build": 1042
     },
+    "Reference/Built-In/CustomControls/Enumerations/Images/BorderStyle.png": {
+      "build": 1042,
+      "scale": 1.5
+    },
+    "Reference/Built-In/CustomControls/Enumerations/Images/CornerShape.png": {
+      "build": 1042,
+      "scale": 1.5
+    },
+    "Reference/Built-In/CustomControls/Enumerations/Images/FillPattern.png": {
+      "build": 1042,
+      "scale": 1.5
+    },
+    "Reference/Built-In/CustomControls/Enumerations/Images/TextAlignment.png": {
+      "build": 1042,
+      "scale": 1.5
+    },
+    "Reference/Built-In/CustomControls/Enumerations/Images/TextOverflowMode.png": {
+      "build": 1042,
+      "scale": 1.5
+    },
+    "Reference/Built-In/CustomControls/Images/Overview.png": {
+      "build": 1042,
+      "scale": 1.5
+    },
+    "Reference/Built-In/CustomControls/Styles/Images/Borders.png": {
+      "build": 1042,
+      "scale": 1.5
+    },
+    "Reference/Built-In/CustomControls/Styles/Images/Fill.png": {
+      "build": 1042,
+      "scale": 1.5
+    },
+    "Reference/Built-In/CustomControls/Styles/Images/TextRendering.png": {
+      "build": 1042,
+      "scale": 1.5
+    },
+    "Reference/Built-In/CustomControls/WaynesButton/Images/WaynesButton_States.png": {
+      "build": 1042,
+      "scale": 1.5
+    },
+    "Reference/Built-In/CustomControls/WaynesGrid/Images/WaynesGrid.png": {
+      "build": 1042,
+      "scale": 1.5
+    },
+    "Reference/Built-In/CustomControls/WaynesSlider/Images/WaynesSlider.png": {
+      "build": 1042,
+      "scale": 1.5
+    },
+    "Reference/Built-In/CustomControls/WaynesTextBox/Images/WaynesTextBox.png": {
+      "build": 1042,
+      "scale": 1.5
+    },
     "Reference/Built-In/WinNativeCommonCtls/Enumerations/Images/ImlDrawConstants.png": {
       "build": 1042,
       "scale": 1.5

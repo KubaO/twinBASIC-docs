@@ -52,6 +52,10 @@ End With
 
 Setting [**OverflowMode**](#overflowmode) to **tbShrinkToFit** scales the glyphs down rather than truncating with an ellipsis when the text is too long for the available width --- useful on fixed-width labels whose caption is set at runtime from data of unpredictable length.
 
+The two samples above, the label given a dark **BackgroundFill** for its white text:
+
+![A label reading Monthly report in large white bold letters on a dark blue fill, and a blue button whose large bold caption, Go, is drawn in a white-to-pink gradient with a black outline](Images/TextRendering.png){:width="521" height="215"}
+
 * TOC
 {:toc}
 

@@ -89,6 +89,9 @@
 //   commonctls  test/shots/commonctls, CommonCtlsShots: the WinNativeCommonCtls section's
 //               pictures of its controls, taken as the programs setup's are, the DTPicker's
 //               calendar laid over the form
+//   waynes      test/shots/waynes, WaynesShots: the CustomControls section's pictures of its
+//               controls on a form of the package, taken as the programs setup's are; a
+//               picture of several states or frames is several runs of the program in rows
 //   codelens   test/shots/codelens: a procedure run by its CodeLens bar, the editor above
 //               the DEBUG CONSOLE
 //   memory      test/shots/memory: Sub Main run to its Stop, and the MEMORY 1 pane showing
@@ -1983,6 +1986,10 @@ const SETUPS = {
   commonctls: {
     start: (run) => startPrograms(run, COMMONCTLS_SHOTS),
     prepare: (run) => preparePrograms(run, "CommonCtlsShots"),
+  },
+  waynes: {
+    start: (run) => startPrograms(run, WAYNES_SHOTS),
+    prepare: (run) => preparePrograms(run, "WaynesShots"),
   },
   codelens: { start: startCodeLens, prepare: prepareSample },
   memory: { start: startMemory, prepare: prepareSample },
@@ -11383,8 +11390,9 @@ const splashShot = {
 
 const PROGRAMS = path.join(REPO_ROOT, "test", "shots", "programs");
 // The class of a twinBASIC form's window: ThunderRT6FormDC in an exe, ThunderFormDC run from
-// the IDE (whose own window is a ThunderForm); an MDI form's is ThunderRT6MDIForm.
-const FORM_CLASS = /^Thunder(RT6)?(MDI)?Form(DC)?$/;
+// the IDE (whose own window is a ThunderForm); an MDI form's is ThunderRT6MDIForm; a form of
+// the CustomControls package's is tbForm.
+const FORM_CLASS = /^(Thunder(RT6)?(MDI)?Form(DC)?|tbForm)$/;
 // The gap between two windows of one picture, in pixels at 96 DPI.
 const WINDOW_GAP = 16;
 
@@ -11594,7 +11602,8 @@ function inRows(windows, perRow) {
 // has not ended ten seconds later. A box it opened (an unhandled error opens one) fails the
 // picture.
 async function withProgram(ctx, scene, fn) {
-  const dir = path.join(ctx.signals, scene);
+  // a scene's variant follows a colon ("button:hover"), which a folder's name cannot hold
+  const dir = path.join(ctx.signals, scene.replace(/[^\w.-]/g, "-"));
   rmSync(dir, { recursive: true, force: true });
   mkdirSync(dir, { recursive: true });
   const run = await launchOnDesktop({
@@ -11937,6 +11946,59 @@ const commonCtlsShots = [
   wnccShot("Images/MonthView", "monthview"),
   wnccShot("Images/DTPicker", "dtpicker"),
   wnccShot("Enumerations/Images/ImlDrawConstants", "imagelist"),
+];
+
+// ---- waynes: test/shots/waynes, WaynesShots, the CustomControls section's pictures of its
+// controls, one form of the package per scene, named on the exe's command line as the programs
+// setup's forms are, and taken as sceneShot takes them. A form of the package shows nothing
+// besides itself.
+
+const WAYNES_SHOTS = path.join(REPO_ROOT, "test", "shots", "waynes");
+const NO_POPUPS = /^$/;
+const waynesShot = (out, scene) =>
+  sceneShot(`Reference/Built-In/CustomControls/${out}.png`, "waynes", scene, NO_POPUPS);
+
+// Several scenes of WaynesShots in rows of `perRow`, each the program's form, active, as
+// `out`: a control in each of its states, a form in each of its border styles.
+const waynesRuns = (out, scenes, perRow = scenes.length) => ({
+  out: `Reference/Built-In/CustomControls/${out}.png`,
+  setup: "waynes",
+  once: true,
+  window: true,
+  async take(ctx) {
+    const shown = [];
+    for (const scene of scenes)
+      shown.push(
+        await withProgram(ctx, scene, async (dir, w) => {
+          const error = path.join(dir, "error");
+          if (existsSync(error)) throw new Error(`scene ${scene}: ${readFileSync(error, "utf8").trim()}`);
+          return windowPicture(ctx.desktop, w.hwnd, scene, path.join(dir, "form.png"), { active: true });
+        }),
+      );
+    return inRows(shown, perRow);
+  },
+});
+
+const waynesShots = [
+  waynesShot("Images/Overview", "overview"),
+  waynesShot("Enumerations/Images/FillPattern", "fillpatterns"),
+  waynesShot("Enumerations/Images/CornerShape", "corners"),
+  waynesShot("Enumerations/Images/TextAlignment", "textalign"),
+  waynesShot("Enumerations/Images/TextOverflowMode", "overflow"),
+  waynesShot("Styles/Images/TextRendering", "textrendering"),
+  waynesShot("Styles/Images/Borders", "borders"),
+  waynesShot("Styles/Images/Fill", "fills"),
+  waynesShot("WaynesSlider/Images/WaynesSlider", "slider"),
+  waynesShot("WaynesTextBox/Images/WaynesTextBox", "textbox"),
+  waynesShot("WaynesGrid/Images/WaynesGrid", "grid"),
+  // PressedState cannot be shown: the program is told the mouse button is up as soon as it is
+  // down, since no mouse button is down on a private desktop
+  waynesRuns("WaynesButton/Images/WaynesButton_States", ["button:normal", "button:hover", "button:focused"]),
+  waynesRuns(
+    "Enumerations/Images/BorderStyle",
+    [0, 1, 2, 3, 4, 5].map((v) => `borderstyle:${v}`),
+    3,
+  ),
 ];
 
 // ---- codelens: test/shots/codelens, CodeLensDemo, two modules whose procedures the editor's
@@ -15294,6 +15356,7 @@ const SHOTS = [
   ...flexGridShots,
   ...vbShots,
   ...commonCtlsShots,
+  ...waynesShots,
   ...codeLensShots,
   memoryShot,
   packageBuildShot,
@@ -15397,6 +15460,7 @@ const JOB_SECONDS = {
   vbflexgrid: 60,
   vb: 60,
   commonctls: 40,
+  waynes: 90,
   codelens: 35,
   memory: 30,
   package: 25,

@@ -58,6 +58,10 @@ With Grid1.SelectedCellOptions
 End With
 ```
 
+The two samples above together, with grid lines from [**VerticalLineOptions**](#verticallineoptions) and [**HorizontalLineOptions**](#horizontallineoptions), the dates from a fixed day, and the second cell of the third row selected. The selected cell's text is centred: [**SelectedCellOptions**](#selectedcelloptions) has a **TextRendering** of its own, which the sample does not align.
+
+![A grid with a grey gradient header row of ID, Name and Date in bold, grey row headers numbered from 1, white cells with left-aligned text and pale grey grid lines, and the cell Row 3 selected in pale blue with a blue border](Images/WaynesGrid.png){:width="561" height="345"}
+
 * TOC
 {:toc}
 
