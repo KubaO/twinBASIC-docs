@@ -883,7 +883,9 @@ line the page quotes. Its 8 pictures are under `docs/IDE/Troubleshooting/Images/
   without the alpha the form is black). `Controls` is Nothing at run time, so a control is
   reached by name with `CallByName`. A WaynesFrame keeps no ControlContext, so a fill set at run
   time is never drawn: the overview's frame has its fill in the `.tbform`. A form's Caption set
-  at run time does not retitle its window. Hover and focus are shown by mouse messages the
+  at run time does not retitle its window, and nothing else of the window set in code reaches it
+  (BUGS-TO-REPORT, `bugs/waynesform-window-ignores-code`): give a scene's form its caption, size
+  and frame in its `.tbform`. Hover and focus are shown by mouse messages the
   program sends itself (with the thread's key state set to match); **PressedState and a text
   selection cannot be shown**: the controls read the mouse button and Shift from the hardware,
   so a button is told the button is up as soon as it is down. FontWeight was left out: with the

@@ -13826,3 +13826,57 @@ In the four styles without "Picture" in their name the nodes are drawn without t
 Severity: low. Nothing is lost, but a program ported from VB6 that sets a text-only style shows pictures it did not ask for, and its nodes' text is moved right by the pictures' width.
 
 <!-- Reproducer: bugs/treeview-text-styles-show-pictures/ (mode run: pictures drawn for all eight styles, win32 and win64, BETA 1042, 2026-11-13). Its vb6/ side has not run: VB6 /make of any project that uses MSCOMCTL.OCX fails "Permission denied" on this machine, since VB6 writes MSCOMCTL.oca beside the OCX in `C:\Windows\SysWOW64` (none is there); run it once that file exists, and state what VB6 does under Expected behavior. Found 2026-11-13 while taking the WinNativeCommonCtls pictures (shoot_docs setup commonctls): TreeView_Styles.png shows the pictures in all eight styles. docs/Reference/Built-In/WinNativeCommonCtls/TreeView/index.md and Enumerations/TreeStyleConstants.md carry a NOTE for it under the Style table; when a fixed build is released, the NOTE goes and the picture is taken again. -->
+
+---
+
+## A CustomControls form's window ignores its Caption, size and WindowsOptions set in code
+
+**Describe the bug**
+A form of the CustomControls package (a `WaynesForm`) makes its window from the values its form designer saved, and never from the form's properties as the code has set them. `Caption`, `Width` and `Height`, `Left` and `Top`, and every member of `WindowsOptions` (`BorderStyle`, `MaximizeButton`, `MinimizeButton`, `ControlBox`, `ShowInTaskbar`, `StartUpPosition`, `WindowState`) set in code change the property, which reads back the new value, and nothing on the screen: the title bar, the window's size and place, its border and its buttons stay as designed. It makes no difference whether they are set in the form's constructor, before `Show`, or while the form is shown. The form's `BackgroundFill`, and the properties of its controls, set in the same places, are drawn as set.
+
+**To Reproduce**
+Steps to reproduce the behavior:
+1. Open `waynesform-window-ignores-code.twinproj` (attached as `waynesform-window-ignores-code.zip`) and run it: `Form1` is designed with the caption "Designer caption", a 400 x 200 client area, a sizable border and a maximize button. Its `Sub New` sets other values, and once the form is shown it prints each property beside what the window has, sets them again, and prints them once more.
+2. Or, in a form of the package designed with the caption "Form1":
+
+   ```vb
+   Sub New()
+       Me.Caption = "Set in code"
+       Me.WindowsOptions.MaximizeButton = False
+   End Sub
+   ```
+3. See the title bar say "Form1" and the maximize button shown, while `Me.Caption` is "Set in code" and `Me.WindowsOptions.MaximizeButton` is False. The probe prints:
+
+   ```
+   -- set in Sub New, before Show:
+   Caption: "Set in code", title bar: "Designer caption"
+   Width: 300, client width: 400
+   BorderStyle: tbFixedSingle, sizing border: True
+   MaximizeButton: False, maximize box: True
+   BackgroundFill painted: red
+   -- set again while shown:
+   Caption: "Set when shown", title bar: "Designer caption"
+   Width: 250, client width: 400
+   BorderStyle: tbFixedSingle, sizing border: True
+   MaximizeButton: False, maximize box: True
+   BackgroundFill painted: blue
+   ```
+
+The package's `WaynesForm` only repaints the form when one of these properties changes (`OnChanged` calls `ControlContext.Repaint`), and nothing applies them to the window, which the framework creates outside the package's code.
+
+What decides it:
+- Not when the property is set: in `Sub New`, from the code that creates the form before it calls `Show`, and while the form is shown all give the same.
+- Not the property: `Left`, `Top`, `Height`, `StartUpPosition` (set to `tbStartUpManual` with `Left` and `Top`), `ShowInTaskbar`, `ControlBox` and `WindowState` (`tbMaximized`) set in `Sub New` are ignored as well.
+- Not the build: a 32-bit and a 64-bit run in the IDE, and a built 32-bit exe, give the same.
+
+**Expected behavior**
+The window shows the form's properties as the code has set them: the title bar the `Caption`, the client area the `Width` and `Height`, and the border and buttons the `WindowsOptions`, at least for values set before the form is shown, as a form of the VB package does.
+
+**Desktop:**
+ - OS: Windows 10 Pro 22H2 (build 19045)
+ - twinBASIC compiler version: BETA 1042
+
+**Additional context**
+Severity: medium. Nothing fails and no error is raised, so a program that sets its form's title or frame in code shows the designer's instead, and its properties report values the window does not have.
+
+<!-- Reproducer: bugs/waynesform-window-ignores-code/ (mode run: every property ignored, before Show and while shown, win32 and win64, BETA 1042, 2026-11-13; the built exe the same, in a scratch probe). Found 2026-11-13 while taking the CustomControls pictures (shoot_docs setup waynes): a form's Caption set at run time did not retitle it. Narrowed from the lead that a WaynesForm's Form_Load never runs, which is not a defect: WaynesForm has no Load event (its only event is Click), and its setup code goes in Sub New, as the IDE's Sample 6 does. docs/Reference/Built-In/CustomControls/WaynesForm/index.md and WaynesForm/WindowsFormOptions.md carry a WARNING for it; when a fixed build is released, the WARNINGs go. -->

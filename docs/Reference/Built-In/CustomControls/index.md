@@ -31,6 +31,8 @@ Private Sub btnGo_Click()
 End Sub
 ```
 
+The controls can be placed on a form of the [**VB**](../VB/) package, whose **Load** event runs the code above, or on a [**WaynesForm**](WaynesForm/), which raises no **Load** event: there the same code goes in the form's constructor, `Sub New` (see [Setting up a form](WaynesForm/#setting-up-a-form)). The samples on the controls' pages are written as a VB form's code in the same way.
+
 ## Controls
 
 - [WaynesButton](WaynesButton/) -- owner-drawn push-button with separate visual states for normal, hover, focused, and pressed

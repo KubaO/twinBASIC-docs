@@ -14,8 +14,15 @@ Within the current release of the package every form created with the designer i
 
 A form has a [**Caption**](#caption) (shown in the Win32 title bar), a [**BackgroundFill**](#backgroundfill) (painted across its entire client area), and a [**WindowsOptions**](#windowsoptions) sub-object that controls the surrounding Win32 frame --- border style, window state, taskbar visibility, minimize / maximize buttons, and so on. Call [**Show**](#show) to display the form; call [**Close**](#close) to close it.
 
+* TOC
+{:toc}
+
+## Setting up a form
+
+A **WaynesForm** raises no **Load** event --- [**Click**](#click) is its only event --- so a `Form_Load` procedure in its code is never called. The code that sets the form up goes in its constructor, `Sub New`, which runs once the values saved by the form designer are loaded and before the form's window is made. The form's controls exist by then, so `Sub New` can set their properties as well as the form's own.
+
 ```tb check_build inherits=WaynesForm
-Private Sub Form_Load()
+Sub New()
     Me.Caption = "Welcome"
     Me.BackgroundFill.ColorPoints.SetSolidColor vbWhite
     With Me.WindowsOptions
@@ -26,17 +33,18 @@ Private Sub Form_Load()
 End Sub
 ```
 
-[**BackgroundFill**](#backgroundfill) is an ordinary [**Fill**](../Styles/Fill), so the form can display a gradient backdrop or a solid colour --- this is what the package's `HelloWorld` sample form uses to give itself a soft top-to-bottom wash:
+<!-- test: bug waynesform-window-ignores-code -->
+> [!WARNING] BETA 1042
+> The form's window is made from the values the form designer saved, and never from the form's properties as code has set them. [**Caption**](#caption), [**Width**](#width), [**Height**](#height), [**Left**](#left), [**Top**](#top) and every member of [**WindowsOptions**](#windowsoptions) set in code --- in `Sub New`, before **Show**, or while the form is shown --- read back the new value, but the title bar, the window's size and place, its border and its buttons stay as designed, and no error is raised. Set them in the form designer. [**BackgroundFill**](#backgroundfill), and the properties of the form's controls, are drawn as code sets them. In the sample above, only the white background takes effect.
+
+[**BackgroundFill**](#backgroundfill) is an ordinary [**Fill**](../Styles/Fill), so the form can display a gradient backdrop or a solid colour --- a soft top-to-bottom wash, for example:
 
 ```tb check_build inherits=WaynesForm
-Private Sub Form_Load()
+Sub New()
     Me.BackgroundFill.SetSimplePattern &HE5E5E5, &HF8F8F8, _
             Pattern:=tbGradientNorthToSouth
 End Sub
 ```
-
-* TOC
-{:toc}
 
 ## Modal display
 
