@@ -47,6 +47,8 @@ The control inherits the focusable rect-dockable members from `BaseControlFocusa
 | **tvwTreelinesPlusMinusText**                      | yes     | yes   | ---     |
 | **tvwTreelinesPlusMinusPictureText** (default)     | yes     | yes   | yes   |
 
+![Eight TreeViews of the same nodes, one in each Style: the four tvwTreelines styles draw dotted lines between the nodes, the four PlusMinus styles draw a button beside each node that has children, and all eight draw the nodes' pictures](Images/TreeView_Styles.png){:width="811" height="369"}
+
 The values are decoded internally into the Win32 `TVS_HASBUTTONS` / `TVS_HASLINES` style bits.
 
 ## Sorting

@@ -665,6 +665,51 @@
     "Miscellaneous/Images/ac019c1a-dcef-4964-a730-bc5b86c644ba.png": {
       "build": 1042
     },
+    "Reference/Built-In/WinNativeCommonCtls/Enumerations/Images/ImlDrawConstants.png": {
+      "build": 1042,
+      "scale": 1.5
+    },
+    "Reference/Built-In/WinNativeCommonCtls/Enumerations/Images/TreeBorderStyleConstants.png": {
+      "build": 1042,
+      "scale": 1.5
+    },
+    "Reference/Built-In/WinNativeCommonCtls/Enumerations/Images/TreeLineStyleConstants.png": {
+      "build": 1042,
+      "scale": 1.5
+    },
+    "Reference/Built-In/WinNativeCommonCtls/Images/DTPicker.png": {
+      "build": 1042,
+      "scale": 1.5
+    },
+    "Reference/Built-In/WinNativeCommonCtls/Images/MonthView.png": {
+      "build": 1042,
+      "scale": 1.5
+    },
+    "Reference/Built-In/WinNativeCommonCtls/Images/Overview.png": {
+      "build": 1042,
+      "scale": 1.5
+    },
+    "Reference/Built-In/WinNativeCommonCtls/Images/ProgressBar.png": {
+      "build": 1042,
+      "scale": 1.5,
+      "png": {
+        "ignore": [
+          [374, 239, 738, 271]
+        ]
+      }
+    },
+    "Reference/Built-In/WinNativeCommonCtls/Images/Slider.png": {
+      "build": 1042,
+      "scale": 1.5
+    },
+    "Reference/Built-In/WinNativeCommonCtls/ListView/Images/ListView_Views.png": {
+      "build": 1042,
+      "scale": 1.5
+    },
+    "Reference/Built-In/WinNativeCommonCtls/TreeView/Images/TreeView_Styles.png": {
+      "build": 1042,
+      "scale": 1.5
+    },
     "Reference/Contributed/VBFLXGRD18/VBFlexGrid/Images/Appearance_GridLines.png": {
       "build": 1042,
       "scale": 1.5

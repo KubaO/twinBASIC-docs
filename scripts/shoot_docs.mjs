@@ -86,7 +86,10 @@
 //               the form
 //   vb          test/shots/vb, VBShots: the VB, VBRUN and VBA sections' pictures of the VB
 //               package's controls and a form's drawing, taken as the programs setup's are
-//   codelens    test/shots/codelens: a procedure run by its CodeLens bar, the editor above
+//   commonctls  test/shots/commonctls, CommonCtlsShots: the WinNativeCommonCtls section's
+//               pictures of its controls, taken as the programs setup's are, the DTPicker's
+//               calendar laid over the form
+//   codelens   test/shots/codelens: a procedure run by its CodeLens bar, the editor above
 //               the DEBUG CONSOLE
 //   memory      test/shots/memory: Sub Main run to its Stop, and the MEMORY 1 pane showing
 //               a String's characters
@@ -1977,6 +1980,10 @@ const SETUPS = {
   programs: { start: startPrograms, prepare: preparePrograms },
   vbflexgrid: { start: startFlexGrid, prepare: (run) => preparePrograms(run, "FlexGridShots") },
   vb: { start: (run) => startPrograms(run, VB_SHOTS), prepare: (run) => preparePrograms(run, "VBShots") },
+  commonctls: {
+    start: (run) => startPrograms(run, COMMONCTLS_SHOTS),
+    prepare: (run) => preparePrograms(run, "CommonCtlsShots"),
+  },
   codelens: { start: startCodeLens, prepare: prepareSample },
   memory: { start: startMemory, prepare: prepareSample },
   package: { start: startPackage, prepare: prepareSample },
@@ -11908,6 +11915,30 @@ const vbShots = [
   vbDialogShot("VBA/Interaction/Images/InputBox", ["inputbox"]),
 ];
 
+// ---- commonctls: test/shots/commonctls, CommonCtlsShots, the WinNativeCommonCtls section's
+// pictures of its controls, one scene per picture, named on the exe's command line as the
+// programs setup's forms are, and taken as sceneShot takes them. The scene form holds hidden
+// controls of each class, which a scene places and shows.
+
+const COMMONCTLS_SHOTS = path.join(REPO_ROOT, "test", "shots", "commonctls");
+// The window the program shows besides its form: the DTPicker's dropped-down calendar.
+const COMMONCTLS_POPUPS = /^DropDown$/;
+const wnccShot = (out, scene) =>
+  sceneShot(`Reference/Built-In/WinNativeCommonCtls/${out}.png`, "commonctls", scene, COMMONCTLS_POPUPS);
+
+const commonCtlsShots = [
+  wnccShot("Images/Overview", "overview"),
+  wnccShot("ListView/Images/ListView_Views", "listview"),
+  wnccShot("TreeView/Images/TreeView_Styles", "treeview"),
+  wnccShot("Enumerations/Images/TreeLineStyleConstants", "treelines"),
+  wnccShot("Enumerations/Images/TreeBorderStyleConstants", "treeborders"),
+  wnccShot("Images/ProgressBar", "progressbar"),
+  wnccShot("Images/Slider", "slider"),
+  wnccShot("Images/MonthView", "monthview"),
+  wnccShot("Images/DTPicker", "dtpicker"),
+  wnccShot("Enumerations/Images/ImlDrawConstants", "imagelist"),
+];
+
 // ---- codelens: test/shots/codelens, CodeLensDemo, two modules whose procedures the editor's
 // CodeLens bar runs (setup codelens): the editor above the DEBUG CONSOLE, in a layout set in
 // the page, the procedure run by a real click on its bar. The console's line times (the
@@ -15262,6 +15293,7 @@ const SHOTS = [
   ...programShots,
   ...flexGridShots,
   ...vbShots,
+  ...commonCtlsShots,
   ...codeLensShots,
   memoryShot,
   packageBuildShot,
@@ -15364,6 +15396,7 @@ const JOB_SECONDS = {
   programs: 45,
   vbflexgrid: 60,
   vb: 60,
+  commonctls: 40,
   codelens: 35,
   memory: 30,
   package: 25,

@@ -25,6 +25,8 @@ The composite decoding:
 | **tvwTreelinesPlusMinusText**                    | yes     | yes   | ---     | yes    |
 | **tvwTreelinesPlusMinusPictureText**             | yes     | yes   | yes   | yes    |
 
+![Eight TreeViews of the same nodes, one in each Style: the four tvwTreelines styles draw dotted lines between the nodes, the four PlusMinus styles draw a button beside each node that has children, and all eight draw the nodes' pictures](../TreeView/Images/TreeView_Styles.png){:width="811" height="369"}
+
 The enum's underlying values are 0--7, matching the order in the table.
 
 | Member                                       | Value |

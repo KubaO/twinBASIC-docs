@@ -846,6 +846,26 @@ line the page quotes. Its 8 pictures are under `docs/IDE/Troubleshooting/Images/
   indexes from 26 on. Not taken: the Report preview, whose first `DoEvents` after `Show` never
   returns on the tool's desktop, with or without a recordset, with the forms fixture's MyReport
   unchanged too (not narrowed).
+- **Setup `commonctls`**: `test/shots/commonctls`, CommonCtlsShots, the 10 pictures of the
+  WinNativeCommonCtls section, one scene per command line, taken by `sceneShot` as `vb`'s are.
+  `frmScene` holds hidden controls of each class (`lv0`--`lv3`, `tv0`--`tv7`, `pb0`--`pb11`,
+  `sl0`--`sl7`, `mv0`, `dt0`--`dt5`, `ud0`, three ImageLists), which a scene places and shows;
+  its `GetDayBold` handler bolds the MonthView's days (`DayBold` raises 380 for a month just
+  scrolled into view, the visible range being cached at the last `MCN_GETDAYSTATE`). Every date is
+  January 14, 2025, 3:45 PM, the calendars' "Today:" included (`MCM_SETTODAY`, `&H100C`; the
+  DTPicker's calendar is dropped by `WM_KEYDOWN` F4 and dropped again whenever it has closed, its
+  `DropDown` window laid over the form). A ListView is filled once visible: filled while hidden,
+  `lvwIcon` shows none of its items and `lvwSmallIcon` places them oddly (BETA 1042, not
+  narrowed). **A progress bar drawn with visual styles animates** (its growth to a value, the
+  marquee, a light running along a normal bar) with timers of its own window: the fixture waits
+  0.6 s for the bars to grow, starts the marquee, stops every timer (`KillTimer` on ids 0 to
+  1000), gives the marquee's 30 ticks, and stops the timers again while it waits, since a bar
+  moved again once the tool had the window. The marquee's block still lands a few pixels apart
+  from run to run (its step is timed), so its track is left out of the picture's comparison
+  (`png.ignore` in the manifest, owner). The ImageList picture draws one list of the default
+  ColorDepth32Bit (icons) and one of ColorDepth24Bit (bitmaps on silver, the default
+  MaskColor): an icon added to a 24-bit list draws on black (not narrowed: the stock icon's own
+  mask, or the package's `RuntimeCreateScaledPicture`).
 - **85f25aa2** (Opacity 75, TransparencyKey red): `PW_RENDERFULLCONTENT` draws the key colour
   black and every pixel opaque, so the tool reads the key's pixels from a client-only capture
   (flags 1) and gives the picture the window's own alpha (191) and alpha 0 there: the page is
