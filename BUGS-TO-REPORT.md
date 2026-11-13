@@ -13790,3 +13790,39 @@ Severity: medium. Nothing fails, but a program that checks `Err.Number` after se
 
 <!-- Reproducer: bugs/usercontrol-propertychanged-leaves-err/ (mode test: the first three cases fail, the two controls pass, win32 and win64, on BETA 1042; vb6/ prints Err 0 for all four, 2026-11-13). Found 2026-11-13 while documenting VBFLXGRD18, whose every property assignment left Err.Number 438. docs/Reference/Default/VB/UserControl/index.md carries a WARNING for it under PropertyChanged; when a fixed build is released, that WARNING goes. -->
 
+---
+
+## A WinNativeCommonCtls TreeView draws its nodes' pictures in every Style, the four text-only ones included
+
+**Describe the bug**
+The TreeView of the WinNativeCommonCtls package draws its nodes' pictures whatever its `Style`. `tvwTextOnly`, `tvwPlusMinusText`, `tvwTreelinesText` and `tvwTreelinesPlusMinusText` should show the nodes' text with no picture, but a tree with an `ImageList` draws the pictures in all eight styles, exactly as `tvwPictureText` and the other three picture styles do. Observed in a running program and measured: the node's text starts as far right in a text-only style as in a picture style.
+
+**To Reproduce**
+Steps to reproduce the behavior:
+1. Open `treeview-text-styles-show-pictures.twinproj` (attached as `treeview-text-styles-show-pictures.zip`) and run it: a form with two TreeViews of the same nodes, `TreeView1` with an `ImageList` and a picture on each node, `TreeView2` with none. For each `Style` in turn it prints whether `TreeView1` draws the pictures (its first node's text, from `TVM_GETITEMRECT`, starts further right than `TreeView2`'s).
+2. Or, on a form with a TreeView and an ImageList holding one picture:
+
+   ```vb
+   Set TreeView1.ImageList = ImageList1
+   TreeView1.Style = tvwTextOnly
+   TreeView1.Nodes.Add , , "docs", "Documents", 1
+   ```
+3. See the node drawn with its picture; and the probe's output, `pictures drawn` for all eight styles, where `not drawn` is expected for styles 0, 2, 4 and 6.
+
+The cause is in the package: `TreeViewBaseCtl.StyleToWin32Styles` turns the `Style` into `TVS_HASBUTTONS` and `TVS_HASLINES` only, and the `ImageList` is given to the tree (`TVM_SETIMAGELIST`, `TVSIL_NORMAL`) whatever the `Style`, so nothing makes a text-only style leave the pictures out.
+
+What decides it:
+- The `ImageList`: a tree with none draws no pictures in any style.
+- Not the build: a 32-bit and a 64-bit run in the IDE give the same.
+
+**Expected behavior**
+In the four styles without "Picture" in their name the nodes are drawn without their pictures, as the names say and as twinBASIC's own documentation of `TreeStyleConstants` states (its Icons column). The `vb6/` project of the reproducer is the same probe with MSCOMCTL.OCX's TreeView.
+
+**Desktop:**
+ - OS: Windows 10 Pro 22H2 (build 19045)
+ - twinBASIC compiler version: BETA 1042
+
+**Additional context**
+Severity: low. Nothing is lost, but a program ported from VB6 that sets a text-only style shows pictures it did not ask for, and its nodes' text is moved right by the pictures' width.
+
+<!-- Reproducer: bugs/treeview-text-styles-show-pictures/ (mode run: pictures drawn for all eight styles, win32 and win64, BETA 1042, 2026-11-13). Its vb6/ side has not run: VB6 /make of any project that uses MSCOMCTL.OCX fails "Permission denied" on this machine, since VB6 writes MSCOMCTL.oca beside the OCX in `C:\Windows\SysWOW64` (none is there); run it once that file exists, and state what VB6 does under Expected behavior. Found 2026-11-13 while taking the WinNativeCommonCtls pictures (shoot_docs setup commonctls): TreeView_Styles.png shows the pictures in all eight styles. docs/Reference/Built-In/WinNativeCommonCtls/TreeView/index.md and Enumerations/TreeStyleConstants.md carry a NOTE for it under the Style table; when a fixed build is released, the NOTE goes and the picture is taken again. -->
