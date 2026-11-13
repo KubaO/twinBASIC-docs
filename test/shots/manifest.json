@@ -729,6 +729,98 @@
       "build": 1042,
       "scale": 1.5
     },
+    "Reference/Default/VB/CheckBox/Images/CheckBox_States.png": {
+      "build": 1042,
+      "scale": 1.5
+    },
+    "Reference/Default/VB/ComboBox/Images/ComboBox_Styles.png": {
+      "build": 1042,
+      "scale": 1.5
+    },
+    "Reference/Default/VB/CommandButton/Images/CommandButton_Styles.png": {
+      "build": 1042,
+      "scale": 1.5
+    },
+    "Reference/Default/VB/Form/Images/Form_BorderStyle.png": {
+      "build": 1042,
+      "scale": 1.5
+    },
+    "Reference/Default/VB/ListBox/Images/ListBox_Styles.png": {
+      "build": 1042,
+      "scale": 1.5
+    },
+    "Reference/Default/VB/MDIForm/Images/MDIForm_Cascade.png": {
+      "build": 1042,
+      "scale": 1.5
+    },
+    "Reference/Default/VB/MDIForm/Images/MDIForm_TileHorizontal.png": {
+      "build": 1042,
+      "scale": 1.5
+    },
+    "Reference/Default/VB/MDIForm/Images/MDIForm_TileVertical.png": {
+      "build": 1042,
+      "scale": 1.5
+    },
+    "Reference/Default/VB/Menu/Images/Menu_File.png": {
+      "build": 1042,
+      "scale": 1.5
+    },
+    "Reference/Default/VB/OptionButton/Images/OptionButton_Styles.png": {
+      "build": 1042,
+      "scale": 1.5
+    },
+    "Reference/Default/VB/QRCode/Images/QRCode_EccMode.png": {
+      "build": 1042,
+      "scale": 1.5
+    },
+    "Reference/Default/VB/Shape/Images/Shape_BorderStyle.png": {
+      "build": 1042,
+      "scale": 1.5
+    },
+    "Reference/Default/VB/Shape/Images/Shape_FillStyle.png": {
+      "build": 1042,
+      "scale": 1.5
+    },
+    "Reference/Default/VB/Shape/Images/Shape_Kinds.png": {
+      "build": 1042,
+      "scale": 1.5
+    },
+    "Reference/Default/VBA/Constants/Images/VbMsgBoxStyle_Buttons.png": {
+      "build": 1042,
+      "scale": 1.5
+    },
+    "Reference/Default/VBA/Constants/Images/VbMsgBoxStyle_Icons.png": {
+      "build": 1042,
+      "scale": 1.5
+    },
+    "Reference/Default/VBA/Information/Images/QBColor.png": {
+      "build": 1042,
+      "scale": 1.5
+    },
+    "Reference/Default/VBA/Interaction/Images/InputBox.png": {
+      "build": 1042,
+      "scale": 1.5
+    },
+    "Reference/Default/VBRUN/Constants/Images/DrawModeConstants.png": {
+      "build": 1042,
+      "scale": 1.5
+    },
+    "Reference/Default/VBRUN/Constants/Images/DrawStyleConstants.png": {
+      "build": 1042,
+      "scale": 1.5
+    },
+    "Reference/Default/VBRUN/Constants/Images/FillStyleConstants.png": {
+      "build": 1042,
+      "scale": 1.5
+    },
+    "Reference/Default/VBRUN/Constants/Images/MousePointerConstants.png": {
+      "build": 1042,
+      "scale": 1.5
+    },
+    "Reference/Default/VBRUN/Constants/Images/SystemColorConstants.png": {
+      "build": 1042,
+      "scale": 1.5
+    },
     "Tutorials/CustomControls/Images/ccEvents.light.png": {
       "build": 1042
     },

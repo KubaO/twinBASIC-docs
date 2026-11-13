@@ -85,6 +85,12 @@ Private Sub mnuWindowArrangeIcons_Click()
 End Sub
 ```
 
+![An MDI form whose three child forms are cascaded, each one's title bar showing below the one before it](Images/MDIForm_Cascade.png){:width="587" height="373"}
+
+![An MDI form whose three child forms are tiled horizontally, one above the other](Images/MDIForm_TileHorizontal.png){:width="587" height="373"}
+
+![An MDI form whose three child forms are tiled vertically, side by side](Images/MDIForm_TileVertical.png){:width="587" height="373"}
+
 ## Window appearance
 
 An MDIForm always uses the sizable border style --- there is no [**BorderStyle**](../Form/#borderstyle) property, the title bar is always present, the system menu and minimise / maximise buttons are always shown, and the form always appears in the taskbar. [**Caption**](#caption) sets the title-bar text. [**Icon**](#icon) supplies the small/large icon used by the system menu, the taskbar, and Alt-Tab. [**WindowState**](#windowstate) ([**FormWindowStateConstants**](../../VBRUN/Constants/FormWindowStateConstants)) reads or sets normal / minimised / maximised state at run time.

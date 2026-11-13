@@ -820,6 +820,32 @@ line the page quotes. Its 8 pictures are under `docs/IDE/Troubleshooting/Images/
   gives the focus back to the grid: the fixture opens the edit again whenever it finds it closed
   (`KeepEditing`). The calendar's "Today:" line is set to a fixed date (`MCM_SETTODAY`), or the
   picture would change every day.
+- **Setup `vb`**: `test/shots/vb`, VBShots, the 23 pictures of the VB, VBRUN and VBA sections
+  (the VB package's controls, a form's drawing, its menus and MDI forms, MsgBox and InputBox),
+  one scene per command line, taken by `sceneShot` as `vbflexgrid`'s are; the VB reference's
+  library symbol is `*VB`, for the QRCode's members. Each scene lays its form out in pixels at 96
+  DPI (`FitClient`: the form's client made the size in twips, then `Scale`d to those pixels).
+  Most controls are made in code (`Controls.Add`), which in BETA 1042 makes only a class that
+  some form already holds (else error -2147467259): `frmScene` holds one hidden control of each
+  class, the ListBox whose `Columns` needs design time, and the five QRCodes, which `Controls.Add`
+  does not make at all. A control inside a Frame is placed in twips (a Frame has no scale). The
+  forms of `formborders` are `frmBorder0` to `frmBorder7`, each with its `BorderStyle` at design
+  time: set at run time, it gives the tool windows and the fixed dialog no extended style
+  (`WS_EX_TOOLWINDOW`, `WS_EX_DLGMODALFRAME`), so they draw as ordinary windows; `Show` puts a form
+  with `vbStartUpScreen` in the middle of the screen whatever `Move` said, so the forms are moved
+  after. A `.tbform` lists a menu's items last first, and `ShortcutId` shows its text only when
+  set in the `.tbform`. The menu is opened by the tool (`vbMenuShot`, SC_KEYMENU 'f', as
+  `Preview_Window`). A dialog's scene shows no form: `vbDialogShot` starts the program once per
+  dialog, takes its one window and ends it, laying several out in rows (`inRows`); a timer in the
+  program, which runs inside MsgBox's modal loop, keeps the box's caption active and puts it in a
+  mouse user's state (`WM_CHANGEUISTATE`: no focus rectangle, no access-key underlines), which
+  differs from box to box otherwise, then writes `shown`. The MousePointer picture draws the
+  cursor each value makes the form set (`WM_SETCURSOR` sent, `GetCursor` read): vbIconPointer and
+  vbSizePointer are left out, since for them the form sets a null cursor (BETA 1042). The system
+  colours are Labels' `BackColor`, as twinBASIC paints them: `OleTranslateColor` refuses the
+  indexes from 26 on. Not taken: the Report preview, whose first `DoEvents` after `Show` never
+  returns on the tool's desktop, with or without a recordset, with the forms fixture's MyReport
+  unchanged too (not narrowed).
 - **85f25aa2** (Opacity 75, TransparencyKey red): `PW_RENDERFULLCONTENT` draws the key colour
   black and every pixel opaque, so the tool reads the key's pixels from a client-only capture
   (flags 1) and gives the picture the window's own alpha (191) and alpha 0 there: the page is

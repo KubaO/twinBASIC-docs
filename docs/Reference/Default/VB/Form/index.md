@@ -158,6 +158,8 @@ The background colour of the form's client area, as an **OLE_COLOR**. Defaults t
 
 The window-frame style. A member of [**FormBorderStyleConstants**](../../VBRUN/Constants/FormBorderStyleConstants): **vbBSNone**, **vbFixedSingle**, **vbSizable** (default), **vbFixedDialog**, **vbFixedToolWindow**, **vbSizableToolWindow**, **vbSizableNoTitleBar** (new in twinBASIC), or **vbSizableToolWindowNoTitleBar** (new in twinBASIC). Run-time changes are accepted but only take effect after another change to the window --- typically reassigning [**Caption**](#caption).
 
+![Eight forms, one in each BorderStyle value: no border, fixed single, sizable, fixed dialog, the fixed and sizable tool windows with a Close button only, and the sizable border and the sizable tool window with no title bar](Images/Form_BorderStyle.png){:width="957" height="234"}
+
 ### Caption
 {: .no_toc }
 

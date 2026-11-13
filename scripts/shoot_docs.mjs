@@ -84,6 +84,8 @@
 //               embedded in a staged copy: the VBFLXGRD18 section's pictures of a VBFlexGrid,
 //               taken as the programs setup's are, its drop-down list or calendar laid over
 //               the form
+//   vb          test/shots/vb, VBShots: the VB, VBRUN and VBA sections' pictures of the VB
+//               package's controls and a form's drawing, taken as the programs setup's are
 //   codelens    test/shots/codelens: a procedure run by its CodeLens bar, the editor above
 //               the DEBUG CONSOLE
 //   memory      test/shots/memory: Sub Main run to its Stop, and the MEMORY 1 pane showing
@@ -1974,6 +1976,7 @@ const SETUPS = {
   "no-project": { start: startNoProject, prepare: prepareNoProject },
   programs: { start: startPrograms, prepare: preparePrograms },
   vbflexgrid: { start: startFlexGrid, prepare: (run) => preparePrograms(run, "FlexGridShots") },
+  vb: { start: (run) => startPrograms(run, VB_SHOTS), prepare: (run) => preparePrograms(run, "VBShots") },
   codelens: { start: startCodeLens, prepare: prepareSample },
   memory: { start: startMemory, prepare: prepareSample },
   package: { start: startPackage, prepare: prepareSample },
@@ -11373,17 +11376,17 @@ const splashShot = {
 
 const PROGRAMS = path.join(REPO_ROOT, "test", "shots", "programs");
 // The class of a twinBASIC form's window: ThunderRT6FormDC in an exe, ThunderFormDC run from
-// the IDE (whose own window is a ThunderForm).
-const FORM_CLASS = /^Thunder(RT6)?Form(DC)?$/;
+// the IDE (whose own window is a ThunderForm); an MDI form's is ThunderRT6MDIForm.
+const FORM_CLASS = /^Thunder(RT6)?(MDI)?Form(DC)?$/;
 // The gap between two windows of one picture, in pixels at 96 DPI.
 const WINDOW_GAP = 16;
 
-async function startPrograms(run) {
+async function startPrograms(run, root = PROGRAMS) {
   run.step = "open";
   run.signals = path.join(run.work, "signals");
   mkdirSync(run.signals, { recursive: true });
-  say(run.name, `opening ${path.relative(REPO_ROOT, PROGRAMS)}`);
-  return run.lane.open(PROGRAMS, { env: { TB_SHOT_SIGNALS: path.join(run.signals, "ide") } });
+  say(run.name, `opening ${path.relative(REPO_ROOT, root)}`);
+  return run.lane.open(root, { env: { TB_SHOT_SIGNALS: path.join(run.signals, "ide") } });
 }
 
 async function preparePrograms(run, project = "ShotPrograms") {
@@ -11554,6 +11557,31 @@ function besideEachOther(windows) {
   return { png: encodePng({ width, height, rgba }), scale: dpi / 96, window: true };
 }
 
+// The pictures of windows in rows of `perRow`, as besideEachOther lays out one row: each row's
+// tops level, the windows and the rows WINDOW_GAP apart, on a transparent ground.
+function inRows(windows, perRow) {
+  const { dpi } = windows[0];
+  const gap = Math.round((WINDOW_GAP * dpi) / 96);
+  const rows = [];
+  for (let i = 0; i < windows.length; i += perRow) rows.push(windows.slice(i, i + perRow));
+  const rowWidth = (row) => row.reduce((n, w) => n + w.picture.width, 0) + gap * (row.length - 1);
+  const rowHeight = (row) => Math.max(...row.map((w) => w.picture.height));
+  const width = Math.max(...rows.map(rowWidth));
+  const height = rows.reduce((n, row) => n + rowHeight(row), 0) + gap * (rows.length - 1);
+  const rgba = Buffer.alloc(width * height * 4);
+  let y0 = 0;
+  for (const row of rows) {
+    let x0 = 0;
+    for (const { picture: p } of row) {
+      for (let y = 0; y < p.height; y++)
+        rgba.set(p.rgba.subarray(y * p.width * 4, (y + 1) * p.width * 4), ((y0 + y) * width + x0) * 4);
+      x0 += p.width + gap;
+    }
+    y0 += rowHeight(row) + gap;
+  }
+  return { png: encodePng({ width, height, rgba }), scale: dpi / 96, window: true };
+}
+
 // Starts the program with `scene` on the setup's desktop, waits for its form, runs `fn` with
 // its folder of signals and its window, and ends it: by "end", or by its process id when it
 // has not ended ten seconds later. A box it opened (an unhandled error opens one) fails the
@@ -11712,11 +11740,12 @@ function overlaid(layers) {
   return { picture: { width, height, rgba }, dpi: layers[0].p.dpi };
 }
 
-// A scene of FlexGridShots, as `<Name>.png` beside the VBFlexGrid's topic pages: the form,
-// active, and the visible top-level windows of the program besides it laid over it.
-const flexShot = (name, scene) => ({
-  out: `Reference/Contributed/VBFLXGRD18/VBFlexGrid/Images/${name}.png`,
-  setup: "vbflexgrid",
+// A scene of a program run as the programs setup's are, its command line `scene`, as `out`: the
+// form, active, and the visible top-level windows of the program whose class `popups` matches
+// (a drop-down list, a calendar, a menu) laid over it where they are on the desktop.
+const sceneShot = (out, setup, scene, popups) => ({
+  out,
+  setup,
   once: true,
   window: true,
   take: (ctx) =>
@@ -11732,15 +11761,17 @@ const flexShot = (name, scene) => ({
       const mine = (await desktopWindows(ctx.desktop)).filter(
         (x) => x.depth === 0 && x.visible && x.pid === w.pid && x.hwnd !== w.hwnd,
       );
-      if (mine.length) say("vbflexgrid", `${scene}: windows besides the form: ${mine.map((x) => x.class).join(", ")}`);
-      const popups = mine.filter(
-        (x) => FLEXGRID_POPUPS.test(x.class) && x.rect[2] > x.rect[0] && x.rect[3] > x.rect[1],
-      );
-      for (const [i, x] of popups.entries())
+      if (mine.length) say(setup, `${scene}: windows besides the form: ${mine.map((x) => x.class).join(", ")}`);
+      const shown = mine.filter((x) => popups.test(x.class) && x.rect[2] > x.rect[0] && x.rect[3] > x.rect[1]);
+      for (const [i, x] of shown.entries())
         layers.push({ w: x, p: await windowPicture(ctx.desktop, x.hwnd, scene, path.join(dir, `popup${i}.png`)) });
       return besideEachOther([layers.length === 1 ? layers[0].p : overlaid(layers)]);
     }),
 });
+
+// A scene of FlexGridShots, as `<Name>.png` beside the VBFlexGrid's topic pages.
+const flexShot = (name, scene) =>
+  sceneShot(`Reference/Contributed/VBFLXGRD18/VBFlexGrid/Images/${name}.png`, "vbflexgrid", scene, FLEXGRID_POPUPS);
 
 const flexGridShots = [
   flexShot("Overview", "overview"),
@@ -11759,6 +11790,122 @@ const flexGridShots = [
   flexShot("Appearance_GridLines", "gridlines"),
   flexShot("Appearance_TextStyles", "textstyles"),
   flexShot("Appearance_WallPaper", "wallpaper"),
+];
+
+// ---- vb: test/shots/vb, VBShots, the VB, VBRUN and VBA sections' pictures of a running
+// program: the VB package's controls and the form's drawing, one scene per picture, named on the
+// exe's command line as the programs setup's forms are, and taken as sceneShot takes them. The
+// VB package's library symbol is *VB, for the QRCode's Private members.
+
+const VB_SHOTS = path.join(REPO_ROOT, "test", "shots", "vb");
+// The windows the program shows besides its form: a combo box's dropped-down list.
+const VB_POPUPS = /^ComboLBox$/;
+const vbShot = (out, scene) => sceneShot(`Reference/Default/${out}.png`, "vb", scene, VB_POPUPS);
+// A scene of several forms: the program's other forms laid over the first where they are.
+const vbForms = (out, scene) => sceneShot(`Reference/Default/${out}.png`, "vb", scene, FORM_CLASS);
+
+// The scene's form with its File menu open, as Alt+F opens it (WM_SYSCOMMAND SC_KEYMENU 'f'
+// posted to the form), the menu's window laid over the form's, as Preview_Window takes it.
+const vbMenuShot = (out, scene) => ({
+  out: `Reference/Default/${out}.png`,
+  setup: "vb",
+  once: true,
+  window: true,
+  take: (ctx) =>
+    withProgram(ctx, scene, async (dir, w) => {
+      await activated(ctx.desktop, w.hwnd, scene);
+      await postWindowMessage(ctx.desktop, w.hwnd, WM_SYSCOMMAND, SC_KEYMENU, "f".charCodeAt(0));
+      const menu = await waitFor(null, () => openMenuWindow(ctx.desktop, w.pid), { timeout: 5000, interval: 100 });
+      if (!menu) throw new Error(`the File menu of ${scene} did not open`);
+      // the form is not made active again: that would close the menu
+      const form = await windowPicture(ctx.desktop, w.hwnd, scene, path.join(dir, "form.png"));
+      const drop = await windowPicture(ctx.desktop, menu.hwnd, "its File menu", path.join(dir, "menu.png"));
+      const now = (await desktopWindows(ctx.desktop)).find((x) => x.hwnd === w.hwnd) ?? w;
+      return besideEachOther([withMenu(now, form, menu, drop)]);
+    }),
+});
+
+// The windows the system gives a process besides its own: never part of a picture.
+const SYSTEM_WINDOWS = /^(UAC_InputIndicatorOverlayWnd|UAC Input Indicator|ThunderRT6Main|IME|MSCTFIME UI|SysShadow)$/;
+
+// The dialog a scene's program opens (MsgBox, InputBox) and nothing else: the program, started
+// on the setup's desktop with the scene as its command line, waits in the dialog until the tool
+// has it, and is then ended. Several scenes are laid out in rows of `perRow`.
+const vbDialogShot = (out, scenes, perRow = scenes.length) => ({
+  out: `Reference/Default/${out}.png`,
+  setup: "vb",
+  once: true,
+  window: true,
+  async take(ctx) {
+    const shown = [];
+    for (const scene of scenes) {
+      const dir = path.join(ctx.signals, scene.replace(/\W/g, "-"));
+      rmSync(dir, { recursive: true, force: true });
+      mkdirSync(dir, { recursive: true });
+      const run = await launchOnDesktop({
+        exe: ctx.exe.split("/").join("\\"),
+        arg: scene,
+        desktop: ctx.desktop,
+        env: { ...process.env, TB_SHOT_SIGNALS: dir },
+      });
+      try {
+        const box = await waitFor(
+          null,
+          async () =>
+            (await desktopWindows(ctx.desktop)).find(
+              (x) =>
+                x.depth === 0 &&
+                x.visible &&
+                x.pid === run.pid &&
+                !SYSTEM_WINDOWS.test(x.class) &&
+                x.rect[2] > x.rect[0] &&
+                x.rect[3] > x.rect[1],
+            ),
+          { timeout: 15000, interval: 200 },
+        );
+        if (!box) throw new Error(`scene ${scene} opened no window`);
+        say("vb", `${scene}: ${box.class} ${JSON.stringify(box.title)}`);
+        // the program writes "shown" once it has put its box in the state the picture shows
+        await signalled(dir, "shown");
+        shown.push(await windowPicture(ctx.desktop, box.hwnd, scene, path.join(dir, "dialog.png"), { active: true }));
+      } finally {
+        killTree(run.pid);
+        run.launcher.kill();
+        await Promise.race([run.exited, sleep(10000)]);
+      }
+    }
+    return inRows(shown, perRow);
+  },
+});
+
+const vbShots = [
+  vbShot("VBRUN/Constants/Images/DrawStyleConstants", "drawstyle"),
+  vbShot("VBRUN/Constants/Images/FillStyleConstants", "fillstyle"),
+  vbShot("VBRUN/Constants/Images/DrawModeConstants", "drawmode"),
+  vbShot("VB/Shape/Images/Shape_Kinds", "shapes"),
+  vbShot("VB/Shape/Images/Shape_FillStyle", "shapefill"),
+  vbShot("VB/Shape/Images/Shape_BorderStyle", "shapeborder"),
+  vbShot("VB/CheckBox/Images/CheckBox_States", "checkbox"),
+  vbShot("VB/OptionButton/Images/OptionButton_Styles", "optionbutton"),
+  vbShot("VB/CommandButton/Images/CommandButton_Styles", "commandbutton"),
+  vbShot("VB/ListBox/Images/ListBox_Styles", "listbox"),
+  vbShot("VB/ComboBox/Images/ComboBox_Styles", "combobox"),
+  vbShot("VB/QRCode/Images/QRCode_EccMode", "qrcode"),
+  vbForms("VB/Form/Images/Form_BorderStyle", "formborders"),
+  vbShot("VBA/Information/Images/QBColor", "qbcolor"),
+  vbShot("VBRUN/Constants/Images/SystemColorConstants", "syscolors"),
+  vbShot("VBRUN/Constants/Images/MousePointerConstants", "mousepointers"),
+  vbMenuShot("VB/Menu/Images/Menu_File", "menu"),
+  vbShot("VB/MDIForm/Images/MDIForm_Cascade", "mdi-cascade"),
+  vbShot("VB/MDIForm/Images/MDIForm_TileHorizontal", "mdi-tilehorizontal"),
+  vbShot("VB/MDIForm/Images/MDIForm_TileVertical", "mdi-tilevertical"),
+  vbDialogShot("VBA/Constants/Images/VbMsgBoxStyle_Icons", ["msgbox:16", "msgbox:32", "msgbox:48", "msgbox:64"], 2),
+  vbDialogShot(
+    "VBA/Constants/Images/VbMsgBoxStyle_Buttons",
+    ["msgbox:0", "msgbox:1", "msgbox:2", "msgbox:3", "msgbox:4", "msgbox:5", "msgbox:6"],
+    3,
+  ),
+  vbDialogShot("VBA/Interaction/Images/InputBox", ["inputbox"]),
 ];
 
 // ---- codelens: test/shots/codelens, CodeLensDemo, two modules whose procedures the editor's
@@ -15114,6 +15261,7 @@ const SHOTS = [
   newProjectOptionsShot,
   ...programShots,
   ...flexGridShots,
+  ...vbShots,
   ...codeLensShots,
   memoryShot,
   packageBuildShot,
@@ -15215,6 +15363,7 @@ const JOB_SECONDS = {
   "no-project-3": 70,
   programs: 45,
   vbflexgrid: 60,
+  vb: 60,
   codelens: 35,
   memory: 30,
   package: 25,
