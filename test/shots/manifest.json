@@ -665,6 +665,70 @@
     "Miscellaneous/Images/ac019c1a-dcef-4964-a730-bc5b86c644ba.png": {
       "build": 1042
     },
+    "Reference/Contributed/VBFLXGRD18/VBFlexGrid/Images/Appearance_GridLines.png": {
+      "build": 1042,
+      "scale": 1.5
+    },
+    "Reference/Contributed/VBFLXGRD18/VBFlexGrid/Images/Appearance_TextStyles.png": {
+      "build": 1042,
+      "scale": 1.5
+    },
+    "Reference/Contributed/VBFLXGRD18/VBFlexGrid/Images/Appearance_WallPaper.png": {
+      "build": 1042,
+      "scale": 1.5
+    },
+    "Reference/Contributed/VBFLXGRD18/VBFlexGrid/Images/CellFormatting_Cells.png": {
+      "build": 1042,
+      "scale": 1.5
+    },
+    "Reference/Contributed/VBFLXGRD18/VBFlexGrid/Images/CheckBoxes_States.png": {
+      "build": 1042,
+      "scale": 1.5
+    },
+    "Reference/Contributed/VBFLXGRD18/VBFlexGrid/Images/ComboEditing_Calendar.png": {
+      "build": 1042,
+      "scale": 1.5
+    },
+    "Reference/Contributed/VBFLXGRD18/VBFlexGrid/Images/ComboEditing_Cues.png": {
+      "build": 1042,
+      "scale": 1.5
+    },
+    "Reference/Contributed/VBFLXGRD18/VBFlexGrid/Images/ComboEditing_DropDown.png": {
+      "build": 1042,
+      "scale": 1.5
+    },
+    "Reference/Contributed/VBFLXGRD18/VBFlexGrid/Images/Editing_EditBox.png": {
+      "build": 1042,
+      "scale": 1.5
+    },
+    "Reference/Contributed/VBFLXGRD18/VBFlexGrid/Images/Merging_Free.png": {
+      "build": 1042,
+      "scale": 1.5
+    },
+    "Reference/Contributed/VBFLXGRD18/VBFlexGrid/Images/MouseAndKeyboard_InsertMarks.png": {
+      "build": 1042,
+      "scale": 1.5
+    },
+    "Reference/Contributed/VBFLXGRD18/VBFlexGrid/Images/Overview.png": {
+      "build": 1042,
+      "scale": 1.5
+    },
+    "Reference/Contributed/VBFLXGRD18/VBFlexGrid/Images/Selection_Modes.png": {
+      "build": 1042,
+      "scale": 1.5
+    },
+    "Reference/Contributed/VBFLXGRD18/VBFlexGrid/Images/Sorting_Arrows.png": {
+      "build": 1042,
+      "scale": 1.5
+    },
+    "Reference/Contributed/VBFLXGRD18/VBFlexGrid/Images/Structure_Zones.png": {
+      "build": 1042,
+      "scale": 1.5
+    },
+    "Reference/Contributed/VBFLXGRD18/VBFlexGrid/Images/Text_Wrapping.png": {
+      "build": 1042,
+      "scale": 1.5
+    },
     "Tutorials/CustomControls/Images/ccEvents.light.png": {
       "build": 1042
     },

@@ -80,6 +80,10 @@
 //               window of the exe, started on a private desktop with a command line naming
 //               its form, taken with PrintWindow (lib/tb-ide.mjs's captureWindow), once,
 //               in no theme; the ListView's is of the project run from the IDE (F5)
+//   vbflexgrid  test/shots/vbflexgrid, FlexGridShots, with the TWINSERV package VBFLXGRD18
+//               embedded in a staged copy: the VBFLXGRD18 section's pictures of a VBFlexGrid,
+//               taken as the programs setup's are, its drop-down list or calendar laid over
+//               the form
 //   codelens    test/shots/codelens: a procedure run by its CodeLens bar, the editor above
 //               the DEBUG CONSOLE
 //   memory      test/shots/memory: Sub Main run to its Stop, and the MEMORY 1 pane showing
@@ -249,6 +253,8 @@ import { QUIET_CSS } from "./svgshot/capture.mjs";
 import { useSubsetCache } from "./svgshot/fonts.mjs";
 import { holdsUserName, judgeSvg, sameSvgAs, sameWhy } from "./svgshot/keep.mjs";
 import { stageProject, unpackProject } from "./lib/tb-project.mjs";
+import { embeddedPackages } from "./lib/example-batches.mjs";
+import { downloadPackage } from "../indexer/lib/twinserv-client.mjs";
 import { holdLlvmCache } from "./lib/tb-llvm-cache.mjs";
 import { guard, presentKeys, press, serverRequests } from "../test/ide/building-kit.mjs";
 import { layout } from "../test/ide/starting-kit.mjs";
@@ -1967,6 +1973,7 @@ const SETUPS = {
   glyphs: { start: startSample, prepare: prepareSample },
   "no-project": { start: startNoProject, prepare: prepareNoProject },
   programs: { start: startPrograms, prepare: preparePrograms },
+  vbflexgrid: { start: startFlexGrid, prepare: (run) => preparePrograms(run, "FlexGridShots") },
   codelens: { start: startCodeLens, prepare: prepareSample },
   memory: { start: startMemory, prepare: prepareSample },
   package: { start: startPackage, prepare: prepareSample },
@@ -11379,12 +11386,12 @@ async function startPrograms(run) {
   return run.lane.open(PROGRAMS, { env: { TB_SHOT_SIGNALS: path.join(run.signals, "ide") } });
 }
 
-async function preparePrograms(run) {
+async function preparePrograms(run, project = "ShotPrograms") {
   const { c } = run;
   run.step = "shoot";
   const built = await buildProject(c);
   if (!built.ok || !/\.exe$/i.test(built.file ?? "")) {
-    throw new Error(`ShotPrograms did not build: ${built.message ?? built.file}`);
+    throw new Error(`${project} did not build: ${built.message ?? built.file}`);
   }
   say(run.name, `built ${path.basename(built.file)}`);
   // The programs' own desktop, a second slot of the job's (endRun gives it back), and the
@@ -11641,6 +11648,117 @@ const programShots = [
   programShot(ANCHORS("5fc60b7b-4f54-445c-8504-451019b7ec55"), "checkmark"),
   programShot(ANCHORS("85f25aa2-abc8-4d42-8510-078f8ee4a324"), "translucent"),
   listViewShot,
+];
+
+// ---- vbflexgrid: test/shots/vbflexgrid, FlexGridShots, the pictures of the VBFLXGRD18 section:
+// a VBFlexGrid in each of its looks and states, one scene per picture, named on the exe's command
+// line as the programs setup's forms are. The fixture references the TWINSERV package VBFLXGRD18
+// embedded at /Packages/VBFLXGRD18, as a contributed section's sample template does, and commits
+// none of its code: the package is downloaded from TWINSERV at the version the reference names
+// into %TEMP%\tb-twinserv (the cache check_examples and package_tests keep), and copied into a
+// staged copy of the fixture, which the setup's IDE opens and builds. Each picture is the exe's
+// window, as programShot takes it, with the program's other top-level windows (the grid's
+// drop-down list or calendar) laid over it where they are on the desktop.
+
+const FLEXGRID = path.join(REPO_ROOT, "test", "shots", "vbflexgrid");
+// The window classes of the grid's popups: its drop-down list and its calendar.
+const FLEXGRID_POPUPS = /ComboL|ListBox|SysMonthCal32|DropDown|VBFlexGrid/i;
+const TWINSERV_CACHE = path.join(tmpdir(), "tb-twinserv");
+
+async function startFlexGrid(run) {
+  run.step = "open";
+  run.signals = path.join(run.work, "signals");
+  mkdirSync(run.signals, { recursive: true });
+  const src = path.join(run.work, "vbflexgrid-src");
+  rmSync(src, { recursive: true, force: true });
+  cpSync(FLEXGRID, src, { recursive: true });
+  for (const p of embeddedPackages(JSON.parse(readFileSync(path.join(src, "Settings"), "utf8")))) {
+    const tree = path.join(TWINSERV_CACHE, p.key);
+    if (!existsSync(path.join(tree, "Settings"))) {
+      const file = `${tree}.twinpack`;
+      if (!existsSync(file)) {
+        say(run.name, `downloading ${p.folder} (${p.key}) from TWINSERV`);
+        mkdirSync(TWINSERV_CACHE, { recursive: true });
+        writeFileSync(file, await downloadPackage(p.id, p.version));
+      }
+      unpackProject(file, tree);
+    }
+    cpSync(tree, path.join(src, "Packages", p.folder), { recursive: true });
+  }
+  say(run.name, `opening ${path.relative(REPO_ROOT, FLEXGRID)} with its package embedded`);
+  return run.lane.open(src, { env: { TB_SHOT_SIGNALS: path.join(run.signals, "ide") } });
+}
+
+// Windows laid over each other where they are on the desktop, the first at the bottom: each a
+// window `w` as desktopWindows lists it and its picture `p` as windowPicture returns it. The
+// ground beyond the first window, where another reaches past it, is transparent (withMenu, for
+// any number of windows).
+function overlaid(layers) {
+  const at = ({ w, p }) => [w.rect[0] + p.frame[0], w.rect[1] + p.frame[1]];
+  const corners = layers.map(at);
+  const x0 = Math.min(...corners.map(([x]) => x));
+  const y0 = Math.min(...corners.map(([, y]) => y));
+  const width = Math.max(...layers.map((l, i) => corners[i][0] + l.p.picture.width)) - x0;
+  const height = Math.max(...layers.map((l, i) => corners[i][1] + l.p.picture.height)) - y0;
+  const rgba = Buffer.alloc(width * height * 4);
+  layers.forEach(({ p }, i) => {
+    const [x, y] = [corners[i][0] - x0, corners[i][1] - y0];
+    for (let r = 0; r < p.picture.height; r++)
+      rgba.set(
+        p.picture.rgba.subarray(r * p.picture.width * 4, (r + 1) * p.picture.width * 4),
+        ((y + r) * width + x) * 4,
+      );
+  });
+  return { picture: { width, height, rgba }, dpi: layers[0].p.dpi };
+}
+
+// A scene of FlexGridShots, as `<Name>.png` beside the VBFlexGrid's topic pages: the form,
+// active, and the visible top-level windows of the program besides it laid over it.
+const flexShot = (name, scene) => ({
+  out: `Reference/Contributed/VBFLXGRD18/VBFlexGrid/Images/${name}.png`,
+  setup: "vbflexgrid",
+  once: true,
+  window: true,
+  take: (ctx) =>
+    withProgram(ctx, scene, async (dir, w) => {
+      // the program writes "error" with the error a scene's code raised, and shows its form all the same
+      const error = path.join(dir, "error");
+      if (existsSync(error)) throw new Error(`scene ${scene}: ${readFileSync(error, "utf8").trim()}`);
+      const layers = [
+        { w, p: await windowPicture(ctx.desktop, w.hwnd, scene, path.join(dir, "form.png"), { active: true }) },
+      ];
+      // the grid's drop-down list and calendar, top-level windows of the program; not its other
+      // visible ones, such as the input-language indicator Windows gives a process
+      const mine = (await desktopWindows(ctx.desktop)).filter(
+        (x) => x.depth === 0 && x.visible && x.pid === w.pid && x.hwnd !== w.hwnd,
+      );
+      if (mine.length) say("vbflexgrid", `${scene}: windows besides the form: ${mine.map((x) => x.class).join(", ")}`);
+      const popups = mine.filter(
+        (x) => FLEXGRID_POPUPS.test(x.class) && x.rect[2] > x.rect[0] && x.rect[3] > x.rect[1],
+      );
+      for (const [i, x] of popups.entries())
+        layers.push({ w: x, p: await windowPicture(ctx.desktop, x.hwnd, scene, path.join(dir, `popup${i}.png`)) });
+      return besideEachOther([layers.length === 1 ? layers[0].p : overlaid(layers)]);
+    }),
+});
+
+const flexGridShots = [
+  flexShot("Overview", "overview"),
+  flexShot("Structure_Zones", "zones"),
+  flexShot("Merging_Free", "merging"),
+  flexShot("CellFormatting_Cells", "formatting"),
+  flexShot("Text_Wrapping", "wrapping"),
+  flexShot("Selection_Modes", "selection"),
+  flexShot("Editing_EditBox", "editing"),
+  flexShot("ComboEditing_DropDown", "dropdown"),
+  flexShot("ComboEditing_Calendar", "calendar"),
+  flexShot("ComboEditing_Cues", "cues"),
+  flexShot("CheckBoxes_States", "checkboxes"),
+  flexShot("Sorting_Arrows", "sortarrows"),
+  flexShot("MouseAndKeyboard_InsertMarks", "insertmark"),
+  flexShot("Appearance_GridLines", "gridlines"),
+  flexShot("Appearance_TextStyles", "textstyles"),
+  flexShot("Appearance_WallPaper", "wallpaper"),
 ];
 
 // ---- codelens: test/shots/codelens, CodeLensDemo, two modules whose procedures the editor's
@@ -14995,6 +15113,7 @@ const SHOTS = [
   ...debuggingShots,
   newProjectOptionsShot,
   ...programShots,
+  ...flexGridShots,
   ...codeLensShots,
   memoryShot,
   packageBuildShot,
@@ -15095,6 +15214,7 @@ const JOB_SECONDS = {
   "no-project-2": 59,
   "no-project-3": 70,
   programs: 45,
+  vbflexgrid: 60,
   codelens: 35,
   memory: 30,
   package: 25,

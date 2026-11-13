@@ -289,7 +289,7 @@ Exit codes: 0 every picture written or unchanged, 1 a picture failed, 2 the tool
   page's `currentDPI` to the 2x ratio, or the IDE's 5 s DPI check covers every designer with
   RESYNC), and `forms` (the same without the add-in), `community` (the demo, its compiler
   restarted on an empty licence key in the page) and `splash` (the demo, for the splash
-  alone), `programs`, `codelens`, `memory`, `package` and `fusion` (pictures of a running program),
+  alone), `programs`, `vbflexgrid`, `codelens`, `memory`, `package` and `fusion` (pictures of a running program),
   `package-server`, `settings-linked` and `package-check`, `import`, `webpage` and `web` (a
   Chrome, not an IDE), `featuremap`, `tour`, `code-chapter`, `debugging`, `forms-chapter`, `projects`, `projects-refs`,
   `projects-start`, the `building`, `starting` and `troubleshooting` setups, `customcontrols`, `code` and `sample9` (all described
@@ -810,6 +810,16 @@ line the page quotes. Its 8 pictures are under `docs/IDE/Troubleshooting/Images/
   rectangle. Even so a form drew its caption inactive now and then (4829696d and 599a66ad, one
   run each), so `programShot` makes the form the active window (`activateWindow`) before its
   captures and again whenever a capture finds the caption inactive (owner).
+- **Setup `vbflexgrid`**: `test/shots/vbflexgrid`, FlexGridShots, the 16 pictures of the
+  VBFLXGRD18 section, taken as the `programs` setup's are (`flexShot`), one scene per command
+  line. The fixture commits none of the package: `startFlexGrid` stages a copy with VBFLXGRD18 at
+  the version its Settings names, from TWINSERV through the `%TEMP%\tb-twinserv` cache. The grid's
+  drop-down list and calendar are top-level windows of the program, laid over the form where they
+  are (`overlaid`). **An edit closes when its box loses the focus** (the package destroys it on
+  `WM_KILLFOCUS`, with no event to cancel), and the form, when `activateWindow` makes it active,
+  gives the focus back to the grid: the fixture opens the edit again whenever it finds it closed
+  (`KeepEditing`). The calendar's "Today:" line is set to a fixed date (`MCM_SETTODAY`), or the
+  picture would change every day.
 - **85f25aa2** (Opacity 75, TransparencyKey red): `PW_RENDERFULLCONTENT` draws the key colour
   black and every pixel opaque, so the tool reads the key's pixels from a client-only capture
   (flags 1) and gives the picture the window's own alpha (191) and alpha 0 there: the page is

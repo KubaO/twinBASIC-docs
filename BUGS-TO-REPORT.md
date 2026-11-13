@@ -13678,3 +13678,115 @@ Severity: low. The box shows a second line, but nothing says that the replacemen
 
 <!-- Reproducer: bugs/quick-find-enter-in-replace-box/ (mode lane: asserted by `ide-test.bat --only quick-find-keys` (test/ide/quick-find-keys.test.mjs), the test named in repro.json, which passes on BETA 1042 (2026-11-13)). No project and no zip: the steps give the code. docs/IDE/Code/Finding.md carries a NOTE for it under "Quick Find"; when a fixed build is released, that NOTE goes. Found 2026-11-13 with find-panel-keys-outside-panel, pressing each key in Quick Find. -->
 
+---
+
+## `UserControl.PropertyChanged` leaves `Err.Number` set in the caller, 438 with a name and 13 without, though no error is raised
+
+**Describe the bug**
+`PropertyChanged` in a UserControl raises no error, but after it returns, the code that called the control's member reads `Err.Number` 438 (*Object doesn't support this property or method*) when `PropertyChanged` was given a property name, and 13 (*Type mismatch*) when it was called with none. Every property of a VB6-style control ends its `Property Let` with `PropertyChanged "<Name>"`, so after an ordinary assignment such as `MyControl1.Caption = "x"` the caller sees error 438 that did not happen. It does so with or without an `On Error` statement in the caller; an `On Error GoTo` handler is not entered.
+
+**To Reproduce**
+Steps to reproduce the behavior:
+1. Open `usercontrol-propertychanged-leaves-err.twinproj` (attached as `usercontrol-propertychanged-leaves-err.zip`): a form with one UserControl of the project on it, and `RegressionTests.twin`, one `[TestCase]` per behaviour, each asserting the correct result.
+2. Or, with a UserControl `ProbeControl` on `Form1` whose property is
+
+   ```vb
+   Public Property Let WithChanged(ByVal Value As Long)
+       m_A = Value
+       UserControl.PropertyChanged "WithChanged"
+   End Property
+   ```
+
+   run:
+
+   ```vb
+   Load Form1
+   Err.Clear
+   Form1.ProbeControl1.WithChanged = 1
+   Debug.Print Err.Number
+   ```
+3. See `438`, where `0` is expected.
+
+The regression tests (the first three fail on BETA 1042, the two controls pass):
+
+```vb
+[TestFixture]
+Module RegressionTests
+
+    [TestCase]
+    Public Sub PropertyLet_CallingPropertyChanged_LeavesErrZero()
+        Load Form1
+        On Error Resume Next
+        Err.Clear
+        Form1.ProbeControl1.WithChanged = 1
+        Dim n As Long = Err.Number
+        On Error GoTo 0
+        Unload Form1
+        Assert.Strict.AreEqual 0, n
+    End Sub
+
+    [TestCase]
+    Public Sub PropertyChangedWithNoName_LeavesErrZero()
+        Load Form1
+        On Error Resume Next
+        Err.Clear
+        Form1.ProbeControl1.CallsChangedNoName
+        Dim n As Long = Err.Number
+        On Error GoTo 0
+        Unload Form1
+        Assert.Strict.AreEqual 0, n
+    End Sub
+
+    [TestCase]
+    Public Sub PropertyLet_CallingPropertyChanged_LeavesErrZero_WithNoHandler()
+        Load Form1
+        Err.Clear
+        Form1.ProbeControl1.WithChanged = 2
+        Dim n As Long = Err.Number
+        Unload Form1
+        Assert.Strict.AreEqual 0, n
+    End Sub
+
+    [TestCase]
+    Public Sub PropertyLet_CallingPropertyChanged_StoresTheValue()
+        Load Form1
+        Form1.ProbeControl1.WithChanged = 3
+        Dim v As Long = Form1.ProbeControl1.WithChanged
+        Unload Form1
+        Assert.Strict.AreEqual 3, v
+    End Sub
+
+    [TestCase]
+    Public Sub Control_PropertyLet_WithoutPropertyChanged_LeavesErrZero()
+        Load Form1
+        On Error Resume Next
+        Err.Clear
+        Form1.ProbeControl1.WithoutChanged = 1
+        Dim n As Long = Err.Number
+        On Error GoTo 0
+        Unload Form1
+        Assert.Strict.AreEqual 0, n
+    End Sub
+
+End Module
+```
+
+What decides it:
+- `PropertyChanged`: the same `Property Let` without it leaves `Err.Number` at 0.
+- Its argument: 438 with a property name, 13 without one.
+- Not the form being shown: the same with `Form1.Show` and `DoEvents` first.
+- Not the build: a 32-bit and a 64-bit run in the IDE, and the test mode, each give the same.
+- Not the control: the same in Krool's VBFlexGrid (TWINSERV package VBFLXGRD18 1.8.69.0), where every property assignment leaves 438.
+
+**Expected behavior**
+`Err.Number` stays 0, as `PropertyChanged` raised nothing and the assignment worked. VB6 leaves it at 0 in all four cases (the `vb6/` project of the reproducer).
+
+**Desktop:**
+ - OS: Windows 10 Pro 22H2 (build 19045)
+ - twinBASIC compiler version: BETA 1042
+
+**Additional context**
+Severity: medium. Nothing fails, but a program that checks `Err.Number` after setting a property of a control (a common VB6 pattern under `On Error Resume Next`) takes the assignment for a failure, silently.
+
+<!-- Reproducer: bugs/usercontrol-propertychanged-leaves-err/ (mode test: the first three cases fail, the two controls pass, win32 and win64, on BETA 1042; vb6/ prints Err 0 for all four, 2026-11-13). Found 2026-11-13 while documenting VBFLXGRD18, whose every property assignment left Err.Number 438. docs/Reference/Default/VB/UserControl/index.md carries a WARNING for it under PropertyChanged; when a fixed build is released, that WARNING goes. -->
+
