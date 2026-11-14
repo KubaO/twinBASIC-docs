@@ -289,7 +289,7 @@ Exit codes: 0 every picture written or unchanged, 1 a picture failed, 2 the tool
   page's `currentDPI` to the 2x ratio, or the IDE's 5 s DPI check covers every designer with
   RESYNC), and `forms` (the same without the add-in), `community` (the demo, its compiler
   restarted on an empty licence key in the page) and `splash` (the demo, for the splash
-  alone), `programs`, `vbflexgrid`, `codelens`, `memory`, `package` and `fusion` (pictures of a running program),
+  alone), `programs`, `vbflexgrid`, `xcalendar`, `codelens`, `memory`, `package` and `fusion` (pictures of a running program),
   `package-server`, `settings-linked` and `package-check`, `import`, `webpage` and `web` (a
   Chrome, not an IDE), `featuremap`, `tour`, `code-chapter`, `debugging`, `forms-chapter`, `projects`, `projects-refs`,
   `projects-start`, the `building`, `starting` and `troubleshooting` setups, `customcontrols`, `code` and `sample9` (all described
@@ -812,7 +812,7 @@ line the page quotes. Its pictures are under `docs/IDE/Troubleshooting/Images/`.
   captures and again whenever a capture finds the caption inactive (owner).
 - **Setup `vbflexgrid`**: `test/shots/vbflexgrid`, FlexGridShots, the pictures of the
   VBFLXGRD18 section, taken as the `programs` setup's are (`flexShot`), one scene per command
-  line. The fixture commits none of the package: `startFlexGrid` stages a copy with VBFLXGRD18 at
+  line. The fixture commits none of the package: `startWithPackages` stages a copy with VBFLXGRD18 at
   the version its Settings names, from TWINSERV through the `%TEMP%\tb-twinserv` cache. The grid's
   drop-down list and calendar are top-level windows of the program, laid over the form where they
   are (`overlaid`). **An edit closes when its box loses the focus** (the package destroys it on
@@ -820,6 +820,18 @@ line the page quotes. Its pictures are under `docs/IDE/Troubleshooting/Images/`.
   gives the focus back to the grid: the fixture opens the edit again whenever it finds it closed
   (`KeepEditing`). The calendar's "Today:" line is set to a fixed date (`MCM_SETTODAY`), or the
   picture would change every day.
+- **Setup `xcalendar`**: `test/shots/xcalendar`, XCalendarShots, the pictures of the xCalendar
+  section, one scene per command line, taken by `sceneShot`, the package embedded by
+  `startWithPackages` as `vbflexgrid`'s is. Its forms (`frmOne`, `frmTwo`, `frmThree`: one, two
+  and three calendars, with hidden Labels) are written by a kit script. The
+  calendars are reached through the form's extender (`As Object`): the type `xCalendar.xCalendar`
+  has no `Move`, `Left` or `Width` (TB5027). Every calendar shows March 15, 2026, set as `Value`
+  to the 16th and then `PreviousDay`, since `Value` in another month and `FirstDay` leave the
+  grid's dates as they were until the selection moves (the page's Known problems). The areas
+  picture's labels are Labels of the form, in the IDE labels' dark red, with lines drawn by the
+  form (`AutoRedraw`): the annotation layer draws on the IDE's page only, and a line ends at the
+  control's edge, since the form draws nothing over a child window. The heights it labels are
+  worked out as the control does (a line of the font plus the margins).
 - **Setup `vb`**: `test/shots/vb`, VBShots, the pictures of the VB, VBRUN and VBA sections
   (the VB package's controls, a form's drawing, its menus and MDI forms, MsgBox and InputBox),
   one scene per command line, taken by `sceneShot` as `vbflexgrid`'s are; the VB reference's

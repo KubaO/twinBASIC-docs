@@ -92,6 +92,9 @@
 //   waynes      test/shots/waynes, WaynesShots: the CustomControls section's pictures of its
 //               controls on a form of the package, taken as the programs setup's are; a
 //               picture of several states or frames is several runs of the program in rows
+//   xcalendar   test/shots/xcalendar, XCalendarShots, with the TWINSERV package xCalendar
+//               embedded as vbflexgrid's is: the xCalendar section's pictures of its control,
+//               taken as the programs setup's are
 //   tbide       test/shots/tbide, MyAddInDemo, an add-in built into the copy, the sample open:
 //               the tbIDE section's pictures of its toolbar buttons, its tool window floating
 //               and docked by a drag, and its DEBUG CONSOLE lines; tbide-sample10 Sample 10
@@ -1985,7 +1988,14 @@ const SETUPS = {
   glyphs: { start: startSample, prepare: prepareSample },
   "no-project": { start: startNoProject, prepare: prepareNoProject },
   programs: { start: startPrograms, prepare: preparePrograms },
-  vbflexgrid: { start: startFlexGrid, prepare: (run) => preparePrograms(run, "FlexGridShots") },
+  vbflexgrid: {
+    start: (run) => startWithPackages(run, FLEXGRID),
+    prepare: (run) => preparePrograms(run, "FlexGridShots"),
+  },
+  xcalendar: {
+    start: (run) => startWithPackages(run, XCALENDAR_SHOTS),
+    prepare: (run) => preparePrograms(run, "XCalendarShots"),
+  },
   vb: { start: (run) => startPrograms(run, VB_SHOTS), prepare: (run) => preparePrograms(run, "VBShots") },
   commonctls: {
     start: (run) => startPrograms(run, COMMONCTLS_SHOTS),
@@ -11715,13 +11725,15 @@ const FLEXGRID = path.join(REPO_ROOT, "test", "shots", "vbflexgrid");
 const FLEXGRID_POPUPS = /ComboL|ListBox|SysMonthCal32|DropDown|VBFlexGrid/i;
 const TWINSERV_CACHE = path.join(tmpdir(), "tb-twinserv");
 
-async function startFlexGrid(run) {
+// Opens a fixture that references TWINSERV packages embedded at /Packages/<folder>: a staged
+// copy of `root` with each package copied in from the cache (downloaded into it when missing).
+async function startWithPackages(run, root) {
   run.step = "open";
   run.signals = path.join(run.work, "signals");
   mkdirSync(run.signals, { recursive: true });
-  const src = path.join(run.work, "vbflexgrid-src");
+  const src = path.join(run.work, `${path.basename(root)}-src`);
   rmSync(src, { recursive: true, force: true });
-  cpSync(FLEXGRID, src, { recursive: true });
+  cpSync(root, src, { recursive: true });
   for (const p of embeddedPackages(JSON.parse(readFileSync(path.join(src, "Settings"), "utf8")))) {
     const tree = path.join(TWINSERV_CACHE, p.key);
     if (!existsSync(path.join(tree, "Settings"))) {
@@ -11735,7 +11747,7 @@ async function startFlexGrid(run) {
     }
     cpSync(tree, path.join(src, "Packages", p.folder), { recursive: true });
   }
-  say(run.name, `opening ${path.relative(REPO_ROOT, FLEXGRID)} with its package embedded`);
+  say(run.name, `opening ${path.relative(REPO_ROOT, root)} with its packages embedded`);
   return run.lane.open(src, { env: { TB_SHOT_SIGNALS: path.join(run.signals, "ide") } });
 }
 
@@ -12005,6 +12017,21 @@ const waynesShots = [
     [0, 1, 2, 3, 4, 5].map((v) => `borderstyle:${v}`),
     3,
   ),
+];
+
+// ---- xcalendar: test/shots/xcalendar, XCalendarShots, the xCalendar section's pictures of an
+// xCalendar on a form, one scene per picture, taken as sceneShot takes them. The fixture embeds
+// the TWINSERV package xCalendar as vbflexgrid embeds VBFLXGRD18. The control's two lists are
+// child windows of the form, so no popup is laid over it.
+
+const XCALENDAR_SHOTS = path.join(REPO_ROOT, "test", "shots", "xcalendar");
+const xCalendarShot = (name, scene) =>
+  sceneShot(`Reference/Contributed/xCalendar/Images/${name}.png`, "xcalendar", scene, NO_POPUPS);
+const xCalendarShots = [
+  xCalendarShot("Areas", "areas"),
+  xCalendarShot("Enabled", "enabled"),
+  xCalendarShot("GridCellEffect", "effects"),
+  xCalendarShot("Sample", "sample"),
 ];
 
 // ---- codelens: test/shots/codelens, CodeLensDemo, two modules whose procedures the editor's
@@ -15655,6 +15682,7 @@ const SHOTS = [
   ...vbShots,
   ...commonCtlsShots,
   ...waynesShots,
+  ...xCalendarShots,
   ...tbIdeShots,
   ...codeLensShots,
   memoryShot,
@@ -15760,6 +15788,7 @@ const JOB_SECONDS = {
   vb: 60,
   commonctls: 40,
   waynes: 90,
+  xcalendar: 40,
   tbide: 40,
   "tbide-sample10": 30,
   codelens: 35,
