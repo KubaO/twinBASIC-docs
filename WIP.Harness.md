@@ -1825,8 +1825,8 @@ probe lanes:
   native-exception code. The scenario reads each line's HTML from
   `debugConsoleContent.dataNodes` and the colour its class gives, and `g_TraceMode`. About 15 s.
 
-**Timing:** the thirteen lanes other than widgets (24 s alone) take about two minutes at the default two at a time
-(the env lane is 16 s alone, the help lane 15 to 18 s, of which its sixteen cases are about 6 s). Typical lane costs: an add-in build about 10 s, a host IDE
+**Timing:** the lanes other than widgets (24 s alone) take about two minutes at the default two at a time
+(the env lane is 16 s alone, the help lane 15 to 18 s, of which its cases are about 6 s). Typical lane costs: an add-in build about 10 s, a host IDE
 about 9 s, a scenario 2 s; the slowest lanes are arch (56 s: two builds and two switches of
 target) and reload (47 s: two builds and two restarts).
 

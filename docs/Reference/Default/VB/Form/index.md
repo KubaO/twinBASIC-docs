@@ -48,7 +48,7 @@ End Sub
 
 ## Lifecycle
 
-A form goes through six distinct events from creation to destruction:
+A form goes through these events from creation to destruction:
 
 | Event                            | When                                                                                |
 |----------------------------------|-------------------------------------------------------------------------------------|

@@ -384,7 +384,7 @@ now on First Launch.
 
 Setup `code-chapter` (three parts): FeatureTour, the feature map's Inventory project, with
 `test/shots/codechapter/` staged onto it (`Helpers`, `Ev`/`Ev2`, `Watcher`) and the project's
-warnings set so that TB0016 is a hint and TB0012 information. Its 21 pictures are under
+warnings set so that TB0016 is a hint and TB0012 information. Its pictures are under
 `docs/IDE/Code/Images/`, plus `Menu_Edit` and `Menu_View`, taken with the code focused.
 
 - **Each picture starts from the default layout and its own tabs** (`chapterTabs`), and closes
@@ -407,7 +407,7 @@ Setup `debugging` (three parts): the code-chapter project with `test/shots/debug
 staged onto it as well, a module `Checks` with the chapter's `FillTable` (a Subscript error on
 its fourth pass), `PingLater` (`Shell "ping -n 20 127.0.0.1", vbHide`) and `WaitAWhile` (a
 `DoEvents` loop of a minute at most). It is a setup of its own because the code chapter's
-combo boxes list the project's modules. Its 16 pictures are under `docs/IDE/Debugging/Images/`,
+combo boxes list the project's modules. Its pictures are under `docs/IDE/Debugging/Images/`,
 plus `Menu_Debug` (paused, the code focused) and `Menu_Run` (WaitAWhile running).
 
 - **Each picture starts from nothing** (`debugReset`: the program stopped, no breakpoint, no
@@ -507,7 +507,7 @@ project file the lane opens is `project.twinproj`, the name the title shows. `pr
 the same project with Microsoft Scripting Runtime's symbol overridden as `SR` and a type library
 that is not on the machine (`MISSING_LIBRARY`) put in the staged `Settings`; the IDE opens
 Project Settings by itself a second after loading it, and the setup's prepare closes it.
-`projects-start` is the IDE with no project. Its 16 pictures are under `docs/IDE/Projects/Images/`;
+`projects-start` is the IDE with no project. Its pictures are under `docs/IDE/Projects/Images/`;
 `Menu_File_Project` is the File menu with the project open (the Menu pages keep `Menu_File`, with
 none, which `New Project.md` also shows).
 
@@ -551,14 +551,14 @@ none, which `New Project.md` also shows).
 
 ## The "Building" chapter
 
-Six setups, their fixtures under `test/shots/building/`, copied from the Building lanes'
+Several setups, their fixtures under `test/shots/building/`, copied from the Building lanes'
 `test/ide/probes/building-{exe,ax,pkg}`: `exe` is Program, a Standard EXE whose Sub Main waits a
 minute (so that a second build finds its file in use), `ax` is ShotActiveX, an ActiveX DLL whose
 class has GUIDs of its own (`B01D...B001` to `B003`, not the lanes', so that a lane and a shot run
 at once never share a registration), and `pkg` is MyPackage, a PRIVATE package. Each project is
 staged in a folder of the tool's own on `PACKAGE_ROOT` named for its setup (shown as
 `C:\tbshots\Building` and so on), with the templates' build path, so that a console line names no user; the setup's
-`end` removes the folder once its IDE has ended. Its 14 pictures
+`end` removes the folder once its IDE has ended. Its pictures
 are under `docs/IDE/Building/Images/`.
 
 - **`building`** (exe): the console after a build, a failed build and a build refused by the
@@ -608,11 +608,11 @@ are under `docs/IDE/Building/Images/`.
 
 ## The "Starting a project" chapter
 
-Four setups, their fixtures under `test/shots/starting/`: `Throwaway` is the Starting lanes'
+Several setups, their fixtures under `test/shots/starting/`: `Throwaway` is the Starting lanes'
 `test/ide/probes/starting`, `Ledger` (a form, a module and a class, no manifest) and `Missing` (a
 `.vbp` naming `Gone.bas`) come from the trial's cases C, G and K. The `.vbp` fixtures are staged
 with CRLF, and every project is in a folder of the tool's own on `PACKAGE_ROOT`, named for its
-setup, which the setup's `end` removes. Its 14 pictures are under `docs/IDE/Starting/Images/`.
+setup, which the setup's `end` removes. Its pictures are under `docs/IDE/Starting/Images/`.
 
 - **`starting-first-run`**: the licence agreement, the reporting question and the first-run IDE
   Options. The IDE reads `--no-save-ide-settings` in `parseCommandLine`, after those dialogs, so
@@ -658,9 +658,9 @@ setup, which the setup's `end` removes. Its 14 pictures are under `docs/IDE/Star
 
 ## The "When something goes wrong" chapter
 
-Two setups, the fixture `test/shots/troubleshooting/Trouble`, the lanes' `test/ide/probes/troubleshooting`
+The setups `troubleshooting` and `troubleshooting-box`, the fixture `test/shots/troubleshooting/Trouble`, the lanes' `test/ide/probes/troubleshooting`
 under another name: `Sub Crash` calls `RtlMoveMemory` with two bad addresses at line 10 of `MainMod`, the
-line the page quotes. Its 8 pictures are under `docs/IDE/Troubleshooting/Images/`.
+line the page quotes. Its pictures are under `docs/IDE/Troubleshooting/Images/`.
 
 - **`troubleshooting`**: one IDE, the project in a folder of the tool's own on `PACKAGE_ROOT`, its
   compiler restarted on `licenceKey = ""` as in `community` (`communityCompiler`), and
@@ -810,7 +810,7 @@ line the page quotes. Its 8 pictures are under `docs/IDE/Troubleshooting/Images/
   rectangle. Even so a form drew its caption inactive now and then (4829696d and 599a66ad, one
   run each), so `programShot` makes the form the active window (`activateWindow`) before its
   captures and again whenever a capture finds the caption inactive (owner).
-- **Setup `vbflexgrid`**: `test/shots/vbflexgrid`, FlexGridShots, the 16 pictures of the
+- **Setup `vbflexgrid`**: `test/shots/vbflexgrid`, FlexGridShots, the pictures of the
   VBFLXGRD18 section, taken as the `programs` setup's are (`flexShot`), one scene per command
   line. The fixture commits none of the package: `startFlexGrid` stages a copy with VBFLXGRD18 at
   the version its Settings names, from TWINSERV through the `%TEMP%\tb-twinserv` cache. The grid's
@@ -820,7 +820,7 @@ line the page quotes. Its 8 pictures are under `docs/IDE/Troubleshooting/Images/
   gives the focus back to the grid: the fixture opens the edit again whenever it finds it closed
   (`KeepEditing`). The calendar's "Today:" line is set to a fixed date (`MCM_SETTODAY`), or the
   picture would change every day.
-- **Setup `vb`**: `test/shots/vb`, VBShots, the 23 pictures of the VB, VBRUN and VBA sections
+- **Setup `vb`**: `test/shots/vb`, VBShots, the pictures of the VB, VBRUN and VBA sections
   (the VB package's controls, a form's drawing, its menus and MDI forms, MsgBox and InputBox),
   one scene per command line, taken by `sceneShot` as `vbflexgrid`'s are; the VB reference's
   library symbol is `*VB`, for the QRCode's members. Each scene lays its form out in pixels at 96
@@ -846,7 +846,7 @@ line the page quotes. Its 8 pictures are under `docs/IDE/Troubleshooting/Images/
   indexes from 26 on. Not taken: the Report preview, whose first `DoEvents` after `Show` never
   returns on the tool's desktop, with or without a recordset, with the forms fixture's MyReport
   unchanged too (not narrowed).
-- **Setup `commonctls`**: `test/shots/commonctls`, CommonCtlsShots, the 10 pictures of the
+- **Setup `commonctls`**: `test/shots/commonctls`, CommonCtlsShots, the pictures of the
   WinNativeCommonCtls section, one scene per command line, taken by `sceneShot` as `vb`'s are.
   `frmScene` holds hidden controls of each class (`lv0`--`lv3`, `tv0`--`tv7`, `pb0`--`pb11`,
   `sl0`--`sl7`, `mv0`, `dt0`--`dt5`, `ud0`, three ImageLists), which a scene places and shows;
@@ -866,7 +866,7 @@ line the page quotes. Its 8 pictures are under `docs/IDE/Troubleshooting/Images/
   ColorDepth32Bit (icons) and one of ColorDepth24Bit (bitmaps on silver, the default
   MaskColor): an icon added to a 24-bit list draws on black (not narrowed: the stock icon's own
   mask, or the package's `RuntimeCreateScaledPicture`).
-- **Setup `waynes`**: `test/shots/waynes`, WaynesShots, the 13 pictures of the CustomControls
+- **Setup `waynes`**: `test/shots/waynes`, WaynesShots, the pictures of the CustomControls
   section, taken by `sceneShot`, or by `waynesRuns` for a picture of several runs in rows (the
   button's states, the six border styles). A form of the package is a window of class `tbForm`
   (in `FORM_CLASS`), has no default instance and is shown modally only, so `Sub Main` makes the

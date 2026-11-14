@@ -44,7 +44,7 @@ End Sub
 
 ## Lifecycle
 
-The MDIForm goes through the same six events as a regular [**Form**](../Form/) from creation to destruction:
+The MDIForm goes through the same events as a regular [**Form**](../Form/) from creation to destruction:
 
 | Event                            | When                                                                                |
 |----------------------------------|-------------------------------------------------------------------------------------|
