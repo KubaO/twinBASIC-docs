@@ -39,7 +39,7 @@ Exit codes: **0** every piece of every shipped theme loads; **1** at least one i
 
 Runs the add-in scenarios under `test/addin/`. Each scenario file is a `node:test` file and one **lane**, listed in `test/addin/lanes.mjs`; run it with [`addin-test.bat`](Tools#addin-testbat), because on its own a scenario skips itself. A lane runs in its own process, with its own slot from [`tbbroker`](Tools-Compiler#tbbroker) (a private desktop), work folder and private copy of the twinBASIC install, so a test add-in never loads into your own IDE and two lanes never share one. Each IDE's DevTools port is one Windows picks.
 
-A scenario builds the add-ins it tests into its copy, opens a project and operates the IDE: it clicks, presses keys, types, and reads the add-ins' tool windows, message boxes, notifications, the code editor and the Debug Console. The eighteen lanes take about two minutes together:
+A scenario builds the add-ins it tests into its copy, opens a project and operates the IDE: it clicks, presses keys, types, and reads the add-ins' tool windows, message boxes, notifications, the code editor and the Debug Console. The twenty lanes take about two minutes together:
 
 - **Two sample lanes** operate the IDE's own sample add-ins, Sample 10 and Sample 15 (Global Search), end to end.
 - **Probe lanes** take what they need from `test/addin/probes/`. They check:
@@ -50,6 +50,7 @@ A scenario builds the add-ins it tests into its copy, opens a project and operat
   - whether `TB_ADDIN_TEST` (see below) reaches the add-in, also after a compiler restart;
   - what the help add-in's hover help costs, and whether a hover provider added through the page shows in the IDE's own hover;
   - whether an add-in can show a window of its own, a form holding a WebView2 control.
+- **Two defect lanes** assert IDE defects that an add-in meets: what applying a panel layout does to an add-in's tool window, and what [DebugConsole.PrintText](../../tB/Packages/tbIDE/DebugConsole#printtext) does with its colour argument.
 - **Two help lanes** test the help add-in in `add-in/`, built with the symbol index committed in `add-in/Resources/SYMBOLS/`. `help` takes the pages from the built site. `help-offline` takes them from the add-in's own server, built with an archive of the built offline tree that the lane writes with the build's [help archive](Tools-Build#the-help-archive) writer.
 
 | Flag | Effect |

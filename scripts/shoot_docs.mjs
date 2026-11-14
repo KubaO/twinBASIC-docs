@@ -92,6 +92,10 @@
 //   waynes      test/shots/waynes, WaynesShots: the CustomControls section's pictures of its
 //               controls on a form of the package, taken as the programs setup's are; a
 //               picture of several states or frames is several runs of the program in rows
+//   tbide       test/shots/tbide, MyAddInDemo, an add-in built into the copy, the sample open:
+//               the tbIDE section's pictures of its toolbar buttons, its tool window floating
+//               and docked by a drag, and its DEBUG CONSOLE lines; tbide-sample10 Sample 10
+//               built and loaded, for its window of styled div elements
 //   codelens   test/shots/codelens: a procedure run by its CodeLens bar, the editor above
 //               the DEBUG CONSOLE
 //   memory      test/shots/memory: Sub Main run to its Stop, and the MEMORY 1 pane showing
@@ -1991,6 +1995,8 @@ const SETUPS = {
     start: (run) => startPrograms(run, WAYNES_SHOTS),
     prepare: (run) => preparePrograms(run, "WaynesShots"),
   },
+  tbide: { start: startTbIde, prepare: prepareTbIde },
+  "tbide-sample10": { start: startTbIdeSample10, prepare: prepareTbIdeSample10 },
   codelens: { start: startCodeLens, prepare: prepareSample },
   memory: { start: startMemory, prepare: prepareSample },
   package: { start: startPackage, prepare: prepareSample },
@@ -15273,6 +15279,298 @@ async function endMissingDll(run) {
   if (run.process && !run.exited) killTree(run.process.pid);
 }
 
+// ---- tbide: test/shots/tbide, MyAddIn, the add-in of the tbIDE package's pictures, built into
+// the copy as global-search builds Sample 15 (never into the install, nor into %APPDATA%), with
+// the sample open. Each part of it is the sample of the page its picture goes on: Toolbar.md's
+// two buttons, ToolWindow.md's window (Action 1) and DebugConsole.md's two PrintText lines
+// (Action 2). Its icon, Resources/ICONS/icon.png, is the install's Sample 10's button1.png,
+// copied into the staged tree, as stageSample takes the template's icon. tbide-sample10 is
+// Sample 10 itself built and loaded, for its tool window of styled DOM elements.
+
+const TBIDE = path.join(REPO_ROOT, "test", "shots", "tbide");
+const TBIDE_IMAGE = (name) => `Reference/Built-In/tbIDE/Images/${name}.png`;
+const TBIDE_BUTTON = (n) => `addinButton-MyAddInButton${n}`;
+const TBIDE_WINDOW = "MyAddIn.MyWindowPosition";
+const S10_WINDOW = "WaynesWindowData";
+
+async function startTbIde(run) {
+  const { lane, work } = run;
+  run.step = "build";
+  const src = path.join(work, "tbide-src");
+  cpSync(TBIDE, src, { recursive: true });
+  const s10 = lane.exportSample("Sample 10");
+  mkdirSync(path.join(src, "Resources", "ICONS"), { recursive: true });
+  cpSync(path.join(s10, "Resources", "ICONS", "button1.png"), path.join(src, "Resources", "ICONS", "icon.png"));
+  say(run.name, `building ${path.relative(REPO_ROOT, TBIDE)} into a copy of ${ide}`);
+  await lane.addAddin(src);
+  run.step = "open";
+  say(run.name, `opening ${path.relative(REPO_ROOT, SAMPLE)}`);
+  return lane.open(stageSample(run));
+}
+
+async function startTbIdeSample10(run) {
+  run.step = "build";
+  say(run.name, `building Sample 10 into a copy of ${ide}`);
+  await run.lane.addSample("Sample 10");
+  run.step = "open";
+  say(run.name, `opening ${path.relative(REPO_ROOT, SAMPLE)}`);
+  return run.lane.open(stageSample(run));
+}
+
+// Waits for an add-in's button on the toolbar, which says it has loaded.
+async function addinButtonShown(c, id, what) {
+  if (!(await waitFor(c, () => rectOf(c, `#${id}`), { timeout: 30000, interval: 100 }))) {
+    throw new Error(`${what} put no button ${id} on the toolbar`);
+  }
+}
+
+async function prepareTbIde(run) {
+  await addinButtonShown(run.c, TBIDE_BUTTON(2), "MyAddIn");
+  return prepareSample(run);
+}
+
+// Sample 10 prints the project's path to the DEBUG CONSOLE as it loads, which is under the
+// user's profile: the console is emptied with its own button once the last of its lines shows.
+async function prepareTbIdeSample10(run) {
+  const { c } = run;
+  await addinButtonShown(c, "addinButton-ShowToolWindow", "Sample 10");
+  if (
+    !(await waitFor(c, async () => (await consoleText(c)).includes("[WaynesWorldAddin] ProjectName"), {
+      timeout: 10000,
+      interval: 100,
+    }))
+  ) {
+    throw new Error(`Sample 10 printed no ProjectName line: ${JSON.stringify(await consoleText(c))}`);
+  }
+  await clearConsole(c);
+  return prepareSample(run);
+}
+
+// The floating panel that holds an add-in's tool window, by the window's id.
+const addinPanelRect = (c, id) =>
+  c.evaluate(`(() => {
+  const p = toolWindowsById[${JSON.stringify(id)}]?.shadowDom.host.closest(".floatingPanel");
+  if (!p) return null;
+  const r = p.getBoundingClientRect();
+  return r.width && r.height ? { x: r.x, y: r.y, width: r.width, height: r.height } : null;
+})()`);
+
+// The add-in's window, shown with a real click on Action 1 when it is not showing, once it has
+// stopped flashing: floating, where the IDE puts it (centred, at its suggested size).
+async function tbIdeWindow(c) {
+  if (!(await c.evaluate(`!!toolWindowsById[${JSON.stringify(TBIDE_WINDOW)}]?.isConnected`))) {
+    await click(c, TBIDE_BUTTON(1));
+  }
+  if (!(await waitFor(c, () => addinPanelRect(c, TBIDE_WINDOW), { timeout: 5000, interval: 50 }))) {
+    throw new Error("Action 1 showed no tool window");
+  }
+  await notFlashing(c, TBIDE_WINDOW);
+}
+
+// Waits until the floating or docked container of an add-in's window has stopped flashing.
+async function notFlashing(c, id) {
+  const flashing = () =>
+    c.evaluate(`(() => {
+  const h = toolWindowsById[${JSON.stringify(id)}]?.shadowDom.host;
+  const p = h?.closest(".floatingPanel") ?? h?.closest(".toolWindowContainer");
+  return !!p && !!p.matches(".flashElement, :has(.flashElement)");
+})()`);
+  if (!(await waitFor(c, async () => !(await flashing()), { timeout: 5000, interval: 50 }))) {
+    throw new Error(`the tool window ${id} never stopped flashing`);
+  }
+  await frames(c);
+}
+
+// Closes an add-in's window, floating or docked, with a real click on its own close button.
+async function closeAddinWindow(c, id) {
+  const x = await c.evaluate(`(() => {
+  const w = toolWindowsById[${JSON.stringify(id)}];
+  if (!w?.isConnected) return null;
+  const e = w.shadowDom.host.closest(".toolWindowContainer")?.querySelector(".sectionHeader .codicon-close");
+  if (!e) return null;
+  const r = e.getBoundingClientRect();
+  return { x: r.x + r.width / 2, y: r.y + r.height / 2 };
+})()`);
+  if (x) {
+    await clickAt(c, x.x, x.y);
+    await waitFor(c, () => c.evaluate(`!toolWindowsById[${JSON.stringify(id)}]?.isConnected`), {
+      timeout: 3000,
+      interval: 50,
+    });
+  }
+  await parkMouse(c);
+}
+
+// The docked panel headed `title`'s container (whose top edge takes a drop above it), as a box.
+const dockedContainer = (c, title) =>
+  c.evaluate(`(() => {
+  const h = [...document.querySelectorAll(".sectionHeaderInner")].find((e) => e.textContent.trim() === ${JSON.stringify(title)});
+  const t = h?.closest(".toolWindowContainer");
+  if (!t) return null;
+  const r = t.getBoundingClientRect();
+  return { x: r.x, y: r.y, width: r.width, height: r.height };
+})()`);
+
+// The floating window docked above PROPERTIES as a person docks it: its grip pressed and the
+// mouse moved to near the top edge of PROPERTIES. The IDE starts the drag itself on the press
+// (a dragstart of its own); Chromium's drag that the moves begin is intercepted
+// (Input.setInterceptDrags) and delivered where the mouse is, as the browser would.
+async function dockAboveProperties(c) {
+  const grip = await c.evaluate(`(() => {
+  const g = toolWindowsById[${JSON.stringify(TBIDE_WINDOW)}]?.shadowDom.host.closest(".floatingPanel")?.querySelector(".gripIcon");
+  if (!g) return null;
+  const r = g.getBoundingClientRect();
+  return { x: r.x + r.width / 2, y: r.y + r.height / 2 };
+})()`);
+  const props = await dockedContainer(c, "PROPERTIES");
+  if (!grip || !props) throw new Error("no floating window to dock, or no docked PROPERTIES");
+  const to = { x: props.x + props.width / 2, y: props.y + 12 };
+  let data = null;
+  c.on((m) => {
+    if (m.method === "Input.dragIntercepted" && !data) data = m.params.data;
+  });
+  const mouse = (type, x, y, buttons) =>
+    c.send("Input.dispatchMouseEvent", {
+      type,
+      x,
+      y,
+      button: "left",
+      buttons,
+      clickCount: type === "mouseMoved" ? 0 : 1,
+    });
+  await c.send("Input.setInterceptDrags", { enabled: true });
+  try {
+    await mouse("mouseMoved", grip.x, grip.y, 0);
+    await mouse("mousePressed", grip.x, grip.y, 1);
+    for (let i = 1; i <= 10; i++) {
+      await mouse("mouseMoved", grip.x + ((to.x - grip.x) * i) / 10, grip.y + ((to.y - grip.y) * i) / 10, 1);
+      await sleep(30);
+    }
+    if (!(await waitFor(c, async () => !!data, { timeout: 3000, interval: 50 }))) {
+      throw new Error("the mouse's moves from the grip began no drag");
+    }
+    for (const type of ["dragEnter", "dragOver", "dragOver"]) {
+      await c.send("Input.dispatchDragEvent", { type, x: to.x, y: to.y, data });
+      await sleep(100);
+    }
+    await c.send("Input.dispatchDragEvent", { type: "drop", x: to.x, y: to.y, data });
+    await mouse("mouseReleased", to.x, to.y, 0);
+  } finally {
+    await c.send("Input.setInterceptDrags", { enabled: false });
+  }
+  const docked = () =>
+    c.evaluate(`(() => {
+  const w = toolWindowsById[${JSON.stringify(TBIDE_WINDOW)}];
+  return !!w?.isConnected && !w.shadowDom.host.closest(".floatingPanel");
+})()`);
+  if (!(await waitFor(c, docked, { timeout: 3000, interval: 50 }))) throw new Error("the drop did not dock the window");
+  await notFlashing(c, TBIDE_WINDOW);
+  await parkMouse(c);
+}
+
+const tbIdeShots = [
+  {
+    // Toolbar.md's sample: the add-in's splitter and two buttons after the IDE's own, from Preview
+    out: TBIDE_IMAGE("Toolbar"),
+    setup: "tbide",
+    async take({ c }) {
+      await resetUi(c);
+      const bar = await toolbarRect(c);
+      const from = await rectOf(c, "#toolbarPreviewBtn");
+      const to = await rectOf(c, `#${TBIDE_BUTTON(2)}`);
+      if (!from || !to) throw new Error("the toolbar has no Preview button or no Action 2");
+      const x = from.x - 8;
+      return capture(c, "Toolbar", snapOut({ x, y: bar.y, width: to.x + to.width + 10 - x, height: bar.height }), {
+        away: () => parkMouse(c),
+      });
+    },
+  },
+  {
+    // ToolWindow.md's sample: the window Action 1 adds, floating where the IDE shows it
+    out: TBIDE_IMAGE("ToolWindow"),
+    setup: "tbide",
+    async take({ c }) {
+      await resetUi(c);
+      try {
+        await tbIdeWindow(c);
+        return await capture(c, "ToolWindow", snapOut(await addinPanelRect(c, TBIDE_WINDOW)), {
+          away: () => parkMouse(c),
+        });
+      } finally {
+        await closeAddinWindow(c, TBIDE_WINDOW);
+      }
+    },
+  },
+  {
+    // the same window docked above PROPERTIES: the right-hand column of the layout
+    out: TBIDE_IMAGE("ToolWindow_Docked"),
+    setup: "tbide",
+    async take({ c }) {
+      await resetUi(c);
+      try {
+        await tbIdeWindow(c);
+        await dockAboveProperties(c);
+        const pe = await dockedContainer(c, "PROJECT EXPLORER");
+        const props = await dockedContainer(c, "PROPERTIES");
+        if (!pe || !props) throw new Error("no docked PROJECT EXPLORER or PROPERTIES");
+        // down to the end of the PROPERTIES header
+        const head = await c.evaluate(`(() => {
+  const h = [...document.querySelectorAll(".sectionHeaderInner")].find((e) => e.textContent.trim() === "PROPERTIES");
+  return h.closest(".sectionHeader").getBoundingClientRect().bottom;
+})()`);
+        const clip = { x: pe.x, y: pe.y, width: pe.width, height: head + 4 - pe.y };
+        return await capture(c, "ToolWindow_Docked", snapOut(clip), { away: () => parkMouse(c) });
+      } finally {
+        await closeAddinWindow(c, TBIDE_WINDOW);
+        await defaultLayout(c);
+      }
+    },
+  },
+  {
+    // DebugConsole.md's PrintText sample, run by Action 2: a line in the console's own colour and
+    // one in the colour given
+    out: TBIDE_IMAGE("DebugConsole_PrintText"),
+    setup: "tbide",
+    async take({ c }) {
+      await resetUi(c);
+      try {
+        await floatPanel(c, "DEBUG CONSOLE", { width: 420, height: 96 });
+        await clearConsole(c);
+        await click(c, TBIDE_BUTTON(2));
+        const printed = await waitFor(c, async () => (await consoleText(c)).includes("Warning: something looks off"), {
+          timeout: 5000,
+          interval: 50,
+        });
+        if (!printed) throw new Error(`Action 2 printed no lines: ${JSON.stringify(await consoleText(c))}`);
+        return await consolePicture(c, "DebugConsole_PrintText", 2);
+      } finally {
+        await clearConsole(c);
+        await unfloatPanel(c, "DEBUG CONSOLE");
+      }
+    },
+  },
+  {
+    // Sample 10's tool window of styled div elements (HtmlElement.md), shown by its own button
+    out: TBIDE_IMAGE("Sample10"),
+    setup: "tbide-sample10",
+    async take({ c }) {
+      await resetUi(c);
+      try {
+        if (!(await addinPanelRect(c, S10_WINDOW))) await click(c, "addinButton-ShowToolWindow");
+        if (!(await waitFor(c, () => addinPanelRect(c, S10_WINDOW), { timeout: 5000, interval: 50 }))) {
+          throw new Error("Sample 10's button showed no tool window");
+        }
+        await notFlashing(c, S10_WINDOW);
+        return await capture(c, "Sample10", snapOut(await addinPanelRect(c, S10_WINDOW)), {
+          away: () => parkMouse(c),
+        });
+      } finally {
+        await closeAddinWindow(c, S10_WINDOW);
+      }
+    },
+  },
+];
+
 // ---------------------------------------------------------------- the table of shots
 
 // Each shot is a picture: `out` its path under the output folder, `setup` the IDE
@@ -15357,6 +15655,7 @@ const SHOTS = [
   ...vbShots,
   ...commonCtlsShots,
   ...waynesShots,
+  ...tbIdeShots,
   ...codeLensShots,
   memoryShot,
   packageBuildShot,
@@ -15461,6 +15760,8 @@ const JOB_SECONDS = {
   vb: 60,
   commonctls: 40,
   waynes: 90,
+  tbide: 40,
+  "tbide-sample10": 30,
   codelens: 35,
   memory: 30,
   package: 25,

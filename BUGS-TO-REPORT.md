@@ -14057,3 +14057,39 @@ Not the build: a 32-bit and a 64-bit run in the IDE give the same. Severity: low
 
 <!-- Reproducer: bugs/waynes-fontweight-three-steps/ (mode run: three groups of weights, the widths those of GDI's Segoe UI, win32 and win64, BETA 1042, 2026-11-14). Found 2026-11-13 while taking the CustomControls pictures (shoot_docs setup waynes). docs/Reference/Built-In/CustomControls/Enumerations/FontWeight.md and Styles/TextRendering.md (Weight) carry a NOTE for it; when a fixed build is released, the NOTEs go. -->
 
+---
+
+## DebugConsole.PrintText ignores its ColorRGB argument: every line an add-in prints is drawn in the IDE's yellow
+
+**Describe the bug**
+The IDE Extensibility package's `DebugConsole.PrintText` takes an optional second argument, `ColorRGB`, the colour of the line. On BETA 1042 the argument has no effect: every line an add-in prints is drawn in the yellow of the IDE's own message lines, whatever the value, an RGB colour, 0 or none.
+
+**To Reproduce**
+`printtext-colorrgb-ignored` is an add-in project: building it makes a DLL that the IDE's compiler loads on every start until the DLL is removed. Install it knowingly, in an IDE you can restart, and remove it afterwards.
+
+Steps to reproduce the behavior:
+1. Open `printtext-colorrgb-ignored.twinproj` (attached as `printtext-colorrgb-ignored.zip`) and build it for Win32. Copy `Build\PrintTextColorRgbIgnored_win32.dll` into `%APPDATA%\twinBASIC\addins\win32\` and restart the IDE. Open any project: the toolbar has a button, *Print in colour*, which runs
+   ```
+   With Host.DebugConsole
+       .PrintText "no colour"
+       .PrintText "orange", RGB(255, 128, 0)
+       .PrintText "red", RGB(255, 0, 0)
+       .PrintText "blue", RGB(0, 0, 255)
+   End With
+   ```
+2. Click *Print in colour*. The DEBUG CONSOLE prints the four lines, all in the same yellow.
+3. Close the IDE and delete `PrintTextColorRgbIgnored_win32.dll` from `%APPDATA%\twinBASIC\addins\win32\`.
+
+**Expected behavior**
+Each line is drawn in the colour its `ColorRGB` gives: `orange` in orange, `red` in red, `blue` in blue, and `no colour` in the console's default colour.
+
+**Desktop:**
+ - OS: Windows 10 Pro 22H2 (build 19045)
+ - twinBASIC compiler version: BETA 1042
+
+**Additional context**
+Every line reaches the IDE's page with the class `debugConsoleOutputTextYELLOW`, which `event_output` in `ide/main.js` gives the output the compiler marks with the colour code `&HFE0000`. The page reads a line's colour only as one of five such codes (`&HFF0000` alert, `&HFE0000` yellow, `&HFD0000` a native exception, `&HFC0000` green, `&HEAEAEA` text read as HTML), never as a colour, so even a page that received the argument would draw an RGB colour in the default colour. None of the five codes passed as `ColorRGB` changes the line either: `&HFD0000` does not turn TRACE-MODE on, which it does for the compiler's own output.
+
+Severity: low. Nothing is lost, but an add-in cannot tell its warnings from its other lines by colour, as the argument promises.
+
+<!-- Reproducer: bugs/printtext-colorrgb-ignored/ (mode lane: an add-in has to be built into an IDE's add-in folder, which nothing here may do outside a lane, so `verify` runs the lane). Asserted by `addin-test.bat --only console-colour` (test/addin/console-colour.test.mjs; its add-in is the ConsoleColourProbe, test/addin/probes/consolecolour, which prints a line for each of 0, four RGB colours and the five codes), the three tests named in repro.json, which pass on BETA 1042, win32 (2026-11-14). The reproducer is a cut-down copy of that add-in, compiled clean by `bug_repro.mjs compile`, and not itself run in a lane. Found 2026-11-14 taking the tbIDE pictures (shoot_docs setup tbide, test/shots/tbide), whose DebugConsole_PrintText picture shows DebugConsole.md's sample: its orange line is yellow. docs/Reference/Built-In/tbIDE/DebugConsole.md (PrintText) carries a NOTE labelled BETA 1042 for it; when a fixed build is released, the NOTE goes. -->

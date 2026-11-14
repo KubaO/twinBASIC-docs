@@ -762,6 +762,36 @@
       "build": 1042,
       "scale": 1.5
     },
+    "Reference/Built-In/tbIDE/Images/DebugConsole_PrintText.light.png": {
+      "build": 1042
+    },
+    "Reference/Built-In/tbIDE/Images/DebugConsole_PrintText.png": {
+      "build": 1042
+    },
+    "Reference/Built-In/tbIDE/Images/Sample10.light.png": {
+      "build": 1042
+    },
+    "Reference/Built-In/tbIDE/Images/Sample10.png": {
+      "build": 1042
+    },
+    "Reference/Built-In/tbIDE/Images/ToolWindow.light.png": {
+      "build": 1042
+    },
+    "Reference/Built-In/tbIDE/Images/ToolWindow.png": {
+      "build": 1042
+    },
+    "Reference/Built-In/tbIDE/Images/ToolWindow_Docked.light.png": {
+      "build": 1042
+    },
+    "Reference/Built-In/tbIDE/Images/ToolWindow_Docked.png": {
+      "build": 1042
+    },
+    "Reference/Built-In/tbIDE/Images/Toolbar.light.png": {
+      "build": 1042
+    },
+    "Reference/Built-In/tbIDE/Images/Toolbar.png": {
+      "build": 1042
+    },
     "Reference/Contributed/VBFLXGRD18/VBFlexGrid/Images/Appearance_GridLines.png": {
       "build": 1042,
       "scale": 1.5

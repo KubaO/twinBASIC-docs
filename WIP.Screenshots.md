@@ -926,6 +926,31 @@ line the page quotes. Its 8 pictures are under `docs/IDE/Troubleshooting/Images/
   Fusion is documented for controls; a failure message that names no cause may be worth an
   issue.
 
+## The tbIDE package's pictures
+
+- **Setup `tbide`**: `test/shots/tbide`, MyAddInDemo, an add-in built into the lane's copy as
+  `global-search` builds Sample 15, with `test/shots/sample` open: the tbIDE section's pictures
+  of what an add-in makes. Each part of it is the sample of the page its picture goes on, so the
+  picture shows that code at work: Toolbar.md's splitter and two buttons (`Toolbar`, also on
+  Button.md), ToolWindow.md's window, which Action 1 adds (`ToolWindow`, and
+  `ToolWindow_Docked`), and DebugConsole.md's two PrintText lines, which Action 2 prints into
+  the floated console (`DebugConsole_PrintText`). Its icon is the install's Sample 10's
+  `button1.png`, copied into the staged tree, not committed. **An add-in reads its resources
+  with `LoadResDataInternal`**, as the install's add-in samples do: `LoadResData` is the VB
+  package's, which neither an add-in sample nor the Standard DLL template references (TB5079
+  without it); the class and the project must not share a name (TB5139).
+- **Docking is a real drag** (`dockAboveProperties`): the grip at the left of a floating
+  panel's title bar starts the IDE's own drag on the press (a `dragstart` it makes itself), and
+  the docked panels take HTML drag events, so the mouse is pressed on the grip and moved with
+  `Input.setInterceptDrags` on, and the drag Chromium begins is delivered with
+  `Input.dispatchDragEvent` (enter, over, drop) near the top edge of PROPERTIES. The shot closes
+  the window with its close button, and `defaultLayout` puts the layout back.
+- **Setup `tbide-sample10`**: Sample 10 built and loaded, for its window of styled `div`
+  elements on HtmlElement.md (`Sample10`). Sample 10 prints the project's path, under the
+  user's profile, as it loads, so the setup empties the console first.
+- The console picture shows the sample's "orange" line in yellow: PrintText ignores its
+  colour (BUGS-TO-REPORT, `printtext-colorrgb-ignored`, a NOTE on DebugConsole.md).
+
 ## Package server
 
 Taken on BETA 1010, in both themes where the theme shows.
