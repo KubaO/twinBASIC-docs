@@ -14,8 +14,8 @@ The control paints three visual states ([**NormalState**](#normalstate), [**Hove
 
 The current text is held in [**Value**](#value). Surrogate-pair characters are handled correctly by the cursor / selection logic --- the caret never appears between the high and low halves of a pair.
 
-```tb check_build
-Private Sub Form_Load()
+```tb check_build inherits=WaynesForm
+Sub New()
     txtName.Value = ""
     txtName.NormalState.TextRendering.Padding.Left = 6
     txtName.NormalState.TextRendering.Padding.Right = 6
@@ -24,8 +24,8 @@ End Sub
 
 The three states are styled independently --- a common pattern is to give the focused state a heavier border in an accent colour and brighten its fill, so the active field stands out from its siblings:
 
-```tb check_build
-Private Sub Form_Load()
+```tb check_build inherits=WaynesForm
+Sub New()
     With txtName.NormalState
         .BackgroundFill.ColorPoints.SetSolidColor vbWhite
         .Borders.SetSimpleBorder StrokeSize:=1, ColorRGB:=&HC0C0C0

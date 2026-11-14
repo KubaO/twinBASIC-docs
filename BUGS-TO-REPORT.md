@@ -13832,7 +13832,7 @@ Severity: low. Nothing is lost, but a program ported from VB6 that sets a text-o
 ## A CustomControls form's window ignores its Caption, size and WindowsOptions set in code
 
 **Describe the bug**
-A form of the CustomControls package (a `WaynesForm`) makes its window from the values its form designer saved, and never from the form's properties as the code has set them. `Caption`, `Width` and `Height`, `Left` and `Top`, and every member of `WindowsOptions` (`BorderStyle`, `MaximizeButton`, `MinimizeButton`, `ControlBox`, `ShowInTaskbar`, `StartUpPosition`, `WindowState`) set in code change the property, which reads back the new value, and nothing on the screen: the title bar, the window's size and place, its border and its buttons stay as designed. It makes no difference whether they are set in the form's constructor, before `Show`, or while the form is shown. The form's `BackgroundFill`, and the properties of its controls, set in the same places, are drawn as set.
+A form of the CustomControls package (a `WaynesForm`) makes its window from the values its form designer saved, and never from the form's properties as the code has set them. `Caption`, `Width` and `Height`, `Left` and `Top`, and every member of `WindowsOptions` (`BorderStyle`, `MaximizeButton`, `MinimizeButton`, `ControlBox`, `ShowInTaskbar`, `StartUpPosition`, `WindowState`) set in code change the property, which reads back the new value, and nothing on the screen: the title bar, the window's size and place, its border and its buttons stay as designed. It makes no difference whether they are set in the form's constructor, before `Show`, or while the form is shown. The form's `BackgroundFill`, and the style properties of its controls (a `WaynesLabel`'s `BackgroundFill`, say), set in the same places, are drawn as set. (A control's own place, size and visibility set in code are mostly ignored as well; that is reported on its own.)
 
 **To Reproduce**
 Steps to reproduce the behavior:
@@ -13880,3 +13880,180 @@ The window shows the form's properties as the code has set them: the title bar t
 Severity: medium. Nothing fails and no error is raised, so a program that sets its form's title or frame in code shows the designer's instead, and its properties report values the window does not have.
 
 <!-- Reproducer: bugs/waynesform-window-ignores-code/ (mode run: every property ignored, before Show and while shown, win32 and win64, BETA 1042, 2026-11-13; the built exe the same, in a scratch probe). Found 2026-11-13 while taking the CustomControls pictures (shoot_docs setup waynes): a form's Caption set at run time did not retitle it. Narrowed from the lead that a WaynesForm's Form_Load never runs, which is not a defect: WaynesForm has no Load event (its only event is Click), and its setup code goes in Sub New, as the IDE's Sample 6 does. docs/Reference/Built-In/CustomControls/WaynesForm/index.md and WaynesForm/WindowsFormOptions.md carry a WARNING for it; when a fixed build is released, the WARNINGs go. -->
+
+---
+
+## A CustomControls form's Controls collection is always Nothing
+
+**Describe the bug**
+The `Controls` property of a form of the CustomControls package (a `WaynesForm`), described in the package as "a collection of all controls attached to this form", is `Nothing` whenever a program can read it: in the form's constructor, from the code that creates the form before it calls `Show`, and while the form is shown. Any use of it, such as `Me.Controls.Count` or `For Each ctl In Me.Controls`, raises error 91, *Object variable or With block variable not set*. The form's controls themselves exist and work (`Me.Label1` is a `WaynesLabel`).
+
+**To Reproduce**
+Steps to reproduce the behavior:
+1. Open `waynesform-controls-nothing.twinproj` (attached as `waynesform-controls-nothing.zip`) and run it: `Form1` holds one `WaynesLabel`, and it reports its `Controls` property in its `Sub New`, from `Sub Main` before `Show`, and once it is shown.
+2. Or, in a form of the package holding a control named `Label1`:
+
+   ```vb
+   Sub New()
+       Debug.Print TypeName(Me.Label1), Me.Controls Is Nothing
+       Debug.Print Me.Controls.Count
+   End Sub
+   ```
+3. See `WaynesLabel True`, then error 91 at `Me.Controls.Count`. The probe prints:
+
+   ```
+   in Sub New: Label1 is a WaynesLabel, Controls Is Nothing = True
+   in Sub New: Controls.Count raises 91, Object variable or With block variable not set
+   before Show: Label1 is a WaynesLabel, Controls Is Nothing = True
+   before Show: Controls.Count raises 91, Object variable or With block variable not set
+   while shown: Label1 is a WaynesLabel, Controls Is Nothing = True
+   while shown: Controls.Count raises 91, Object variable or With block variable not set
+   ```
+
+The package's `BaseForm` class declares `Public Controls As CustomControls.CustomControlsCollection` with `[Serialize(False)]`, and nothing in the package sets it; the form engine, which creates the form's controls, does not set it either.
+
+**Expected behavior**
+`Controls` is the form's `CustomControlsCollection`, holding each of its controls, as the property's description says and as the `Controls` collection of a form of the VB package does.
+
+**Desktop:**
+ - OS: Windows 10 Pro 22H2 (build 19045)
+ - twinBASIC compiler version: BETA 1042
+
+**Additional context**
+Not the time it is read: the constructor, before `Show` and while shown all give `Nothing`. Not the build: a 32-bit and a 64-bit run in the IDE, and a built 32-bit exe, give the same. Severity: low. The error is raised at once, so nothing is lost, but no program can reach a form's controls through the collection, or add or remove one with `Controls.Add` and `Controls.Remove`.
+
+<!-- Reproducer: bugs/waynesform-controls-nothing/ (mode run: Nothing in Sub New, before Show and while shown, win32 and win64, BETA 1042, 2026-11-14; the built exe the same, in a scratch probe). Found 2026-11-13 while taking the CustomControls pictures (shoot_docs setup waynes): Controls.Add gave error 91. docs/Reference/Built-In/CustomControls/WaynesForm/index.md (Controls), Framework/CustomControlsCollection.md and Framework/_CustomControlsCollection.md carry a NOTE for it; when a fixed build is released, the NOTEs go. -->
+
+---
+
+## A CustomControls WaynesFrame never redraws for a property set at run time
+
+**Describe the bug**
+A `WaynesFrame` of the CustomControls package is never drawn again once its form is shown: a property set while the form is shown, such as its `BackgroundFill`, changes the property and nothing on the screen, even after the whole window is redrawn. A `WaynesLabel` beside it, given the same fill in the same place, is drawn with it at once. A fill set in the form's constructor, before the frame is first drawn, is drawn.
+
+**To Reproduce**
+Steps to reproduce the behavior:
+1. Open `waynesframe-ignores-runtime-changes.twinproj` (attached as `waynesframe-ignores-runtime-changes.zip`) and run it: `Form1` holds a grey `WaynesFrame` and a green `WaynesLabel`. Once it is shown, its timer sets both fills to red, reports the colour drawn in each, has the whole window redrawn with `RedrawWindow`, and reports again.
+2. Or, in a form of the package holding a `WaynesFrame` named `Frame1`, once the form is shown (in a `WaynesTimer`'s `Timer` event, say):
+
+   ```vb
+   Frame1.BackgroundFill.ColorPoints.SetSolidColor vbRed
+   ```
+3. See the frame stay grey. The probe prints:
+
+   ```
+   fills set to red while shown: Frame1 drawn grey, Label1 drawn red
+   after RedrawWindow of the whole form: Frame1 drawn grey, Label1 drawn red
+   ```
+
+The cause is in the package's `WaynesFrame` class. Its handler for a changed property is `If Me.ControlContext IsNot Nothing Then Me.ControlContext.Repaint`, as in every other control, but its `ICustomControl.Initialize` never stores the context it is given, so `ControlContext` stays `Nothing` and no repaint is asked for. `WaynesLabel`, `WaynesButton` and `WaynesGrid` end their `Initialize` with `Set Me.ControlContext = ControlContext`. The same line at the end of `WaynesFrame`'s `OnInitialize` should fix it:
+
+```vb
+    Private Sub OnInitialize(ByVal ControlContext As CustomControls.CustomControlContext) _
+            Implements ICustomControl.Initialize
+        If Not ControlContext.GetSerializer.RuntimeUISrzDeserialize(Me, False) Then
+            InitializeDefaultValues
+        End If
+        Set Me.ControlContext = ControlContext
+    End Sub
+```
+
+**Expected behavior**
+The frame is drawn again when one of its properties changes, as the package's other controls are.
+
+**Desktop:**
+ - OS: Windows 10 Pro 22H2 (build 19045)
+ - twinBASIC compiler version: BETA 1042
+
+**Additional context**
+Not the redraw: `RedrawWindow` of the whole form, with `RDW_INVALIDATE`, `RDW_ERASE`, `RDW_ALLCHILDREN` and `RDW_UPDATENOW`, leaves the frame as it was. Not the build: a 32-bit and a 64-bit run in the IDE, and a built 32-bit exe, give the same. Severity: medium. No error is raised, so a program that changes a frame's look in code, to show a state for instance, shows the old one, and the frame's properties report values the screen does not have.
+
+<!-- Reproducer: bugs/waynesframe-ignores-runtime-changes/ (mode run: the frame stays grey while the label turns red, before and after RedrawWindow, win32 and win64, BETA 1042, 2026-11-14; the built exe the same, in a scratch probe). Found 2026-11-13 while taking the CustomControls pictures (shoot_docs setup waynes). docs/Reference/Built-In/CustomControls/WaynesFrame.md carries a WARNING for it, and the landing page index.md says the frame is the exception to its repaint-on-change paragraph; when a fixed build is released, the WARNING and the exception go. -->
+
+---
+
+## A CustomControls control ignores most of its place, size and visibility set in code
+
+**Describe the bug**
+A control of the CustomControls package on a `WaynesForm` is drawn at the place, the size and the visibility its form designer saved, whatever the code has set, for most of those properties. Set in the form's constructor, before the form is first drawn, `Left`, `Height` and `Dock` are drawn as set, and `Top`, `Width` and `Visible` are not. Set while the form is shown, none of the six is: the control stays where and as it was drawn, and setting `Visible` to `False` leaves it on the screen. Each property reads back the value the code set. The control's style properties, such as its `BackgroundFill`, set in the same places, are drawn as set.
+
+**To Reproduce**
+Steps to reproduce the behavior:
+1. Open `waynes-controls-ignore-geometry.twinproj` (attached as `waynes-controls-ignore-geometry.zip`) and run it: `Form1` holds six green `WaynesLabel`s, `L1` to `L6`, each 80 x 60 pixels. `Sub Main` shows the form twice: the first time its constructor gives each label a new value of one property (`L1.Left`, `L2.Top`, `L3.Width`, `L4.Height`, `L5.Visible`, `L6.Dock`), the second time it gives them once the form is shown. Each time it reports where each label is drawn.
+2. Or, in a form of the package holding a `WaynesLabel` named `Label1`, once the form is shown:
+
+   ```vb
+   Label1.Left = Label1.Left + 100
+   Label1.Visible = False
+   ```
+3. See the label stay where it was, shown. The probe prints:
+
+   ```
+   in Sub New, L1.Left = 60 (designed 20): drawn at the old place False, at the new place True
+   in Sub New, L2.Top = 140 (designed 40): drawn at the old place True, at the new place False
+   in Sub New, L3.Width = 100 (designed 80): drawn past the old width False
+   in Sub New, L4.Height = 120 (designed 60): drawn past the old height True
+   in Sub New, L5.Visible = False: drawn True
+   in Sub New, L6.Dock = tbDockRight: drawn at the right edge True, at the old place False
+   while shown, L1.Left = 60 (designed 20): drawn at the old place True, at the new place False
+   while shown, L2.Top = 140 (designed 40): drawn at the old place True, at the new place False
+   while shown, L3.Width = 100 (designed 80): drawn past the old width False
+   while shown, L4.Height = 120 (designed 60): drawn past the old height False
+   while shown, L5.Visible = False: drawn True
+   while shown, L6.Dock = tbDockRight: drawn at the right edge False, at the old place True
+   ```
+
+The package's base classes raise their `OnChanged` event for each of these properties, and each control asks its context to repaint, so the defect is in the form engine, which does not take the new values.
+
+**Expected behavior**
+A control is drawn at the place and the size its properties (and its `Dock`) give it, and is hidden while its `Visible` is `False`, whenever they are set, as a control on a form of the VB package is.
+
+**Desktop:**
+ - OS: Windows 10 Pro 22H2 (build 19045)
+ - twinBASIC compiler version: BETA 1042
+
+**Additional context**
+Not the order of the assignments: in the constructor, `Top` set before `Left`, `Width` before `Height`, and `Visible` before `Left` are still ignored. Not the redraw: `RedrawWindow` of the whole form leaves a moved control at its old place. Not the build: a 32-bit and a 64-bit run in the IDE, and a built 32-bit exe, give the same. Related: the form's own window ignores its `Caption`, size and `WindowsOptions` set in code (reported on its own). Severity: medium. No error is raised, so a program that lays out, resizes, shows or hides its controls in code shows the designer's layout instead, and its controls report places, sizes and visibility the screen does not have.
+
+<!-- Reproducer: bugs/waynes-controls-ignore-geometry/ (mode run: Left, Height and Dock applied in Sub New only, Top, Width and Visible never, win32 and win64, BETA 1042, 2026-11-14; the built exe the same, in a scratch probe). Found 2026-11-13 while taking the CustomControls pictures (shoot_docs setup waynes): a control moved at run time was not drawn where it moved. docs/Reference/Built-In/CustomControls/index.md (Controls) and WaynesForm/index.md (Setting up a form) carry a WARNING for it; when a fixed build is released, the WARNINGs go. -->
+
+---
+
+## CustomControls text draws three of the nine FontWeight values
+
+**Describe the bug**
+The text of a control of the CustomControls package is drawn in three weights only, whichever of the nine `FontWeight` values its `TextRendering.Font.Weight` holds: 100 to 500 draw alike, as Segoe UI's regular face; 600 as Segoe UI Semibold; and 700 to 900 alike, as Segoe UI Bold. So `tbThin`, `tbExtraLight`, `tbLight` and `tbMedium` draw as `tbNormal`, and `tbExtraBold` and `tbHeavy` as `tbBold`, although Windows 10 has Segoe UI Light, Semilight and Black. This is how GDI maps a weight for the family "Segoe UI", whose GDI family holds only those three. `FontStyle` has no font name, so no family with more weights can be chosen.
+
+**To Reproduce**
+Steps to reproduce the behavior:
+1. Open `waynes-fontweight-three-steps.twinproj` (attached as `waynes-fontweight-three-steps.zip`) and run it: `Form1` holds a `WaynesLabel` with the caption "Wg Hq Wg Hq" at 28 points. Its timer sets each weight from 100 to 900 in turn and measures the ink of the text drawn; the probe then groups the weights that drew alike, and draws the same text with GDI in Segoe UI at 400, 600 and 700 to compare.
+2. Or give two labels the same caption, one `Font.Weight = tbLight` and one `tbNormal`, or one `tbBold` and one `tbHeavy`.
+3. See each pair drawn alike. The probe prints (the measurements at 144 DPI):
+
+   ```
+   Weights drawn alike: 100 200 300 400 500 | 600 | 700 800 900
+     Weight 100: ink 352 x 53, darkness 1047
+     ...
+     Weight 500: ink 352 x 53, darkness 1047
+     Weight 600: ink 363 x 53, darkness 1392
+     Weight 700: ink 374 x 53, darkness 1796
+     ...
+     Weight 900: ink 374 x 53, darkness 1796
+     GDI Segoe UI 400: ink 351 x 53, darkness 950
+     GDI Segoe UI 600: ink 363 x 54, darkness 1482
+     GDI Segoe UI 700: ink 375 x 53, darkness 1751
+   As wide as GDI's Segoe UI at 400, 600 and 700: True
+   ```
+
+**Expected behavior**
+Each `FontWeight` value is drawn in the nearest face the family has: on Windows 10, `tbLight` in Segoe UI Light (300), `tbHeavy` in Segoe UI Black (900), and so on, as a font family chosen by weight is in DirectWrite and in CSS, whose 100 to 900 scale the enumeration follows.
+
+**Desktop:**
+ - OS: Windows 10 Pro 22H2 (build 19045)
+ - twinBASIC compiler version: BETA 1042
+
+**Additional context**
+Not the build: a 32-bit and a 64-bit run in the IDE give the same. Severity: low. Nothing is lost, but six of the enumeration's nine values give a weight other than the one named, and a design that relies on a light or a heavy weight cannot be drawn.
+
+<!-- Reproducer: bugs/waynes-fontweight-three-steps/ (mode run: three groups of weights, the widths those of GDI's Segoe UI, win32 and win64, BETA 1042, 2026-11-14). Found 2026-11-13 while taking the CustomControls pictures (shoot_docs setup waynes). docs/Reference/Built-In/CustomControls/Enumerations/FontWeight.md and Styles/TextRendering.md (Weight) carry a NOTE for it; when a fixed build is released, the NOTEs go. -->
+

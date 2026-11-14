@@ -12,8 +12,8 @@ An owner-drawn push-button. Renders a configurable rectangle (with optional grad
 
 The button raises a [**Click**](#click) event when clicked, plus the standard set of mouse, focus, and keyboard events. By default the four state objects are pre-set with a solid mid-blue ([**WAYNESCOLOR_BLUE**](#) --- `&HAC7220`) background and 15-pixel curved corners.
 
-```tb check_build
-Private Sub Form_Load()
+```tb check_build inherits=WaynesForm
+Sub New()
     btnGo.Caption = "Continue"
     btnGo.NormalState.BackgroundFill.ColorPoints.SetSolidColor vbBlue
     btnGo.HoverState.BackgroundFill.SetSimplePattern vbBlue, vbWhite

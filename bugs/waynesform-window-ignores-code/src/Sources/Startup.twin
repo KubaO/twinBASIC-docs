@@ -2,7 +2,7 @@
 ' designer saved, whatever its code has set: Caption, the size and position, and each of
 ' WindowsOptions (BorderStyle, MaximizeButton, StartUpPosition, WindowState and the rest) set
 ' in code, before the form is shown or after, change the property and nothing on the screen.
-' The form's BackgroundFill, and its controls' properties, set in the same place, are drawn.
+' The form's BackgroundFill, and its controls' style properties, set in the same place, are drawn.
 ' Sub Main shows Form1, whose constructor sets Caption, Width, BackgroundFill and two of
 ' WindowsOptions; once it is shown, Form1 calls Report, which prints each property beside what
 ' the window has (its title, its client width at 96 DPI, its styles, the colour it is painted).
