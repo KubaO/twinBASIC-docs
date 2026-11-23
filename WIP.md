@@ -432,6 +432,22 @@ they are.
   file is read when the filtered lines turn out not to be enough. A filter that keeps the
   wrong lines otherwise costs the whole run again. A tool that writes its report to a file of its own (`--out`, `--dump-results`) is
   given one as well.
+- **A batch of work runs from a committed, tested script, never an ad-hoc chain** (owner, 2026-11-23:
+  "This is a recurring issue."). A batch is several steps started as one long or background command:
+  checks, builds and tests in a row, a run left going while the session waits. Its script is committed
+  in the repository the work belongs to, and it has run once before a batch relies on it. It is never
+  written for the occasion and then started at once. A one-off step that will not be reused is not
+  chained: it goes in tool calls of its own, split by judgement, so that each result is read before the
+  next step starts. Every script, and every step it starts, follows these rules:
+  - It takes no input from stdin: start each child with `< /dev/null`.
+  - It exports no environment variable that changes how a later step is parsed. Set such a variable on
+    the one command that needs it: an exported `MSYS_NO_PATHCONV=1` turns Git Bash's `cmd //c` into a
+    prompt that waits for ever, and cost two runs of 7 and 3 hours.
+  - It writes each step's output to a file as it goes.
+
+  A session checks that a background batch is progressing a few minutes after starting it, and again at
+  each of its notifications. A batch with no notification for much longer than its usual time is looked
+  at, not waited for.
 - Don't push or force-push without explicit user request.
 - **Use `gh` read-only.** Viewing, listing and searching are fine: `gh issue view`, `gh pr view`,
   `gh run list`, `gh search`, `gh api` with GET. Anything that writes to GitHub is the owner's
